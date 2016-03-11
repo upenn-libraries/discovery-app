@@ -50,3 +50,9 @@ group :development do
   gem 'spring'
 end
 
+
+gem 'rsolr', '~> 1.0.6'
+gem 'globalid'
+gem 'devise'
+gem 'devise-guests', '~> 0.3'
+gem 'blacklight-marc', '~> 6.0'
