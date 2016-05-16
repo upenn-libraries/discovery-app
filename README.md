@@ -2,6 +2,12 @@
 
 [Generic Blacklight Install](https://gitlab.library.upenn.edu/katherly/blacklight)
 
+NOTE: This application is currently using a patched fork of the blacklight-marc gem, as the original throws an error when attempting to ingest Penn records due to a bug in the gem's handling of the 008 field Format values.  A PR has been submitted to the master project.  In the meantime, to use the patched version, this line is included in the gemfile:
+
+```bash
+gem 'blacklight-marc', '~> 6.0', :git => 'git://github.com/magibney/blacklight-marc', :branch => 'fix-extract_marc-format-008'
+```
+
 * To get the jetty instance needed to power the application, run:
 ```bash
 rake jetty:clean
