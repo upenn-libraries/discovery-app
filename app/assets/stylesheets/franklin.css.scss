@@ -10,7 +10,7 @@ h1, h2, h3 {
   color: $upenn-blue;
 }
 
-span.site-name {
+span.site-name, span.site-name a {
   font-size: 40px;
   color: $text-white;
   font-style: italic;
