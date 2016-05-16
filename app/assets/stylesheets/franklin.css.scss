@@ -1,0 +1,39 @@
+@import 'base/globals.css.scss';
+@import 'base/colors.css.scss';
+
+body {
+  color: $text-black;
+  font-family: $font-family;
+}
+
+h1, h2, h3 {
+  color: $upenn-blue;
+}
+
+span.site-name {
+  font-size: 40px;
+  color: $text-white;
+  font-style: italic;
+}
+
+
+
+/*************
+*
+* Overriding Blacklight styles
+*
+**************/
+
+#header-navbar {
+  background: $upenn-blue asset-url('orrerybg.jpg') top left repeat-x;
+
+  .navbar-brand {
+    background-image: asset-url('logo.png');
+    margin-top: 10px;
+  }
+}
+
+.btn-primary {
+  background-color: $upenn-red;
+  border-color: $upenn-blue;
+}
