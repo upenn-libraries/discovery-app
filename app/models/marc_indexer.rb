@@ -11,6 +11,14 @@ class MarcIndexer < Blacklight::Marc::Indexer
       provide "marc_source.type", "binary"
       # set this to be non-negative if threshold should be enforced
       provide 'solr_writer.max_skipped', -1
+
+      if defined? JRUBY_VERSION
+        # 'store' overrides existing settings, 'provide' does not
+        store 'reader_class_name', "Traject::Marc4JReader"
+        store 'solr_writer.thread_pool', 4
+        provide 'processing_thread_pool', 4
+      end
+
     end
 
     to_field "id", trim(extract_marc("001"), :first => true)
