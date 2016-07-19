@@ -16,7 +16,7 @@ class MarcIndexer < Blacklight::Marc::Indexer
         # 'store' overrides existing settings, 'provide' does not
         store 'reader_class_name', "Traject::Marc4JReader"
         store 'solr_writer.thread_pool', 4
-        provide 'processing_thread_pool', 4
+        store 'processing_thread_pool', 4
       end
 
     end
