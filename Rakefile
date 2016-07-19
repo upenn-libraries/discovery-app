@@ -5,8 +5,6 @@ require File.expand_path('../config/application', __FILE__)
 
 Rails.application.load_tasks
 
-Rails.application.load_tasks
-
 require 'solr_wrapper/rake_task'
 
 ZIP_URL = "https://github.com/projectblacklight/blacklight-jetty/archive/v4.10.4.zip"
