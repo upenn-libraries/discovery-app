@@ -8,7 +8,15 @@ unless defined?(Spring)
   require 'bundler'
 
   if (match = Bundler.default_lockfile.read.match(/^GEM$.*?^    (?:  )*spring \((.*?)\)$.*?^$/m))
-    Gem.paths = { 'GEM_PATH' => [Bundler.bundle_path.to_s, *Gem.path].uniq.join(Gem.path_separator) }
+    # TODO: The commented-out line below breaks on JRuby, where
+    # Gem.path_separator is a RegExp object instead of str. This has
+    # been fixed in spring's master branch, which we probably won't
+    # get for a while:
+    # https://github.com/rails/spring/commit/bb119595d61eb63d0832c662ced4f237bf02ade7
+
+    # Gem.paths = { 'GEM_PATH' => [Bundler.bundle_path.to_s, *Gem.path].uniq.join(Gem.path_separator) }
+
+    Gem.use_paths Gem.dir, Bundler.bundle_path.to_s, *Gem.path
     gem 'spring', match[1]
     require 'spring/binstub'
   end

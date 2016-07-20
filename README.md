@@ -91,7 +91,5 @@ To index a MARC file:
 bundle exec rake solr:marc:index MARC_FILE=/path/to/records.mrc
 ```
 
-Rails and Blacklight should run under JRuby too. Note that spring has
-an incompatibility with JRuby; you'll need to
-[change a line](https://github.com/rails/spring/commit/bb119595d61eb63d0832c662ced4f237bf02ade7)
-in `bin/spring` for it to work.
+Rails and Blacklight should run under JRuby too. Note that
+`bin/spring` has been patched to work with JRuby.
