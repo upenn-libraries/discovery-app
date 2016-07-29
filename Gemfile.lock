@@ -1,5 +1,5 @@
 GIT
-  remote: git://github.com/magibney/blacklight-marc
+  remote: https://github.com/magibney/blacklight-marc.git
   revision: 47c663b9cf40c28ba6831d624c64c943ca82c6f0
   branch: fix-extract_marc-format-008
   specs:

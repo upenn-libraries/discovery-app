@@ -58,4 +58,4 @@ gem 'devise-guests', '~> 0.3'
 gem 'blacklight_range_limit'
 
 # Using this version, corrects error for getting format from 008 field, currently breaks in original project.  PR out to original project, will switch back when applied.
-gem 'blacklight-marc', '~> 6.0', :git => 'git://github.com/magibney/blacklight-marc', :branch => 'fix-extract_marc-format-008'
+gem 'blacklight-marc', '~> 6.0', :git => 'https://github.com/magibney/blacklight-marc.git', :branch => 'fix-extract_marc-format-008'
