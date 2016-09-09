@@ -54,3 +54,42 @@ rails s
 ```
 
 * Open up [localhost:3000](localhost:3000) in a browser.  If everything went well, you should see the generic Blacklight homepage and have 30 faceted records to search.
+
+# JRuby
+
+Using JRuby for the Solr indexing of MARC records greatly improves performance.
+
+To use JRuby, install it using [rvm](https://rvm.io/).
+
+```
+# standard steps to install rvm
+gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+\curl -sSL https://get.rvm.io | bash -s stable
+
+# you may need to update rvm to head, in order to get support for
+# jruby-9.1.2.0
+rvm get head
+
+# install jruby
+rvm install jruby-9.1.2.0
+
+# use it
+rvm use jruby
+```
+
+From this repository's directory, run:
+
+```
+gem install bundler
+bundle install
+```
+
+You can tweak the thread pool parameters for indexing in `app/models/marc_indexer.rb`
+
+To index a MARC file:
+```
+bundle exec rake solr:marc:index MARC_FILE=/path/to/records.mrc
+```
+
+Rails and Blacklight should run under JRuby too. Note that
+`bin/spring` has been patched to work with JRuby.
