@@ -13,11 +13,11 @@ GIT
 
 GIT
   remote: https://github.com/upenn-libraries/blacklight_solrplugins.git
-  revision: cc1e352d66d34d4d1c32c2c73b3615debf526e44
+  revision: 63b3804aabe4deee7621dfccf0ca2ecc73d074ff
   specs:
     blacklight_solrplugins (0.0.1)
       blacklight (~> 6.0)
-      rails (~> 4.2.5.1)
+      rails (~> 4.2.5)
 
 GEM
   remote: https://rubygems.org/
