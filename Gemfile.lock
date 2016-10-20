@@ -11,6 +11,14 @@ GIT
       rails
       traject (~> 2.1)
 
+GIT
+  remote: https://github.com/upenn-libraries/blacklight_solrplugins.git
+  revision: 63b3804aabe4deee7621dfccf0ca2ecc73d074ff
+  specs:
+    blacklight_solrplugins (0.0.1)
+      blacklight (~> 6.0)
+      rails (~> 4.2.5)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -277,6 +285,7 @@ DEPENDENCIES
   blacklight (>= 5.3.0)
   blacklight-marc (~> 6.0)!
   blacklight_range_limit
+  blacklight_solrplugins!
   byebug
   coffee-rails (~> 4.1.0)
   devise

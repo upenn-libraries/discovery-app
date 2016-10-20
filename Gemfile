@@ -61,3 +61,6 @@ gem 'blacklight_range_limit'
 
 # Using this version, corrects error for getting format from 008 field, currently breaks in original project.  PR out to original project, will switch back when applied.
 gem 'blacklight-marc', '~> 6.0', :git => 'https://github.com/magibney/blacklight-marc.git', :branch => 'fix-extract_marc-format-008'
+
+gem 'blacklight_solrplugins', :git => 'https://github.com/upenn-libraries/blacklight_solrplugins.git'
+# gem 'blacklight_solrplugins', :path => "/home/jeffchiu/blacklight_solrplugins"

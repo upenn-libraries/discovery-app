@@ -6,8 +6,15 @@ class CatalogController < ApplicationController
   include Blacklight::Catalog
   include Blacklight::Marc::Catalog
 
+  include BlacklightSolrplugins::XBrowse
+
+  # override Blacklight::Controller
+  def search_state
+    @search_state ||= BlacklightSolrplugins::SearchState.new(params, blacklight_config)
+  end
 
   configure_blacklight do |config|
+
     ## Class for sending and receiving requests from a search index
     # config.repository_class = Blacklight::Solr::Repository
     #
@@ -15,7 +22,7 @@ class CatalogController < ApplicationController
     # config.search_builder_class = ::SearchBuilder
     #
     ## Model that maps search index responses to the blacklight response model
-    # config.response_model = Blacklight::Solr::Response
+    config.response_model = BlacklightSolrplugins::Response
 
     ## Default parameters to send to solr for all search-like requests. See also SearchBuilder#processed_parameters
     config.default_solr_params = {
@@ -73,6 +80,7 @@ class CatalogController < ApplicationController
 
     config.add_facet_field 'format', label: 'Format'
     config.add_facet_field 'subject_topic_facet', label: 'Topic', limit: 20, index_range: 'A'..'Z'
+    config.add_facet_field 'subject_topic_xfacet', label: 'Topic', limit: 20, index_range: 'A'..'Z', show: false, xfacet: true, facet_for_filtering: 'subject_topic_facet'
     config.add_facet_field 'language_facet', label: 'Language', limit: true
     config.add_facet_field 'lc_1letter_facet', label: 'Call Number'
     config.add_facet_field 'subject_geo_facet', label: 'Region'
@@ -103,6 +111,7 @@ class CatalogController < ApplicationController
     config.add_index_field 'published_display', label: 'Published'
     config.add_index_field 'published_vern_display', label: 'Published'
     config.add_index_field 'lc_callnum_display', label: 'Call number'
+    config.add_index_field 'subject_topic_facet', label: 'Topic'
 
     # solr fields to be displayed in the show (single result) view
     #   The ordering of the field names is the order of the display
@@ -120,6 +129,7 @@ class CatalogController < ApplicationController
     config.add_show_field 'published_vern_display', label: 'Published'
     config.add_show_field 'lc_callnum_display', label: 'Call number'
     config.add_show_field 'isbn_t', label: 'ISBN'
+    config.add_show_field 'subject_topic_facet', label: 'Topic'
 
     # "fielded" search configuration. Used by pulldown among other places.
     # For supported keys in hash, see rdoc for Blacklight::SearchFields
@@ -178,6 +188,11 @@ class CatalogController < ApplicationController
         qf: '$subject_qf',
         pf: '$subject_pf'
       }
+    end
+
+    config.add_search_field('subject_topic_xfacet') do |field|
+      field.label = 'Subject Heading Browse'
+      field.action = '/catalog/xbrowse/subject_topic_xfacet'
     end
 
     # "sort results by" select (pulldown)

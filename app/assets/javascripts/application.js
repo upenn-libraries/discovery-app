@@ -15,6 +15,7 @@
 //= require turbolinks//
 // Required by Blacklight
 //= require blacklight/blacklight
+//= require blacklight_solrplugins/blacklight_solrplugins
 
 //= require_tree .
 
