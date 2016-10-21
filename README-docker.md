@@ -16,7 +16,7 @@ git checkout develop
 docker build -t discovery-app .
 
 # optional: build the image that uses jruby/traject for indexing
-docker build -t discovery-indexing-app .
+docker build -f Dockerfile-jruby -t discovery-indexing-app .
 ```
 
 Save the image to a .tgz file, so you can deploy it to servers. We
