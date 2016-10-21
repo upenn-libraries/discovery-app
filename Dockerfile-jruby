@@ -7,7 +7,7 @@
 # this image uses Debian 8 (jessie) as a base
 FROM jruby:9.1.2.0
 
-RUN apt-get update && apt-get install -y git nodejs
+RUN apt-get update && apt-get install -y git nodejs make
 
 RUN gem update bundler
 
@@ -20,5 +20,7 @@ RUN bundle install
 RUN mkdir -p /opt/discovery
 
 WORKDIR /opt/discovery
+
+ADD . /opt/discovery
 
 CMD bundle exec rake solr:marc:index MARC_FILE=$MARC_FILE

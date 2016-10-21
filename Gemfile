@@ -36,6 +36,8 @@ gem 'sdoc', '0.4.2', group: :doc
 # Use Unicorn as the app server
 # gem 'unicorn'
 
+gem 'passenger', '5.0.30', require: 'phusion_passenger/rack_handler'
+
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
