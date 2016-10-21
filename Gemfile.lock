@@ -152,6 +152,9 @@ GEM
     nokogiri (1.6.8.1)
       mini_portile2 (~> 2.1.0)
     orm_adapter (0.5.0)
+    passenger (5.0.30)
+      rack
+      rake (>= 0.8.1)
     rack (1.6.4)
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -271,6 +274,7 @@ DEPENDENCIES
   jdbc-sqlite3 (= 3.8.11.2)
   jettywrapper (= 2.0.4)
   jquery-rails (= 4.2.1)
+  passenger (= 5.0.30)
   rails (= 4.2.7)
   rsolr (= 1.1.2)
   sass-rails (= 5.0.6)
