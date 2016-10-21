@@ -48,12 +48,16 @@ RUN rm /etc/nginx/sites-enabled/default
 ADD nginx/webapp.conf /etc/nginx/sites-enabled/webapp.conf
 ADD nginx/webapp-env.conf /etc/nginx/main.d/webapp-env.conf
 
-# TODO: precompile assets at container startup because it needs env
-# vars; is there a clean way to do this as part of build instead?
-RUN echo "#!/bin/bash" > /etc/my_init.d/50_precompile_assets.sh
-RUN echo "cd /home/app/webapp && bundle exec rake assets:precompile" >> /etc/my_init.d/50_precompile_assets.sh
-RUN echo "chown -R app:app /home/app/webapp" >> /etc/my_init.d/50_precompile_assets.sh
-RUN chmod a+rx /etc/my_init.d/50_precompile_assets.sh
+# assets:precompile won't run unless these secrets are present, but
+# it doesn't appear to actually use them, so we just use dummy values here
+RUN RAILS_ENV=production SECRET_TOKEN=dummy DEVISE_SECRET_KEY=dummy bundle exec rake assets:precompile
+RUN chown -R app:app /home/app/webapp
+
+# alternative: precompile assets at container startup
+#RUN echo "#!/bin/bash" > /etc/my_init.d/50_precompile_assets.sh
+#RUN echo "cd /home/app/webapp && bundle exec rake assets:precompile" >> /etc/my_init.d/50_precompile_assets.sh
+#RUN echo "chown -R app:app /home/app/webapp" >> /etc/my_init.d/50_precompile_assets.sh
+#RUN chmod a+rx /etc/my_init.d/50_precompile_assets.sh
 
 RUN echo "#!/bin/bash" > /etc/my_init.d/60_db_migrate.sh
 RUN echo "cd /home/app/webapp && bundle exec rake db:migrate" >> /etc/my_init.d/60_db_migrate.sh
