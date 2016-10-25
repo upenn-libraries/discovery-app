@@ -47,14 +47,14 @@ class MarcIndexer < Blacklight::Marc::Indexer
     #    primary title 
      
     to_field 'title_t', extract_marc('245a')
-    to_field 'title_display', extract_marc('245a', :trim_punctuation => true, :alternate_script=>false)
-    to_field 'title_vern_display', extract_marc('245a', :trim_punctuation => true, :alternate_script=>:only)
+    to_field 'title_display', extract_marc('245aa', :trim_punctuation => true, :alternate_script=>false)
+    to_field 'title_vern_display', extract_marc('245aa', :trim_punctuation => true, :alternate_script=>:only)
      
     #    subtitle
      
     to_field 'subtitle_t', extract_marc('245b')
-    to_field 'subtitle_display', extract_marc('245b', :trim_punctuation => true, :alternate_script=>false)
-    to_field 'subtitle_vern_display', extract_marc('245b', :trim_punctuation => true, :alternate_script=>:only)
+    to_field 'subtitle_display', extract_marc('245bb', :trim_punctuation => true, :alternate_script=>false)
+    to_field 'subtitle_vern_display', extract_marc('245bb', :trim_punctuation => true, :alternate_script=>:only)
      
     #    additional title fields
     to_field 'title_addl_t', 
