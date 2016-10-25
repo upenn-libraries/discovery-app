@@ -69,7 +69,20 @@ class MarcIndexer < Blacklight::Marc::Indexer
         246abcdefgnp
         247abcdefgnp
       }.join(':'))
-     
+
+    to_field 'title_facet',
+      extract_marc(%W{
+        245abnps
+        130#{ATOZ}
+        240abcdefgklmnopqrs
+        210ab
+        222ab
+        242abnp
+        243abcdefgklmnopqrs
+        246abcdefgnp
+        247abcdefgnp
+      }.join(':'))
+
     to_field 'title_added_entry_t', extract_marc(%W{
       700gklmnoprst
       710fgklmnopqrst
