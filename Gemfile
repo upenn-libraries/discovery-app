@@ -23,8 +23,12 @@ gem "solr_wrapper", '0.18.1'
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails', '4.2.1'
+
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
-gem 'turbolinks', '5.0.1'
+# As of Blacklight v6.3.0, enabling turbolinks corrupts render of search nav.
+# See https://github.com/projectblacklight/blacklight/issues/1562
+# gem 'turbolinks', '5.0.1'
+
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '2.6.0'
 # bundle exec rake doc:rails generates the API under doc/api.
