@@ -9,6 +9,10 @@ It's best to run this command from a separate, clean clone of this
 repository, so that your build doesn't pick up files lying around in
 the repo where you do development.
 
+Note that Gemfile.lock stores a commit hash for git repos it depends
+upon. If such a dependency is updated, remember to run `bundle update
+--source gem` in THIS repo and commit the change.
+
 ```
 # checkout the branch you want to build the image for
 git checkout develop
