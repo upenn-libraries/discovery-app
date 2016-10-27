@@ -81,7 +81,7 @@ class CatalogController < ApplicationController
     config.add_facet_field 'format', label: 'Format'
     config.add_facet_field 'subject_topic_facet', label: 'Topic', limit: 20, index_range: 'A'..'Z'
     config.add_facet_field 'subject_topic_xfacet', label: 'Topic', limit: 20, index_range: 'A'..'Z', show: false, xfacet: true, facet_for_filtering: 'subject_topic_facet'
-    config.add_facet_field 'title_facet', label: 'Title', limit: 20, index_range: 'A'..'Z', show: false, xfacet: true
+    config.add_facet_field 'title_xfacet', label: 'Title', limit: 20, index_range: 'A'..'Z', show: false, xfacet: true
     config.add_facet_field 'language_facet', label: 'Language', limit: true
     config.add_facet_field 'lc_1letter_facet', label: 'Call Number'
     config.add_facet_field 'subject_geo_facet', label: 'Region'
@@ -196,9 +196,9 @@ class CatalogController < ApplicationController
       field.action = '/catalog/xbrowse/subject_topic_xfacet'
     end
 
-    config.add_search_field('title_facet') do |field|
+    config.add_search_field('title_xfacet') do |field|
       field.label = 'Title Browse'
-      field.action = '/catalog/rbrowse/title_facet'
+      field.action = '/catalog/rbrowse/title_xfacet'
     end
 
     # "sort results by" select (pulldown)
