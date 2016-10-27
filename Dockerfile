@@ -56,14 +56,16 @@ RUN chown -R app:app /home/app/webapp
 # alternative: precompile assets at container startup
 #RUN echo "#!/bin/bash" > /etc/my_init.d/50_precompile_assets.sh
 #RUN echo "cd /home/app/webapp && bundle exec rake assets:precompile" >> /etc/my_init.d/50_precompile_assets.sh
-#RUN echo "chown -R app:app /home/app/webapp" >> /etc/my_init.d/50_precompile_assets.sh
 #RUN chmod a+rx /etc/my_init.d/50_precompile_assets.sh
 
 RUN echo "#!/bin/bash" > /etc/my_init.d/60_db_migrate.sh
 RUN echo "cd /home/app/webapp && bundle exec rake db:migrate" >> /etc/my_init.d/60_db_migrate.sh
-RUN echo "chown -R app:app /home/app/webapp/db" >> /etc/my_init.d/60_db_migrate.sh
 RUN chmod a+rx /etc/my_init.d/60_db_migrate.sh
-  
+
+RUN echo "#!/bin/bash" > /etc/my_init.d/90_chown_app.sh
+RUN echo "chown -R app:app /home/app/webapp" >> /etc/my_init.d/90_chown_app.sh
+RUN chmod a+rx /etc/my_init.d/90_chown_app.sh
+
 #### END of app-specific stuff
 
 # Clean up APT when done.
