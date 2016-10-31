@@ -8,11 +8,6 @@ class CatalogController < ApplicationController
 
   include BlacklightSolrplugins::XBrowse
 
-  # override Blacklight::Controller
-  def search_state
-    @search_state ||= BlacklightSolrplugins::SearchState.new(params, blacklight_config)
-  end
-
   configure_blacklight do |config|
 
     ## Class for sending and receiving requests from a search index
@@ -83,6 +78,7 @@ class CatalogController < ApplicationController
     config.add_facet_field 'subject_topic_xfacet', label: 'Topic', limit: 20, index_range: 'A'..'Z', show: false, xfacet: true, facet_for_filtering: 'subject_topic_facet'
     config.add_facet_field 'title_xfacet', label: 'Title', limit: 20, index_range: 'A'..'Z', show: false, xfacet: true,
                            xfacet_rbrowse_fields: %w(published_display format)
+    config.add_facet_field 'author_xfacet', label: 'Author', limit: 20, index_range: 'A'..'Z', show: false, xfacet: true
     config.add_facet_field 'language_facet', label: 'Language', limit: true
     config.add_facet_field 'lc_1letter_facet', label: 'Call Number'
     config.add_facet_field 'subject_geo_facet', label: 'Region'
@@ -190,6 +186,11 @@ class CatalogController < ApplicationController
         qf: '$subject_qf',
         pf: '$subject_pf'
       }
+    end
+
+    config.add_search_field('author_xfacet') do |field|
+      field.label = 'Author Browse (last name first)'
+      field.action = '/catalog/xbrowse/author_xfacet'
     end
 
     config.add_search_field('subject_topic_xfacet') do |field|
