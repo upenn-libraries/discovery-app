@@ -7,6 +7,23 @@ class MarcIndexer < Blacklight::Marc::Indexer
   include Blacklight::Marc::Indexer::Formats
   include BlacklightSolrplugins::Indexer
 
+  # for a string 's', return a hash of ref_type => Array of references,
+  # where a reference is a String or a Hash representing a multipart string
+  def get_subject_references(s)
+    # TODO: just simple test data for now; hook up to actual cross ref data
+    case s
+    when 'Cyberspace'
+      { 'see_also' => [ 'Internet', 'Computer networks' ] }
+    when 'Internet'
+      { 'see_also' => [ 'Cyberspace', 'Computer networks' ] }
+    when 'Computer networks'
+      { 'see_also' => [ 'Cyberspace', 'Internet' ] }
+    # one way
+    when 'Programming Languages'
+      { 'use_instead' => [ 'Computer programming' ] }
+    end
+  end
+
   def initialize
     super
 
@@ -103,7 +120,11 @@ class MarcIndexer < Blacklight::Marc::Indexer
     to_field 'author_addl_t', extract_marc("700abcegqu:710abcdegnu:711acdegjnqu")
     to_field 'author_display', extract_marc("100abcdq:110#{ATOZ}:111#{ATOZ}", :alternate_script=>false)
     to_field 'author_vern_display', extract_marc("100abcdq:110#{ATOZ}:111#{ATOZ}", :alternate_script=>:only)
-     
+
+    to_field 'author_xfacet', extract_marc("100abcegqu:110abcdegnu:111acdegjnqu") do |r, acc|
+      acc.map! { |v| references(v) }
+    end
+
     # JSTOR isn't an author. Try to not use it as one
     to_field 'author_sort', marc_sortable_author
      
@@ -120,7 +141,7 @@ class MarcIndexer < Blacklight::Marc::Indexer
     to_field 'subject_addl_t', extract_marc("600vwxyz:610vwxyz:611vwxyz:630vwxyz:650vwxyz:651vwxyz:654vwxyz:655vwxyz")
     to_field 'subject_topic_facet', extract_marc("600abcdq:610ab:611ab:630aa:650aa:653aa:654ab:655ab", :trim_punctuation => true)
     to_field 'subject_topic_xfacet', extract_marc("600abcdq:610ab:611ab:630aa:650aa:653aa:654ab:655ab", :trim_punctuation => true) do |r, acc|
-      acc.map! { |v| references(v) }
+      acc.map! { |v| references(v, refs: get_subject_references(v)) }
     end
     to_field 'subject_era_facet',  extract_marc("650y:651y:654y:655y", :trim_punctuation => true)
     to_field 'subject_geo_facet',  extract_marc("651a:650z",:trim_punctuation => true )
