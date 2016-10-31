@@ -8,11 +8,6 @@ class CatalogController < ApplicationController
 
   include BlacklightSolrplugins::XBrowse
 
-  # override Blacklight::Controller
-  def search_state
-    @search_state ||= BlacklightSolrplugins::SearchState.new(params, blacklight_config)
-  end
-
   configure_blacklight do |config|
 
     ## Class for sending and receiving requests from a search index
