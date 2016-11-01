@@ -31,6 +31,11 @@ RUN bundle install
 # everything after this ADD typically won't get cached by docker build
 ADD . /home/app/webapp
 
+# Store commit hash in image
+ARG GIT_COMMIT
+ENV GIT_COMMIT ${GIT_COMMIT}
+RUN echo $GIT_COMMIT > /home/app/webapp/public/version.txt
+
 RUN chown app.app -R /home/app/webapp
 
 RUN mkdir -p /home/app/webapp/log
