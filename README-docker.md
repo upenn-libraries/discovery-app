@@ -17,10 +17,10 @@ upon. If such a dependency is updated, remember to run `bundle update
 # checkout the branch you want to build the image for
 git checkout develop
 # build it
-docker build -t discovery-app .
+docker build -t discovery-app --build-arg GIT_COMMIT=`git rev-parse --short HEAD` .
 
 # optional: build the image that uses jruby/traject for indexing
-docker build -f Dockerfile-jruby -t discovery-indexing-app .
+docker build -f Dockerfile-jruby -t discovery-indexing-app --build-arg GIT_COMMIT=`git rev-parse --short HEAD` .
 ```
 
 Save the image to a .tgz file, so you can deploy it to servers. We
