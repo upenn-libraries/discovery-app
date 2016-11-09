@@ -23,4 +23,9 @@ WORKDIR /opt/discovery
 
 ADD . /opt/discovery
 
+# Store commit hash in image
+ARG GIT_COMMIT
+ENV GIT_COMMIT ${GIT_COMMIT}
+RUN echo $GIT_COMMIT > /opt/discovery/public/version.txt
+
 CMD bundle exec rake solr:marc:index MARC_FILE=$MARC_FILE
