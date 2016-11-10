@@ -29,7 +29,7 @@ class MarcIndexer < Blacklight::Marc::Indexer
 
     settings do
       # type may be 'binary', 'xml', or 'json'
-      provide "marc_source.type", "binary"
+      provide "marc_source.type", "xml"
       # set this to be non-negative if threshold should be enforced
       provide 'solr_writer.max_skipped', -1
 
@@ -40,6 +40,8 @@ class MarcIndexer < Blacklight::Marc::Indexer
         store 'processing_thread_pool', 4
       end
 
+      store 'solr_writer.commit_on_close', false
+
     end
 
     to_field "id", trim(extract_marc("001"), :first => true)
@@ -48,8 +50,8 @@ class MarcIndexer < Blacklight::Marc::Indexer
       acc.replace [acc.join(' ')] # turn it into a single string
     end
      
-    to_field "language_facet", marc_languages("008[35-37]:041a:041d:")
-    to_field "format", get_format
+    to_field "language_f_stored", marc_languages("008[35-37]:041a:041d:")
+    to_field "format_f_stored_single", get_format
     to_field "isbn_t",  extract_marc('020a', :separator=>nil) do |rec, acc|
          orig = acc.dup
          acc.map!{|x| StdNum::ISBN.allNormalizedValues(x)}
@@ -58,7 +60,7 @@ class MarcIndexer < Blacklight::Marc::Indexer
          acc.uniq!
     end
      
-    to_field 'material_type_display', extract_marc('300a', :trim_punctuation => true)
+    to_field 'material_type_display_a', extract_marc('300a', :trim_punctuation => true)
      
     # Title fields
     #    primary title 
@@ -112,7 +114,7 @@ class MarcIndexer < Blacklight::Marc::Indexer
      
     to_field 'title_series_t', extract_marc("440anpv:490av")
      
-    to_field 'title_sort', marc_sortable_title  
+    to_field 'title_ssort', marc_sortable_title
      
     # Author fields
      
@@ -126,7 +128,7 @@ class MarcIndexer < Blacklight::Marc::Indexer
     end
 
     # JSTOR isn't an author. Try to not use it as one
-    to_field 'author_sort', marc_sortable_author
+    to_field 'author_ssort', marc_sortable_author
      
     # Subject fields
     to_field 'subject_t', extract_marc(%W(
@@ -139,40 +141,40 @@ class MarcIndexer < Blacklight::Marc::Indexer
       653a:654abcde:655abc
     ).join(':'))
     to_field 'subject_addl_t', extract_marc("600vwxyz:610vwxyz:611vwxyz:630vwxyz:650vwxyz:651vwxyz:654vwxyz:655vwxyz")
-    to_field 'subject_topic_facet', extract_marc("600abcdq:610ab:611ab:630aa:650aa:653aa:654ab:655ab", :trim_punctuation => true)
+    to_field 'subject_topic_f_stored', extract_marc("600abcdq:610ab:611ab:630aa:650aa:653aa:654ab:655ab", :trim_punctuation => true)
     to_field 'subject_topic_xfacet', extract_marc("600abcdq:610ab:611ab:630aa:650aa:653aa:654ab:655ab", :trim_punctuation => true) do |r, acc|
       acc.map! { |v| references(v, refs: get_subject_references(v)) }
     end
-    to_field 'subject_era_facet',  extract_marc("650y:651y:654y:655y", :trim_punctuation => true)
-    to_field 'subject_geo_facet',  extract_marc("651a:650z",:trim_punctuation => true )
+    to_field 'subject_era_f',  extract_marc("650y:651y:654y:655y", :trim_punctuation => true)
+    to_field 'subject_geo_f',  extract_marc("651a:650z",:trim_punctuation => true )
      
     # Publication fields
-    to_field 'published_display', extract_marc('260a', :trim_punctuation => true, :alternate_script=>false)
-    to_field 'published_vern_display', extract_marc('260a', :trim_punctuation => true, :alternate_script=>:only)
-    to_field 'pub_date', marc_publication_date
-     
+    to_field 'published_display_a', extract_marc('260a', :trim_punctuation => true, :alternate_script=>false)
+    to_field 'published_vern_display_a', extract_marc('260a', :trim_punctuation => true, :alternate_script=>:only)
+    to_field 'pub_date_isort_stored', marc_publication_date
+
     # Call Number fields
     to_field 'lc_callnum_display', extract_marc('050ab', :first => true)
-    to_field 'lc_1letter_facet', extract_marc('050ab', :first=>true, :translation_map=>'callnumber_map') do |rec, acc|
+    to_field 'lc_1letter_f', extract_marc('050ab', :first=>true, :translation_map=>'callnumber_map') do |rec, acc|
       # Just get the first letter to send to the translation map
       acc.map!{|x| x[0]}
     end
 
     alpha_pat = /\A([A-Z]{1,3})\d.*\Z/
-    to_field 'lc_alpha_facet', extract_marc('050a', :first=>true) do |rec, acc|
+    to_field 'lc_alpha_f', extract_marc('050a', :first=>true) do |rec, acc|
       acc.map! do |x|
         (m = alpha_pat.match(x)) ? m[1] : nil
       end
       acc.compact! # eliminate nils
     end
 
-    to_field 'lc_b4cutter_facet', extract_marc('050a', :first=>true)
+    to_field 'lc_b4cutter_f', extract_marc('050a', :first=>true)
      
     # URL Fields
      
     notfulltext = /abstract|description|sample text|table of contents|/i
      
-    to_field('url_fulltext_display') do |rec, acc|
+    to_field('url_fulltext_display_a') do |rec, acc|
       rec.fields('856').each do |f|
         case f.indicator2
         when '0'
@@ -191,7 +193,7 @@ class MarcIndexer < Blacklight::Marc::Indexer
     end
 
     # Very similar to url_fulltext_display. Should DRY up.
-    to_field 'url_suppl_display' do |rec, acc|
+    to_field 'url_suppl_display_a' do |rec, acc|
       rec.fields('856').each do |f|
         case f.indicator2
         when '2'
