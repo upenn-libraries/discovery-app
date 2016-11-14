@@ -1,0 +1,50 @@
+<%# this overrides the partial in bento_search gem %>
+
+<% bento_decorate(item) do |item| %>
+
+    <%# for debugging purposes, we'll include the vendor-specific unique_id, if we have
+      one, in a data-unique-id attribute. %>
+
+    <div class="bento_item" data-unique-id="<%= item.unique_id %>">
+      <%= render :partial => "bento_search/item_title", :object => item, :as => 'item', :locals => {:index => bento_item_counter(local_assigns[:item_counter], local_assigns[:results]) } %>
+
+      <div class="bento_item_body">
+
+        <dl class="document-metadata dl-horizontal dl-invert">
+          <% if item.display_format.present? %>
+              <dt>Format:</dt>
+              <dd><%= item.display_format %></dd>
+          <% end %>
+
+          <% if item.authors.present? %>
+            <dt>Author:</dt>
+            <dd><%= item.render_authors_list %></dd>
+          <% end %>
+
+          <% if item.display_date.present? %>
+            <dt>Date:</dt>
+            <dd><%= item.display_date %></dd>
+          <% end %>
+
+          <% if item.abstract %>
+            <dt>Abstract:</dt>
+            <dd><%= item.render_summary %></dd>
+          <% end %>
+
+          <% if item.has_source_info? %>
+            <dt>Source:</dt>
+            <dd><%= item.render_source_info %></dd>
+          <% end %>
+
+          <% if item.other_links.present? %>
+              <p class="bento_item_other_links">
+                <%= render :partial => "bento_search/link", :collection => item.other_links %>
+              </p>
+          <% end %>
+        </dl>
+
+      </div>
+
+    </div>
+
+<% end %>

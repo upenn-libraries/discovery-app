@@ -1,0 +1,8 @@
+
+<h3>Articles+</h3>
+
+<div class="text-right">
+<%= link_to "View and filter #{number_with_delimiter(results.total_items)} results", summon_url(params[:q] || params[:query]) %>
+</div>
+
+<%= yield %>

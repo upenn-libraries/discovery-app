@@ -23,3 +23,4 @@
 // this:
 //= require 'blacklight_range_limit'
 
+//= require 'bento_search/ajax_load'

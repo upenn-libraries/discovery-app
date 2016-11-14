@@ -28,6 +28,10 @@ resources :bookmarks do
   end
 end
 
+  get 'bento/' => 'catalog#bento'
+
+  BentoSearch::Routes.new(self).draw
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

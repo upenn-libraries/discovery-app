@@ -37,3 +37,24 @@ span.site-name, span.site-name a {
   background-color: $upenn-red;
   border-color: $upenn-blue;
 }
+
+/*******
+ *
+ * bento_search styles
+ *
+ *******/
+
+.bento_item_title {
+  font-size: 14px;
+}
+
+/* made to resemble "#documents .document" rule in BL */
+.bento_item {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-bottom: 1px dotted #ddd;
+}
+
+.bento_item_about {
+  display: none;
+}
