@@ -27,7 +27,7 @@ fi
 
 echo "Running indexing rake task"
 docker run --name $CONTAINER_NAME \
+       --env-file .docker-environment \
        -e MARC_FILE="data/$1" \
-       -e SOLR_URL=http://solr-test.library.upenn.int:8983/solr/test_core \
        -v /opt/discovery:/opt/discovery/data \
        $IMAGE_NAME
