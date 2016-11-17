@@ -3,7 +3,7 @@ Rails.application.routes.draw do
           mount Blacklight::Engine => '/'
 
   Blacklight::Marc.add_routes(self)
-  root to: "catalog#index"
+  root to: "landing#index"
   concern :searchable, Blacklight::Routes::Searchable.new
   concern :xbrowsable, BlacklightSolrplugins::Routes::XBrowsable.new
 

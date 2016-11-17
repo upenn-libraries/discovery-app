@@ -16,7 +16,13 @@ span.site-name, span.site-name a {
   font-style: italic;
 }
 
-
+#franklintabs {
+  position: absolute;
+  z-index: 31;
+  top: 97px;
+  left: 14%;
+  min-width: 515px;
+}
 
 /*************
 *
