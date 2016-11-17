@@ -245,4 +245,10 @@ class CatalogController < ApplicationController
     config.autocomplete_enabled = true
     config.autocomplete_path = 'suggest'
   end
+
+  # extend 'index' so we can override views
+  def bento
+    index
+  end
+
 end

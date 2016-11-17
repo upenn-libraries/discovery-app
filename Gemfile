@@ -72,3 +72,5 @@ gem 'blacklight-marc', '~> 6.0', :git => 'https://github.com/magibney/blacklight
 
 gem 'blacklight_solrplugins', :git => 'https://github.com/upenn-libraries/blacklight_solrplugins.git'
 # gem 'blacklight_solrplugins', :path => "/home/jeffchiu/blacklight_solrplugins"
+
+gem 'bento_search', '1.6.1'
