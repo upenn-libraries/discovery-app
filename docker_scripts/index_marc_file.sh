@@ -28,6 +28,6 @@ fi
 echo "Running indexing rake task"
 docker run --name $CONTAINER_NAME \
        --env-file .docker-environment \
-       -e MARC_FILE="data/$1" \
-       -v /opt/discovery:/opt/discovery/data \
+       -e MARC_FILE="$1" \
+       -v /var/solr_input_data:/var/solr_input_data \
        $IMAGE_NAME
