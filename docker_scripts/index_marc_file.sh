@@ -2,8 +2,8 @@
 #
 # runs Solr indexing using JRuby, in a docker container
 
-CONTAINER_NAME="discovery-indexing-app"
-IMAGE_NAME="discovery/discovery-indexing-app"
+CONTAINER_NAME="discovery-indexing-app-container"
+IMAGE_NAME="discovery-indexing-app"
 SCRIPT_PATH="$(readlink -f ${BASH_SOURCE[0]})"
 # dir of this script, which should also be root of the repo
 SCRIPT_DIR="$(dirname $SCRIPT_PATH)"
@@ -18,11 +18,6 @@ usage()
 
 [ $# -gt 0 ] || usage
 
-# 'build' can be run each time we want to run the app; docker won't
-# rebuild the image unless something has changed in the Dockerfile
-echo "Building image"
-docker build -f Dockerfile-jruby -t $IMAGE_NAME .
-
 # remove old container image if there is one
 docker ps -a | grep $CONTAINER_NAME > /dev/null
 if [ $? == 0 ]; then
@@ -31,4 +26,8 @@ if [ $? == 0 ]; then
 fi
 
 echo "Running indexing rake task"
-docker run --name $CONTAINER_NAME -e MARC_FILE="$1" -v $SCRIPT_DIR:/opt/discovery $IMAGE_NAME
+docker run --name $CONTAINER_NAME \
+       --env-file .docker-environment \
+       -e MARC_FILE="$1" \
+       -v /var/solr_input_data:/var/solr_input_data \
+       $IMAGE_NAME

@@ -64,7 +64,7 @@ RUN chown -R app:app /home/app/webapp
 #RUN chmod a+rx /etc/my_init.d/50_precompile_assets.sh
 
 RUN echo "#!/bin/bash" > /etc/my_init.d/60_db_migrate.sh
-RUN echo "cd /home/app/webapp && bundle exec rake db:migrate" >> /etc/my_init.d/60_db_migrate.sh
+RUN echo "cd /home/app/webapp && RAILS_ENV=\$PASSENGER_APP_ENV bundle exec rake db:migrate" >> /etc/my_init.d/60_db_migrate.sh
 RUN chmod a+rx /etc/my_init.d/60_db_migrate.sh
 
 RUN echo "#!/bin/bash" > /etc/my_init.d/90_chown_app.sh
