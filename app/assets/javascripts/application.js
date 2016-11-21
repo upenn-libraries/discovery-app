@@ -12,6 +12,7 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require bootstrap/tab
 // Required by Blacklight
 //= require blacklight/blacklight
 //= require blacklight_solrplugins/blacklight_solrplugins

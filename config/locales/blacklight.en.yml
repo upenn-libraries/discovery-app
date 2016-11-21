@@ -1,3 +1,10 @@
 en:
   blacklight:
     application_name: 'Franklin'
+    search:
+      form:
+        label: 'Find books, journals, videos, & more'
+
+  franklin:
+    bento_search:
+      label: 'Find articles, books, journals & more'

@@ -251,4 +251,10 @@ class CatalogController < ApplicationController
     index
   end
 
+  # Landing has to live under this controller, otherwise the paths for
+  # certain BL view partials used on landing page won't resolve correctly.
+  def landing
+    index
+  end
+
 end
