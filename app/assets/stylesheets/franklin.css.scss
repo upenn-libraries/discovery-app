@@ -16,12 +16,8 @@ span.site-name, span.site-name a {
   font-style: italic;
 }
 
-#franklintabs {
-  position: absolute;
-  z-index: 31;
-  top: 97px;
-  left: 14%;
-  min-width: 515px;
+#search-navbar .nav-tabs {
+  margin-top: 4px;
 }
 
 /*************
@@ -35,13 +31,31 @@ span.site-name, span.site-name a {
 
   .navbar-brand {
     background-image: asset-url('logo.png');
-    margin-top: 10px;
+    margin-top: 15px;
+    margin-bottom: 34px;
   }
 }
 
 .btn-primary {
   background-color: $upenn-red;
   border-color: $upenn-blue;
+}
+
+.inline {
+  display: inline;
+  margin: 0;
+}
+
+.landing-content h3 {
+  font-weight: bold;
+  color: #900;
+  font-size: 1.17em;
+}
+
+.minishield {
+  background-image: asset-url('ptswirl-11px.gif');
+  background-position: 1px 6px;
+  background-repeat: no-repeat;
 }
 
 /*******
@@ -63,4 +77,80 @@ span.site-name, span.site-name a {
 
 .bento_item_about {
   display: none;
+}
+
+/*******
+ *
+ * summon form styles
+ *
+ *******/
+
+.summon-form .limit-options {
+  margin-top: 2px;
+}
+
+.summon-form .limit-options label {
+  margin-right: 2em;
+}
+
+/*******
+ *
+ * collection news styles
+ *
+ *******/
+
+h3.ongray {
+  font-weight: bold;
+  background-color: #eee;
+  margin-bottom: 9px;
+  font-style: normal;
+  padding-left: 36px;
+  color: #000;
+}
+
+.colnews h3 {
+  margin-top:0;
+  background-color: #e8e8e8;
+  color: #444;
+  font-style:normal;
+  font-size: 1.08em;
+  padding: .08em .33em .33em .33em;
+  letter-spacing: .02em;
+}
+.colnews h3.colnewsheader .colnewslabel {
+  display:inline-block;
+  vertical-align: top;
+  /*IE Hack*/
+  zoom: 1;
+  *display: inline;
+}
+.colnews h3.colnewsheader .colnewslabel div {
+  padding-top:1em;
+}
+.colnews h3.colnewsheader .colnewslabelicon {
+  display:inline-block;
+  vertical-align:top;
+  /*IE Hack*/
+  zoom: 1;
+  *display: inline;
+  width: 3.91667em;
+  background-image: asset-url('news.png');
+  background-repeat: no-repeat;
+  height: 2.2em;
+  width: 2.75em;
+}
+
+.collection-news {
+  line-height: 145%;
+}
+.feed-item {
+  margin: 0 0 .75em 0;
+}
+.collection-news .item-title {
+  font-weight:bold;
+}
+.feed-item span {
+  text-transform: uppercase;
+  color: #888;
+  font-size: 0.92em;
 }
