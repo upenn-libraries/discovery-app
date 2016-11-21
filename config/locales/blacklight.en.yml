@@ -3,8 +3,11 @@ en:
     application_name: 'Franklin'
     search:
       form:
-        label: 'Find books, journals, videos, & more'
+        search:
+          placeholder: 'Find books, journals, videos, & more'
 
   franklin:
     bento_search:
-      label: 'Find articles, books, journals & more'
+      placeholder: 'Find articles, books, journals & more'
+    articles_search:
+      placeholder: 'Find articles & more'
