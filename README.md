@@ -86,9 +86,15 @@ bundle install
 
 You can tweak the thread pool parameters for indexing in `app/models/marc_indexer.rb`
 
-To index a MARC file:
+To index MARC files, use the `pennlib:marc:index` rake task, which
+wraps `solr:marc:index`. The wrapper task can accept a glob for the
+MARC_FILE variable:
+
 ```
-bundle exec rake solr:marc:index MARC_FILE=/path/to/records.mrc
+# single file
+bundle exec rake pennlib:marc:index MARC_FILE=/path/to/records.xml
+# glob
+bundle exec rake pennlib:marc:index MARC_FILE=/path/to/*.xml
 ```
 
 Rails and Blacklight should run under JRuby too. Note that

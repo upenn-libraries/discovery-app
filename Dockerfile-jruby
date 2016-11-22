@@ -30,4 +30,4 @@ RUN echo $GIT_COMMIT > /opt/discovery/public/version.txt
 
 ENV JRUBY_OPTS="-J-Xms1g -J-Xmx2g"
 
-CMD bundle exec rake solr:marc:index MARC_FILE=$MARC_FILE
+CMD bundle exec rake pennlib:marc:index MARC_FILE=$MARC_FILE
