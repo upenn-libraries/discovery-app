@@ -36,7 +36,8 @@ module ApplicationHelper
           'aria-controls': tab_id,
           'data-target': data_target,
           'role': 'tab',
-          'data-toggle': 'tab'
+          'data-toggle': 'tab',
+          'class': "tab-#{tab_id}",
       }
     end
     content_tag('a', tab_label, attrs)
