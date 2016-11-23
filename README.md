@@ -1,65 +1,64 @@
-# Production deployment of Blacklight
 
-[Generic Blacklight Install](https://gitlab.library.upenn.edu/katherly/blacklight)
+# Nouveau Franklin
 
-NOTE: This application is currently using a patched fork of the blacklight-marc gem, as the original throws an error when attempting to ingest Penn records due to a bug in the gem's handling of the 008 field Format values.  A PR has been submitted to the master project.  In the meantime, to use the patched version, this line is included in the gemfile:
+Installation:
 
-```bash
-gem 'blacklight-marc', '~> 6.0', :git => 'git://github.com/magibney/blacklight-marc', :branch => 'fix-extract_marc-format-008'
-```
+- Checkout this repo.
+- Make sure you have ruby 2.3.1 installed. The easiest way to do this is to use [rvm](https://rvm.io/).
+- Run `bundle install`
+- Install Solr 6.3.0 with
+  [solrplugins](https://github.com/upenn-libraries/solrplugins). The following line should be added 
+  to the file `solr-6.3.0/server/contexts/solr-jetty-context.xml` inside the 'Configure' tag:
 
-* To get the jetty instance needed to power the application, run:
-```bash
-rake jetty:clean
-```
+  ```
+  <Set name="extraClasspath">/path/to/solrplugins-0.1-SNAPSHOT.jar</Set>
+  ```
 
-If all is well, you should see output something like:
-```bash
-LTS-KL01:blacklight katherly$ rake jetty:clean
-I, [2016-03-03T12:28:12.106876 #99629]  INFO -- : Downloading jetty at https://github.com/projectblacklight/blacklight-jetty/archive/v4.10.4.zip ...
-I, [2016-03-03T12:28:26.932889 #99629]  INFO -- : Unpacking tmp/v4.10.4.zip...
-```
+- Load some test marc data into Solr:
 
-And commit the change.
+  ```bash
+  bundle exec rake solr:marc:index_test_data
+  ```
 
-```bash
-git add .gitignore
-git commit -m "Added /jetty to .gitignore"
-```
+  This pulls 30 sample records from
+  [the Blacklight-Data repository](https://github.com/projectblacklight/blacklight-data).
 
-* Start jetty:
-```bash
-rake jetty:start
-```
-
-* Load test marc data into Solr:
-```bash
-rake solr:marc:index_test_data
-```
-
-This pulls 30 sample records from [the Blacklight-Data repository](https://github.com/projectblacklight/blacklight-data).
-
-If the test data is successfully indexed, you should see output something like:
-```bash
-LTS-KL01:blacklight katherly$ rake solr:marc:index_test_data
-2016-03-03T12:29:40-05:00  INFO    Traject::SolrJsonWriter writing to 'http://127.0.0.1:8983/solr/blacklight-core/update/json' in batches of 100 with 1 bg threads
-2016-03-03T12:29:40-05:00  INFO    Indexer with 1 processing threads, reader: Traject::MarcReader and writer: Traject::SolrJsonWriter
-2016-03-03T12:29:41-05:00  INFO Traject::SolrJsonWriter sending commit to solr at url http://127.0.0.1:8983/solr/blacklight-core/update/json...
-2016-03-03T12:29:41-05:00  INFO finished Indexer#process: 30 records in 0.471 seconds; 63.8 records/second overall.
-```
+  If the test data is successfully indexed, you should see output
+  something like:
+  
+  ```bash
+  2016-03-03T12:29:40-05:00  INFO    Traject::SolrJsonWriter writing to 'http://127.0.0.1:8983/solr/blacklight-core/update/json' in batches of 100 with 1 bg threads
+  2016-03-03T12:29:40-05:00  INFO    Indexer with 1 processing threads, reader: Traject::MarcReader and writer: Traject::SolrJsonWriter
+  2016-03-03T12:29:41-05:00  INFO Traject::SolrJsonWriter sending commit to solr at url http://127.0.0.1:8983/solr/blacklight-core/update/json...
+  2016-03-03T12:29:41-05:00  INFO finished Indexer#process: 30 records in 0.471 seconds; 63.8 records/second overall.
+  ```
 
 * Start the rails server:
-```bash
-rails s
-```
 
-* Open up [localhost:3000](localhost:3000) in a browser.  If everything went well, you should see the generic Blacklight homepage and have 30 faceted records to search.
+  ```bash
+  bundle exec rails s
+  ```
 
-# JRuby
+- Open up [localhost:3000](localhost:3000) in a browser.  If
+  everything went well, you should see the generic Blacklight homepage
+  and have 30 faceted records to search.
 
-Using JRuby for the Solr indexing of MARC records greatly improves performance.
 
-To use JRuby, install it using [rvm](https://rvm.io/).
+# JRuby and Traject
+
+Using JRuby for indexing MARC records into Solr greatly improves
+performance. BUT there are major known issues with regular expressions
+in threads, causing intermittent (!) exceptions. For more information,
+see these links:
+
+- https://groups.google.com/forum/#!topic/traject-users/v_HDAyf2NQA
+- https://groups.google.com/forum/#!topic/traject-users/cDqaU-YYQyI
+- https://github.com/jruby/jruby/issues/4001
+
+So we have elected NOT to use JRuby, but these instructions remain
+here in case the situation changes.
+
+First, install JRuby using [rvm](https://rvm.io/).
 
 ```
 # standard steps to install rvm
@@ -97,5 +96,60 @@ bundle exec rake pennlib:marc:index MARC_FILE=/path/to/records.xml
 bundle exec rake pennlib:marc:index MARC_FILE=/path/to/*.xml
 ```
 
-Rails and Blacklight should run under JRuby too. Note that
-`bin/spring` has been patched to work with JRuby.
+Rails and Blacklight should run under JRuby too, though it's not clear
+how well they run. Note that `bin/spring` has been patched to work
+with JRuby.
+
+
+# Docker
+
+## Building the Image(s)
+
+It's best to run this command from a separate, clean clone of this
+repository, so that your build doesn't pick up files lying around in
+the repo where you do development.
+
+Note that Gemfile.lock stores a commit hash for git repos it depends
+upon. If such a dependency is updated, remember to run `bundle update
+--source gem` in THIS repo and commit the change.
+
+```
+# checkout the branch you want to build the image for
+git checkout develop
+# build it
+docker build -t discovery-app --build-arg GIT_COMMIT=`git rev-parse --short HEAD` .
+
+# optional: build the image that uses jruby/traject for indexing
+docker build -f Dockerfile-jruby -t discovery-indexing-app --build-arg GIT_COMMIT=`git rev-parse --short HEAD` .
+```
+
+Save the image to a .tgz file, so you can deploy it to servers. We
+might consider setting up our own Docker registry for storing images,
+at some point.
+
+```
+docker save discovery-app:latest | gzip > discovery-app-latest.tgz
+# copy it to the server
+scp discovery-app-latest.tgz me@server.library.upenn.edu:docker_images
+```
+
+## Deploying the Image
+
+ssh into the server, and load the image into docker:
+
+```
+gunzip -c docker_images/discovery-app-latest.tgz | docker load
+```
+
+Now you can start a container for the app:
+
+```
+# note the use of PASSENGER_APP_ENV instead of RAILS_ENV
+docker run -p 80:80 \
+       --env PASSENGER_APP_ENV=production \
+       --env DEVISE_SECRET_KEY=REPLACE_WITH_REAL_KEY \
+       --env SECRET_KEY_BASE=REPLACE_WITH_REAL_KEY \
+       --env SOLR_URL=http://hostname:8983/solr/blacklight-core \
+       discovery-app:latest
+```
+
