@@ -166,13 +166,23 @@ ul.footerlinks {
 
 /* made to resemble "#documents .document" rule in BL */
 .bento_item {
-  margin-top: 6px;
+  margin-top: 0;
   padding-top: 6px;
-  border-bottom: 1px dotted #ddd;
+  border-bottom: 1px solid #d2d2d2;
+}
+
+.bento_item:nth-child(odd) {
+  background: #ececec;
 }
 
 .bento_item_about {
   display: none;
+}
+
+.view-and-filter {
+  padding: 6px;
+  background: #ececec;
+  border-bottom: 1px solid #d2d2d2;
 }
 
 /*******
