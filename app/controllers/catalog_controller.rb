@@ -244,6 +244,8 @@ class CatalogController < ApplicationController
     # Configuration for autocomplete suggestor
     config.autocomplete_enabled = true
     config.autocomplete_path = 'suggest'
+
+    config.index.document_actions.delete(:bookmark)
   end
 
   # extend 'index' so we can override views
