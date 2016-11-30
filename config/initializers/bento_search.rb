@@ -1,11 +1,25 @@
 
 # Configuration for bento_search gem
 
+class PennSummonEngine < BentoSearch::SummonEngine
+
+  # send a space char so Summon API doesn't return an error page
+  # when 's.q' param is a blank string.
+  # TODO: figure out why this hack isn't needed in DLA Franklin.
+  def construct_request(args)
+    if !args[:query] || args[:query] == ''
+      args[:query] = ' '
+    end
+    super(args)
+  end
+end
+
+
 BentoSearch.register_engine('summon') do |conf|
-  conf.engine     = 'BentoSearch::SummonEngine'
+  conf.engine     = 'PennSummonEngine'
   conf.access_id  = ENV['SUMMON_ACCESS_ID']
   conf.secret_key = ENV['SUMMON_SECRET_KEY']
-  conf.lang       = 'en'
+  #conf.lang       = 'en'
 
   conf.fixed_params = {
     # These pre-limit the search to avoid certain content-types, you may or may
@@ -14,10 +28,14 @@ BentoSearch.register_engine('summon') do |conf|
     # because our entire demo app is behind auth, we can hard-code that
     # all users are authenticated.
     #"s.role" => "authenticated"
+    's.ho' => 't',
+    's.secure' => 'f',
   }
 
   # allow ajax load.
   conf.allow_routable_results = true
+
+  conf.highlighting = false
 
   # ajax loaded results with our wrapper template
   # with total number of hits, link to full results, etc.
