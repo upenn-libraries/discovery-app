@@ -225,8 +225,6 @@ GEM
       faraday
       ruby-progressbar
       rubyzip
-    spring (2.0.0)
-      activesupport (>= 4.2)
     sprockets (3.7.0)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
@@ -297,7 +295,6 @@ DEPENDENCIES
   sass-rails (= 5.0.6)
   sdoc (= 0.4.2)
   solr_wrapper (= 0.18.1)
-  spring
   sqlite3 (= 1.3.12)
   therubyracer (= 0.12.2)
   traject (= 2.3.2)
