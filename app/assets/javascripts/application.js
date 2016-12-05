@@ -16,6 +16,7 @@
 // Required by Blacklight
 //= require blacklight/blacklight
 //= require blacklight_solrplugins/blacklight_solrplugins
+//= require blacklight_alma/blacklight_alma
 
 //= require_tree .
 

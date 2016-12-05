@@ -30,6 +30,10 @@ end
 
   get 'bento/' => 'catalog#bento'
 
+  scope module: 'blacklight_alma' do
+    get 'alma/availability' => 'alma#availability'
+  end
+
   BentoSearch::Routes.new(self).draw
 
   # The priority is based upon order of creation: first created -> highest priority.

@@ -43,4 +43,28 @@ module ApplicationHelper
     content_tag('a', tab_label, attrs)
   end
 
+  # override Blacklight so that 'index_document_append' and
+  # 'show_document_append' partials are appended to the partials
+  # that normally render for a document. This exists
+  # to avoid having to copy-and-paste a stock BL template
+  # when we want to append to it; that prevents us from
+  # getting template updates when upgrading BL.
+  def render_document_partial(doc, base_name, locals = {})
+    result = super(doc, base_name, locals)
+    if [:index, :show].member?(base_name)
+      template = lookup_context.find_all("#{base_name}_document_append", lookup_context.prefixes + [""], true, locals.keys + [:document], {}).first
+      if template
+        result += template.render(self, locals.merge(document: doc))
+      end
+    end
+    result
+  end
+
+  # suppress showing availability info, which we want to do in Test
+  # currently but not Dev.
+  # TODO: should be removed eventually
+  def show_availability?
+    !(ENV['SUPPRESS_AVAILABILITY'] == 'true')
+  end
+
 end
