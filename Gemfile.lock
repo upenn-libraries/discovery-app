@@ -30,7 +30,7 @@ GIT
 
 GIT
   remote: https://github.com/upenn-libraries/ezwadl.git
-  revision: d5d9b4a8635dc8e52bee499db78cf9b29a1dceac
+  revision: ca6f0ff69e2324da0032224ea396c3eef0f5e0f4
   specs:
     ezwadl (0.0.1)
       httparty (~> 0.14)
