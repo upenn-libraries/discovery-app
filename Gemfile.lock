@@ -13,7 +13,7 @@ GIT
 
 GIT
   remote: https://github.com/upenn-libraries/blacklight_alma.git
-  revision: 103cc6b0d14374e684ae279dc50d80255f773a20
+  revision: 09e1c1e85fefa55b046646e7751f9e8a7c9be3a7
   specs:
     blacklight_alma (0.0.1)
       blacklight (~> 6.0)
@@ -22,7 +22,7 @@ GIT
 
 GIT
   remote: https://github.com/upenn-libraries/blacklight_solrplugins.git
-  revision: e1bc8cc4bb85a5eb92c85a148dc8aacd53c446d8
+  revision: 3da29f3c216390af5539d61c9642bfe0f20e8269
   specs:
     blacklight_solrplugins (0.0.1)
       blacklight (~> 6.0)
