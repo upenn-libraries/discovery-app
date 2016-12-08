@@ -26,7 +26,7 @@ module ApplicationHelper
   # returns a link element to be used for the tab; this could be either an anchor
   # or a link to another page, depending on the needs of the view
   def render_tab_link(tab_id, tab_label, anchor, url, data_target)
-    if params[:q]
+    if params[:q] || !(controller_name == 'catalog' && action_name == 'landing')
       attrs = {
           'href': url
       }
