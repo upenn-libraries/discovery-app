@@ -4,7 +4,7 @@
       <h3>Catalog</h3>
 
       <div class="view-and-filter text-right">
-      <%= link_to "View and filter #{number_with_delimiter(@response.total)} results", search_catalog_path(q: params[:q] || params[:query]) %>
+      <%= link_to "View and filter #{number_with_delimiter(@response.total)} results", search_catalog_path(q: params[:q] || params[:query], search_field: 'all_fields') %>
       </div>
 
       <%- if @response.empty? %>
