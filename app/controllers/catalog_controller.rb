@@ -46,6 +46,7 @@ class CatalogController < ApplicationController
         url_fulltext_display_a
         url_suppl_display_a
       }.join(','),
+      'facet.threads': 2,
       rows: 10
     }
 
