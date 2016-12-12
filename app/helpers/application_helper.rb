@@ -18,8 +18,10 @@ module ApplicationHelper
     on_bento_page = (controller_name == 'catalog') && ['landing', 'bento'].member?(action_name)
     if tab_id == 'bento' && on_bento_page
       'active'
-    elsif tab_id == 'catalog' && controller_name == 'catalog' && !on_bento_page
-      'active'
+    elsif tab_id == 'catalog'
+      if !on_bento_page
+        'active'
+      end
     end
   end
 
@@ -72,6 +74,16 @@ module ApplicationHelper
     # we do NOT call #search_action_path because it might take us to an
     # "blank" browse page, which is never what we want
     root_path
+  end
+
+  def facet_field_names_for_advanced_search
+    # exclude pub date range facet, b/c it has a form, which nests insid
+    # the advanced search form and causes havoc
+    blacklight_config.facet_fields.values.select { |f| !f.xfacet && f.field != 'pub_date_isort' }.map(&:field)
+  end
+
+  def render_link_to_range_limit(solr_field, min, max)
+    link_to('View distribution', params.merge(use_route: "blacklight_advanced_search_routes", :action => 'range_limit', :range_field => solr_field, :range_start => min, :range_end => max), :class => "load_distribution")
   end
 
 end
