@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 class CatalogController < ApplicationController
+  include BlacklightAdvancedSearch::Controller
 
   include BlacklightRangeLimit::ControllerOverride
 
@@ -9,6 +10,13 @@ class CatalogController < ApplicationController
   include BlacklightSolrplugins::XBrowse
 
   configure_blacklight do |config|
+    # default advanced config values
+    config.advanced_search ||= Blacklight::OpenStructWithHashAccess.new
+    # config.advanced_search[:qt] ||= 'advanced'
+    config.advanced_search[:url_key] ||= 'advanced'
+    config.advanced_search[:query_parser] ||= 'dismax'
+    config.advanced_search[:form_solr_parameters] ||= {}
+
 
     ## Class for sending and receiving requests from a search index
     # config.repository_class = Blacklight::Solr::Repository
@@ -217,16 +225,19 @@ class CatalogController < ApplicationController
     config.add_search_field('author_xfacet') do |field|
       field.label = 'Author Browse (last name first)'
       field.action = '/catalog/xbrowse/author_xfacet'
+      field.include_in_advanced_search = false
     end
 
     config.add_search_field('subject_topic_xfacet') do |field|
       field.label = 'Subject Heading Browse'
       field.action = '/catalog/xbrowse/subject_topic_xfacet'
+      field.include_in_advanced_search = false
     end
 
     config.add_search_field('title_xfacet') do |field|
       field.label = 'Title Browse'
       field.action = '/catalog/rbrowse/title_xfacet'
+      field.include_in_advanced_search = false
     end
 
     # "sort results by" select (pulldown)
