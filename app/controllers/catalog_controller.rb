@@ -115,8 +115,8 @@ class CatalogController < ApplicationController
     config.add_facet_field 'author_xfacet', label: 'Author', limit: 20, index_range: 'A'..'Z', show: false, xfacet: true
     config.add_facet_field 'language_f', label: 'Language', limit: true
     config.add_facet_field 'lc_1letter_f', label: 'Call Number'
-    config.add_facet_field 'subject_geo_f', label: 'Region'
-    config.add_facet_field 'subject_era_f', label: 'Era'
+    config.add_facet_field 'subject_geo_f', label: 'Region', limit: 20
+    config.add_facet_field 'subject_era_f', label: 'Era', limit: 20
     #config.add_facet_field 'example_pivot_field', label: 'Pivot Field', :pivot => ['format_f', 'language_f']
     config.add_facet_field 'example_query_facet_field', label: 'Publish Date', :query => {
        :years_5 => { label: 'within 5 Years', fq: "pub_date_isort:[#{Time.zone.now.year - 5 } TO *]" },
