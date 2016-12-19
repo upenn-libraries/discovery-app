@@ -79,4 +79,7 @@ gem 'bento_search', '1.6.1'
 gem 'blacklight_alma', :git => 'https://github.com/upenn-libraries/blacklight_alma.git'
 gem 'ezwadl', :git => 'https://github.com/upenn-libraries/ezwadl.git'
 
-gem 'blacklight_advanced_search', '6.1.0'
+# TODO: switch back to gem when they make a release newer than 6.2.1,
+# so that we get PR #70
+#gem 'blacklight_advanced_search', '6.1.0'
+gem 'blacklight_advanced_search', :git => 'https://github.com/codeforkjeff/blacklight_advanced_search.git'
