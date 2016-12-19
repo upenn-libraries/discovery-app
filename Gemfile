@@ -1,24 +1,33 @@
 source 'https://rubygems.org'
 
-
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.7'
+
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3', '1.3.12', platforms: :ruby
+
 gem 'jdbc-sqlite3', '3.8.11.2', platforms: :jruby
+
 gem 'activerecord-jdbcmysql-adapter', '1.3.21', platforms: :jruby
+
 # Use SCSS for stylesheets
 gem 'sass-rails', '5.0.6'
+
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '3.0.2'
+
 # Use CoffeeScript for .coffee assets and views
 gem 'coffee-rails', '4.2.1'
+
 # See https://github.com/rails/execjs#readme for more supported runtimes
 gem 'therubyracer', '0.12.2', platforms: :ruby
 
 gem "blacklight", '6.7.2'
+
 gem "jettywrapper", '2.0.4'
+
 gem 'tzinfo-data', '1.2016.7', platforms: [:mingw, :mswin, :x64_mingw]
+
 gem "solr_wrapper", '0.18.1'
 
 # Use jquery as the JavaScript library
@@ -31,6 +40,7 @@ gem 'jquery-rails', '4.2.1'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '2.6.0'
+
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', '0.4.2', group: :doc
 
@@ -59,24 +69,29 @@ group :development do
   # gem 'spring'
 end
 
-
 gem 'rsolr', '1.1.2'
+
 gem 'globalid', '0.3.7'
+
 gem 'devise', '4.2.0'
+
 gem 'devise-guests', '0.5.0'
+
 gem 'blacklight_range_limit', '6.0.0'
 
 gem 'traject', '2.3.2'
 
-# Using this version, corrects error for getting format from 008 field, currently breaks in original project.  PR out to original project, will switch back when applied.
+# TODO: Using this version, corrects error for getting format from 008 field,
+# currently breaks in original project.  PR out to original project,
+# will switch back when applied.
 gem 'blacklight-marc', '~> 6.0', :git => 'https://github.com/magibney/blacklight-marc.git', :branch => 'fix-extract_marc-format-008'
 
 gem 'blacklight_solrplugins', :git => 'https://github.com/upenn-libraries/blacklight_solrplugins.git'
-# gem 'blacklight_solrplugins', :path => "/home/jeffchiu/blacklight_solrplugins"
 
 gem 'bento_search', '1.6.1'
 
 gem 'blacklight_alma', :git => 'https://github.com/upenn-libraries/blacklight_alma.git'
+
 gem 'ezwadl', :git => 'https://github.com/upenn-libraries/ezwadl.git'
 
 # TODO: switch back to gem when they make a release newer than 6.2.1,
