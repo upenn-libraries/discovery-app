@@ -1,6 +1,11 @@
 Rails.application.routes.draw do
   concern :range_searchable, BlacklightRangeLimit::Routes::RangeSearchable.new
-          mount Blacklight::Engine => '/'
+  concern :exportable, Blacklight::Routes::Exportable.new
+
+  root to: "catalog#landing"
+  get 'bento/' => 'catalog#bento'
+
+  mount Blacklight::Engine => '/'
 
   mount BlacklightAdvancedSearch::Engine => '/'
 
@@ -12,32 +17,28 @@ Rails.application.routes.draw do
   get 'advanced/facet' => 'advanced#facet'
 
   Blacklight::Marc.add_routes(self)
-  root to: "catalog#landing"
   concern :searchable, Blacklight::Routes::Searchable.new
   concern :xbrowsable, BlacklightSolrplugins::Routes::XBrowsable.new
 
-resource :catalog, only: [:index], as: 'catalog', path: '/catalog', controller: 'catalog' do
-  concerns :searchable
+  resource :catalog, only: [:index], as: 'catalog', path: '/catalog', controller: 'catalog' do
+    concerns :searchable
     concerns :range_searchable
-  concerns :xbrowsable
-end
+    concerns :xbrowsable
+  end
 
   devise_for :users
-  concern :exportable, Blacklight::Routes::Exportable.new
 
-resources :solr_documents, only: [:show], path: '/catalog', controller: 'catalog' do
-  concerns :exportable
-end
-
-resources :bookmarks do
-  concerns :exportable
-
-  collection do
-    delete 'clear'
+  resources :solr_documents, only: [:show], path: '/catalog', controller: 'catalog' do
+    concerns :exportable
   end
-end
 
-  get 'bento/' => 'catalog#bento'
+  resources :bookmarks do
+    concerns :exportable
+
+    collection do
+      delete 'clear'
+    end
+  end
 
   scope module: 'blacklight_alma' do
     get 'alma/availability' => 'alma#availability'
