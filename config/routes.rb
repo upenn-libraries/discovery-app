@@ -5,14 +5,11 @@ Rails.application.routes.draw do
   mount BlacklightAdvancedSearch::Engine => '/'
 
   #####
-  # these next two routes are needed in order for range_limit facets
-  # to display properly on advanced search page, because of the
-  # url helpers in _range_limit_panel.html.erb. But we disable them
-  # because range_limit doesn't play nice with adv search for other reasons
-  # (nested forms)
+  # the reverse routes in blacklight_advanced_search/_facet_limit.html.erb
+  # don't work unless these routes exist
   #####
-  #get 'advanced' => 'advanced#index'
-  #get 'advanced/range_limit' => 'advanced#range_limit'
+  get 'advanced' => 'advanced#index'
+  get 'advanced/facet' => 'advanced#facet'
 
   Blacklight::Marc.add_routes(self)
   root to: "catalog#landing"
