@@ -1,8 +1,0 @@
-<%# override stock template from blacklight_advanced_search
-  # so that we don't pick up xfacets
-  # TODO: this can be removed (along with facet_field_names_for_advanced_search method)
-  # once this PR gets accepted: https://github.com/projectblacklight/blacklight_advanced_search/pull/70
-%>
-<div class="advanced-facet-limits panel-group">
-  <%= render_facet_partials facet_field_names_for_advanced_search %>
-</div>
