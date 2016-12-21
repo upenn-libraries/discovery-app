@@ -123,8 +123,8 @@ class CatalogController < ApplicationController
        :years_10 => { label: 'within 10 Years', fq: "pub_date_isort:[#{Time.zone.now.year - 10 } TO *]" },
        :years_25 => { label: 'within 25 Years', fq: "pub_date_isort:[#{Time.zone.now.year - 25 } TO *]" }
     }
-    config.add_facet_field 'pub_date_isort', label: 'Publication Year', range: true, collapse: false
-
+    config.add_facet_field 'pub_date_isort', label: 'Publication Year', range: true, collapse: false,
+                           include_in_advanced_search: false
 
 
     # Have BL send all facet field names to Solr, which has been the default
