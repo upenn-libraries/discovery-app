@@ -2,6 +2,26 @@ $:.unshift './config'
 
 require 'traject'
 
+# This behaves like the wrapped MARC::Record object it contains
+# except that the #each method filters out fields with non-standard tags.
+class PlainMarcRecord
+
+  def initialize(record)
+    @record = record
+  end
+
+  def method_missing(*args)
+    @record.send(*args)
+  end
+
+  def each
+    @valid_tag_regex ||= /^\d\d\d$/
+    for field in @record.fields
+      yield field if field.tag =~ @valid_tag_regex
+    end
+  end
+end
+
 class MarcIndexer < Blacklight::Marc::Indexer
   # this mixin defines lambda facotry method get_format for legacy marc formats
   include Blacklight::Marc::Indexer::Formats
@@ -21,6 +41,15 @@ class MarcIndexer < Blacklight::Marc::Indexer
     # one way
     when 'Programming Languages'
       { 'use_instead' => [ 'Computer programming' ] }
+    end
+  end
+
+  # Filter out enriched fields from ALMA because a lot of them can cause
+  # the XML document to exceed max field size in Solr. Note that the
+  # marc_view partial filters out non-standard MARC tags on display side too.
+  def get_plain_marc_xml
+    lambda do |record, accumulator|
+      accumulator << MARC::FastXMLWriter.encode(PlainMarcRecord.new(record))
     end
   end
 
@@ -45,7 +74,7 @@ class MarcIndexer < Blacklight::Marc::Indexer
     end
 
     to_field "id", trim(extract_marc("001"), :first => true)
-    to_field 'marc_display', get_xml
+    to_field 'marc_display', get_plain_marc_xml
     to_field "text", extract_all_marc_values do |r, acc|
       acc.replace [acc.join(' ')] # turn it into a single string
     end
