@@ -90,7 +90,7 @@ gem 'blacklight_solrplugins', :git => 'https://github.com/upenn-libraries/blackl
 
 gem 'bento_search', '1.6.1'
 
-gem 'blacklight_alma', :git => 'https://github.com/upenn-libraries/blacklight_alma.git'
+gem 'blacklight_alma', :git => 'https://github.com/upenn-libraries/blacklight_alma.git', :branch => 'iframe-toggle-on-search-results'
 
 gem 'ezwadl', :git => 'https://github.com/upenn-libraries/ezwadl.git'
 

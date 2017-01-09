@@ -21,7 +21,8 @@ GIT
 
 GIT
   remote: https://github.com/upenn-libraries/blacklight_alma.git
-  revision: 787343ec0d71c074853b25980015c1a5df764289
+  revision: 87bf6faa862dc367333ee742bf14f00df0bc07df
+  branch: iframe-toggle-on-search-results
   specs:
     blacklight_alma (0.0.1)
       blacklight (~> 6.0)
