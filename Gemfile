@@ -92,8 +92,6 @@ gem 'bento_search', '1.6.1'
 
 gem 'blacklight_alma', :git => 'https://github.com/upenn-libraries/blacklight_alma.git', :branch => 'iframe-toggle-on-search-results'
 
-gem 'ezwadl', :git => 'https://github.com/upenn-libraries/ezwadl.git'
-
 # TODO: switch back to gem when they make a release newer than 6.2.1,
 # so that we get PR #70
 #gem 'blacklight_advanced_search', '6.1.0'
