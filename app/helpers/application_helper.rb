@@ -39,11 +39,30 @@ module ApplicationHelper
     content_tag('a', tab_label, attrs)
   end
 
-  # suppress showing availability info, which we want to do in Test
-  # currently but not Dev.
-  # TODO: should be removed eventually
-  def show_availability?
-    !(ENV['SUPPRESS_AVAILABILITY'] == 'true')
+  # return true if availability info HTML should be rendered (and loaded dynamically in-page)
+  def show_availability?(document)
+    # TODO: env var check should be removed eventually
+    (ENV['SUPPRESS_AVAILABILITY'] != 'true') && document.has?(:physical_holdings_json)
+  end
+
+  def render_electronic_holdings(options)
+    buf = ''
+    electronic_holdings = options[:value]
+    if electronic_holdings.present?
+      # options[:value] is multi-valued even if Solr field is single-valued
+      electronic_holdings.each do |electronic_holdings_json|
+        electronic_holdings_struct = JSON.parse(electronic_holdings_json)
+        content = electronic_holdings_struct.map do |holding|
+          url = holding['url'] + "&rfr_id=info:sid/primo.exlibrisgroup.com&svc_dat=viewit&portfolio_pid=#{holding['portfolio_pid']}"
+          coverage = holding['coverage'] ? content_tag('span', ' - ' + holding['coverage']) : ''
+          link = content_tag('a', holding['collection'], { href: url })
+          content_tag('div', link + coverage)
+        end.join('')
+        content = content.present? ? content : 'No electronic holdings information available'
+        buf << content
+      end
+    end
+    buf.html_safe
   end
 
 end

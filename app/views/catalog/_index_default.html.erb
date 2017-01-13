@@ -9,7 +9,7 @@
       <% end -%>
   <% end -%>
 
-  <% if show_availability? %>
+  <% if show_availability?(document) %>
   <dt class="blacklight-availability">Status/Location:</dt>
   <dd class="blacklight-availability availability-ajax-load" data-availability-id="<%= document.id %>">Loading...</dd>
 
@@ -20,6 +20,6 @@
   <% end %>
 </dl>
 
-<% if show_availability? %>
+<% if show_availability?(document) %>
     <div class="availability-details-container" data-availability-iframe-url="<%= alma_app_fulfillment_url(document) %>"></div>
 <% end %>

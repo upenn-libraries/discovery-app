@@ -35,24 +35,22 @@ class CatalogController < ApplicationController
       fl: %w{
         id
         score
-        author_display
-        author_vern_display
         format
-        isbn_t
+        isbn_isxn
         language_a
-        lc_callnum_display
-        material_type_display
-        published_display_a
-        published_vern_display_a
-        title_display
-        title_vern_display
+        title
+        author_a
+        standardized_title_a
+        edition
+        conference_a
+        series
+        publication_a
+        contained_within
         subject_topic_a
-        subject_geo_a
-        subject_era_a
-        subtitle_display
-        subtitle_vern_display
         url_fulltext_display_a
         url_suppl_display_a
+        physical_holdings_json
+        electronic_holdings_json
       }.join(','),
       'facet.threads': 2,
       rows: 10
@@ -76,7 +74,7 @@ class CatalogController < ApplicationController
     #}
 
     # solr field configuration for search results/index views
-    config.index.title_field = 'title_display'
+    config.index.title_field = 'title'
     config.index.display_type_field = 'format'
 
     # solr field configuration for document/show views
@@ -107,25 +105,30 @@ class CatalogController < ApplicationController
     #  (useful when user clicks "more" on a large facet and wants to navigate alphabetically across a large set of results)
     # :index_range can be an array or range of prefixes that will be used to create the navigation (note: It is case sensitive when searching values)
 
+    config.add_facet_field 'access_f', label: 'Access'
     config.add_facet_field 'format_f', label: 'Format'
-    config.add_facet_field 'subject_topic_f', label: 'Topic', limit: 20, index_range: 'A'..'Z'
+    config.add_facet_field 'author_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z'
+    config.add_facet_field 'subject_f', label: 'Subject', limit: 5, index_range: 'A'..'Z'
+    config.add_facet_field 'language_f', label: 'Language', limit: true
+    config.add_facet_field 'library_f', label: 'Library', limit: true
+    config.add_facet_field 'specific_location_f', label: 'Specific location', limit: true
+    config.add_facet_field 'publication_date_f', label: 'Publication date', limit: true
+    config.add_facet_field 'classification_f', label: 'Classification', limit: true
+    config.add_facet_field 'genre_f', label: 'Form/Genre', limit: true
+
+    #config.add_facet_field 'example_pivot_field', label: 'Pivot Field', :pivot => ['format_f', 'language_f']
+    # config.add_facet_field 'example_query_facet_field', label: 'Publish Date', :query => {
+    #     :years_5 => { label: 'within 5 Years', fq: "pub_date_isort:[#{Time.zone.now.year - 5 } TO *]" },
+    #     :years_10 => { label: 'within 10 Years', fq: "pub_date_isort:[#{Time.zone.now.year - 10 } TO *]" },
+    #     :years_25 => { label: 'within 25 Years', fq: "pub_date_isort:[#{Time.zone.now.year - 25 } TO *]" }
+    # }
+    # config.add_facet_field 'pub_date_isort', label: 'Publication Year', range: true, collapse: false,
+    #                        include_in_advanced_search: false
+
     config.add_facet_field 'subject_topic_xfacet', label: 'Topic', limit: 20, index_range: 'A'..'Z', show: false, xfacet: true, facet_for_filtering: 'subject_topic_f'
     config.add_facet_field 'title_xfacet', label: 'Title', limit: 20, index_range: 'A'..'Z', show: false, xfacet: true,
-                           xfacet_rbrowse_fields: %w(published_display_a format)
+                           xfacet_rbrowse_fields: %w(publication format)
     config.add_facet_field 'author_xfacet', label: 'Author', limit: 20, index_range: 'A'..'Z', show: false, xfacet: true
-    config.add_facet_field 'language_f', label: 'Language', limit: true
-    config.add_facet_field 'lc_1letter_f', label: 'Call Number'
-    config.add_facet_field 'subject_geo_f', label: 'Region', limit: 20
-    config.add_facet_field 'subject_era_f', label: 'Era', limit: 20
-    #config.add_facet_field 'example_pivot_field', label: 'Pivot Field', :pivot => ['format_f', 'language_f']
-    config.add_facet_field 'example_query_facet_field', label: 'Publish Date', :query => {
-       :years_5 => { label: 'within 5 Years', fq: "pub_date_isort:[#{Time.zone.now.year - 5 } TO *]" },
-       :years_10 => { label: 'within 10 Years', fq: "pub_date_isort:[#{Time.zone.now.year - 10 } TO *]" },
-       :years_25 => { label: 'within 25 Years', fq: "pub_date_isort:[#{Time.zone.now.year - 25 } TO *]" }
-    }
-    config.add_facet_field 'pub_date_isort', label: 'Publication Year', range: true, collapse: false,
-                           include_in_advanced_search: false
-
 
     # Have BL send all facet field names to Solr, which has been the default
     # previously. Simply remove these lines if you'd rather use Solr request
@@ -134,34 +137,27 @@ class CatalogController < ApplicationController
 
     # solr fields to be displayed in the index (search results) view
     #   The ordering of the field names is the order of the display
-    config.add_index_field 'title_display', label: 'Title'
-    config.add_index_field 'title_vern_display', label: 'Title'
-    config.add_index_field 'author_display', label: 'Author'
-    config.add_index_field 'author_vern_display', label: 'Author'
-    config.add_index_field 'format', label: 'Format'
-    config.add_index_field 'language_a', label: 'Language'
-    config.add_index_field 'published_display_a', label: 'Published'
-    config.add_index_field 'published_vern_display_a', label: 'Published'
-    config.add_index_field 'lc_callnum_display', label: 'Call number'
-    config.add_index_field 'subject_topic_a', label: 'Topic'
+    config.add_index_field 'author_a', label: 'Author/Creator'
+    config.add_index_field 'standardized_title_a', label: 'Standardized Title'
+    config.add_index_field 'edition', label: 'Edition'
+    config.add_index_field 'conference_a', label: 'Conference name'
+    config.add_index_field 'series', label: 'Series'
+    config.add_index_field 'publication_a', label: 'Publication'
+    config.add_index_field 'contained_within', label: 'Contained in'
+    config.add_index_field 'format', label: 'Format/Description'
+    config.add_index_field 'electronic_holdings_json', label: 'Online resource', helper_method: 'render_electronic_holdings'
 
     # solr fields to be displayed in the show (single result) view
     #   The ordering of the field names is the order of the display
-    config.add_show_field 'title_display', label: 'Title'
-    config.add_show_field 'title_vern_display', label: 'Title'
-    config.add_show_field 'subtitle_display', label: 'Subtitle'
-    config.add_show_field 'subtitle_vern_display', label: 'Subtitle'
-    config.add_show_field 'author_display', label: 'Author'
-    config.add_show_field 'author_vern_display', label: 'Author'
-    config.add_show_field 'format', label: 'Format'
-    config.add_show_field 'url_fulltext_display_a', label: 'URL'
-    config.add_show_field 'url_suppl_display_a', label: 'More Information'
-    config.add_show_field 'language_a', label: 'Language'
-    config.add_show_field 'published_display_a', label: 'Published'
-    config.add_show_field 'published_vern_display_a', label: 'Published'
-    config.add_show_field 'lc_callnum_display', label: 'Call number'
-    config.add_show_field 'isbn_t', label: 'ISBN'
-    config.add_show_field 'subject_topic_a', label: 'Topic'
+    config.add_show_field 'author_a', label: 'Author/Creator'
+    config.add_show_field 'standardized_title_a', label: 'Standardized Title'
+    config.add_show_field 'edition', label: 'Edition'
+    config.add_show_field 'conference_a', label: 'Conference name'
+    config.add_show_field 'series', label: 'Series'
+    config.add_show_field 'publication_a', label: 'Publication'
+    config.add_show_field 'contained_within', label: 'Contained in'
+    config.add_show_field 'format', label: 'Format/Description'
+    config.add_show_field 'electronic_holdings_json', label: 'Online resource', helper_method: 'render_electronic_holdings'
 
     # "fielded" search configuration. Used by pulldown among other places.
     # For supported keys in hash, see rdoc for Blacklight::SearchFields
@@ -181,32 +177,38 @@ class CatalogController < ApplicationController
     # solr request handler? The one set in config[:default_solr_parameters][:qt],
     # since we aren't specifying it otherwise.
 
-    config.add_search_field 'all_fields', label: 'All Fields'
-
+    config.add_search_field 'all_fields' do |field|
+      field.label = 'All Fields'
+      field.solr_local_parameters = {
+          qf: 'text_search',
+          pf: 'text_search'
+      }
+    end
 
     # Now we see how to over-ride Solr request handler defaults, in this
     # case for a BL "search field", which is really a dismax aggregate
     # of Solr search fields.
 
-    config.add_search_field('title') do |field|
+    config.add_search_field('title_search') do |field|
+      field.label = 'Title Keyword'
       # solr_parameters hash are sent to Solr as ordinary url query params.
-      field.solr_parameters = { :'spellcheck.dictionary' => 'title' }
+      field.solr_parameters = { :'spellcheck.dictionary' => 'title_search' }
 
       # :solr_local_parameters will be sent using Solr LocalParams
       # syntax, as eg {! qf=$title_qf }. This is neccesary to use
       # Solr parameter de-referencing like $title_qf.
       # See: http://wiki.apache.org/solr/LocalParams
       field.solr_local_parameters = {
-        qf: '$title_qf',
-        pf: '$title_pf'
+        qf: 'title_search',
+        pf: 'title_search'
       }
     end
 
     config.add_search_field('author') do |field|
       field.solr_parameters = { :'spellcheck.dictionary' => 'author' }
       field.solr_local_parameters = {
-        qf: '$author_qf',
-        pf: '$author_pf'
+        qf: 'author',
+        pf: 'author'
       }
     end
 
@@ -217,8 +219,8 @@ class CatalogController < ApplicationController
       field.solr_parameters = { :'spellcheck.dictionary' => 'subject' }
       field.qt = 'search'
       field.solr_local_parameters = {
-        qf: '$subject_qf',
-        pf: '$subject_pf'
+        qf: 'subject',
+        pf: 'subject'
       }
     end
 
@@ -238,6 +240,14 @@ class CatalogController < ApplicationController
       field.label = 'Title Browse'
       field.action = '/catalog/rbrowse/title_xfacet'
       field.include_in_advanced_search = false
+    end
+
+    # only show these fields on Advanced Search
+
+    config.add_search_field('blah') do |field|
+      field.label = 'Blah'
+      field.if = Proc.new { false }
+      field.include_in_advanced_search = true
     end
 
     # "sort results by" select (pulldown)
