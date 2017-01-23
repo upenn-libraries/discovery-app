@@ -147,16 +147,81 @@ class CatalogController < ApplicationController
     config.add_index_field 'format', label: 'Format/Description'
     config.add_index_field 'electronic_holdings_json', label: 'Online resource', helper_method: 'render_electronic_holdings'
 
-    # solr fields to be displayed in the show (single result) view
-    #   The ordering of the field names is the order of the display
-    config.add_show_field 'author_a', label: 'Author/Creator'
-    config.add_show_field 'standardized_title_a', label: 'Standardized Title'
-    config.add_show_field 'edition', label: 'Edition'
-    config.add_show_field 'conference_a', label: 'Conference name'
-    config.add_show_field 'series', label: 'Series'
-    config.add_show_field 'publication_a', label: 'Publication'
+    is_field_present = lambda { |context, field_config, document|
+      document.send(field_config.field.to_sym).present?
+    }
+
+    # Many of our show field values are generated dynamically from MARC stored in Solr
+    # This is because there's sometimes complex logic for extracting granular bits
+    # used for linking, which differs from fields stored in Solr for faceting/search.
+    # Hence all the fields here that use 'accessor' to make calls on the SolrDocument object.
+
+    config.add_show_field 'author_display', label: 'Author/Creator',
+                          accessor: 'author_display', helper_method: 'render_author_display', if: is_field_present
+    config.add_show_field 'standardized_title_display', label: 'Standardized Title',
+                          accessor: 'standardized_title_display', helper_method: 'render_standardized_title_display', if: is_field_present
+    config.add_show_field 'other_title_display', label: 'Other Title',
+                          accessor: 'other_title_display', helper_method: 'render_values_with_breaks', if: is_field_present
+    config.add_show_field 'edition_display', label: 'Edition',
+                          accessor: 'edition_display', helper_method: 'render_values_with_breaks', if: is_field_present
+    config.add_show_field 'publication_display', label: 'Publication',
+                          accessor: 'publication_display', helper_method: 'render_values_with_breaks', if: is_field_present
+    config.add_show_field 'distribution_display', label: 'Distribution',
+                          accessor: 'distribution_display', helper_method: 'render_values_with_breaks', if: is_field_present
+    config.add_show_field 'manufacture_display', label: 'Manufacture',
+                          accessor: 'manufacture_display', helper_method: 'render_values_with_breaks', if: is_field_present
+    config.add_show_field 'conference_display', label: 'Conference Name',
+                          accessor: 'conference_display', helper_method: 'render_conference_display', if: is_field_present
+    config.add_show_field 'series_display', label: 'Series',
+                          accessor: 'series_display', helper_method: 'render_series_display', if: is_field_present
+    config.add_show_field 'format_display', label: 'Format/Description',
+                          accessor: 'format_display', helper_method: 'render_values_with_breaks', if: is_field_present
+    config.add_show_field 'cartographic_display', label: 'Cartographic Data',
+                          accessor: 'cartographic_display', helper_method: 'render_values_with_breaks', if: is_field_present
+    config.add_show_field 'fingerprint_display', label: 'Fingerprint',
+                          accessor: 'fingerprint_display', helper_method: 'render_values_with_breaks', if: is_field_present
+    config.add_show_field 'arrangement_display', label: 'Arrangement',
+                          accessor: 'arrangement_display', helper_method: 'render_values_with_breaks', if: is_field_present
+
+    # TODO:
+    # Former title
+    # Continues
+    # Continued By
+    # Subjects (Childrens, Medical, Local, etc)
+    # Form/Genre
+    # Place of Publication
+    # Language
+    # System Details
+    # Biography/History
+    # Summary
+    # Contents
+    # Participant
+    # Credits
+    # Notes
+    # Local Notes
+    # Finding Aid/Index
+    # Provenance / Chronology
+    # Related Collections
+    # Cited in
+    # Publications about
+    # Cite as
+    # Contributor
+    # Related Work
+    # Contains
+    # Other Edition
+    # Contained In
+    # Constituent Unit
+    # Has supplement
+    # Other format
+    # ISBN
+    # ISSN
+    # OCLC
+    # Publisher Number
+    # Online (for Hathi)
+    # Access restriction
+    # Bound with
+
     config.add_show_field 'contained_within', label: 'Contained in'
-    config.add_show_field 'format', label: 'Format/Description'
     config.add_show_field 'electronic_holdings_json', label: 'Online resource', helper_method: 'render_electronic_holdings'
 
     # "fielded" search configuration. Used by pulldown among other places.

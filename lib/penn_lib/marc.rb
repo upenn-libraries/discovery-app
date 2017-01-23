@@ -9,6 +9,15 @@ module PennLib
   # (since MARC is stored in Solr). As such, there should NOT be any traject-specific
   # things here.
   #
+  # Method naming conventions:
+  #
+  # *_values = indicates method returns an Array of values
+  #
+  # *_display = indicates method is intended to be used for
+  # individual record view (we should name things more meaningfully, according to
+  # the logic by which the values are generated, but I don't always know what this
+  # logic is, necessarily - JC)
+  #
   class Marc
 
     include BlacklightSolrplugins::Indexer
@@ -85,6 +94,27 @@ module PennLib
       normalize_space(array.join(' '))
     end
 
+    # this is used for filtering in a lots of places
+    # returns a lambda that can be passed to Enumerable#select
+    # using the & syntax
+    def subfield_not_6_or_8
+      @subfield_not_6_or_8 ||= lambda { |subfield|
+        !%w{6 8}.member?(subfield.code)
+      }
+    end
+
+    # returns a lambda checking if passed-in subfield's code
+    # is a member of array
+    def subfield_in(array)
+      lambda { |subfield| array.member?(subfield.code) }
+    end
+
+    # returns a lambda checking if passed-in subfield's code
+    # is NOT a member of array
+    def subfield_not_in(array)
+      lambda { |subfield| !array.member?(subfield.code) }
+    end
+
     # for a string 's', return a hash of ref_type => Array of references,
     # where a reference is a String or a Hash representing a multipart string
     def get_subject_references(s)
@@ -108,8 +138,8 @@ module PennLib
 
     # if double_dash is true, then some subfields are joined together with --
     def join_subject_parts(field, double_dash: false)
-      parts = field.find_all { |sf| sf.code == 'a'}.map { |sf| sf.value }
-      parts += field.find_all { |sf| !%w{a 6 5}.member?(sf.code) }.map do |sf|
+      parts = field.find_all(&subfield_in(['a'])).map(&:value)
+      parts += field.find_all(&subfield_not_in(%w{a 6 5})).map do |sf|
         (double_dash && !%w{b c d q t}.member?(sf.code) ? ' -- ' : ' ') + sf.value
       end
       parts.join(' ')
@@ -131,6 +161,31 @@ module PennLib
     def get_format
       # TODO: there's some complex logic for determining the format of a record,
       # depending on location, 008, and other things
+    end
+
+    def get_format_values_display(rec)
+      results = []
+      results += rec.fields('300').map do |field|
+        field.select(&subfield_not_in(%w{3 6 8})).map(&:value).join(' ')
+      end
+      results += rec.fields(%w{254 255 310 342 352 362}).map do |field|
+        field.select(&subfield_not_in(%w{6 8})).map(&:value).join(' ')
+      end
+      results += rec.fields(%w{340}).map do |field|
+        field.select(&subfield_not_in(%w{0 2 6 8})).map(&:value).join(' ')
+      end
+      results += rec.fields(%w{880}).map do |field|
+        if field.any? { |sf| sf.code == '6' && sf.value =~ /^300/ }
+          field.select(&subfield_not_in(%w{3 6 8})).map(&:value).join(' ')
+        elsif field.any? { |sf| sf.code == '6' && sf.value =~ /^(254|255|310|342|352|362)/ }
+          field.select(&subfield_not_in(%w{6 8})).map(&:value).join(' ')
+        elsif field.any? { |sf| sf.code == '6' && sf.value =~ /^340/ }
+          field.select(&subfield_not_in(%w{0 2 6 8})).map(&:value).join(' ')
+        else
+          []
+        end
+      end
+      results
     end
 
     def get_access_values(rec)
@@ -156,7 +211,7 @@ module PennLib
           s << " #{sf.value}"
         end
         if sf.code == '4'
-          s << ", #{relator_codes[sf.code]}"
+          s << ", #{relator_codes[sf.value]}"
         end
       end
       if !['.', '-'].member?(s[-1])
@@ -172,7 +227,7 @@ module PennLib
           s << " #{sf.value}"
         end
         if sf.code == '4'
-          s << ", #{relator_codes[sf.code]}"
+          s << ", #{relator_codes[sf.value]}"
         end
       end
       if !['.', '-'].member?(s[-1])
@@ -188,7 +243,7 @@ module PennLib
           s << " #{sf.value}"
         end
         if sf.code == '4'
-          s << ", #{relator_codes[sf.code]}"
+          s << ", #{relator_codes[sf.value]}"
         end
       end
       if !['.', '-'].member?(s[-1])
@@ -201,13 +256,13 @@ module PennLib
       acc = []
       rec.fields('245').each do |field|
         field.find_all { |sf| sf.code == 'f' }
-            .map { |sf| sf.value }
+            .map(&:value)
             .each { |value| acc << value }
       end
       added_2xx = false
       rec.fields(%w{260 261 262}).take(1).each do |field|
         results = field.find_all { |sf| sf.code != '6' }
-                      .map { |sf| sf.value }
+                      .map(&:value)
         acc << join_and_trim_whitespace(results)
         added_2xx = true
       end
@@ -215,14 +270,14 @@ module PennLib
         sf_ab264 = rec.fields.select { |field| field.tag == '264' && field.indicator2 == '1' }
                        .take(1)
                        .flat_map do |field|
-          field.find_all { |sf| %w{a b}.member?(sf.code) }.map { |sf| sf.value }
+          field.find_all(&subfield_in(%w{a b})).map(&:value)
         end
 
         sf_c264_1 = rec.fields.select { |field| field.tag == '264' && field.indicator2 == '1' }
                         .take(1)
                         .flat_map do |field|
-          field.find_all { |sf| sf.code == 'c' }
-              .map { |sf| sf.value }
+          field.find_all(&subfield_in(['c']))
+              .map(&:value)
               .select { |value| value =~ /\d\d\d\d/ }
         end
 
@@ -236,6 +291,42 @@ module PennLib
         acc << [sf_ab264, sf_c264_1, sf_c264_4].join(' ')
       end
       acc
+    end
+
+    def get_publication_values_display(rec)
+      acc = []
+      rec.fields('245').take(1).each do |field|
+        field.find_all { |sf| sf.code == 'f' }
+            .map(&:value)
+            .each { |value| acc << value }
+      end
+      rec.fields(%w{260 261 262}).take(1).each do |field|
+        publication = field.find_all(&subfield_not_6_or_8).map(&:value).join(' ')
+        acc << publication
+      end
+      rec.fields('880')
+          .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^(260|261|262)/ } }
+          .take(1)
+          .each do |field|
+        publication = field.find_all(&subfield_not_6_or_8).map(&:value).join(' ')
+        acc << publication
+      end
+      rec.fields('880')
+          .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^245/ } }
+          .each do |field|
+        publication = field.find_all(&subfield_in(['f'])).map(&:value).join(' ')
+        acc << publication
+      end
+      acc
+    end
+
+    # used to determine whether to include faceted publication values
+    # as part of record display
+    def has_264_with_a_or_b(rec)
+      rec.fields('264')
+          .select { |f| f.indicator2 == '1' }
+          .take(1)
+          .any? { |f| f.any?(&subfield_in(%w{a b})) }
     end
 
     def get_library_values(rec)
@@ -276,7 +367,7 @@ module PennLib
         cn_type = item.find_all { |sf| sf.code == 'cntype' }.map { |sf| cn_type = sf.value }.first
 
         results = item.find_all { |sf| sf.code == 'cnf' }
-                      .map { |sf| sf.value }
+                      .map(&:value)
                       .select { |call_num| call_num.present? }
                       .map { |call_num| call_num[0] }
                       .compact
@@ -308,8 +399,8 @@ module PennLib
 
       if rec['007'].try { |r| r.value.start_with?('v') } || is_manuscript
         genres = rec.fields('655').map do |field|
-          field.find_all { |sf| ! %W{0 2 5 c}.member?(sf.code) }
-              .map{ |sf| sf.value }
+          field.find_all(&subfield_not_in(%w{0 2 5 c}))
+              .map(&:value)
               .join(' ')
         end
         genres.each { |genre| acc << genre }
@@ -320,8 +411,7 @@ module PennLib
     def get_title_search_values(rec)
       acc = []
       rec.fields(%w{245 880}).each do |field|
-        field.find_all { |sf| ! %W{c 6 8 h}.member?(sf.code) }
-            .each{ |sf| acc << sf.value }
+        acc.concat(field.find_all(&subfield_not_in(%w{c 6 8 h})).map(&:value))
       end
       acc
     end
@@ -335,10 +425,10 @@ module PennLib
     def get_title_values(rec)
       acc = []
       rec.fields('245').take(1).each do |field|
-        a_or_k = field.find_all { |sf| %W{a k}.member?(sf.code) }
+        a_or_k = field.find_all(&subfield_in(%w{a k}))
                      .map { |sf| trim_trailing_comma(trim_trailing_slash(sf.value).rstrip) }
                      .first
-        joined = field.find_all { |sf| %W{b n p}.member?(sf.code) }
+        joined = field.find_all(&subfield_in(%w{b n p}))
                      .map{ |sf| trim_trailing_slash(sf.value) }
                      .join(' ')
 
@@ -359,22 +449,93 @@ module PennLib
 
     def get_standardized_title_values(rec)
       rec.fields(%w{130 240}).map do |field|
-        results = field.find_all { |sf| !%W{6 8}.member?(sf.code) }.map { |sf| sf.value }
+        results = field.find_all(&subfield_not_in(%W{6 8})).map(&:value)
         join_and_trim_whitespace(results)
       end
     end
 
+    def get_standardized_title_values_display(rec)
+      acc = []
+      rec.fields(%w{130 240}).each do |field|
+        title = field.select(&subfield_not_in(%W{6 8 e w})).map(&:value).join(' ')
+        title_param_value = field.select(&subfield_not_in(%W{5 6 8 e w})).map(&:value).join(' ')
+        title_extra = get_title_extra(field)
+        acc << HashWithIndifferentAccess.new(
+            title: title,
+            title_param_value: title_param_value,
+            title_extra: title_extra)
+      end
+      rec.fields('730')
+          .select { |f| f.indicator1 == '' || f.indicator2 == '' }
+          .select { |f| f.none? { |sf| sf.code == 'i'} }
+          .each do |field|
+        title = field.select(&subfield_not_in(%w{5 6 8 e w})).map(&:value).join(' ')
+        title_extra = get_title_extra(field)
+        acc << HashWithIndifferentAccess.new(
+            title: title,
+            title_param_value: title,
+            title_extra: title_extra)
+      end
+      rec.fields('880')
+          .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^(130|240|730)/ } }
+          .select { |f| f.none? { |sf| sf.code == 'i'} }
+          .each do |field|
+        title = field.select(&subfield_not_in(%w{5 6 8 e w})).map(&:value).join(' ')
+        title_extra = get_title_extra(field)
+        acc << HashWithIndifferentAccess.new(
+            title: title,
+            title_param_value: title,
+            title_extra: title_extra)
+      end
+      acc
+    end
+
     def get_edition_values(rec)
       rec.fields('250').take(1).map do |field|
-        results = field.find_all { |sf| !%W{6 8}.member?(sf.code) }.map { |sf| sf.value }
+        results = field.find_all(&subfield_not_in(%w{6 8})).map(&:value)
         join_and_trim_whitespace(results)
       end
+    end
+
+    def get_edition_values_display(rec)
+      acc = []
+      rec.fields('250').each do |field|
+        acc << field.find_all(&subfield_not_in(%W{6 8})).map(&:value).join(' ')
+      end
+      rec.fields('880')
+          .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^250/ } }
+          .each do |field|
+        acc << field.find_all(&subfield_not_in(%W{6 8})).map(&:value).join(' ')
+      end
+      acc
     end
 
     def get_conference_values(rec)
       rec.fields('111').map do |field|
         get_name_1xx_field(field)
       end
+    end
+
+    def get_conference_values_display(rec)
+      results = rec.fields(%w{111 711})
+          .select{ |f| ['', ' '].member?(f.indicator2) }
+          .map do |field|
+        conf = ''
+        if field.none? { |sf| sf.code == 'i' }
+          conf = field.find_all(&subfield_not_in(%w{4 5 6 8 e j w})).map(&:value).join(' ')
+        end
+        conf_extra = field.find_all(&subfield_in(%w{e j w})).map(&:value).join(', ')
+        { conf: conf, conf_extra: conf_extra}
+      end
+      results += rec.fields('880')
+          .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^(111|711)/ } }
+          .select { |f| f.none? { |sf| sf.code == 'i' } }
+          .map do |field|
+        conf = field.find_all(&subfield_not_in(%w{4 5 6 8 e j w})).map(&:value).join(' ')
+        conf_extra = field.find_all(&subfield_in(%w{4 e j w})).map(&:value).join(', ')
+        { conf: conf, conf_extra: conf_extra}
+      end
+      results
     end
 
     def get_series_values(rec)
@@ -392,10 +553,50 @@ module PennLib
       acc
     end
 
+    def get_series_values_display(rec)
+      acc = []
+
+      series_tags = %w{800 810 811 830 400 411 440 490}.select { |tag| rec[tag].present? }
+
+      if %w{800 810 811 400 410 411}.member?(series_tags.first)
+        rec.fields(series_tags.first).each do |field|
+          series = field.select(&subfield_not_in(%w{5 6 8 e t w v n})).map(&:value).join(' ')
+          pairs = field.map do |sf|
+            if %w{e w v n t}.member?(sf.code)
+              [ ' ', sf.value ]
+            elsif sf.code == '4'
+              [ ', ', relator_codes[sf.value] ]
+            end
+          end
+          series_extra = pairs.flatten.join.strip
+          acc << { series: series, series_extra: series_extra, link_type: :author_search }
+        end
+      elsif %w{830 440 490}.member?(series_tags.first)
+        rec.fields(series_tags.first).each do |field|
+          series = field.select(&subfield_not_in(%w{5 6 8 c e w v n})).map(&:value).join(' ')
+          series_extra = field.select(&subfield_in(%w{c e w v n})).map(&:value).join(' ')
+          acc << { series: series, series_extra: series_extra, link_type: :title_search }
+        end
+      end
+
+      rec.fields(series_tags.drop(1)).each do |field|
+        series = field.select(&subfield_not_in(%w{5 6 8})).map(&:value).join(' ')
+        acc << { series: series }
+      end
+
+      rec.fields('880')
+          .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^(800|810|811|830|400|410|411|440|490)/ } }
+          .each do |field|
+        series = field.select(&subfield_in(%w{5 6 8})).map(&:value).join(' ')
+        acc << { series: series }
+      end
+
+      acc
+    end
+
     def get_contained_within_values(rec)
       rec.fields('773').each do |field|
-        results = field.find_all { |sf| !%w{6 8}.member?(sf.code) }
-                      .map { |sf| sf.value }
+        results = field.find_all(&subfield_not_in(%w{6 8})).map(&:value)
         join_and_trim_whitespace(results)
       end
     end
@@ -447,6 +648,118 @@ module PennLib
         }
       end
       electronic_holdings
+    end
+
+    def get_subfield_4ew(field)
+      field.select(&subfield_in(%W{4 e w}))
+          .map { |sf| (sf.code == '4' ? ', ' : ' ') + "#{relator_codes[sf.value]}" }
+          .join('')
+    end
+
+    def get_author_values_display(rec)
+      acc = []
+      rec.fields(%w{100 110}).each do |field|
+        subf4 = get_subfield_4ew(field)
+        author_parts = []
+        field.each do |sf|
+          if !%W{4 6 8 e w}.member?(sf.code)
+            author_parts << sf.value
+          end
+        end
+        acc << HashWithIndifferentAccess.new(
+            author: author_parts.join(' '),
+            relator: subf4)
+      end
+      rec.fields('880').each do |field|
+        if field.any? { |sf| sf.code == '6' && sf.value =~ /^(100|110)/ }
+          subf4 = get_subfield_4ew(field)
+          author_parts = []
+          field.each do |sf|
+            if !%W{4 6 8 e w}.member?(sf.code)
+              author_parts << sf.value.gsub(/\?$/, '')
+            end
+          end
+          acc << HashWithIndifferentAccess.new(
+              author: author_parts.join(' '),
+              relator: subf4)
+        end
+      end
+      acc
+    end
+
+    def get_title_extra(field)
+      field.select(&subfield_in(%W{e w})).map(&:value).join(' ')
+    end
+
+    def get_other_title_values_display(rec)
+      acc = []
+      rec.fields('246').each do |field|
+        other_title = field.select(&subfield_not_in(%W{6 8})).map(&:value).join(' ')
+        acc << other_title
+      end
+      rec.fields('740')
+          .select { |f| ['', ' ', '0', '1', '3'].member?(f.indicator2) }
+          .each do |field|
+        other_title = field.select(&subfield_not_in(%W{5 6 8})).map(&:value).join(' ')
+        acc << other_title
+      end
+      rec.fields('880')
+          .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^(246|740)/ } }
+          .each do |field|
+        other_title = field.select(&subfield_not_in(%W{5 6 8})).map(&:value).join(' ')
+        acc << other_title
+      end
+      acc
+    end
+
+    # distribution and manufacture share the same logic except for indicator2
+    def get_264_or_880_fields(rec, indicator2)
+      acc = []
+      rec.fields('264')
+          .select { |f| f.indicator2 == indicator2 }
+          .each do |field|
+        acc << field.select(&subfield_in(%w{a b c})).map(&:value).join
+      end
+      rec.fields('880')
+          .select { |f| f.indicator2 == indicator2 }
+          .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^264/ } }
+          .each do |field|
+        acc << field.select(&subfield_in(%w{a b c})).map(&:value).join
+      end
+      acc
+    end
+
+    def get_distribution_values_display(rec)
+      get_264_or_880_fields(rec, '2')
+    end
+
+    def get_manufacture_values_display(rec)
+      get_264_or_880_fields(rec, '3')
+    end
+
+    def get_cartographic_values_display(rec)
+      rec.fields(%w{255 342}).map do |field|
+        field.select(&subfield_not_6_or_8).map(&:value).join
+      end
+    end
+
+    def get_fingerprint_values_display(rec)
+      rec.fields('026').map do |field|
+        field.select(&subfield_not_in(%w{2 5 6 8})).map(&:value).join
+      end
+    end
+
+    def get_arrangement_values_display(rec)
+      acc = []
+      acc += rec.fields('351').map do |field|
+        field.select(&subfield_not_6_or_8).map(&:value).join
+      end
+      acc += rec.fields('880')
+          .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^351/ } }
+          .map do |field|
+        field.select(&subfield_not_6_or_8).map(&:value).join
+      end
+      acc
     end
 
   end
