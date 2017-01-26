@@ -10,6 +10,10 @@
     <%= link_to application_name, root_path, class: "navbar-brand" %>
     <span class="site-name"><%= link_to application_name, root_path %></span>
     </div>
+
+    <div class="collapse navbar-collapse" id="user-util-collapse">
+      <%= render :partial=>'/user_util_links' %>
+    </div>
   </div>
 </div>
 

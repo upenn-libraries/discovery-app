@@ -90,7 +90,7 @@ gem 'blacklight_solrplugins', :git => 'https://github.com/upenn-libraries/blackl
 
 gem 'bento_search', '1.6.1'
 
-gem 'blacklight_alma', :git => 'https://github.com/upenn-libraries/blacklight_alma.git', :branch => 'iframe-toggle-on-search-results'
+gem 'blacklight_alma', :git => 'https://github.com/upenn-libraries/blacklight_alma.git'
 
 # TODO: switch back to gem when they make a release newer than 6.2.1,
 # so that we get PR #70
