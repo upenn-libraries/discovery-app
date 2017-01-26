@@ -16,6 +16,8 @@ Rails.application.routes.draw do
   get 'advanced' => 'advanced#index'
   get 'advanced/facet' => 'advanced#facet'
 
+  get 'nopennkey' => 'catalog#nopennkey'
+
   Blacklight::Marc.add_routes(self)
   concern :searchable, Blacklight::Routes::Searchable.new
   concern :xbrowsable, BlacklightSolrplugins::Routes::XBrowsable.new
@@ -26,7 +28,8 @@ Rails.application.routes.draw do
     concerns :xbrowsable
   end
 
-  devise_for :users
+  # override devise's sessions controller w/ our own
+  devise_for :users, controllers: { sessions: 'sessions' }
 
   resources :solr_documents, only: [:show], path: '/catalog', controller: 'catalog' do
     concerns :exportable
@@ -42,6 +45,10 @@ Rails.application.routes.draw do
 
   scope module: 'blacklight_alma' do
     get 'alma/availability' => 'alma#availability'
+  end
+
+  devise_scope :user do
+    get 'alma/social_login_callback' => 'sessions#social_login_callback'
   end
 
   BentoSearch::Routes.new(self).draw

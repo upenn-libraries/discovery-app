@@ -21,12 +21,12 @@ GIT
 
 GIT
   remote: https://github.com/upenn-libraries/blacklight_alma.git
-  revision: ff96e9c6900bbe304046c2e5f0d69e8371fd58b4
-  branch: iframe-toggle-on-search-results
+  revision: 4cc0eec90b9dd204b025c80e84dab40020c9eeb6
   specs:
     blacklight_alma (0.0.1)
       blacklight (~> 6.0)
       ezwadl (= 0.0.1)
+      jwt (= 1.5.6)
       rails (~> 4.2)
 
 GIT
@@ -164,6 +164,7 @@ GEM
       railties (>= 4.2.0)
       thor (>= 0.14, < 2.0)
     json (1.8.3)
+    jwt (1.5.6)
     kaminari (0.17.0)
       actionpack (>= 3.0.0)
       activesupport (>= 3.0.0)
