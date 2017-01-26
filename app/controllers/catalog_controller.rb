@@ -45,7 +45,7 @@ class CatalogController < ApplicationController
         conference_a
         series
         publication_a
-        contained_within
+        contained_within_a
         subject_topic_a
         url_fulltext_display_a
         url_suppl_display_a
@@ -143,7 +143,7 @@ class CatalogController < ApplicationController
     config.add_index_field 'conference_a', label: 'Conference name'
     config.add_index_field 'series', label: 'Series'
     config.add_index_field 'publication_a', label: 'Publication'
-    config.add_index_field 'contained_within', label: 'Contained in'
+    config.add_index_field 'contained_within_a', label: 'Contained in'
     config.add_index_field 'format', label: 'Format/Description'
     config.add_index_field 'electronic_holdings_json', label: 'Online resource', helper_method: 'render_electronic_holdings'
 
@@ -157,9 +157,9 @@ class CatalogController < ApplicationController
     # Hence all the fields here that use 'accessor' to make calls on the SolrDocument object.
 
     config.add_show_field 'author_display', label: 'Author/Creator',
-                          accessor: 'author_display', helper_method: 'render_author_display', if: is_field_present
+                          accessor: 'author_display', helper_method: 'render_linked_values', if: is_field_present
     config.add_show_field 'standardized_title_display', label: 'Standardized Title',
-                          accessor: 'standardized_title_display', helper_method: 'render_standardized_title_display', if: is_field_present
+                          accessor: 'standardized_title_display', helper_method: 'render_linked_values', if: is_field_present
     config.add_show_field 'other_title_display', label: 'Other Title',
                           accessor: 'other_title_display', helper_method: 'render_values_with_breaks', if: is_field_present
     config.add_show_field 'edition_display', label: 'Edition',
@@ -171,9 +171,9 @@ class CatalogController < ApplicationController
     config.add_show_field 'manufacture_display', label: 'Manufacture',
                           accessor: 'manufacture_display', helper_method: 'render_values_with_breaks', if: is_field_present
     config.add_show_field 'conference_display', label: 'Conference Name',
-                          accessor: 'conference_display', helper_method: 'render_conference_display', if: is_field_present
+                          accessor: 'conference_display', helper_method: 'render_linked_values', if: is_field_present
     config.add_show_field 'series_display', label: 'Series',
-                          accessor: 'series_display', helper_method: 'render_series_display', if: is_field_present
+                          accessor: 'series_display', helper_method: 'render_linked_values', if: is_field_present
     config.add_show_field 'format_display', label: 'Format/Description',
                           accessor: 'format_display', helper_method: 'render_values_with_breaks', if: is_field_present
     config.add_show_field 'cartographic_display', label: 'Cartographic Data',
@@ -182,35 +182,55 @@ class CatalogController < ApplicationController
                           accessor: 'fingerprint_display', helper_method: 'render_values_with_breaks', if: is_field_present
     config.add_show_field 'arrangement_display', label: 'Arrangement',
                           accessor: 'arrangement_display', helper_method: 'render_values_with_breaks', if: is_field_present
+    config.add_show_field 'former_title_display', label: 'Former title',
+                          accessor: 'former_title_display', helper_method: 'render_linked_values', if: is_field_present
+    config.add_show_field 'continues_display', label: 'Continues',
+                          accessor: 'continues_display', helper_method: 'render_values_with_breaks', if: is_field_present
+    config.add_show_field 'continued_by_display', label: 'Continued By',
+                          accessor: 'continued_by_display', helper_method: 'render_values_with_breaks', if: is_field_present
+    # TODO: Subjects (Childrens, Medical, Local, etc)
+    config.add_show_field 'genre_display', label: 'Form/Genre',
+                          accessor: 'genre_display', helper_method: 'render_linked_values', if: is_field_present
+    config.add_show_field 'place_of_publication_display', label: 'Place of Publication',
+                          accessor: 'place_of_publication_display', helper_method: 'render_linked_values', if: is_field_present
+    config.add_show_field 'language_display', label: 'Language',
+                          accessor: 'language_display', helper_method: 'render_values_with_breaks', if: is_field_present
+    # TODO: System Details
+    config.add_show_field 'biography_display', label: 'Biography/History',
+                          accessor: 'biography_display', helper_method: 'render_values_with_breaks', if: is_field_present
+    config.add_show_field 'summary_display', label: 'Summary',
+                          accessor: 'summary_display', helper_method: 'render_values_with_breaks', if: is_field_present
+    # TODO: Contents
+    config.add_show_field 'participant_display', label: 'Participant',
+                          accessor: 'participant_display', helper_method: 'render_values_with_breaks', if: is_field_present
+    config.add_show_field 'credits_display', label: 'Credits',
+                          accessor: 'credits_display', helper_method: 'render_values_with_breaks', if: is_field_present
+    # TODO: Notes
+    # TODO: Local Notes
+    config.add_show_field 'finding_aid_display', label: 'Finding Aid/Index',
+                          accessor: 'finding_aid_display', helper_method: 'render_values_with_breaks', if: is_field_present
+    # TODO: Provenance / Chronology
+    config.add_show_field 'related_collections_display', label: 'Related Collections',
+                          accessor: 'related_collections_display', helper_method: 'render_values_with_breaks', if: is_field_present
+    config.add_show_field 'cited_in_display', label: 'Cited in',
+                          accessor: 'cited_in_display', helper_method: 'render_values_with_breaks', if: is_field_present
+    config.add_show_field 'publications_about_display', label: 'Publications about',
+                          accessor: 'publications_about_display', helper_method: 'render_values_with_breaks', if: is_field_present
+    config.add_show_field 'cite_as_display', label: 'Cited as',
+                          accessor: 'cite_as_display', helper_method: 'render_values_with_breaks', if: is_field_present
+    config.add_show_field 'contributor_display', label: 'Contributor',
+                          accessor: 'contributor_display', helper_method: 'render_linked_values', if: is_field_present
+    config.add_show_field 'related_work_display', label: 'Related Work',
+                          accessor: 'related_work_display', helper_method: 'render_values_with_breaks', if: is_field_present
+    config.add_show_field 'contains_display', label: 'Contains',
+                          accessor: 'contains_display', helper_method: 'render_values_with_breaks', if: is_field_present
+    config.add_show_field 'other_edition_display', label: 'Other Edition',
+                          accessor: 'other_edition_display', helper_method: 'render_linked_values', if: is_field_present
+    config.add_show_field 'contained_in_display', label: 'Contained In',
+                          accessor: 'contained_in_display', helper_method: 'render_values_with_breaks', if: is_field_present
+    config.add_show_field 'constituent_unit_display', label: 'Constituent Unit',
+                          accessor: 'constituent_unit_display', helper_method: 'render_values_with_breaks', if: is_field_present
 
-    # TODO:
-    # Former title
-    # Continues
-    # Continued By
-    # Subjects (Childrens, Medical, Local, etc)
-    # Form/Genre
-    # Place of Publication
-    # Language
-    # System Details
-    # Biography/History
-    # Summary
-    # Contents
-    # Participant
-    # Credits
-    # Notes
-    # Local Notes
-    # Finding Aid/Index
-    # Provenance / Chronology
-    # Related Collections
-    # Cited in
-    # Publications about
-    # Cite as
-    # Contributor
-    # Related Work
-    # Contains
-    # Other Edition
-    # Contained In
-    # Constituent Unit
     # Has supplement
     # Other format
     # ISBN
@@ -221,7 +241,6 @@ class CatalogController < ApplicationController
     # Access restriction
     # Bound with
 
-    config.add_show_field 'contained_within', label: 'Contained in'
     config.add_show_field 'electronic_holdings_json', label: 'Online resource', helper_method: 'render_electronic_holdings'
 
     # "fielded" search configuration. Used by pulldown among other places.

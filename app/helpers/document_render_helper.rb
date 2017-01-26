@@ -40,46 +40,39 @@ module DocumentRenderHelper
     buf.html_safe
   end
 
-  def render_author_display(options)
-    author_records = options[:value]
-    values = author_records.map do |author_record|
-      # TODO: normalize URL param value: my:trimTrailingComma(my:normalize-facet($auth))
-      link_to(author_record[:author], xbrowse_catalog_path('author_xfacet', q: author_record[:author]))
-    end
-    render_values_with_breaks(values)
-  end
-
-  def render_standardized_title_display(options)
-    standardized_title_records = options[:value]
-    values = standardized_title_records.map do |standardized_title_record|
-      # TODO: normalize URL param value: my:trimTrailingComma(my:normalize-facet($auth))
-      link = link_to(standardized_title_record[:title], search_catalog_path(q: standardized_title_record[:title], search_field: 'title_search'))
-      [ link, standardized_title_record[:title_extra] ].compact.join(' ')
-    end
-    render_values_with_breaks(values)
-  end
-
-  def render_conference_display(options)
-    conference_records = options[:value]
-    values = conference_records.map do |conference_record|
-      # TODO: normalize URL param value: my:trimTrailingComma(my:normalize-facet($auth))
-      link = link_to(conference_record[:conf], xbrowse_catalog_path('author_xfacet', q: conference_record[:conf]))
-      [ link, conference_record[:conf_extra] ].compact.join(' ')
-    end
-    render_values_with_breaks(values)
-  end
-
-  def render_series_display(options)
-    series_records = options[:value]
-    values = series_records.map do |series_record|
-      # TODO: normalize URL param value: my:trimTrailingComma(my:normalize-facet($auth))
-      search_field = series_record[:link_type].to_s
-      if search_field.present?
-        text = link_to(series_record[:series], search_catalog_path(q: series_record[:series], search_field: search_field))
+  # creates a URL for the given hash record. based on 'link_type' key and other keys
+  # @param record [Hash]
+  # @return [String] url
+  def link_for_link_type(record)
+    val = record[:value_for_link] || record[:value]
+    case record[:link_type]
+      when 'search'
+        search_catalog_path(q: val)
+      when /_search$/
+        search_catalog_path(q: val, search_field: record[:link_type])
+      when /_xfacet$/
+        xbrowse_catalog_path(record[:link_type], q: val)
       else
-        text = series_record[:series]
-      end
-      [ text, series_record[:series_extra] ].compact.join(' ')
+        "#UNKNOWN"
+    end
+  end
+
+  # Render method for document field values that should be linked to a search URL.
+  #
+  # This gets called by Blacklight, so options[:value] will be an Array.
+  # This should consist of Hashes containing the following symbol keys:
+  #  value: main value
+  #  value_for_link: (optional) this value will be used in the generated search URL, instead of 'value'
+  #  value_append: (optional) the value to append after 'value'
+  #  link: (optional, default=true) boolean determining whether 'value'
+  #    should be linked or just displayed as plain text
+  #  link_type: (optional if 'link' is false) string indicating what kind of link to generate
+  def render_linked_values(options)
+    records = options[:value]
+    values = records.map do |record|
+      should_link = record[:link].nil? || record[:link]
+      text = should_link ? link_to(record[:value], link_for_link_type(record)) : record[:value]
+      [ record[:value_prepend], text, record[:value_append] ].select(&:present?).join(' ')
     end
     render_values_with_breaks(values)
   end
