@@ -12,14 +12,11 @@
   <% if show_availability?(document) %>
   <dt class="blacklight-availability">Status/Location:</dt>
   <dd class="blacklight-availability availability-ajax-load" data-availability-id="<%= document.id %>">Loading...</dd>
-
-  <dt class="availability-show-on-ajax-load hide"></dt>
-  <dd class="availability-show-on-ajax-load hide">
+  <% end %>
+  <dt></dt>
+  <dd>
     <button class="btn btn-default availability-toggle-details" data-show-text="Show Availability Details" data-hide-text="Hide Availability Details">Show Availability Details</button>
   </dd>
-  <% end %>
 </dl>
 
-<% if show_availability?(document) %>
-    <div class="availability-details-container" data-availability-iframe-url="<%= alma_app_fulfillment_url(document) %>"></div>
-<% end %>
+<div class="availability-details-container" data-availability-iframe-url="<%= alma_app_fulfillment_url(document) %>"></div>
