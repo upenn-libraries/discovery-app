@@ -189,7 +189,7 @@ class MarcIndexer < Blacklight::Marc::Indexer
       acc.concat(pennlibmarc.get_publication_values(rec))
     end
 
-    to_field 'contained_within'  do |rec, acc|
+    to_field 'contained_within_a'  do |rec, acc|
       acc.concat(pennlibmarc.get_contained_within_values(rec))
     end
 
