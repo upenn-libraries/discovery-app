@@ -74,6 +74,10 @@ module PennLib
       s.sub(/:$/, '')
     end
 
+    def trim_trailing_semicolon(s)
+      s.sub(/;$/, '')
+    end
+
     def trim_trailing_equal(s)
       s.sub(/=$/, '')
     end
@@ -196,7 +200,7 @@ module PennLib
       # depending on location, 008, and other things
     end
 
-    def get_format_values_display(rec)
+    def get_format_display(rec)
       results = []
       results += rec.fields('300').map do |field|
         field.select(&subfield_not_in(%w{3 6 8})).map(&:value).join(' ')
@@ -327,7 +331,7 @@ module PennLib
       acc
     end
 
-    def get_publication_values_display(rec)
+    def get_publication_display(rec)
       acc = []
       rec.fields('245').take(1).each do |field|
         field.find_all { |sf| sf.code == 'f' }
@@ -442,7 +446,7 @@ module PennLib
       acc
     end
 
-    def get_genre_values_display(rec, should_link)
+    def get_genre_display(rec, should_link)
       rec.fields
           .select { |f| f.tag == '655' || (f.tag == '880' && f.any? { |sf| sf.code == '6' && sf.value =~ /655/ }) }
           .map do |field|
@@ -501,7 +505,7 @@ module PennLib
       end
     end
 
-    def get_standardized_title_values_display(rec)
+    def get_standardized_title_display(rec)
       acc = []
       rec.fields(%w{130 240}).each do |field|
         title = field.select(&subfield_not_in(%W{6 8 e w})).map(&:value).join(' ')
@@ -545,7 +549,7 @@ module PennLib
       end
     end
 
-    def get_edition_values_display(rec)
+    def get_edition_display(rec)
       acc = []
       rec.fields('250').each do |field|
         acc << field.find_all(&subfield_not_in(%W{6 8})).map(&:value).join(' ')
@@ -564,7 +568,7 @@ module PennLib
       end
     end
 
-    def get_conference_values_display(rec)
+    def get_conference_display(rec)
       results = rec.fields(%w{111 711})
           .select{ |f| ['', ' '].member?(f.indicator2) }
           .map do |field|
@@ -601,7 +605,7 @@ module PennLib
       acc
     end
 
-    def get_series_values_display(rec)
+    def get_series_display(rec)
       acc = []
 
       series_tags = %w{800 810 811 830 400 411 440 490}.select { |tag| rec[tag].present? }
@@ -704,7 +708,7 @@ module PennLib
           .join('')
     end
 
-    def get_author_values_display(rec)
+    def get_author_display(rec)
       acc = []
       rec.fields(%w{100 110}).each do |field|
         subf4 = get_subfield_4ew(field)
@@ -741,7 +745,7 @@ module PennLib
       field.select(&subfield_in(%W{e w})).map(&:value).join(' ')
     end
 
-    def get_other_title_values_display(rec)
+    def get_other_title_display(rec)
       acc = []
       rec.fields('246').each do |field|
         other_title = field.select(&subfield_not_in(%W{6 8})).map(&:value).join(' ')
@@ -779,31 +783,31 @@ module PennLib
       acc
     end
 
-    def get_distribution_values_display(rec)
+    def get_distribution_display(rec)
       get_264_or_880_fields(rec, '2')
     end
 
-    def get_manufacture_values_display(rec)
+    def get_manufacture_display(rec)
       get_264_or_880_fields(rec, '3')
     end
 
-    def get_cartographic_values_display(rec)
+    def get_cartographic_display(rec)
       rec.fields(%w{255 342}).map do |field|
         field.select(&subfield_not_6_or_8).map(&:value).join(' ')
       end
     end
 
-    def get_fingerprint_values_display(rec)
+    def get_fingerprint_display(rec)
       rec.fields('026').map do |field|
         field.select(&subfield_not_in(%w{2 5 6 8})).map(&:value).join(' ')
       end
     end
 
-    def get_arrangement_values_display(rec)
+    def get_arrangement_display(rec)
       get_datafield_and_880(rec, '351')
     end
 
-    def get_former_title_values_display(rec)
+    def get_former_title_display(rec)
       acc = []
       acc += rec.fields
                  .select { |f| f.tag == '247' || (f.tag == '880' && f.any? { |sf| sf.code == '6' && sf.value =~ /^247/}) }
@@ -827,15 +831,15 @@ module PennLib
       acc
     end
 
-    def get_continues_values_display(rec)
+    def get_continues_display(rec)
       get_continues(rec, '780')
     end
 
-    def get_continued_by_values_display(rec)
+    def get_continued_by_display(rec)
       get_continues(rec, '785')
     end
 
-    def get_place_of_publication_values_display(rec)
+    def get_place_of_publication_display(rec)
       acc = []
       acc += rec.fields('752').map do |field|
         place = field.select(&subfield_not_in(%w{6 8 e w})).map(&:value).join(' ')
@@ -848,47 +852,197 @@ module PennLib
       acc
     end
 
-    def get_language_values_display(rec)
+    def get_language_display(rec)
       get_datafield_and_880(rec, '546')
     end
 
-    def get_biography_values_display(rec)
+    def get_system_details_display(rec)
+      # TODO: refactor for better DRY
+      acc = []
+      acc += rec.fields('538').map do |field|
+        sub3 = field.select(&subfield_in(%w{3})).map(&:value).map { |v| trim_trailing_period(v) }.join(': ')
+        oth_subs = field.select(&subfield_in(%w{a i u})).map(&:value).join(' ')
+        [ sub3, trim_trailing_semicolon(oth_subs) ].join(' ')
+      end
+      acc += rec.fields('344').map do |field|
+        sub3 = field.select(&subfield_in(%w{3})).map(&:value).map { |v| trim_trailing_period(v) }.join(': ')
+        oth_subs = field.select(&subfield_in(%w{a b c d e f g h})).map(&:value).join(' ')
+        [ sub3, trim_trailing_semicolon(oth_subs) ].join(' ')
+      end
+      acc += rec.fields(%w{345 346}).map do |field|
+        sub3 = field.select(&subfield_in(%w{3})).map(&:value).map { |v| trim_trailing_period(v) }.join(': ')
+        oth_subs = field.select(&subfield_in(%w{a b})).map(&:value).join(' ')
+        [ sub3, trim_trailing_semicolon(oth_subs) ].join(' ')
+      end
+      acc += rec.fields(%w{347}).map do |field|
+        sub3 = field.select(&subfield_in(%w{3})).map(&:value).map { |v| trim_trailing_period(v) }.join(': ')
+        oth_subs = field.select(&subfield_in(%w{a b c d e f})).map(&:value).join(' ')
+        [ sub3, trim_trailing_semicolon(oth_subs) ].join(' ')
+      end
+      acc += rec.fields(%w{880})
+                 .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^538/ } }
+                 .map do |field|
+        sub3 = field.select(&subfield_in(%w{3})).map(&:value).map { |v| trim_trailing_period(v) }.join(': ')
+        oth_subs = field.select(&subfield_in(%w{a i u})).map(&:value).join(' ')
+        [ sub3, trim_trailing_semicolon(oth_subs) ].join(' ')
+      end
+      acc += rec.fields(%w{880})
+                 .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^344/ } }
+                 .map do |field|
+        sub3 = field.select(&subfield_in(%w{3})).map(&:value).map { |v| trim_trailing_period(v) }.join(': ')
+        oth_subs = field.select(&subfield_in(%w{a b c d e f g h})).map(&:value).join(' ')
+        [ sub3, trim_trailing_semicolon(oth_subs) ].join(' ')
+      end
+      acc += rec.fields(%w{880})
+                 .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^(345|346)/ } }
+                 .map do |field|
+        sub3 = field.select(&subfield_in(%w{3})).map(&:value).map { |v| trim_trailing_period(v) }.join(': ')
+        oth_subs = field.select(&subfield_in(%w{a b})).map(&:value).join(' ')
+        [ sub3, trim_trailing_semicolon(oth_subs) ].join(' ')
+      end
+      acc += rec.fields(%w{880})
+                 .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^347/ } }
+                 .map do |field|
+        sub3 = field.select(&subfield_in(%w{3})).map(&:value).map { |v| trim_trailing_period(v) }.join(': ')
+        oth_subs = field.select(&subfield_in(%w{a b c d e f})).map(&:value).join(' ')
+        [ sub3, trim_trailing_semicolon(oth_subs) ].join(' ')
+      end
+      acc
+   end
+
+    def get_biography_display(rec)
       get_datafield_and_880(rec, '545')
     end
 
-    def get_summary_values_display(rec)
+    def get_summary_display(rec)
       get_datafield_and_880(rec, '520')
     end
 
-    def get_participant_values_display(rec)
+    def get_contents_display(rec)
+      acc = []
+      acc += rec.fields('505').flat_map do |field|
+        joined = field.select(&subfield_not_6_or_8).map(&:value).join(' ')
+        joined.split('--')
+      end
+      acc += rec.fields('880')
+                 .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^505/ } }
+                 .flat_map do |field|
+        joined = field.select(&subfield_not_6_or_8).map(&:value).join(' ')
+        joined.split('--')
+      end
+      acc
+    end
+
+    def get_participant_display(rec)
       get_datafield_and_880(rec, '511')
     end
 
-    def get_credits_values_display(rec)
+    def get_credits_display(rec)
       get_datafield_and_880(rec, '508')
     end
 
-    def get_finding_aid_values_display(rec)
+    def get_notes_display(rec)
+      acc = []
+      acc += rec.fields(%w{500 502 504 515 518 525 533 550 580 588}).map do |field|
+        if field.tag == '588'
+          field.select(&subfield_in(%w{a})).map(&:value).join(' ')
+        else
+          field.select(&subfield_not_in(%w{5 6 8})).map(&:value).join(' ')
+        end
+      end
+      acc += rec.fields('880')
+                 .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^(500|502|504|515|518|525|533|550|580|588)/ } }
+                 .map do |field|
+        sub6 = field.select(&subfield_in(%w{6})).map(&:value).first
+        if sub6 == '588'
+          field.select(&subfield_in(%w{a})).map(&:value).join(' ')
+        else
+          field.select(&subfield_not_in(%w{5 6 8})).map(&:value).join(' ')
+        end
+      end
+      acc
+    end
+
+    def get_local_notes_display(rec)
+      acc = []
+      acc += rec.fields(%w{590}).map do |field|
+        field.select(&subfield_not_in(%w{5 6 8})).map(&:value).join(' ')
+      end
+      acc += get_880(rec, '590') do |sf|
+        ! %w{5 6 8}.member?(sf.code)
+      end
+      acc
+    end
+
+    def get_finding_aid_display(rec)
       get_datafield_and_880(rec, '555')
     end
 
-    def get_related_collections_values_display(rec)
+    # get 650/880 for provenance and chronology: value should be 'PRO' or 'CHR'
+    def get_650_and_880(rec, value)
+      acc = []
+      acc += rec.fields('650')
+                 .select { |f| f.indicator2 == '4' }
+                 .map do |field|
+        suba = field.select(&subfield_in(%w{a})).select { |sf| sf.value =~ /^(#{value}|%#{value})/ }
+                   .map {|sf| sf.value.gsub(/^%?#{value}/, '') }.join(' ')
+        sub_others = field.select(&subfield_not_in(%w{a 6 8 e w})).map(&:value).join(' ')
+        value = [ suba, sub_others ].join(' ')
+        { value: value, link_type: 'subject_search' } if value.present?
+      end.compact
+      acc += rec.fields('880')
+                 .select { |f| f.indicator2 == '4' }
+                 .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^650/ }  }
+                 .map do |field|
+        suba = field.select(&subfield_in(%w{a})).select { |sf| sf.value =~ /^(#{value}|%#{value})/ }
+                   .map {|sf| sf.value.gsub(/^%?#{value}/, '') }.join(' ')
+        sub_others = field.select(&subfield_not_in(%w{a 6 8 e w})).map(&:value).join(' ')
+        value = [ suba, sub_others ].join(' ')
+        { value: value, link_type: 'subject_search' } if value.present?
+      end.compact
+      acc
+    end
+
+    def get_provenance_display(rec)
+      acc = []
+      acc += rec.fields('561')
+                 .select { |f| ['1', '', ' '].member?(f.indicator1) && [' ', ''].member?(f.indicator2) }
+                 .map do |field|
+        value = field.select(&subfield_in(%w{a})).map(&:value).join(' ')
+        { value: value, link: false } if value
+      end.compact
+      acc += rec.fields('880')
+                 .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^561/ } }
+                 .select { |f| ['1', '', ' '].member?(f.indicator1) && [' ', ''].member?(f.indicator2) }
+                 .map do |field|
+        value = field.select(&subfield_in(%w{a})).map(&:value).join(' ')
+        { value: value, link: false } if value
+      end.compact
+      acc += get_650_and_880(rec, 'PRO')
+      acc
+    end
+
+    def get_chronology_display(rec)
+      get_650_and_880(rec, 'CHR')
+    end
+
+    def get_related_collections_display(rec)
       get_datafield_and_880(rec, '544')
     end
 
-    def get_cited_in_values_display(rec)
+    def get_cited_in_display(rec)
       get_datafield_and_880(rec, '510')
     end
 
-    def get_publications_about_values_display(rec)
+    def get_publications_about_display(rec)
       get_datafield_and_880(rec, '581')
     end
 
-    def get_cite_as_values_display(rec)
+    def get_cite_as_display(rec)
       get_datafield_and_880(rec, '524')
     end
 
-    def get_contributor_values_display(rec)
+    def get_contributor_display(rec)
       acc = []
       acc += rec.fields(%w{700 710})
                  .select { |f| ['', ' ', '0'].member?(f.indicator2) }
@@ -927,7 +1081,7 @@ module PennLib
       trim_trailing_colon(trim_trailing_period(val))
     end
 
-    def get_related_work_values_display(rec)
+    def get_related_work_display(rec)
       acc = []
       acc += rec.fields(%w{700 710 711 730})
                  .select { |f| ['', ' '].member?(f.indicator2) }
@@ -961,7 +1115,7 @@ module PennLib
       acc
     end
 
-    def get_contains_values_display(rec)
+    def get_contains_display(rec)
       acc = []
       acc += rec.fields(%w{700 710 711 730 740})
                  .select { |f| f.indicator2 == '2' }
@@ -1011,7 +1165,7 @@ module PennLib
       }
     end
 
-    def get_other_edition_values_display(rec)
+    def get_other_edition_display(rec)
       acc = []
       acc += rec.fields('775')
                  .select { |f| f.any? { |sf| sf.code == 'i' } }
@@ -1028,7 +1182,7 @@ module PennLib
       acc
     end
 
-    def get_contained_in_values_display(rec)
+    def get_contained_in_display(rec)
       acc = []
       acc += rec.fields('773').map do |field|
         field.select(&subfield_in(%w{a g i s t})).map(&:value).join(' ')
@@ -1039,7 +1193,7 @@ module PennLib
       acc
     end
 
-    def get_constituent_unit_values_display(rec)
+    def get_constituent_unit_display(rec)
       acc = []
       acc += rec.fields('774').map do |field|
         field.select(&subfield_in(%w{i a s t})).map(&:value).join(' ')
@@ -1048,6 +1202,78 @@ module PennLib
         %w{i a s t}.member?(sf.code)
       end
       acc
+    end
+
+    def get_has_supplement_display(rec)
+      acc = []
+      acc += rec.fields('770').map do |field|
+        field.select(&subfield_not_6_or_8).map(&:value).join(' ')
+      end.select(&:present?)
+      acc += get_880_subfield_not_6_or_8(rec, '770')
+      acc
+    end
+
+    def get_other_format_display(rec)
+      acc = []
+      acc += rec.fields('776').map do |field|
+        field.select(&subfield_in(%w{i a s t o})).map(&:value).join(' ')
+      end.select(&:present?)
+      acc += get_880(rec, '774') do |sf|
+        %w{i a s t o}.member?(sf.code)
+      end
+      acc
+    end
+
+    def get_isbn_display(rec)
+      acc = []
+      acc += rec.fields('020').map do |field|
+        field.select(&subfield_in(%w{a z})).map(&:value).join(' ')
+      end.select(&:present?)
+      acc += get_880(rec, '020') do |sf|
+        %w{a z}.member?(sf.code)
+      end
+      acc
+    end
+
+    def get_issn_display(rec)
+      acc = []
+      acc += rec.fields('022').map do |field|
+        field.select(&subfield_in(%w{a z})).map(&:value).join(' ')
+      end.select(&:present?).select(&:present?)
+      acc += get_880(rec, '022') do |sf|
+        %w{a z}.member?(sf.code)
+      end
+      acc
+    end
+
+    def get_oclc_display(rec)
+      # TODO: how to get OCLC? from holdings?
+      []
+    end
+
+    def get_publisher_number_display(rec)
+      acc = []
+      acc += rec.fields(%w{024 028}).map do |field|
+        field.select(&subfield_not_in(%w{5 6})).map(&:value).join(' ')
+      end.select(&:present?)
+      acc += rec.fields('880')
+                 .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^(024|028)/ } }
+                 .map do |field|
+        field.select(&subfield_not_in(%w{5 6})).map(&:value).join(' ')
+      end
+      acc
+    end
+
+    def get_access_restriction_display(rec)
+      rec.fields(%w{506}).map do |field|
+        field.select(&subfield_not_in(%w{5 6})).map(&:value).join(' ')
+      end.select(&:present?)
+    end
+
+    def get_bound_with_display(rec)
+      rec.fields(%w{501}).map do |field|
+        field.select(&subfield_not_in(%w{a})).map(&:value).join(' ')
+      end.select(&:present?)
     end
 
   end

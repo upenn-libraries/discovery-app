@@ -151,97 +151,87 @@ class CatalogController < ApplicationController
       document.send(field_config.field.to_sym).present?
     }
 
-    # Many of our show field values are generated dynamically from MARC stored in Solr
+    # Most show field values are generated dynamically from MARC stored in Solr.
     # This is because there's sometimes complex logic for extracting granular bits
     # used for linking, which differs from fields stored in Solr for faceting/search.
-    # Hence all the fields here that use 'accessor' to make calls on the SolrDocument object.
+    #
+    # For brevity and DRY, we define show fields in a data-driven way, following a few conventions:
+    #   name/dynamic_name: use one or the other, depending on whether field is dynamic or a regular Solr field
+    #   accessor: if dynamic, set to same string as 'dynamic_name'
+    #   helper_method: defaults to 'render_values_with_breaks' if not specified
+    #   if: if dynamic, defaults to 'is_field_present' lambda if not specified
 
-    config.add_show_field 'author_display', label: 'Author/Creator',
-                          accessor: 'author_display', helper_method: 'render_linked_values', if: is_field_present
-    config.add_show_field 'standardized_title_display', label: 'Standardized Title',
-                          accessor: 'standardized_title_display', helper_method: 'render_linked_values', if: is_field_present
-    config.add_show_field 'other_title_display', label: 'Other Title',
-                          accessor: 'other_title_display', helper_method: 'render_values_with_breaks', if: is_field_present
-    config.add_show_field 'edition_display', label: 'Edition',
-                          accessor: 'edition_display', helper_method: 'render_values_with_breaks', if: is_field_present
-    config.add_show_field 'publication_display', label: 'Publication',
-                          accessor: 'publication_display', helper_method: 'render_values_with_breaks', if: is_field_present
-    config.add_show_field 'distribution_display', label: 'Distribution',
-                          accessor: 'distribution_display', helper_method: 'render_values_with_breaks', if: is_field_present
-    config.add_show_field 'manufacture_display', label: 'Manufacture',
-                          accessor: 'manufacture_display', helper_method: 'render_values_with_breaks', if: is_field_present
-    config.add_show_field 'conference_display', label: 'Conference Name',
-                          accessor: 'conference_display', helper_method: 'render_linked_values', if: is_field_present
-    config.add_show_field 'series_display', label: 'Series',
-                          accessor: 'series_display', helper_method: 'render_linked_values', if: is_field_present
-    config.add_show_field 'format_display', label: 'Format/Description',
-                          accessor: 'format_display', helper_method: 'render_values_with_breaks', if: is_field_present
-    config.add_show_field 'cartographic_display', label: 'Cartographic Data',
-                          accessor: 'cartographic_display', helper_method: 'render_values_with_breaks', if: is_field_present
-    config.add_show_field 'fingerprint_display', label: 'Fingerprint',
-                          accessor: 'fingerprint_display', helper_method: 'render_values_with_breaks', if: is_field_present
-    config.add_show_field 'arrangement_display', label: 'Arrangement',
-                          accessor: 'arrangement_display', helper_method: 'render_values_with_breaks', if: is_field_present
-    config.add_show_field 'former_title_display', label: 'Former title',
-                          accessor: 'former_title_display', helper_method: 'render_linked_values', if: is_field_present
-    config.add_show_field 'continues_display', label: 'Continues',
-                          accessor: 'continues_display', helper_method: 'render_values_with_breaks', if: is_field_present
-    config.add_show_field 'continued_by_display', label: 'Continued By',
-                          accessor: 'continued_by_display', helper_method: 'render_values_with_breaks', if: is_field_present
-    # TODO: Subjects (Childrens, Medical, Local, etc)
-    config.add_show_field 'genre_display', label: 'Form/Genre',
-                          accessor: 'genre_display', helper_method: 'render_linked_values', if: is_field_present
-    config.add_show_field 'place_of_publication_display', label: 'Place of Publication',
-                          accessor: 'place_of_publication_display', helper_method: 'render_linked_values', if: is_field_present
-    config.add_show_field 'language_display', label: 'Language',
-                          accessor: 'language_display', helper_method: 'render_values_with_breaks', if: is_field_present
-    # TODO: System Details
-    config.add_show_field 'biography_display', label: 'Biography/History',
-                          accessor: 'biography_display', helper_method: 'render_values_with_breaks', if: is_field_present
-    config.add_show_field 'summary_display', label: 'Summary',
-                          accessor: 'summary_display', helper_method: 'render_values_with_breaks', if: is_field_present
-    # TODO: Contents
-    config.add_show_field 'participant_display', label: 'Participant',
-                          accessor: 'participant_display', helper_method: 'render_values_with_breaks', if: is_field_present
-    config.add_show_field 'credits_display', label: 'Credits',
-                          accessor: 'credits_display', helper_method: 'render_values_with_breaks', if: is_field_present
-    # TODO: Notes
-    # TODO: Local Notes
-    config.add_show_field 'finding_aid_display', label: 'Finding Aid/Index',
-                          accessor: 'finding_aid_display', helper_method: 'render_values_with_breaks', if: is_field_present
-    # TODO: Provenance / Chronology
-    config.add_show_field 'related_collections_display', label: 'Related Collections',
-                          accessor: 'related_collections_display', helper_method: 'render_values_with_breaks', if: is_field_present
-    config.add_show_field 'cited_in_display', label: 'Cited in',
-                          accessor: 'cited_in_display', helper_method: 'render_values_with_breaks', if: is_field_present
-    config.add_show_field 'publications_about_display', label: 'Publications about',
-                          accessor: 'publications_about_display', helper_method: 'render_values_with_breaks', if: is_field_present
-    config.add_show_field 'cite_as_display', label: 'Cited as',
-                          accessor: 'cite_as_display', helper_method: 'render_values_with_breaks', if: is_field_present
-    config.add_show_field 'contributor_display', label: 'Contributor',
-                          accessor: 'contributor_display', helper_method: 'render_linked_values', if: is_field_present
-    config.add_show_field 'related_work_display', label: 'Related Work',
-                          accessor: 'related_work_display', helper_method: 'render_values_with_breaks', if: is_field_present
-    config.add_show_field 'contains_display', label: 'Contains',
-                          accessor: 'contains_display', helper_method: 'render_values_with_breaks', if: is_field_present
-    config.add_show_field 'other_edition_display', label: 'Other Edition',
-                          accessor: 'other_edition_display', helper_method: 'render_linked_values', if: is_field_present
-    config.add_show_field 'contained_in_display', label: 'Contained In',
-                          accessor: 'contained_in_display', helper_method: 'render_values_with_breaks', if: is_field_present
-    config.add_show_field 'constituent_unit_display', label: 'Constituent Unit',
-                          accessor: 'constituent_unit_display', helper_method: 'render_values_with_breaks', if: is_field_present
-
-    # Has supplement
-    # Other format
-    # ISBN
-    # ISSN
-    # OCLC
-    # Publisher Number
-    # Online (for Hathi)
-    # Access restriction
-    # Bound with
-
-    config.add_show_field 'electronic_holdings_json', label: 'Online resource', helper_method: 'render_electronic_holdings'
+    show_fields = [
+        { dynamic_name: 'author_display', label: 'Author/Creator', helper_method: 'render_linked_values' },
+        { dynamic_name: 'standardized_title_display', label: 'Standardized Title', helper_method: 'render_linked_values' },
+        { dynamic_name: 'other_title_display', label: 'Other Title' },
+        { dynamic_name: 'edition_display', label: 'Edition' },
+        { dynamic_name: 'publication_display', label: 'Publication' },
+        { dynamic_name: 'distribution_display', label: 'Distribution' },
+        { dynamic_name: 'manufacture_display', label: 'Manufacture' },
+        { dynamic_name: 'conference_display', label: 'Conference Name', helper_method: 'render_linked_values' },
+        { dynamic_name: 'series_display', label: 'Series', helper_method: 'render_linked_values' },
+        { dynamic_name: 'format_display', label: 'Format/Description' },
+        { dynamic_name: 'cartographic_display', label: 'Cartographic Data' },
+        { dynamic_name: 'fingerprint_display', label: 'Fingerprint' },
+        { dynamic_name: 'arrangement_display', label: 'Arrangement' },
+        { dynamic_name: 'former_title_display', label: 'Former title', helper_method: 'render_linked_values' },
+        { dynamic_name: 'continues_display', label: 'Continues' },
+        { dynamic_name: 'continued_by_display', label: 'Continued By' },
+        # TODO: Subjects (Childrens, Medical, Local, etc)
+        { dynamic_name: 'genre_display', label: 'Form/Genre', helper_method: 'render_linked_values' },
+        { dynamic_name: 'place_of_publication_display', label: 'Place of Publication', helper_method: 'render_linked_values' },
+        { dynamic_name: 'language_display', label: 'Language' },
+        { dynamic_name: 'system_details_display', label: 'System Details' },
+        { dynamic_name: 'biography_display', label: 'Biography/History' },
+        { dynamic_name: 'summary_display', label: 'Summary' },
+        { dynamic_name: 'contents_display', label: 'Contents' },
+        { dynamic_name: 'participant_display', label: 'Participant' },
+        { dynamic_name: 'credits_display', label: 'Credits' },
+        { dynamic_name: 'notes_display', label: 'Notes' },
+        { dynamic_name: 'local_notes_display', label: 'Local notes' },
+        # TODO: Offsite (for CRL; do we need this?)
+        { dynamic_name: 'finding_aid_display', label: 'Finding Aid/Index' },
+        { dynamic_name: 'provenance_display', label: 'Provenance', helper_method: 'render_linked_values' },
+        { dynamic_name: 'chronology_display', label: 'Chronology', helper_method: 'render_linked_values' },
+        { dynamic_name: 'related_collections_display', label: 'Related Collections' },
+        { dynamic_name: 'cited_in_display', label: 'Cited in' },
+        { dynamic_name: 'publications_about_display', label: 'Publications about' },
+        { dynamic_name: 'cite_as_display', label: 'Cited as' },
+        { dynamic_name: 'contributor_display', label: 'Contributor', helper_method: 'render_linked_values' },
+        { dynamic_name: 'related_work_display', label: 'Related Work' },
+        { dynamic_name: 'contains_display', label: 'Contains' },
+        { dynamic_name: 'other_edition_display', label: 'Other Edition', helper_method: 'render_linked_values' },
+        { dynamic_name: 'contained_in_display', label: 'Contained In' },
+        { dynamic_name: 'constituent_unit_display', label: 'Constituent Unit' },
+        { dynamic_name: 'has_supplement_display', label: 'Has Supplement' },
+        { dynamic_name: 'other_format_display', label: 'Other format' },
+        { dynamic_name: 'isbn_display', label: 'ISBN' },
+        { dynamic_name: 'issn_display', label: 'ISSN' },
+        { dynamic_name: 'oclc_display', label: 'OCLC' },
+        { dynamic_name: 'publisher_number_display', label: 'Publisher Number' },
+        { dynamic_name: 'access_restriction_display', label: 'Access Restriction' },
+        { dynamic_name: 'bound_with_display', label: 'Bound with' },
+        # TODO: Online (for Hathi; do we need this?)
+        { name: 'electronic_holdings_json', label: 'Online resource', helper_method: 'render_electronic_holdings' },
+    ]
+    show_fields.each do |record|
+      field_struct = record.dup
+      if field_struct[:dynamic_name].present?
+        name = field_struct.delete(:dynamic_name)
+        defaults = {
+          accessor: name,
+          helper_method: 'render_values_with_breaks',
+          if: is_field_present
+        }
+      else
+        name = field_struct.delete(:name)
+        defaults = {
+            helper_method: 'render_values_with_breaks',
+        }
+      end
+      config.add_show_field(name, **defaults.merge(field_struct))
+    end
 
     # "fielded" search configuration. Used by pulldown among other places.
     # For supported keys in hash, see rdoc for Blacklight::SearchFields
