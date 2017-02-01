@@ -481,6 +481,12 @@ module PennLib
       acc
     end
 
+    def get_genre_search_values(rec)
+      rec.fields('655').map do |field|
+        join_subfields(field, &subfield_not_in(%w{0 2 5 c}))
+      end
+    end
+
     def get_genre_display(rec, should_link)
       rec.fields
           .select { |f| f.tag == '655' || (f.tag == '880' && f.any? { |sf| sf.code == '6' && sf.value =~ /655/ }) }
@@ -1066,7 +1072,7 @@ module PennLib
     def get_local_notes_display(rec)
       acc = []
       acc += rec.fields(%w{590}).map do |field|
-        sub_fields(field, &subfield_not_in(%w{5 6 8}))
+        join_subfields(field, &subfield_not_in(%w{5 6 8}))
       end
       acc += get_880(rec, '590') do |sf|
         ! %w{5 6 8}.member?(sf.code)
