@@ -195,6 +195,39 @@ module PennLib
       subjects.map { |s| references(s, refs: get_subject_references(s)) }
     end
 
+    def subject_search_tags
+      %w{541 561 600 610 611 630 650 651 653}
+    end
+
+    def is_subject_search_field(field)
+      if subject_search_tags.member?(field.tag) || field.tag.start_with?('69')
+        true
+      elsif field.tag == '880'
+        sub6 = (field.find_all { |sf| sf.code == '6' }.map(&:value).first || '')[0..2]
+        subject_search_tags.member?(sub6) || sub6.start_with?('69')
+      else
+        false
+      end
+    end
+
+    def get_subject_search_values(rec)
+      # this has been completely migrated
+      rec.fields.find_all { |f| is_subject_search_field(f) }
+          .map do |field|
+            subj = []
+            field.each do |sf|
+              if sf.code == 'a'
+                subj << " #{sf.value.gsub(/^%?(PRO|CHR)/, '').gsub(/\?$/, '')}"
+              elsif sf.code == '4'
+                subj << "#{sf.value}, #{relator_codes[sf.value]}"
+              elsif !%w{a 4 5 6 8}.member?(sf.code)
+                subj << " #{sf.value}"
+              end
+            end
+            join_and_trim_whitespace(subj) if subj.present?
+      end.compact
+    end
+
     def get_format
       # TODO: there's some complex logic for determining the format of a record,
       # depending on location, 008, and other things
@@ -460,6 +493,7 @@ module PennLib
     end
 
     def get_title_search_values(rec)
+      # TODO: there are multiple title search fields in current Franklin, which one do we migrate and use here?
       acc = []
       rec.fields(%w{245 880}).each do |field|
         acc.concat(field.find_all(&subfield_not_in(%w{c 6 8 h})).map(&:value))
@@ -468,6 +502,15 @@ module PennLib
     end
 
     def get_author_values(rec)
+      rec.fields(%w{100 110}).map do |field|
+        get_name_1xx_field(field)
+      end
+    end
+
+    def get_author_search_values(rec)
+      # TODO: this is not right; figure out why there are
+      # author_creator_1_search or author_creator_2_search fields
+      # and which ones we should migrate and use here
       rec.fields(%w{100 110}).map do |field|
         get_name_1xx_field(field)
       end
@@ -837,6 +880,76 @@ module PennLib
 
     def get_continued_by_display(rec)
       get_continues(rec, '785')
+    end
+
+    # @returns [Array] of string field tags to examine for subjects
+    def subject_600s
+      %w{600 610 611 630 650 651}
+    end
+
+    def get_subjects_from_600s_and_800(rec, indicator2)
+      acc = []
+      if %w{0 1 2}.member?(indicator2)
+        # Subjects, Childrens subjects, and Medical Subjects all share this code
+        acc += rec.fields
+                   .select { |f| subject_600s.member?(f.tag) ||
+                      (f.tag == '800' && f.any? { |sf| sf.code == '6' && sf.value =~ /^(#{subject_600s.join('|')})/ }) }
+                   .select { |f| f.indicator2 == indicator2 }
+                   .map do |field|
+          value_for_link = field.select(&subfield_not_in(%w{6 8 2 e w})).map(&:value).join(' ')
+          sub_with_hyphens = field.select(&subfield_not_in(%w{6 8 2 e w})).map do |sf|
+            pre = !%w{a b c d p q t}.member?(sf.code) ? ' -- ' : ' '
+            pre + sf.value + (sf.code == 'p' ? '.' : '')
+          end.join(' ')
+          eandw_with_hyphens = field.select(&subfield_in(%w{e w})).map do |sf|
+            ' -- ' + sf.value
+          end.join(' ')
+          {
+              value: sub_with_hyphens,
+              value_for_link: value_for_link,
+              value_append: eandw_with_hyphens,
+              link_type: 'subject_xfacet'
+          }
+        end
+      elsif indicator2 == '4'
+        # Local subjects
+        acc += rec.fields(subject_600s)
+                   .select { |f| f.indicator2 == '4' }
+                   .map do |field|
+          suba = field.select(&subfield_in(%w{a}))
+                     .select { |sf| sf.value !~ /^%?(PRO|CHR)/ }
+                     .map(&:value).join(' ')
+          sub_oth = field.select(&subfield_not_in(%w{a 6 8})).map do |sf|
+            pre = !%w{b c d p q t}.member?(sf.code) ? ' -- ' : ' '
+            pre + sf.value + (sf.code == 'p' ? '.' : '')
+          end
+          subj_display = [ suba, sub_oth ].join(' ')
+          sub_oth_no_hyphens = field.select(&subfield_not_in(%w{a 6 8})).map(&:value).join(' ')
+          subj_search = [ suba, sub_oth_no_hyphens ].join(' ')
+          {
+              value: subj_display,
+              value_for_link: subj_search,
+              link_type: 'search'
+          }
+        end
+      end
+      acc
+    end
+
+    def get_subject_display(rec)
+      get_subjects_from_600s_and_800(rec, '0')
+    end
+
+    def get_children_subject_display(rec)
+      get_subjects_from_600s_and_800(rec, '1')
+    end
+
+    def get_medical_subject_display(rec)
+      get_subjects_from_600s_and_800(rec, '2')
+    end
+
+    def get_local_subject_display(rec)
+      get_subjects_from_600s_and_800(rec, '4')
     end
 
     def get_place_of_publication_display(rec)

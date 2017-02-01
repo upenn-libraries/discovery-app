@@ -178,7 +178,10 @@ class CatalogController < ApplicationController
         { dynamic_name: 'former_title_display', label: 'Former title', helper_method: 'render_linked_values' },
         { dynamic_name: 'continues_display', label: 'Continues' },
         { dynamic_name: 'continued_by_display', label: 'Continued By' },
-        # TODO: Subjects (Childrens, Medical, Local, etc)
+        { dynamic_name: 'subject_display', label: 'Subjects', helper_method: 'render_linked_values' },
+        { dynamic_name: 'children_subject_display', label: 'Childrens subjects', helper_method: 'render_linked_values' },
+        { dynamic_name: 'medical_subject_display', label: 'Medical subjects', helper_method: 'render_linked_values' },
+        { dynamic_name: 'local_subject_display', label: 'Local subjects', helper_method: 'render_linked_values' },
         { dynamic_name: 'genre_display', label: 'Form/Genre', helper_method: 'render_linked_values' },
         { dynamic_name: 'place_of_publication_display', label: 'Place of Publication', helper_method: 'render_linked_values' },
         { dynamic_name: 'language_display', label: 'Language' },
@@ -279,10 +282,10 @@ class CatalogController < ApplicationController
     end
 
     config.add_search_field('author') do |field|
-      field.solr_parameters = { :'spellcheck.dictionary' => 'author' }
+      field.solr_parameters = { :'spellcheck.dictionary' => 'author_search' }
       field.solr_local_parameters = {
-        qf: 'author',
-        pf: 'author'
+        qf: 'author_search',
+        pf: 'author_search'
       }
     end
 
@@ -290,11 +293,11 @@ class CatalogController < ApplicationController
     # tests can test it. In this case it's the same as
     # config[:default_solr_parameters][:qt], so isn't actually neccesary.
     config.add_search_field('subject') do |field|
-      field.solr_parameters = { :'spellcheck.dictionary' => 'subject' }
+      field.solr_parameters = { :'spellcheck.dictionary' => 'subject_search' }
       field.qt = 'search'
       field.solr_local_parameters = {
-        qf: 'subject',
-        pf: 'subject'
+        qf: 'subject_search',
+        pf: 'subject_search'
       }
     end
 

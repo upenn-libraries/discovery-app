@@ -101,6 +101,12 @@ class MarcIndexer < Blacklight::Marc::Indexer
       end
     end
 
+    to_field 'subject_search' do |rec, acc|
+      pennlibmarc.get_subject_search_values(rec).each do |facet|
+        acc << facet
+      end
+    end
+
     to_field 'subject_xfacet' do |rec, acc|
       pennlibmarc.get_subject_xfacet_values(rec).each do |facet|
         acc << facet
@@ -133,6 +139,10 @@ class MarcIndexer < Blacklight::Marc::Indexer
 
     to_field 'title_search' do |rec, acc|
       acc.concat(pennlibmarc.get_title_search_values(rec))
+    end
+
+    to_field 'author_search' do |rec, acc|
+      acc.concat(pennlibmarc.get_author_search_values(rec))
     end
 
     to_field 'author_a' do |rec, acc|
