@@ -135,6 +135,10 @@ class MarcIndexer < Blacklight::Marc::Indexer
       acc.concat(pennlibmarc.get_genre_values(rec))
     end
 
+    to_field "genre_search" do |rec, acc|
+      acc.concat(pennlibmarc.get_genre_search_values(rec))
+    end
+
     # Title fields
 
     to_field 'title_search' do |rec, acc|
@@ -205,7 +209,7 @@ class MarcIndexer < Blacklight::Marc::Indexer
 
     to_field 'pub_date_isort_stored', marc_publication_date
 
-    to_field "isbn_isxn_stored",  extract_marc('020az', :separator=>nil) do |rec, acc|
+    to_field "isbn_isxn_stored",  extract_marc(%W{020az 022alz}, :separator=>nil) do |rec, acc|
       orig = acc.dup
       acc.map!{|x| StdNum::ISBN.allNormalizedValues(x)}
       acc << orig

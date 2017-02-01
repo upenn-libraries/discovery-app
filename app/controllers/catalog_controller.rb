@@ -46,7 +46,6 @@ class CatalogController < ApplicationController
         series
         publication_a
         contained_within_a
-        subject_topic_a
         url_fulltext_display_a
         url_suppl_display_a
         physical_holdings_json
@@ -125,7 +124,7 @@ class CatalogController < ApplicationController
     # config.add_facet_field 'pub_date_isort', label: 'Publication Year', range: true, collapse: false,
     #                        include_in_advanced_search: false
 
-    config.add_facet_field 'subject_topic_xfacet', label: 'Topic', limit: 20, index_range: 'A'..'Z', show: false, xfacet: true, facet_for_filtering: 'subject_topic_f'
+    config.add_facet_field 'subject_xfacet', label: 'Topic', limit: 20, index_range: 'A'..'Z', show: false, xfacet: true, facet_for_filtering: 'subject_f'
     config.add_facet_field 'title_xfacet', label: 'Title', limit: 20, index_range: 'A'..'Z', show: false, xfacet: true,
                            xfacet_rbrowse_fields: %w(publication format)
     config.add_facet_field 'author_xfacet', label: 'Author', limit: 20, index_range: 'A'..'Z', show: false, xfacet: true
@@ -254,19 +253,37 @@ class CatalogController < ApplicationController
     # solr request handler? The one set in config[:default_solr_parameters][:qt],
     # since we aren't specifying it otherwise.
 
-    config.add_search_field 'all_fields' do |field|
-      field.label = 'All Fields'
+    # Note that it's possible to specify a :qt argument on fields
+
+    config.add_search_field 'keyword' do |field|
+      field.label = 'Keyword'
       field.solr_local_parameters = {
           qf: 'text_search',
           pf: 'text_search'
       }
     end
 
+    config.add_search_field 'keyword_expert' do |field|
+      field.label = 'Keyword Expert (use: AND, OR, NOT, "phrase")'
+      field.separator_beneath = true
+      # TODO: do we need a custom search handler or something for this?
+      field.solr_local_parameters = {
+          qf: 'text_search',
+          pf: 'text_search'
+      }
+    end
+
+    config.add_search_field('title_xfacet') do |field|
+      field.label = 'Title Browse (omit initial article: a, the, la, ...)'
+      field.action = '/catalog/rbrowse/title_xfacet'
+      field.include_in_advanced_search = false
+    end
+
     # Now we see how to over-ride Solr request handler defaults, in this
     # case for a BL "search field", which is really a dismax aggregate
     # of Solr search fields.
 
-    config.add_search_field('title_search') do |field|
+    config.add_search_field('title') do |field|
       field.label = 'Title Keyword'
       # solr_parameters hash are sent to Solr as ordinary url query params.
       field.solr_parameters = { :'spellcheck.dictionary' => 'title_search' }
@@ -281,23 +298,13 @@ class CatalogController < ApplicationController
       }
     end
 
-    config.add_search_field('author') do |field|
-      field.solr_parameters = { :'spellcheck.dictionary' => 'author_search' }
+    config.add_search_field('journal_title') do |field|
+      field.label = 'Journal Title Keyword'
+      field.separator_beneath = true
+      field.solr_parameters = { :'spellcheck.dictionary' => 'journal_title_search' }
       field.solr_local_parameters = {
-        qf: 'author_search',
-        pf: 'author_search'
-      }
-    end
-
-    # Specifying a :qt only to show it's possible, and so our internal automated
-    # tests can test it. In this case it's the same as
-    # config[:default_solr_parameters][:qt], so isn't actually neccesary.
-    config.add_search_field('subject') do |field|
-      field.solr_parameters = { :'spellcheck.dictionary' => 'subject_search' }
-      field.qt = 'search'
-      field.solr_local_parameters = {
-        qf: 'subject_search',
-        pf: 'subject_search'
+          qf: 'journal_title_search',
+          pf: 'journal_title_search'
       }
     end
 
@@ -307,16 +314,54 @@ class CatalogController < ApplicationController
       field.include_in_advanced_search = false
     end
 
-    config.add_search_field('subject_topic_xfacet') do |field|
-      field.label = 'Subject Heading Browse'
-      field.action = '/catalog/xbrowse/subject_topic_xfacet'
+    config.add_search_field('author') do |field|
+      field.label = 'Author Keyword'
+      field.separator_beneath = true
+      field.solr_parameters = { :'spellcheck.dictionary' => 'author_search' }
+      field.solr_local_parameters = {
+        qf: 'author_search',
+        pf: 'author_search'
+      }
+    end
+
+    config.add_search_field('subject_xfacet') do |field|
+      field.label = 'Subject Heading Browse (Library of Congress)'
+      field.action = '/catalog/xbrowse/subject_xfacet'
       field.include_in_advanced_search = false
     end
 
-    config.add_search_field('title_xfacet') do |field|
-      field.label = 'Title Browse'
-      field.action = '/catalog/rbrowse/title_xfacet'
+    config.add_search_field('subject') do |field|
+      field.label = 'Subject Heading Keyword'
+      field.solr_parameters = { :'spellcheck.dictionary' => 'subject_search' }
+      field.solr_local_parameters = {
+          qf: 'subject_search',
+          pf: 'subject_search'
+      }
+    end
+
+    config.add_search_field('genre') do |field|
+      field.label = 'Form/Genre Heading Keyword'
+      field.separator_beneath = true
+      field.solr_parameters = { :'spellcheck.dictionary' => 'genre_search' }
+      field.solr_local_parameters = {
+          qf: 'genre_search',
+          pf: 'genre_search'
+      }
+    end
+
+    config.add_search_field('call_num_xfacet') do |field|
+      field.label = 'Call Number Browse'
+      field.action = '/catalog/xbrowse/call_num_xfacet'
       field.include_in_advanced_search = false
+    end
+
+    config.add_search_field('isxn') do |field|
+      field.label = 'ISBN/ISSN'
+      field.solr_parameters = { :'spellcheck.dictionary' => 'isbn_isxn' }
+      field.solr_local_parameters = {
+          qf: 'isbn_isxn',
+          pf: 'isbn_isxn'
+      }
     end
 
     # only show these fields on Advanced Search
@@ -341,7 +386,7 @@ class CatalogController < ApplicationController
     config.spell_max = 5
 
     # Configuration for autocomplete suggestor
-    config.autocomplete_enabled = true
+    config.autocomplete_enabled = false
     config.autocomplete_path = 'suggest'
 
     config.index.document_actions.delete(:bookmark)
