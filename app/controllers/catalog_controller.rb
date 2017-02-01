@@ -282,10 +282,10 @@ class CatalogController < ApplicationController
     end
 
     config.add_search_field('author') do |field|
-      field.solr_parameters = { :'spellcheck.dictionary' => 'author' }
+      field.solr_parameters = { :'spellcheck.dictionary' => 'author_search' }
       field.solr_local_parameters = {
-        qf: 'author',
-        pf: 'author'
+        qf: 'author_search',
+        pf: 'author_search'
       }
     end
 
@@ -293,11 +293,11 @@ class CatalogController < ApplicationController
     # tests can test it. In this case it's the same as
     # config[:default_solr_parameters][:qt], so isn't actually neccesary.
     config.add_search_field('subject') do |field|
-      field.solr_parameters = { :'spellcheck.dictionary' => 'subject' }
+      field.solr_parameters = { :'spellcheck.dictionary' => 'subject_search' }
       field.qt = 'search'
       field.solr_local_parameters = {
-        qf: 'subject',
-        pf: 'subject'
+        qf: 'subject_search',
+        pf: 'subject_search'
       }
     end
 
