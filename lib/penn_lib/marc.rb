@@ -916,7 +916,7 @@ module PennLib
           {
               value: subj_display,
               value_for_link: subj_search,
-              link_type: 'search'
+              link_type: 'subject_search'
           }
         end
       end

@@ -255,6 +255,9 @@ class CatalogController < ApplicationController
 
     # Note that it's possible to specify a :qt argument on fields
 
+    # BL search field names should be suffixed with _search and _xfacet where relevant,
+    # in order for auto-generated search links on item page to work properly
+
     config.add_search_field 'keyword' do |field|
       field.label = 'Keyword'
       field.solr_local_parameters = {
@@ -283,7 +286,7 @@ class CatalogController < ApplicationController
     # case for a BL "search field", which is really a dismax aggregate
     # of Solr search fields.
 
-    config.add_search_field('title') do |field|
+    config.add_search_field('title_search') do |field|
       field.label = 'Title Keyword'
       # solr_parameters hash are sent to Solr as ordinary url query params.
       field.solr_parameters = { :'spellcheck.dictionary' => 'title_search' }
@@ -298,7 +301,7 @@ class CatalogController < ApplicationController
       }
     end
 
-    config.add_search_field('journal_title') do |field|
+    config.add_search_field('journal_title_search') do |field|
       field.label = 'Journal Title Keyword'
       field.separator_beneath = true
       field.solr_parameters = { :'spellcheck.dictionary' => 'journal_title_search' }
@@ -314,7 +317,7 @@ class CatalogController < ApplicationController
       field.include_in_advanced_search = false
     end
 
-    config.add_search_field('author') do |field|
+    config.add_search_field('author_search') do |field|
       field.label = 'Author Keyword'
       field.separator_beneath = true
       field.solr_parameters = { :'spellcheck.dictionary' => 'author_search' }
@@ -330,7 +333,7 @@ class CatalogController < ApplicationController
       field.include_in_advanced_search = false
     end
 
-    config.add_search_field('subject') do |field|
+    config.add_search_field('subject_search') do |field|
       field.label = 'Subject Heading Keyword'
       field.solr_parameters = { :'spellcheck.dictionary' => 'subject_search' }
       field.solr_local_parameters = {
@@ -339,7 +342,7 @@ class CatalogController < ApplicationController
       }
     end
 
-    config.add_search_field('genre') do |field|
+    config.add_search_field('genre_search') do |field|
       field.label = 'Form/Genre Heading Keyword'
       field.separator_beneath = true
       field.solr_parameters = { :'spellcheck.dictionary' => 'genre_search' }
@@ -355,7 +358,7 @@ class CatalogController < ApplicationController
       field.include_in_advanced_search = false
     end
 
-    config.add_search_field('isxn') do |field|
+    config.add_search_field('isxn_search') do |field|
       field.label = 'ISBN/ISSN'
       field.solr_parameters = { :'spellcheck.dictionary' => 'isbn_isxn' }
       field.solr_local_parameters = {
