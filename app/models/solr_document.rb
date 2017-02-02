@@ -38,8 +38,8 @@ class SolrDocument
 
   class << self
     # Dynamically define methods corresponding to get_*_display methods in PennLib::Marc.
-    # This needs to be called BEFORE any of the custom _display methods in this class
-    # that shouldn't be delegated in this way.
+    # This needs to be called BEFORE any of the custom _display method definitions
+    # in this class that override these definitions.
     def define_display_methods
       PennLib::Marc.instance_methods
           .select { |m| m.to_s.end_with?('_display') }

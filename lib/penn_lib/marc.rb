@@ -4,11 +4,12 @@ require 'nokogiri'
 
 module PennLib
 
-  # Class for doing extraction and processing on MARC::Record objects
-  #
+  # Class for doing extraction and processing on MARC::Record objects.
   # This is intended to be used in both indexing code and front-end templating code
   # (since MARC is stored in Solr). As such, there should NOT be any traject-specific
   # things here.
+  #
+  # For a slight performance increase (~5%?) we use frozen_string_literal for immutable strings.
   #
   # Method naming conventions:
   #
@@ -703,10 +704,9 @@ module PennLib
       #   <subfield code="i">.G63 2009</subfield>
       #   <subfield code="8">226026380000541</subfield>
       # </datafield>
-      physical_holdings = []
-      rec.fields('hld').each do |item|
+      rec.fields('hld').map do |item|
         # these are MARC 852 subfield codes
-        physical_holdings << {
+        {
             holding_id: item['8'],
             location: item['a'],
             shelving_location: item['c'],
@@ -714,7 +714,6 @@ module PennLib
             item_part: item['i'],
         }
       end
-      physical_holdings
     end
 
     # @return [Array] of hashes each describing an electronic holding
@@ -730,16 +729,14 @@ module PennLib
       #   <subfield code="czcolid">61111058563444000</subfield>
       #   <subfield code="8">5310486800000521</subfield>
       # </datafield>
-      electronic_holdings = []
-      rec.fields('prt').each do |item|
-        electronic_holdings << {
+      rec.fields('prt').map do |item|
+        {
             portfolio_pid: item['pid'],
             url: item['url'],
             collection: item['collection'],
             coverage: item['coverage'],
         }
       end
-      electronic_holdings
     end
 
     def get_subfield_4ew(field)
@@ -845,27 +842,23 @@ module PennLib
     end
 
     def get_former_title_display(rec)
-      acc = []
-      acc += rec.fields
-                 .select { |f| f.tag == '247' || (f.tag == '880' && f.any? { |sf| sf.code == '6' && sf.value =~ /^247/}) }
-                 .map do |field|
+      rec.fields
+          .select { |f| f.tag == '247' || (f.tag == '880' && f.any? { |sf| sf.code == '6' && sf.value =~ /^247/}) }
+          .map do |field|
         former_title = join_subfields(field, &subfield_not_in(%w{6 8 e w}))
         former_title_append = join_subfields(field, &subfield_in(%w{e w}))
         { value: former_title, value_append: former_title_append, link_type: 'title_search' }
       end
-      acc
     end
 
     # logic for 'Continues' and 'Continued By' is very similar
     def get_continues(rec, tag)
-      acc = []
-      acc += rec.fields
-                 .select { |f| f.tag == tag || (f.tag == '880' && f.any? { |sf| sf.code == '6' && sf.value =~ /^#{tag}/}) }
-                 .select { |f| f.any?(&subfield_in(%w{i a s t n d})) }
-                 .map do |field|
+      rec.fields
+          .select { |f| f.tag == tag || (f.tag == '880' && f.any? { |sf| sf.code == '6' && sf.value =~ /^#{tag}/}) }
+          .select { |f| f.any?(&subfield_in(%w{i a s t n d})) }
+          .map do |field|
         join_subfields(field, &subfield_in(%w{i a s t n d}))
       end
-      acc
     end
 
     def get_continues_display(rec)
