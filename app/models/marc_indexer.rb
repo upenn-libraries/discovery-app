@@ -41,13 +41,6 @@ class MarcIndexer < Blacklight::Marc::Indexer
     end
   end
 
-  # returns enumerable of the subfields we care about for 655
-  def subfields_for_655(record)
-    record.fields('655').flat_map do |field|
-      field.find_all { |sf| ! %W{0 2 5 c}.member?(sf.code) }
-    end
-  end
-
   def initialize
     super
 
@@ -96,21 +89,15 @@ class MarcIndexer < Blacklight::Marc::Indexer
     }.join(':'), :trim_punctuation => true)
 
     to_field 'subject_f_stored' do |rec, acc|
-      pennlibmarc.get_subject_facet_values(rec).each do |facet|
-        acc << facet
-      end
+      acc.concat(pennlibmarc.get_subject_facet_values(rec))
     end
 
     to_field 'subject_search' do |rec, acc|
-      pennlibmarc.get_subject_search_values(rec).each do |facet|
-        acc << facet
-      end
+      acc.concat(pennlibmarc.get_subject_search_values(rec))
     end
 
     to_field 'subject_xfacet' do |rec, acc|
-      pennlibmarc.get_subject_xfacet_values(rec).each do |facet|
-        acc << facet
-      end
+      acc.concat(pennlibmarc.get_subject_xfacet_values(rec))
     end
 
     to_field "language_f_stored", marc_languages("008[35-37]")

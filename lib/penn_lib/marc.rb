@@ -176,8 +176,12 @@ module PennLib
       end
     end
 
+    def subject_codes
+      @subject_codes ||= %w(600 610 611 630 650 651)
+    end
+
     def is_subject_field(field)
-      ['600', '610', '611', '630', '650', '651'].member?(field.tag) && ['0','2','4'].member?(field.indicator2)
+      subject_codes.member?(field.tag) && ['0','2','4'].member?(field.indicator2)
     end
 
     # if double_dash is true, then some subfields are joined together with --
@@ -196,14 +200,13 @@ module PennLib
     end
 
     def get_subject_xfacet_values(rec)
-      subjects = rec.fields.find_all { |f| is_subject_field(f) }.map do |f|
-        join_subject_parts(f, double_dash: true)
-      end
-      subjects.map { |s| references(s, refs: get_subject_references(s)) }
+      rec.fields.find_all { |f| is_subject_field(f) }
+          .map { |f| join_subject_parts(f, double_dash: true) }
+          .map { |s| references(s, refs: get_subject_references(s)) }
     end
 
     def subject_search_tags
-      %w{541 561 600 610 611 630 650 651 653}
+      @subject_search_tags ||= %w{541 561 600 610 611 630 650 651 653}
     end
 
     def is_subject_search_field(field)
@@ -248,10 +251,10 @@ module PennLib
       results += rec.fields(%w{254 255 310 342 352 362}).map do |field|
         join_subfields(field, &subfield_not_in(%w{6 8}))
       end
-      results += rec.fields(%w{340}).map do |field|
+      results += rec.fields('340').map do |field|
         join_subfields(field, &subfield_not_in(%w{0 2 6 8}))
       end
-      results += rec.fields(%w{880}).map do |field|
+      results += rec.fields('880').map do |field|
         if field.any? { |sf| sf.code == '6' && sf.value =~ /^300/ }
           join_subfields(field, &subfield_not_in(%w{3 6 8}))
         elsif field.any? { |sf| sf.code == '6' && sf.value =~ /^(254|255|310|342|352|362)/ }
@@ -596,7 +599,6 @@ module PennLib
         join_subfields(field, &subfield_not_in(%W{6 8}))
       end
       acc += rec.fields('880')
-          .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^250/ } }
           .map do |field|
         join_subfields(field, &subfield_not_in(%W{6 8}))
       end
@@ -646,13 +648,17 @@ module PennLib
       acc
     end
 
+    def series_tags
+      @series_tags ||= %w{800 810 811 830 400 411 440 490}
+    end
+
     def get_series_display(rec)
       acc = []
 
-      series_tags = %w{800 810 811 830 400 411 440 490}.select { |tag| rec[tag].present? }
+      tags_present = series_tags.select { |tag| rec[tag].present? }
 
-      if %w{800 810 811 400 410 411}.member?(series_tags.first)
-        rec.fields(series_tags.first).each do |field|
+      if %w{800 810 811 400 410 411}.member?(tags_present.first)
+        rec.fields(tags_present.first).each do |field|
           series = join_subfields(field, &subfield_not_in(%w{5 6 8 e t w v n}))
           pairs = field.map do |sf|
             if %w{e w v n t}.member?(sf.code)
@@ -664,15 +670,15 @@ module PennLib
           series_append = pairs.flatten.join.strip
           acc << { value: series, value_append: series_append, link_type: 'author_search' }
         end
-      elsif %w{830 440 490}.member?(series_tags.first)
-        rec.fields(series_tags.first).each do |field|
+      elsif %w{830 440 490}.member?(tags_present.first)
+        rec.fields(tags_present.first).each do |field|
           series = join_subfields(field, &subfield_not_in(%w{5 6 8 c e w v n}))
           series_append = join_subfields(field, &subfield_in(%w{c e w v n}))
           acc << { value: series, value_append: series_append, link_type: 'title_search' }
         end
       end
 
-      rec.fields(series_tags.drop(1)).each do |field|
+      rec.fields(tags_present.drop(1)).each do |field|
         series = join_subfields(field, &subfield_not_in(%w{5 6 8}))
         acc << { value: series, link: false }
       end
@@ -871,7 +877,7 @@ module PennLib
 
     # @returns [Array] of string field tags to examine for subjects
     def subject_600s
-      %w{600 610 611 630 650 651}
+      @subject_600s ||= %w{600 610 611 630 650 651}
     end
 
     def get_subjects_from_600s_and_800(rec, indicator2)
@@ -974,25 +980,25 @@ module PennLib
       acc += rec.fields(%w{345 346}).map do |field|
         get_sub3_and_other_subs(field, &subfield_in(%w{a b}))
       end
-      acc += rec.fields(%w{347}).map do |field|
+      acc += rec.fields('347').map do |field|
         get_sub3_and_other_subs(field, &subfield_in(%w{a b c d e f}))
       end
-      acc += rec.fields(%w{880})
+      acc += rec.fields('880')
                  .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^538/ } }
                  .map do |field|
         get_sub3_and_other_subs(field, &subfield_in(%w{a i u}))
       end
-      acc += rec.fields(%w{880})
+      acc += rec.fields('880')
                  .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^344/ } }
                  .map do |field|
         get_sub3_and_other_subs(field, &subfield_in(%w{a b c d e f g h}))
       end
-      acc += rec.fields(%w{880})
+      acc += rec.fields('880')
                  .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^(345|346)/ } }
                  .map do |field|
         get_sub3_and_other_subs(field, &subfield_in(%w{a b}))
       end
-      acc += rec.fields(%w{880})
+      acc += rec.fields('880')
                  .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^347/ } }
                  .map do |field|
         get_sub3_and_other_subs(field, &subfield_in(%w{a b c d e f}))
@@ -1053,7 +1059,7 @@ module PennLib
 
     def get_local_notes_display(rec)
       acc = []
-      acc += rec.fields(%w{590}).map do |field|
+      acc += rec.fields('590').map do |field|
         join_subfields(field, &subfield_not_in(%w{5 6 8}))
       end
       acc += get_880(rec, '590') do |sf|
@@ -1353,13 +1359,13 @@ module PennLib
     end
 
     def get_access_restriction_display(rec)
-      rec.fields(%w{506}).map do |field|
+      rec.fields('506').map do |field|
         join_subfields(field, &subfield_not_in(%w{5 6}))
       end.select(&:present?)
     end
 
     def get_bound_with_display(rec)
-      rec.fields(%w{501}).map do |field|
+      rec.fields('501').map do |field|
         join_subfields(field, &subfield_not_in(%w{a}))
       end.select(&:present?)
     end
