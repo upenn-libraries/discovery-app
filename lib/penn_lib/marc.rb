@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 require 'nokogiri'
 
@@ -280,51 +281,39 @@ module PennLib
     # examines a 1xx datafield and constructs a string out of select
     # subfields, including expansion of 'relator' code
     def get_name_1xx_field(field)
-      s = ''
-      field.each do |sf|
+      s = field.map do |sf|
         if(! %W{4 6 8}.member?(sf.code))
-          s << " #{sf.value}"
+          " #{sf.value}"
+        elsif sf.code == '4'
+          ", #{relator_codes[sf.value]}"
         end
-        if sf.code == '4'
-          s << ", #{relator_codes[sf.value]}"
-        end
-      end
-      if !['.', '-'].member?(s[-1])
-        s << '.'
-      end
-      normalize_space(s)
+      end.compact.join
+      s2 = s + (!['.', '-'].member?(s[-1]) ? '.' : '')
+      normalize_space(s2)
     end
 
     def get_series_8xx_field(field)
-      s = ''
-      field.each do |sf|
+      s = field.map do |sf|
         if(! %W{4 5 6 8}.member?(sf.code))
-          s << " #{sf.value}"
+          " #{sf.value}"
+        elsif sf.code == '4'
+          ", #{relator_codes[sf.value]}"
         end
-        if sf.code == '4'
-          s << ", #{relator_codes[sf.value]}"
-        end
-      end
-      if !['.', '-'].member?(s[-1])
-        s << '.'
-      end
-      normalize_space(s)
+      end.compact.join
+      s2 = s + (!['.', '-'].member?(s[-1]) ? '.' : '')
+      normalize_space(s2)
     end
 
     def get_series_4xx_field(field)
-      s = ''
-      field.each do |sf|
+      s = field.map do |sf|
         if(! %W{4 6 8}.member?(sf.code))
-          s << " #{sf.value}"
+          " #{sf.value}"
+        elsif sf.code == '4'
+          ", #{relator_codes[sf.value]}"
         end
-        if sf.code == '4'
-          s << ", #{relator_codes[sf.value]}"
-        end
-      end
-      if !['.', '-'].member?(s[-1])
-        s << '.'
-      end
-      normalize_space(s)
+      end.compact.join
+      s2 = s + (!['.', '-'].member?(s[-1]) ? '.' : '')
+      normalize_space(s2)
     end
 
     def get_publication_values(rec)
