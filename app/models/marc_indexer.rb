@@ -41,13 +41,6 @@ class MarcIndexer < Blacklight::Marc::Indexer
     end
   end
 
-  # returns enumerable of the subfields we care about for 655
-  def subfields_for_655(record)
-    record.fields('655').flat_map do |field|
-      field.find_all { |sf| ! %W{0 2 5 c}.member?(sf.code) }
-    end
-  end
-
   def initialize
     super
 
@@ -71,11 +64,16 @@ class MarcIndexer < Blacklight::Marc::Indexer
     pennlibmarc = PennLib::Marc.new(Rails.root.join('indexing'))
 
     to_field "id", trim(extract_marc("001"), :first => true)
-    to_field 'marc_xml', get_plain_marc_xml
-    to_field "text_search", extract_all_marc_values do |r, acc|
-      acc.unshift(r['001'].try(:value))
-      acc.replace [acc.join(' ')] # turn it into a single string
-    end
+
+    to_field 'marcrecord_xml_stored_single', get_plain_marc_xml
+
+    # Our keyword searches use pf/qf to search multiple fields, so
+    # we don't need this field; leaving it commented out here just in case.
+    #
+    # to_field "text_search", extract_all_marc_values do |r, acc|
+    #   acc.unshift(r['001'].try(:value))
+    #   acc.replace [acc.join(' ')] # turn it into a single string
+    # end
 
     to_field "access_f_stored" do |rec, acc|
       acc.concat(pennlibmarc.get_access_values(rec))
@@ -83,7 +81,7 @@ class MarcIndexer < Blacklight::Marc::Indexer
 
     to_field "format_f_stored_single", get_format
 
-    to_field "author_f", extract_marc(%W{
+    to_field "author_creator_f", extract_marc(%W{
       100abcdjq
       110abcdjq
       700abcdjq
@@ -96,21 +94,15 @@ class MarcIndexer < Blacklight::Marc::Indexer
     }.join(':'), :trim_punctuation => true)
 
     to_field 'subject_f_stored' do |rec, acc|
-      pennlibmarc.get_subject_facet_values(rec).each do |facet|
-        acc << facet
-      end
+      acc.concat(pennlibmarc.get_subject_facet_values(rec))
     end
 
     to_field 'subject_search' do |rec, acc|
-      pennlibmarc.get_subject_search_values(rec).each do |facet|
-        acc << facet
-      end
+      acc.concat(pennlibmarc.get_subject_search_values(rec))
     end
 
     to_field 'subject_xfacet' do |rec, acc|
-      pennlibmarc.get_subject_xfacet_values(rec).each do |facet|
-        acc << facet
-      end
+      acc.concat(pennlibmarc.get_subject_xfacet_values(rec))
     end
 
     to_field "language_f_stored", marc_languages("008[35-37]")
@@ -141,16 +133,32 @@ class MarcIndexer < Blacklight::Marc::Indexer
 
     # Title fields
 
-    to_field 'title_search' do |rec, acc|
-      acc.concat(pennlibmarc.get_title_search_values(rec))
+    to_field 'title_1_search' do |rec, acc|
+      acc.concat(pennlibmarc.get_title_1_search_values(rec))
     end
 
-    to_field 'author_search' do |rec, acc|
-      acc.concat(pennlibmarc.get_author_search_values(rec))
+    to_field 'title_2_search' do |rec, acc|
+      acc.concat(pennlibmarc.get_title_2_search_values(rec))
     end
 
-    to_field 'author_a' do |rec, acc|
-      acc.concat(pennlibmarc.get_author_values(rec))
+    to_field 'journal_title_1_search' do |rec, acc|
+      acc.concat(pennlibmarc.get_journal_title_1_search_values(rec))
+    end
+
+    to_field 'journal_title_2_search' do |rec, acc|
+      acc.concat(pennlibmarc.get_journal_title_2_search_values(rec))
+    end
+
+    to_field 'author_creator_1_search' do |rec, acc|
+      acc.concat(pennlibmarc.get_author_creator_1_search_values(rec))
+    end
+
+    to_field 'author_creator_2_search' do |rec, acc|
+      acc.concat(pennlibmarc.get_author_creator_2_search_values(rec))
+    end
+
+    to_field 'author_creator_a' do |rec, acc|
+      acc.concat(pennlibmarc.get_author_creator_values(rec))
     end
 
     to_field 'title' do |rec, acc|
@@ -215,6 +223,10 @@ class MarcIndexer < Blacklight::Marc::Indexer
       acc << orig
       acc.flatten!
       acc.uniq!
+    end
+
+    to_field 'call_number_search' do |rec, acc|
+      acc.concat(pennlibmarc.get_call_number_search_values(rec))
     end
 
     # URL Fields
