@@ -64,11 +64,16 @@ class MarcIndexer < Blacklight::Marc::Indexer
     pennlibmarc = PennLib::Marc.new(Rails.root.join('indexing'))
 
     to_field "id", trim(extract_marc("001"), :first => true)
-    to_field 'marc_xml', get_plain_marc_xml
-    to_field "text_search", extract_all_marc_values do |r, acc|
-      acc.unshift(r['001'].try(:value))
-      acc.replace [acc.join(' ')] # turn it into a single string
-    end
+
+    to_field 'marcrecord_xml_stored_single', get_plain_marc_xml
+
+    # Our keyword searches use pf/qf to search multiple fields, so
+    # we don't need this field; leaving it commented out here just in case.
+    #
+    # to_field "text_search", extract_all_marc_values do |r, acc|
+    #   acc.unshift(r['001'].try(:value))
+    #   acc.replace [acc.join(' ')] # turn it into a single string
+    # end
 
     to_field "access_f_stored" do |rec, acc|
       acc.concat(pennlibmarc.get_access_values(rec))
@@ -76,7 +81,7 @@ class MarcIndexer < Blacklight::Marc::Indexer
 
     to_field "format_f_stored_single", get_format
 
-    to_field "author_f", extract_marc(%W{
+    to_field "author_creator_f", extract_marc(%W{
       100abcdjq
       110abcdjq
       700abcdjq
@@ -128,16 +133,32 @@ class MarcIndexer < Blacklight::Marc::Indexer
 
     # Title fields
 
-    to_field 'title_search' do |rec, acc|
-      acc.concat(pennlibmarc.get_title_search_values(rec))
+    to_field 'title_1_search' do |rec, acc|
+      acc.concat(pennlibmarc.get_title_1_search_values(rec))
     end
 
-    to_field 'author_search' do |rec, acc|
-      acc.concat(pennlibmarc.get_author_search_values(rec))
+    to_field 'title_2_search' do |rec, acc|
+      acc.concat(pennlibmarc.get_title_2_search_values(rec))
     end
 
-    to_field 'author_a' do |rec, acc|
-      acc.concat(pennlibmarc.get_author_values(rec))
+    to_field 'journal_title_1_search' do |rec, acc|
+      acc.concat(pennlibmarc.get_journal_title_1_search_values(rec))
+    end
+
+    to_field 'journal_title_2_search' do |rec, acc|
+      acc.concat(pennlibmarc.get_journal_title_2_search_values(rec))
+    end
+
+    to_field 'author_creator_1_search' do |rec, acc|
+      acc.concat(pennlibmarc.get_author_creator_1_search_values(rec))
+    end
+
+    to_field 'author_creator_2_search' do |rec, acc|
+      acc.concat(pennlibmarc.get_author_creator_2_search_values(rec))
+    end
+
+    to_field 'author_creator_a' do |rec, acc|
+      acc.concat(pennlibmarc.get_author_creator_values(rec))
     end
 
     to_field 'title' do |rec, acc|
@@ -202,6 +223,10 @@ class MarcIndexer < Blacklight::Marc::Indexer
       acc << orig
       acc.flatten!
       acc.uniq!
+    end
+
+    to_field 'call_number_search' do |rec, acc|
+      acc.concat(pennlibmarc.get_call_number_search_values(rec))
     end
 
     # URL Fields

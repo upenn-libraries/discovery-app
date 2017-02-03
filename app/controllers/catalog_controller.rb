@@ -39,7 +39,7 @@ class CatalogController < ApplicationController
         isbn_isxn
         language_a
         title
-        author_a
+        author_creator_a
         standardized_title_a
         edition
         conference_a
@@ -106,7 +106,7 @@ class CatalogController < ApplicationController
 
     config.add_facet_field 'access_f', label: 'Access'
     config.add_facet_field 'format_f', label: 'Format'
-    config.add_facet_field 'author_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z'
+    config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z'
     config.add_facet_field 'subject_f', label: 'Subject', limit: 5, index_range: 'A'..'Z'
     config.add_facet_field 'language_f', label: 'Language', limit: true
     config.add_facet_field 'library_f', label: 'Library', limit: true
@@ -136,7 +136,7 @@ class CatalogController < ApplicationController
 
     # solr fields to be displayed in the index (search results) view
     #   The ordering of the field names is the order of the display
-    config.add_index_field 'author_a', label: 'Author/Creator'
+    config.add_index_field 'author_creator_a', label: 'Author/Creator'
     config.add_index_field 'standardized_title_a', label: 'Standardized Title'
     config.add_index_field 'edition', label: 'Edition'
     config.add_index_field 'conference_a', label: 'Conference name'
@@ -261,18 +261,18 @@ class CatalogController < ApplicationController
     config.add_search_field 'keyword' do |field|
       field.label = 'Keyword'
       field.solr_local_parameters = {
-          qf: 'text_search',
-          pf: 'text_search'
+          qf: 'marcrecord_xml^0.25 call_number_search^0.5 subject_search^1.0 title_1_search^2.5 title_2_search^1.5 author_creator_1_search^3 author_creator_2_search^2 isbn_isxn^0.25',
+          pf: 'marcrecord_xml^0.25 call_number_search^0.5 subject_search^1.0 title_1_search^2.5 title_2_search^1.5 author_creator_1_search^3 author_creator_2_search^2 isbn_isxn^0.25'
       }
     end
 
     config.add_search_field 'keyword_expert' do |field|
       field.label = 'Keyword Expert (use: AND, OR, NOT, "phrase")'
       field.separator_beneath = true
-      # TODO: do we need a custom search handler or something for this?
+      # TODO: where is 'dla-advanced' defined? right now this temporarily mirrors Keyword search, which isn't right.
       field.solr_local_parameters = {
-          qf: 'text_search',
-          pf: 'text_search'
+          qf: 'marcrecord_xml^0.25 call_number_search^0.5 subject_search^1.0 title_1_search^2.5 title_2_search^1.5 author_creator_1_search^3 author_creator_2_search^2 isbn_isxn^0.25',
+          pf: 'marcrecord_xml^0.25 call_number_search^0.5 subject_search^1.0 title_1_search^2.5 title_2_search^1.5 author_creator_1_search^3 author_creator_2_search^2 isbn_isxn^0.25'
       }
     end
 
@@ -296,8 +296,8 @@ class CatalogController < ApplicationController
       # Solr parameter de-referencing like $title_qf.
       # See: http://wiki.apache.org/solr/LocalParams
       field.solr_local_parameters = {
-        qf: 'title_search',
-        pf: 'title_search'
+        qf: 'title_1_search^3 title_2_search^0.5',
+        pf: 'title_1_search^3 title_2_search^0.5'
       }
     end
 
@@ -306,8 +306,8 @@ class CatalogController < ApplicationController
       field.separator_beneath = true
       field.solr_parameters = { :'spellcheck.dictionary' => 'journal_title_search' }
       field.solr_local_parameters = {
-          qf: 'journal_title_search',
-          pf: 'journal_title_search'
+          qf: 'journal_title_1_search^3 journal_title_2_search^0.5',
+          pf: 'journal_title_1_search^3 journal_title_2_search^0.5'
       }
     end
 
@@ -322,8 +322,8 @@ class CatalogController < ApplicationController
       field.separator_beneath = true
       field.solr_parameters = { :'spellcheck.dictionary' => 'author_search' }
       field.solr_local_parameters = {
-        qf: 'author_search',
-        pf: 'author_search'
+        qf: 'author_creator_1_search^3 author_creator_2_search^0.25',
+        pf: 'author_creator_1_search^3 author_creator_2_search^0.25'
       }
     end
 
@@ -337,8 +337,8 @@ class CatalogController < ApplicationController
       field.label = 'Subject Heading Keyword'
       field.solr_parameters = { :'spellcheck.dictionary' => 'subject_search' }
       field.solr_local_parameters = {
-          qf: 'subject_search',
-          pf: 'subject_search'
+          qf: 'subject_search^1.5',
+          pf: 'subject_search^1'
       }
     end
 
@@ -347,8 +347,8 @@ class CatalogController < ApplicationController
       field.separator_beneath = true
       field.solr_parameters = { :'spellcheck.dictionary' => 'genre_search' }
       field.solr_local_parameters = {
-          qf: 'genre_search',
-          pf: 'genre_search'
+          qf: 'genre_search^1.5',
+          pf: 'genre_search^1'
       }
     end
 
@@ -362,8 +362,7 @@ class CatalogController < ApplicationController
       field.label = 'ISBN/ISSN'
       field.solr_parameters = { :'spellcheck.dictionary' => 'isbn_isxn' }
       field.solr_local_parameters = {
-          qf: 'isbn_isxn',
-          pf: 'isbn_isxn'
+          qf: 'isbn_isxn^1'
       }
     end
 

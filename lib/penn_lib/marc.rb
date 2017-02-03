@@ -100,6 +100,16 @@ module PennLib
       s.strip.gsub(/\s{2,}/, ' ')
     end
 
+    # this logic matches substring-before in XSLT: if no match for sub, returns an empty string
+    def substring_before(s, sub)
+      s.scan(sub).present? ? s.split(sub, 1)[0] : ''
+    end
+
+    # this logic matches substring-after in XSLT: if no match for sub, returns an empty string
+    def substring_after(s, sub)
+      s.scan(sub).present? ? s.split(sub, 1)[1] : ''
+    end
+
     def join_and_trim_whitespace(array)
       normalize_space(array.join(' '))
     end
@@ -132,10 +142,16 @@ module PennLib
 
     # common case of wanting to extract subfields as selected by passed-in block,
     # from 880 datafield that has a particular subfield 6 value
+    # @param subf6_value [String|Array] either a single str value to look for in sub6 or an array of them
     # @param block [Proc] takes a subfield as argument, returns a boolean
     def get_880(rec, subf6_value, &block)
+      regex_value = subf6_value
+      if subf6_value.is_a?(Array)
+        regex_value = "(#{subf6_value.join('|')})"
+      end
+
       rec.fields('880')
-          .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^#{subf6_value}/ } }
+          .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^#{regex_value}/ } }
           .map do |field|
         field.select { |sf| block.call(sf) }.map(&:value).join(' ')
       end
@@ -241,6 +257,12 @@ module PennLib
     def get_format
       # TODO: there's some complex logic for determining the format of a record,
       # depending on location, 008, and other things
+    end
+
+    # returns two-char format code from MARC leader, representing two fields:
+    # "Type of record" and "Bibliographic level"
+    def get_format_from_leader(rec)
+      rec.leader[6..8]
     end
 
     def get_format_display(rec)
@@ -493,28 +515,237 @@ module PennLib
       end
     end
 
-    def get_title_search_values(rec)
-      # TODO: there are multiple title search fields in current Franklin, which one do we migrate and use here?
+    def get_title_1_search_main_values(rec, format_filter: false)
+      format = get_format_from_leader(rec)
+      rec.fields(%w{245 880}).map do |field|
+        if !format_filter || format.end_with?('s')
+          join_and_trim_whitespace(field.find_all(&subfield_not_in(%w{c 6 8 h})).map(&:value))
+        end
+      end.select { |v| v.present? }
+    end
+
+    def get_title_1_search_values(rec)
+      get_title_1_search_main_values(rec)
+    end
+
+    def get_journal_title_1_search_values(rec)
+      get_title_1_search_main_values(rec, format_filter: true)
+    end
+
+    def title_2_search_main_tags
+      @title_2_search_main_tags ||= %w{130 210 240 245 246 247 440 490 730 740 830}
+    end
+
+    def title_2_search_aux_tags
+      @title_2_search_aux_tags ||= %w{773 774 780 785}
+    end
+
+    def title_2_search_7xx_tags(rec)
+      @title_2_search_7xx_tags ||= %w{700 710 711}
+    end
+
+    def get_title_2_search_main_values(rec, format_filter: false)
+      format = get_format_from_leader(rec)
+      rec.fields(title_2_search_main_tags).map do |field|
+        if !format_filter || format.end_with?('s')
+          join_and_trim_whitespace(field.find_all(&subfield_not_in(%w{c 6 8})).map(&:value))
+        end
+      end.select { |v| v.present? }
+    end
+
+    def get_title_2_search_aux_values(rec, format_filter: false)
+      format = get_format_from_leader(rec)
+      rec.fields(title_2_search_aux_tags).map do |field|
+        if !format_filter || format.end_with?('s')
+          join_and_trim_whitespace(field.find_all(&subfield_not_in(%w{s t})).map(&:value))
+        end
+      end.select { |v| v.present? }
+    end
+
+    def get_title_2_search_7xx_values(rec, format_filter: false)
+      format = get_format_from_leader(rec)
+      rec.fields(title_2_search_aux_tags).map do |field|
+        if !format_filter || format.end_with?('s')
+          join_and_trim_whitespace(field.find_all(&subfield_in(%w{t})).map(&:value))
+        end
+      end.select { |v| v.present? }
+    end
+
+    def get_title_2_search_505_values(rec, format_filter: false)
+      format = get_format_from_leader(rec)
+      rec.fields('505')
+          .select { |f| f.indicator1 == '0' && f.indicator2 == '0' }
+          .map do |field|
+        if !format_filter || format.end_with?('s')
+          join_and_trim_whitespace(field.find_all(&subfield_in(%w{t})).map(&:value))
+        end
+      end.select { |v| v.present? }
+    end
+
+    def get_title_2_search_800_values(rec, format_filter: false)
+      format = get_format_from_leader(rec)
       acc = []
-      rec.fields(%w{245 880}).each do |field|
-        acc.concat(field.find_all(&subfield_not_in(%w{c 6 8 h})).map(&:value))
+      acc += rec.fields('880')
+                 .select { |f| f.any? { |sf| sf.code =='6' && sf.value =~ /^(130|210|240|245|246|247|440|490|730|740|830)/ } }
+                 .map do |field|
+        if !format_filter || format.end_with?('s')
+          join_and_trim_whitespace(field.find_all(&subfield_not_in(%w{c 6 8 h})).map(&:value))
+        end
+      end.select { |v| v.present? }
+      acc += rec.fields('880')
+                 .select { |f| f.any? { |sf| sf.code =='6' && sf.value =~ /^(773|774|780|785)/ } }
+                 .map do |field|
+        if !format_filter || format.end_with?('s')
+          join_and_trim_whitespace(field.find_all(&subfield_in(%w{s t})).map(&:value))
+        end
+      end.select { |v| v.present? }
+      acc += rec.fields('880')
+                 .select { |f| f.any? { |sf| sf.code =='6' && sf.value =~ /^(700|710|711)/ } }
+                 .map do |field|
+        if !format_filter || format.end_with?('s')
+          join_and_trim_whitespace(field.find_all(&subfield_in(%w{t})).map(&:value))
+        end
+      end.select { |v| v.present? }
+      acc += rec.fields('880')
+                 .select { |f| f.indicator1 == '0' && f.indicator2 == '0' }
+                 .select { |f| f.any? { |sf| sf.code =='6' && sf.value =~ /^505/ } }
+                 .map do |field|
+        if !format_filter || format.end_with?('s')
+          join_and_trim_whitespace(field.find_all(&subfield_in(%w{t})).map(&:value))
+        end
+      end.select { |v| v.present? }
+      acc
+    end
+
+    def get_title_2_search_values(rec)
+      get_title_2_search_main_values(rec) +
+          get_title_2_search_aux_values(rec) +
+          get_title_2_search_7xx_values(rec) +
+          get_title_2_search_505_values(rec) +
+          get_title_2_search_800_values(rec)
+    end
+
+    def get_journal_title_2_search_values(rec)
+      get_title_2_search_main_values(rec, format_filter: true) +
+          get_title_2_search_aux_values(rec, format_filter: true) +
+          get_title_2_search_7xx_values(rec, format_filter: true) +
+          get_title_2_search_505_values(rec, format_filter: true) +
+          get_title_2_search_800_values(rec, format_filter: true)
+    end
+
+    def get_author_creator_values(rec)
+      rec.fields(%w{100 110}).map do |field|
+        get_name_1xx_field(field)
+      end
+    end
+
+    def get_author_creator_1_search_values(rec)
+      acc = []
+      acc += rec.fields(%w{100 110}).map do |field|
+        pieces = field.map do |sf|
+          if sf.code == 'a'
+            after_comma = join_and_trim_whitespace([ trim_trailing_comma(substring_before(sf.value, ', ')) ])
+            before_comma = substring_before(sf.value, ', ')
+            " #{after_comma} #{before_comma}"
+          elsif(! %W{a 4 6 8}.member?(sf.code))
+            " #{sf.value}"
+          elsif sf.code == '4'
+            ", #{relator_codes[sf.value]}"
+          end
+        end.compact
+        value = join_and_trim_whitespace(pieces)
+        if value.end_with?('.') || value.end_with?('-')
+          value
+        else
+          value + '.'
+        end
+      end
+      acc += rec.fields(%w{100 110}).map do |field|
+        pieces = field.map do |sf|
+          if(! %W{4 6 8}.member?(sf.code))
+            " #{sf.value}"
+          elsif sf.code == '4'
+            ", #{relator_codes[sf.value]}"
+          end
+        end.compact
+        value = join_and_trim_whitespace(pieces)
+        if value.end_with?('.') || value.end_with?('-')
+          value
+        else
+          value + '.'
+        end
+      end
+      acc += rec.fields(%w{880})
+                 .select { |f| f.any? { |sf| sf.code =='6' && sf.value =~ /^(100|110)/ } }
+                 .map do |field|
+        suba = field.find_all(&subfield_in(%w{a})).map do |sf|
+          after_comma = join_and_trim_whitespace([ trim_trailing_comma(substring_before(sf.value, ',')) ])
+          before_comma = substring_before(sf.value, ', ')
+          "#{after_comma} #{before_comma}"
+        end.first
+        oth = join_and_trim_whitespace(field.find_all(&subfield_not_in(%w{6 8 a t})).map(&:value))
+        [suba, oth].join(' ')
       end
       acc
     end
 
-    def get_author_values(rec)
-      rec.fields(%w{100 110}).map do |field|
-        get_name_1xx_field(field)
-      end
+    def author_2_tags
+      @author_2_tags ||= %w{100 110 111 400 410 411 700 710 711 800 810 811}
     end
 
-    def get_author_search_values(rec)
-      # TODO: this is not right; figure out why there are
-      # author_creator_1_search or author_creator_2_search fields
-      # and which ones we should migrate and use here
-      rec.fields(%w{100 110}).map do |field|
-        get_name_1xx_field(field)
-      end
+    def get_author_creator_2_search_values(rec)
+      acc = []
+      acc += rec.fields(author_2_tags).map do |field|
+        pieces1 = field.map do |sf|
+          if(! %W{4 5 6 8 t}.member?(sf.code))
+            " #{sf.value}"
+          elsif sf.code == '4'
+            ", #{relator_codes[sf.value]}"
+          end
+        end.compact
+        value1 = join_and_trim_whitespace(pieces1)
+        if value1.end_with?('.') || value1.end_with?('-')
+          value1
+        else
+          value1 + '.'
+        end
+
+        pieces2 = field.map do |sf|
+          if sf.code == 'a'
+            after_comma = join_and_trim_whitespace([ trim_trailing_comma(substring_before(sf.value, ', ')) ])
+            before_comma = substring_before(sf.value, ', ')
+            " #{after_comma} #{before_comma}"
+          elsif(! %W{a 4 5 6 8 t}.member?(sf.code))
+            " #{sf.value}"
+          elsif sf.code == '4'
+            ", #{relator_codes[sf.value]}"
+          end
+        end.compact
+        value2 = join_and_trim_whitespace(pieces2)
+        if value2.end_with?('.') || value2.end_with?('-')
+          value2
+        else
+          value2 + '.'
+        end
+
+        [ value1, value2 ]
+      end.flatten(1)
+      acc += rec.fields(%w{880})
+                 .select { |f| f.any? { |sf| sf.code =='6' && sf.value =~ /^(100|110|111|400|410|411|700|710|711|800|810|811)/ } }
+                 .map do |field|
+        value1 = join_and_trim_whitespace(field.find_all(&subfield_not_in(%w{5 6 8 t})).map(&:value))
+
+        suba = field.find_all(&subfield_in(%w{a})).map do |sf|
+          after_comma = join_and_trim_whitespace([ trim_trailing_comma(substring_before(sf.value, ',')) ])
+          before_comma = substring_before(sf.value, ', ')
+          "#{after_comma} #{before_comma}"
+        end.first
+        oth = join_and_trim_whitespace(field.find_all(&subfield_not_in(%w{5 6 8 a t})).map(&:value))
+        value2 = [ suba, oth ].join(' ')
+
+        [ value1, value2 ]
+      end.flatten(1)
+      acc
     end
 
     def get_title_values(rec)
@@ -1333,7 +1564,7 @@ module PennLib
       acc = []
       acc += rec.fields('022').map do |field|
         join_subfields(field, &subfield_in(%w{a z}))
-      end.select(&:present?).select(&:present?)
+      end.select(&:present?)
       acc += get_880(rec, '022') do |sf|
         %w{a z}.member?(sf.code)
       end
@@ -1368,6 +1599,20 @@ module PennLib
       rec.fields('501').map do |field|
         join_subfields(field, &subfield_not_in(%w{a}))
       end.select(&:present?)
+    end
+
+    def get_call_number_search_values(rec)
+      # TODO: Alma has "Call number", "Alternative call number" and "Temporary call number" subfields;
+      # use 'hld' instead?
+      rec.fields('itm').map do |item|
+        cn_type = item.find_all { |sf| sf.code == 'cntype' }.map { |sf| cn_type = sf.value }.first
+
+        item.find_all { |sf| sf.code == 'cnf' }
+                      .map(&:value)
+                      .select { |call_num| call_num.present? }
+                      .map { |call_num| call_num[0] }
+                      .compact
+      end.flatten(1)
     end
 
   end
