@@ -151,7 +151,7 @@ module PennLib
       end
 
       rec.fields('880')
-          .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^#{regex_value}/ } }
+          .select { |f| has_subfield6_value(f, /^#{regex_value}/) }
           .map do |field|
         field.select { |sf| block.call(sf) }.map(&:value).join(' ')
       end
@@ -173,6 +173,12 @@ module PennLib
       end
       acc += get_880_subfield_not_6_or_8(rec, tag)
       acc
+    end
+
+    # returns true if field's subfield 6 has a value that matches
+    # passed-in regex
+    def has_subfield6_value(field, regex)
+      field.any? { |sf| sf.code == '6' && sf.value =~ regex }
     end
 
     # for a string 's', return a hash of ref_type => Array of references,
@@ -277,11 +283,11 @@ module PennLib
         join_subfields(field, &subfield_not_in(%w{0 2 6 8}))
       end
       results += rec.fields('880').map do |field|
-        if field.any? { |sf| sf.code == '6' && sf.value =~ /^300/ }
+        if has_subfield6_value(field,/^300/)
           join_subfields(field, &subfield_not_in(%w{3 6 8}))
-        elsif field.any? { |sf| sf.code == '6' && sf.value =~ /^(254|255|310|342|352|362)/ }
+        elsif has_subfield6_value(field, /^(254|255|310|342|352|362)/)
           join_subfields(field, &subfield_not_in(%w{6 8}))
-        elsif field.any? { |sf| sf.code == '6' && sf.value =~ /^340/ }
+        elsif has_subfield6_value(field, /^340/)
           join_subfields(field, &subfield_not_in(%w{0 2 6 8}))
         else
           []
@@ -395,13 +401,13 @@ module PennLib
         acc << join_subfields(field, &subfield_not_6_or_8)
       end
       rec.fields('880')
-          .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^(260|261|262)/ } }
+          .select { |f| has_subfield6_value(f, /^(260|261|262)/) }
           .take(1)
           .each do |field|
         acc << join_subfields(field, &subfield_not_6_or_8)
       end
       rec.fields('880')
-          .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^245/ } }
+          .select { |f| has_subfield6_value(f, /^245/) }
           .each do |field|
         acc << join_subfields(field, &subfield_in(['f']))
       end
@@ -504,7 +510,7 @@ module PennLib
 
     def get_genre_display(rec, should_link)
       rec.fields
-          .select { |f| f.tag == '655' || (f.tag == '880' && f.any? { |sf| sf.code == '6' && sf.value =~ /655/ }) }
+          .select { |f| f.tag == '655' || (f.tag == '880' && has_subfield6_value(f, /655/)) }
           .map do |field|
         sub_with_hyphens = field.find_all(&subfield_not_in(%w{0 2 5 6 8 c e w})).map do |sf|
           sep = ! %w{a b }.member?(sf.code) ? ' -- ' : ' '
@@ -804,7 +810,7 @@ module PennLib
             link_type: 'title_search' }
       end
       rec.fields('880')
-          .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^(130|240|730)/ } }
+          .select { |f| has_subfield6_value(f, /^(130|240|730)/) }
           .select { |f| f.none? { |sf| sf.code == 'i'} }
           .each do |field|
         title = join_subfields(field, &subfield_not_in(%w{5 6 8 e w}))
@@ -854,7 +860,7 @@ module PennLib
         { value: conf, value_append: conf_append, link_type: 'author_xfacet' }
       end
       results += rec.fields('880')
-          .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^(111|711)/ } }
+          .select { |f| has_subfield6_value(f, /^(111|711)/) }
           .select { |f| f.none? { |sf| sf.code == 'i' } }
           .map do |field|
         conf = join_subfields(field, &subfield_not_in(%w{4 5 6 8 e j w}))
@@ -915,7 +921,7 @@ module PennLib
       end
 
       rec.fields('880')
-          .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^(800|810|811|830|400|410|411|440|490)/ } }
+          .select { |f| has_subfield6_value(f, /^(800|810|811|830|400|410|411|440|490)/) }
           .each do |field|
         series = join_subfields(field, &subfield_in(%w{5 6 8}))
         acc << { value: series, link: false }
@@ -998,7 +1004,7 @@ module PennLib
             link_type: 'author_xfacet' }
       end
       rec.fields('880').each do |field|
-        if field.any? { |sf| sf.code == '6' && sf.value =~ /^(100|110)/ }
+        if has_subfield6_value(field, /^(100|110)/)
           subf4 = get_subfield_4ew(field)
           author_parts = []
           field.each do |sf|
@@ -1030,7 +1036,7 @@ module PennLib
         join_subfields(field, &subfield_not_in(%W{5 6 8}))
       end
       acc += rec.fields('880')
-          .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^(246|740)/ } }
+          .select { |f| has_subfield6_value(f, /^(246|740)/) }
           .map do |field|
         join_subfields(field, &subfield_not_in(%W{5 6 8}))
       end
@@ -1047,7 +1053,7 @@ module PennLib
       end
       acc += rec.fields('880')
           .select { |f| f.indicator2 == indicator2 }
-          .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^264/ } }
+          .select { |f| has_subfield6_value(f, /^264/) }
           .map do |field|
         join_subfields(field, &subfield_in(%w{a b c}))
       end
@@ -1080,7 +1086,7 @@ module PennLib
 
     def get_former_title_display(rec)
       rec.fields
-          .select { |f| f.tag == '247' || (f.tag == '880' && f.any? { |sf| sf.code == '6' && sf.value =~ /^247/}) }
+          .select { |f| f.tag == '247' || (f.tag == '880' && has_subfield6_value(f, /^247/)) }
           .map do |field|
         former_title = join_subfields(field, &subfield_not_in(%w{6 8 e w}))
         former_title_append = join_subfields(field, &subfield_in(%w{e w}))
@@ -1091,7 +1097,7 @@ module PennLib
     # logic for 'Continues' and 'Continued By' is very similar
     def get_continues(rec, tag)
       rec.fields
-          .select { |f| f.tag == tag || (f.tag == '880' && f.any? { |sf| sf.code == '6' && sf.value =~ /^#{tag}/}) }
+          .select { |f| f.tag == tag || (f.tag == '880' && has_subfield6_value(f, /^#{tag}/)) }
           .select { |f| f.any?(&subfield_in(%w{i a s t n d})) }
           .map do |field|
         join_subfields(field, &subfield_in(%w{i a s t n d}))
@@ -1117,7 +1123,7 @@ module PennLib
         # Subjects, Childrens subjects, and Medical Subjects all share this code
         acc += rec.fields
                    .select { |f| subject_600s.member?(f.tag) ||
-                      (f.tag == '800' && f.any? { |sf| sf.code == '6' && sf.value =~ /^(#{subject_600s.join('|')})/ }) }
+                      (f.tag == '800' && has_subfield6_value(f, /^(#{subject_600s.join('|')})/)) }
                    .select { |f| f.indicator2 == indicator2 }
                    .map do |field|
           value_for_link = join_subfields(field, &subfield_not_in(%w{6 8 2 e w}))
@@ -1215,22 +1221,22 @@ module PennLib
         get_sub3_and_other_subs(field, &subfield_in(%w{a b c d e f}))
       end
       acc += rec.fields('880')
-                 .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^538/ } }
+                 .select { |f| has_subfield6_value(f, /^538/) }
                  .map do |field|
         get_sub3_and_other_subs(field, &subfield_in(%w{a i u}))
       end
       acc += rec.fields('880')
-                 .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^344/ } }
+                 .select { |f| has_subfield6_value(f, /^344/) }
                  .map do |field|
         get_sub3_and_other_subs(field, &subfield_in(%w{a b c d e f g h}))
       end
       acc += rec.fields('880')
-                 .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^(345|346)/ } }
+                 .select { |f| has_subfield6_value(f, /^(345|346)/) }
                  .map do |field|
         get_sub3_and_other_subs(field, &subfield_in(%w{a b}))
       end
       acc += rec.fields('880')
-                 .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^347/ } }
+                 .select { |f| has_subfield6_value(f, /^347/) }
                  .map do |field|
         get_sub3_and_other_subs(field, &subfield_in(%w{a b c d e f}))
       end
@@ -1251,7 +1257,7 @@ module PennLib
         join_subfields(field, &subfield_not_6_or_8).split('--')
       end
       acc += rec.fields('880')
-                 .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^505/ } }
+                 .select { |f| has_subfield6_value(f, /^505/) }
                  .flat_map do |field|
         join_subfields(field, &subfield_not_6_or_8).split('--')
       end
@@ -1276,7 +1282,7 @@ module PennLib
         end
       end
       acc += rec.fields('880')
-                 .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^(500|502|504|515|518|525|533|550|580|588)/ } }
+                 .select { |f| has_subfield6_value(f, /^(500|502|504|515|518|525|533|550|580|588)/) }
                  .map do |field|
         sub6 = field.select(&subfield_in(%w{6})).map(&:value).first
         if sub6 == '588'
@@ -1317,7 +1323,7 @@ module PennLib
       end.compact
       acc += rec.fields('880')
                  .select { |f| f.indicator2 == '4' }
-                 .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^650/ }  }
+                 .select { |f| has_subfield6_value(f,/^650/) }
                  .map do |field|
         suba = field.select(&subfield_in(%w{a})).select { |sf| sf.value =~ /^(#{value}|%#{value})/ }
                    .map {|sf| sf.value.gsub(/^%?#{value}/, '') }.join(' ')
@@ -1337,7 +1343,7 @@ module PennLib
         { value: value, link: false } if value
       end.compact
       acc += rec.fields('880')
-                 .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^561/ } }
+                 .select { |f| has_subfield6_value(f, /^561/) }
                  .select { |f| ['1', '', ' '].member?(f.indicator1) && [' ', ''].member?(f.indicator2) }
                  .map do |field|
         value = join_subfields(field, &subfield_in(%w{a}))
@@ -1384,7 +1390,7 @@ module PennLib
         { value: contributor, value_append: contributor_append, link_type: 'author_xfacet' }
       end
       acc += rec.fields('880')
-                 .select { |f| (f.any? { |sf| sf.code == '6' && sf.value =~ /^(700|710)/ }) && (f.none? { |sf| sf.code == 'i' }) }
+                 .select { |f| has_subfield6_value(f, /^(700|710)/) && (f.none? { |sf| sf.code == 'i' }) }
                  .map do |field|
         contributor = join_subfields(field, &subfield_in(%w{a b c d j q}))
         contributor_append = join_subfields(field, &subfield_in(%w{e u 3}))
@@ -1424,7 +1430,7 @@ module PennLib
       end
       acc += rec.fields('880')
                  .select { |f| ['', ' '].member?(f.indicator2) }
-                 .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^(700|710|711|730)/ } }
+                 .select { |f| has_subfield6_value(f, /^(700|710|711|730)/) }
                  .select { |f| f.any? { |sf| sf.code == 't' } }
                  .map do |field|
         subi = get_subfield_i_value_from_parens(field) || ''
@@ -1457,7 +1463,7 @@ module PennLib
       end
       acc += rec.fields('880')
                  .select { |f| f.indicator2 == '2' }
-                 .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^(700|710|711|730|740)/ } }
+                 .select { |f| has_subfield6_value(f, /^(700|710|711|730|740)/) }
                  .map do |field|
         subi = get_subfield_i_value_from_parens(field) || ''
         contains = join_subfields(field, &subfield_not_in(%w{0 5 6 8 i}))
@@ -1499,7 +1505,7 @@ module PennLib
       end
       acc += rec.fields('880')
                  .select { |f| ['', ' '].member?(f.indicator2) }
-                 .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^775/ } }
+                 .select { |f| has_subfield6_value(f, /^775/) }
                  .select { |f| f.any? { |sf| sf.code == 'i' } }
                  .map do |field|
         get_other_edition_value(field)
@@ -1582,7 +1588,7 @@ module PennLib
         join_subfields(field, &subfield_not_in(%w{5 6}))
       end.select(&:present?)
       acc += rec.fields('880')
-                 .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^(024|028)/ } }
+                 .select { |f| has_subfield6_value(f, /^(024|028)/) }
                  .map do |field|
         join_subfields(field, &subfield_not_in(%w{5 6}))
       end
