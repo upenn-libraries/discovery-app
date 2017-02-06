@@ -29,9 +29,8 @@ class CatalogController < ApplicationController
 
     ## Default parameters to send to solr for all search-like requests. See also SearchBuilder#processed_parameters
     config.default_solr_params = {
-      # TODO: this is annoying, but we do this: 1) to avoid pulling in large fields
-      # unnecessarily, 2) to avoid hard-coding this list as a default value for 'fl'
-      # in solrconfig.xml (which is how the Solr config that ships with BL does it)
+      # this list is annoying to maintain, but this avoids hard-coding a field list
+      # in the search request handler in solrconfig.xml
       fl: %w{
         id
         score
