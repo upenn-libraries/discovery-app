@@ -81,7 +81,7 @@ class MarcIndexer < Blacklight::Marc::Indexer
 
     to_field "format_f_stored_single", get_format
 
-    to_field "author_creator_f", extract_marc(%W{
+    author_creator_spec = %W{
       100abcdjq
       110abcdjq
       700abcdjq
@@ -91,7 +91,14 @@ class MarcIndexer < Blacklight::Marc::Indexer
       111abcen
       711abcen
       811abcen
-    }.join(':'), :trim_punctuation => true)
+    }.join(':')
+
+    to_field "author_creator_f", extract_marc(author_creator_spec, :trim_punctuation => true)
+
+    # TODO: logic here is exactly the same as author_creator_facet: cache somehow?
+    to_field 'author_creator_xfacet', extract_marc(author_creator_spec, :trim_punctuation => true) do |r, acc|
+      acc.map! { |v| references(v) }
+    end
 
     to_field 'subject_f_stored' do |rec, acc|
       acc.concat(pennlibmarc.get_subject_facet_values(rec))
@@ -169,31 +176,20 @@ class MarcIndexer < Blacklight::Marc::Indexer
       acc.concat(pennlibmarc.get_standardized_title_values(rec))
     end
 
-    to_field 'title_xfacet',
-      extract_marc(%W{
-        245abnps
-        130#{ATOZ}
-        240abcdefgklmnopqrs
-        210ab
-        222ab
-        242abnp
-        243abcdefgklmnopqrs
-        246abcdefgnp
-        247abcdefgnp
-      }.join(':')) do |r, acc|
+    to_field 'title_xfacet' do |rec, acc|
+      acc.concat(pennlibmarc.get_title_xfacet_values(rec))
       acc.map! { |v| references(v) }
     end
 
-    to_field 'title_ssort', marc_sortable_title
+    to_field 'title_ssort' do |rec, acc|
+        acc.concat(pennlibmarc.get_title_sort_values(rec))
+    end
 
     # Author fields
 
-    to_field 'author_xfacet', extract_marc("100abcegqu:110abcdegnu:111acdegjnqu") do |r, acc|
-      acc.map! { |v| references(v) }
+    to_field 'author_creator_ssort' do |rec, acc|
+      acc.concat(pennlibmarc.get_author_creator_sort_values(rec))
     end
-
-    # JSTOR isn't an author. Try to not use it as one
-    to_field 'author_ssort', marc_sortable_author
 
     to_field 'edition' do |rec, acc|
       acc.concat(pennlibmarc.get_edition_values(rec))
@@ -215,7 +211,13 @@ class MarcIndexer < Blacklight::Marc::Indexer
       acc.concat(pennlibmarc.get_contained_within_values(rec))
     end
 
-    to_field 'pub_date_isort_stored', marc_publication_date
+    to_field 'publication_date_ssort' do |rec, acc|
+      acc.concat(pennlibmarc.get_publication_date_sort_values(rec))
+    end
+
+    to_field 'recently_added_ssort' do |rec, acc|
+      acc.concat(pennlibmarc.get_recently_added_sort_values(rec))
+    end
 
     to_field "isbn_isxn_stored",  extract_marc(%W{020az 022alz}, :separator=>nil) do |rec, acc|
       orig = acc.dup

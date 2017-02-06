@@ -445,12 +445,20 @@ module PennLib
       acc
     end
 
-    def get_publication_date_values(rec)
+    def publication_date_digits(rec)
       rec.fields('008').map { |field| field.value[7,4] }
           .select { |year| year.present? }
           .map { |year| year.gsub(/\D/, '0') }
+    end
+
+    def get_publication_date_values(rec)
+      publication_date_digits(rec)
           .select { |year| year =~ /^[1-9][0-9]/ && current_year + 15 > year.to_i }
           .map { |year| year[0, 3] + '0s' }
+    end
+
+    def get_publication_date_sort_values(rec)
+      publication_date_digits(rec)
     end
 
     def get_classification_values(rec)
@@ -519,6 +527,39 @@ module PennLib
         eandw_with_hyphens = field.find_all(&subfield_in(%w{e w})).join(' -- ')
         { value: sub_with_hyphens, value_append: eandw_with_hyphens, link: should_link, link_type: 'genre_search' }
       end
+    end
+
+    def get_title_245(rec)
+      acc = []
+      # TODO: odd use of tabs; do we still need to do this?
+      rec.fields('245').take(1).each do |field|
+        value = ''
+        offset = (field.indicator2 == ' ' ? '0' : field.indicator2).to_i
+        suba = join_subfields(field, &subfield_in(%w{a}))
+        if offset > 0 && offset < 10
+          part1 = suba[0..offset-1]
+          part2 = suba[offset-1..-1]
+          value += [ part1, part2 ].join("\t")
+        else
+          if suba.present?
+            value += suba.gsub(/^\[/, "[\t")
+          else
+            subk = join_subfields(field, &subfield_in(%w{k}))
+            value += subk.gsub(/^\[/, "[\t")
+          end
+        end
+        value = [ value, join_subfields(field, &subfield_in(%w{bnp})) ].join(' ')
+        acc << value
+      end
+      acc
+    end
+
+    def get_title_xfacet_values(rec)
+      get_title_245(rec)
+    end
+
+    def get_title_sort_values(rec)
+      get_title_245(rec).map { |v| v.gsub(/^.*\t/, '') }
     end
 
     def get_title_1_search_main_values(rec, format_filter: false)
@@ -639,8 +680,12 @@ module PennLib
           get_title_2_search_800_values(rec, format_filter: true)
     end
 
+    def author_creator_tags
+      @author_creator_tags ||= %w{100 110}
+    end
+
     def get_author_creator_values(rec)
-      rec.fields(%w{100 110}).map do |field|
+      rec.fields(author_creator_tags).map do |field|
         get_name_1xx_field(field)
       end
     end
@@ -695,13 +740,13 @@ module PennLib
       acc
     end
 
-    def author_2_tags
-      @author_2_tags ||= %w{100 110 111 400 410 411 700 710 711 800 810 811}
+    def author_creator_2_tags
+      @author_creator_2_tags ||= %w{100 110 111 400 410 411 700 710 711 800 810 811}
     end
 
     def get_author_creator_2_search_values(rec)
       acc = []
-      acc += rec.fields(author_2_tags).map do |field|
+      acc += rec.fields(author_creator_2_tags).map do |field|
         pieces1 = field.map do |sf|
           if(! %W{4 5 6 8 t}.member?(sf.code))
             " #{sf.value}"
@@ -752,6 +797,12 @@ module PennLib
         [ value1, value2 ]
       end.flatten(1)
       acc
+    end
+
+    def get_author_creator_sort_values(rec)
+      rec.fields(author_creator_tags).take(1).map do |field|
+        join_subfields(field, &subfield_not_in(%w{468e}))
+      end
     end
 
     def get_title_values(rec)
@@ -857,7 +908,7 @@ module PennLib
           conf = join_subfields(field, &subfield_not_in(%w{4 5 6 8 e j w}))
         end
         conf_append = join_subfields(field, &subfield_in(%w{e j w}))
-        { value: conf, value_append: conf_append, link_type: 'author_xfacet' }
+        { value: conf, value_append: conf_append, link_type: 'author_creator_xfacet' }
       end
       results += rec.fields('880')
           .select { |f| has_subfield6_value(f, /^(111|711)/) }
@@ -865,7 +916,7 @@ module PennLib
           .map do |field|
         conf = join_subfields(field, &subfield_not_in(%w{4 5 6 8 e j w}))
         conf_extra = join_subfields(field, &subfield_in(%w{4 e j w}))
-        { value: conf, value_append: conf_extra, link_type: 'author_xfacet' }
+        { value: conf, value_append: conf_extra, link_type: 'author_creator_xfacet' }
       end
       results
     end
@@ -1001,7 +1052,7 @@ module PennLib
         acc << {
             value: author_parts.join(' '),
             value_append: subf4,
-            link_type: 'author_xfacet' }
+            link_type: 'author_creator_xfacet' }
       end
       rec.fields('880').each do |field|
         if has_subfield6_value(field, /^(100|110)/)
@@ -1015,7 +1066,7 @@ module PennLib
           acc << {
               value: author_parts.join(' '),
               value_append: subf4,
-              link_type: 'author_xfacet' }
+              link_type: 'author_creator_xfacet' }
         end
       end
       acc
@@ -1387,14 +1438,14 @@ module PennLib
             " #{sf.value}"
           end
         end.join
-        { value: contributor, value_append: contributor_append, link_type: 'author_xfacet' }
+        { value: contributor, value_append: contributor_append, link_type: 'author_creator_xfacet' }
       end
       acc += rec.fields('880')
                  .select { |f| has_subfield6_value(f, /^(700|710)/) && (f.none? { |sf| sf.code == 'i' }) }
                  .map do |field|
         contributor = join_subfields(field, &subfield_in(%w{a b c d j q}))
         contributor_append = join_subfields(field, &subfield_in(%w{e u 3}))
-        { value: contributor, value_append: contributor_append, link_type: 'author_xfacet' }
+        { value: contributor, value_append: contributor_append, link_type: 'author_creator_xfacet' }
       end
       acc
     end
@@ -1492,7 +1543,7 @@ module PennLib
           value: other_editions,
           value_prepend: trim_trailing_period(subi),
           value_append: other_editions_append,
-          link_type: 'author_xfacet'
+          link_type: 'author_creator_xfacet'
       }
     end
 
@@ -1619,6 +1670,11 @@ module PennLib
                       .map { |call_num| call_num[0] }
                       .compact
       end.flatten(1)
+    end
+
+    def get_recently_added_sort_values(rec)
+      # TODO: this data doesn't seem to be available from Alma's enriched marc
+      []
     end
 
   end
