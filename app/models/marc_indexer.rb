@@ -231,47 +231,6 @@ class MarcIndexer < Blacklight::Marc::Indexer
       acc.concat(pennlibmarc.get_call_number_search_values(rec))
     end
 
-    # URL Fields
-
-    notfulltext = /abstract|description|sample text|table of contents|/i
-
-    to_field('url_fulltext_display_a') do |rec, acc|
-      rec.fields('856').each do |f|
-        case f.indicator2
-        when '0'
-          f.find_all{|sf| sf.code == 'u'}.each do |url|
-            acc << url.value
-          end
-        when '2'
-          # do nothing
-        else
-          z3 = [f['z'], f['3']].join(' ')
-          unless notfulltext.match(z3)
-            acc << f['u'] unless f['u'].nil?
-          end
-        end
-      end
-    end
-
-    # Very similar to url_fulltext_display. Should DRY up.
-    to_field 'url_suppl_display_a' do |rec, acc|
-      rec.fields('856').each do |f|
-        case f.indicator2
-        when '2'
-          f.find_all{|sf| sf.code == 'u'}.each do |url|
-            acc << url.value
-          end
-        when '0'
-          # do nothing
-        else
-          z3 = [f['z'], f['3']].join(' ')
-          if notfulltext.match(z3)
-            acc << f['u'] unless f['u'].nil?
-          end
-        end
-      end
-    end
-
     to_field 'physical_holdings_json' do |rec, acc|
       result = pennlibmarc.get_physical_holdings(rec)
       if result.present?

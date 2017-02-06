@@ -46,8 +46,6 @@ class CatalogController < ApplicationController
         series
         publication_a
         contained_within_a
-        url_fulltext_display_a
-        url_suppl_display_a
         physical_holdings_json
         electronic_holdings_json
       }.join(','),
