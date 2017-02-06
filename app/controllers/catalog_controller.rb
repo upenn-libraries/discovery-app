@@ -29,9 +29,8 @@ class CatalogController < ApplicationController
 
     ## Default parameters to send to solr for all search-like requests. See also SearchBuilder#processed_parameters
     config.default_solr_params = {
-      # TODO: this is annoying, but we do this: 1) to avoid pulling in large fields
-      # unnecessarily, 2) to avoid hard-coding this list as a default value for 'fl'
-      # in solrconfig.xml (which is how the Solr config that ships with BL does it)
+      # this list is annoying to maintain, but this avoids hard-coding a field list
+      # in the search request handler in solrconfig.xml
       fl: %w{
         id
         score
@@ -46,8 +45,6 @@ class CatalogController < ApplicationController
         series
         publication_a
         contained_within_a
-        url_fulltext_display_a
-        url_suppl_display_a
         physical_holdings_json
         electronic_holdings_json
       }.join(','),
@@ -59,7 +56,7 @@ class CatalogController < ApplicationController
     #config.solr_path = 'select'
 
     # items to show per page, each number in the array represent another option to choose from.
-    #config.per_page = [10,20,50,100]
+    config.per_page = [25, 50, 100]
 
     ## Default parameters to send on single-document requests to Solr. These settings are the Blackligt defaults (see SearchHelper#solr_doc_params) or
     ## parameters included in the Blacklight-jetty document requestHandler.
@@ -124,10 +121,12 @@ class CatalogController < ApplicationController
     # config.add_facet_field 'pub_date_isort', label: 'Publication Year', range: true, collapse: false,
     #                        include_in_advanced_search: false
 
-    config.add_facet_field 'subject_xfacet', label: 'Topic', limit: 20, index_range: 'A'..'Z', show: false, xfacet: true, facet_for_filtering: 'subject_f'
-    config.add_facet_field 'title_xfacet', label: 'Title', limit: 20, index_range: 'A'..'Z', show: false, xfacet: true,
-                           xfacet_rbrowse_fields: %w(publication format)
-    config.add_facet_field 'author_xfacet', label: 'Author', limit: 20, index_range: 'A'..'Z', show: false, xfacet: true
+    config.add_facet_field 'subject_xfacet', label: 'Topic', limit: 20, show: false,
+                           xfacet: true, facet_for_filtering: 'subject_f'
+    config.add_facet_field 'title_xfacet', label: 'Title', limit: 20, show: false,
+                           xfacet: true, xfacet_rbrowse_fields: %w(publication format)
+    config.add_facet_field 'author_creator_xfacet', label: 'Author', limit: 20, show: false,
+                           xfacet: true, facet_for_filtering: 'author_creator_f'
 
     # Have BL send all facet field names to Solr, which has been the default
     # previously. Simply remove these lines if you'd rather use Solr request
@@ -274,6 +273,7 @@ class CatalogController < ApplicationController
           qf: 'marcrecord_xml^0.25 call_number_search^0.5 subject_search^1.0 title_1_search^2.5 title_2_search^1.5 author_creator_1_search^3 author_creator_2_search^2 isbn_isxn^0.25',
           pf: 'marcrecord_xml^0.25 call_number_search^0.5 subject_search^1.0 title_1_search^2.5 title_2_search^1.5 author_creator_1_search^3 author_creator_2_search^2 isbn_isxn^0.25'
       }
+      field.include_in_advanced_search = false
     end
 
     config.add_search_field('title_xfacet') do |field|
@@ -311,9 +311,9 @@ class CatalogController < ApplicationController
       }
     end
 
-    config.add_search_field('author_xfacet') do |field|
+    config.add_search_field('author_creator_xfacet') do |field|
       field.label = 'Author Browse (last name first)'
-      field.action = '/catalog/xbrowse/author_xfacet'
+      field.action = '/catalog/xbrowse/author_creator_xfacet'
       field.include_in_advanced_search = false
     end
 
@@ -378,10 +378,14 @@ class CatalogController < ApplicationController
     # label in pulldown is followed by the name of the SOLR field to sort by and
     # whether the sort is ascending or descending (it must be asc or desc
     # except in the relevancy case).
-    config.add_sort_field 'score desc, pub_date_isort desc, title_ssort asc', label: 'relevance'
-    config.add_sort_field 'pub_date_isort desc, title_ssort asc', label: 'year'
-    config.add_sort_field 'author_ssort asc, title_ssort asc', label: 'author'
-    config.add_sort_field 'title_ssort asc, pub_date_isort desc', label: 'title'
+    config.add_sort_field 'score desc', label: 'Relevance'
+    config.add_sort_field 'title_ssort asc', label: 'Title (a-z)'
+    config.add_sort_field 'title_ssort desc', label: 'Title (z-a)'
+    config.add_sort_field 'author_creator_ssort asc', label: 'Author (a-z)'
+    config.add_sort_field 'author_creator_ssort desc', label: 'Author (z-a)'
+    config.add_sort_field 'publication_date_ssort desc, title_ssort asc', label: 'Pub date (new-old)'
+    config.add_sort_field 'publication_date_ssort asc, title_ssort asc', label: 'Pub date (old-new)'
+    config.add_sort_field 'recently_added_ssort desc', label: 'Date added (new-old)'
 
     # If there are more than this many search results, no spelling ("did you
     # mean") suggestion is offered.
