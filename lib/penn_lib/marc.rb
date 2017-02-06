@@ -260,6 +260,76 @@ module PennLib
       end.compact
     end
 
+    # @returns [Array] of string field tags to examine for subjects
+    def subject_600s
+      @subject_600s ||= %w{600 610 611 630 650 651}
+    end
+
+    def get_subjects_from_600s_and_800(rec, indicator2)
+      acc = []
+      if %w{0 1 2}.member?(indicator2)
+        # Subjects, Childrens subjects, and Medical Subjects all share this code
+        acc += rec.fields
+                   .select { |f| subject_600s.member?(f.tag) ||
+                      (f.tag == '800' && has_subfield6_value(f, /^(#{subject_600s.join('|')})/)) }
+                   .select { |f| f.indicator2 == indicator2 }
+                   .map do |field|
+          value_for_link = join_subfields(field, &subfield_not_in(%w{6 8 2 e w}))
+          sub_with_hyphens = field.select(&subfield_not_in(%w{6 8 2 e w})).map do |sf|
+            pre = !%w{a b c d p q t}.member?(sf.code) ? ' -- ' : ' '
+            pre + sf.value + (sf.code == 'p' ? '.' : '')
+          end.join(' ')
+          eandw_with_hyphens = field.select(&subfield_in(%w{e w})).map do |sf|
+            ' -- ' + sf.value
+          end.join(' ')
+          {
+              value: sub_with_hyphens,
+              value_for_link: value_for_link,
+              value_append: eandw_with_hyphens,
+              link_type: 'subject_xfacet'
+          }
+        end
+      elsif indicator2 == '4'
+        # Local subjects
+        acc += rec.fields(subject_600s)
+                   .select { |f| f.indicator2 == '4' }
+                   .map do |field|
+          suba = field.select(&subfield_in(%w{a}))
+                     .select { |sf| sf.value !~ /^%?(PRO|CHR)/ }
+                     .map(&:value).join(' ')
+          sub_oth = field.select(&subfield_not_in(%w{a 6 8})).map do |sf|
+            pre = !%w{b c d p q t}.member?(sf.code) ? ' -- ' : ' '
+            pre + sf.value + (sf.code == 'p' ? '.' : '')
+          end
+          subj_display = [ suba, sub_oth ].join(' ')
+          sub_oth_no_hyphens = join_subfields(field, &subfield_not_in(%w{a 6 8}))
+          subj_search = [ suba, sub_oth_no_hyphens ].join(' ')
+          {
+              value: subj_display,
+              value_for_link: subj_search,
+              link_type: 'subject_search'
+          }
+        end
+      end
+      acc
+    end
+
+    def get_subject_display(rec)
+      get_subjects_from_600s_and_800(rec, '0')
+    end
+
+    def get_children_subject_display(rec)
+      get_subjects_from_600s_and_800(rec, '1')
+    end
+
+    def get_medical_subject_display(rec)
+      get_subjects_from_600s_and_800(rec, '2')
+    end
+
+    def get_local_subject_display(rec)
+      get_subjects_from_600s_and_800(rec, '4')
+    end
+
     def get_format
       # TODO: there's some complex logic for determining the format of a record,
       # depending on location, 008, and other things
@@ -527,6 +597,31 @@ module PennLib
         eandw_with_hyphens = field.find_all(&subfield_in(%w{e w})).join(' -- ')
         { value: sub_with_hyphens, value_append: eandw_with_hyphens, link: should_link, link_type: 'genre_search' }
       end
+    end
+
+    def get_title_values(rec)
+      acc = []
+      rec.fields('245').take(1).each do |field|
+        a_or_k = field.find_all(&subfield_in(%w{a k}))
+                     .map { |sf| trim_trailing_comma(trim_trailing_slash(sf.value).rstrip) }
+                     .first
+        joined = field.find_all(&subfield_in(%w{b n p}))
+                     .map{ |sf| trim_trailing_slash(sf.value) }
+                     .join(' ')
+
+        apunct = a_or_k[-1]
+        hpunct = field.find_all { |sf| sf.code == 'h' }
+                     .map{ |sf| sf.value[-1] }
+                     .first
+        punct = if [apunct, hpunct].member?('=') then
+                  '='
+                else
+                  [apunct, hpunct].member?(':') ? ':' : nil
+                end
+
+        acc << [ trim_trailing_colon(trim_trailing_equal(a_or_k)), punct, joined ].compact.join(' ')
+      end
+      acc
     end
 
     def get_title_245(rec)
@@ -805,27 +900,35 @@ module PennLib
       end
     end
 
-    def get_title_values(rec)
+    def get_author_display(rec)
       acc = []
-      rec.fields('245').take(1).each do |field|
-        a_or_k = field.find_all(&subfield_in(%w{a k}))
-                     .map { |sf| trim_trailing_comma(trim_trailing_slash(sf.value).rstrip) }
-                     .first
-        joined = field.find_all(&subfield_in(%w{b n p}))
-                     .map{ |sf| trim_trailing_slash(sf.value) }
-                     .join(' ')
-
-        apunct = a_or_k[-1]
-        hpunct = field.find_all { |sf| sf.code == 'h' }
-                     .map{ |sf| sf.value[-1] }
-                     .first
-        punct = if [apunct, hpunct].member?('=') then
-                  '='
-                else
-                  [apunct, hpunct].member?(':') ? ':' : nil
-                end
-
-        acc << [ trim_trailing_colon(trim_trailing_equal(a_or_k)), punct, joined ].compact.join(' ')
+      rec.fields(%w{100 110}).each do |field|
+        subf4 = get_subfield_4ew(field)
+        author_parts = []
+        field.each do |sf|
+          if !%W{4 6 8 e w}.member?(sf.code)
+            author_parts << sf.value
+          end
+        end
+        acc << {
+            value: author_parts.join(' '),
+            value_append: subf4,
+            link_type: 'author_creator_xfacet' }
+      end
+      rec.fields('880').each do |field|
+        if has_subfield6_value(field, /^(100|110)/)
+          subf4 = get_subfield_4ew(field)
+          author_parts = []
+          field.each do |sf|
+            if !%W{4 6 8 e w}.member?(sf.code)
+              author_parts << sf.value.gsub(/\?$/, '')
+            end
+          end
+          acc << {
+              value: author_parts.join(' '),
+              value_append: subf4,
+              link_type: 'author_creator_xfacet' }
+        end
       end
       acc
     end
@@ -1039,39 +1142,6 @@ module PennLib
           .join('')
     end
 
-    def get_author_display(rec)
-      acc = []
-      rec.fields(%w{100 110}).each do |field|
-        subf4 = get_subfield_4ew(field)
-        author_parts = []
-        field.each do |sf|
-          if !%W{4 6 8 e w}.member?(sf.code)
-            author_parts << sf.value
-          end
-        end
-        acc << {
-            value: author_parts.join(' '),
-            value_append: subf4,
-            link_type: 'author_creator_xfacet' }
-      end
-      rec.fields('880').each do |field|
-        if has_subfield6_value(field, /^(100|110)/)
-          subf4 = get_subfield_4ew(field)
-          author_parts = []
-          field.each do |sf|
-            if !%W{4 6 8 e w}.member?(sf.code)
-              author_parts << sf.value.gsub(/\?$/, '')
-            end
-          end
-          acc << {
-              value: author_parts.join(' '),
-              value_append: subf4,
-              link_type: 'author_creator_xfacet' }
-        end
-      end
-      acc
-    end
-
     def get_title_extra(field)
       join_subfields(field, &subfield_in(%W{e w}))
     end
@@ -1161,76 +1231,6 @@ module PennLib
 
     def get_continued_by_display(rec)
       get_continues(rec, '785')
-    end
-
-    # @returns [Array] of string field tags to examine for subjects
-    def subject_600s
-      @subject_600s ||= %w{600 610 611 630 650 651}
-    end
-
-    def get_subjects_from_600s_and_800(rec, indicator2)
-      acc = []
-      if %w{0 1 2}.member?(indicator2)
-        # Subjects, Childrens subjects, and Medical Subjects all share this code
-        acc += rec.fields
-                   .select { |f| subject_600s.member?(f.tag) ||
-                      (f.tag == '800' && has_subfield6_value(f, /^(#{subject_600s.join('|')})/)) }
-                   .select { |f| f.indicator2 == indicator2 }
-                   .map do |field|
-          value_for_link = join_subfields(field, &subfield_not_in(%w{6 8 2 e w}))
-          sub_with_hyphens = field.select(&subfield_not_in(%w{6 8 2 e w})).map do |sf|
-            pre = !%w{a b c d p q t}.member?(sf.code) ? ' -- ' : ' '
-            pre + sf.value + (sf.code == 'p' ? '.' : '')
-          end.join(' ')
-          eandw_with_hyphens = field.select(&subfield_in(%w{e w})).map do |sf|
-            ' -- ' + sf.value
-          end.join(' ')
-          {
-              value: sub_with_hyphens,
-              value_for_link: value_for_link,
-              value_append: eandw_with_hyphens,
-              link_type: 'subject_xfacet'
-          }
-        end
-      elsif indicator2 == '4'
-        # Local subjects
-        acc += rec.fields(subject_600s)
-                   .select { |f| f.indicator2 == '4' }
-                   .map do |field|
-          suba = field.select(&subfield_in(%w{a}))
-                     .select { |sf| sf.value !~ /^%?(PRO|CHR)/ }
-                     .map(&:value).join(' ')
-          sub_oth = field.select(&subfield_not_in(%w{a 6 8})).map do |sf|
-            pre = !%w{b c d p q t}.member?(sf.code) ? ' -- ' : ' '
-            pre + sf.value + (sf.code == 'p' ? '.' : '')
-          end
-          subj_display = [ suba, sub_oth ].join(' ')
-          sub_oth_no_hyphens = join_subfields(field, &subfield_not_in(%w{a 6 8}))
-          subj_search = [ suba, sub_oth_no_hyphens ].join(' ')
-          {
-              value: subj_display,
-              value_for_link: subj_search,
-              link_type: 'subject_search'
-          }
-        end
-      end
-      acc
-    end
-
-    def get_subject_display(rec)
-      get_subjects_from_600s_and_800(rec, '0')
-    end
-
-    def get_children_subject_display(rec)
-      get_subjects_from_600s_and_800(rec, '1')
-    end
-
-    def get_medical_subject_display(rec)
-      get_subjects_from_600s_and_800(rec, '2')
-    end
-
-    def get_local_subject_display(rec)
-      get_subjects_from_600s_and_800(rec, '4')
     end
 
     def get_place_of_publication_display(rec)
