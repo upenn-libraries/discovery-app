@@ -122,10 +122,12 @@ class CatalogController < ApplicationController
     # config.add_facet_field 'pub_date_isort', label: 'Publication Year', range: true, collapse: false,
     #                        include_in_advanced_search: false
 
-    config.add_facet_field 'subject_xfacet', label: 'Topic', limit: 20, index_range: 'A'..'Z', show: false, xfacet: true, facet_for_filtering: 'subject_f'
-    config.add_facet_field 'title_xfacet', label: 'Title', limit: 20, index_range: 'A'..'Z', show: false, xfacet: true,
-                           xfacet_rbrowse_fields: %w(publication format)
-    config.add_facet_field 'author_creator_xfacet', label: 'Author', limit: 20, index_range: 'A'..'Z', show: false, xfacet: true
+    config.add_facet_field 'subject_xfacet', label: 'Topic', limit: 20, show: false,
+                           xfacet: true, facet_for_filtering: 'subject_f'
+    config.add_facet_field 'title_xfacet', label: 'Title', limit: 20, show: false,
+                           xfacet: true, xfacet_rbrowse_fields: %w(publication format)
+    config.add_facet_field 'author_creator_xfacet', label: 'Author', limit: 20, show: false,
+                           xfacet: true, facet_for_filtering: 'author_creator_f'
 
     # Have BL send all facet field names to Solr, which has been the default
     # previously. Simply remove these lines if you'd rather use Solr request
@@ -272,6 +274,7 @@ class CatalogController < ApplicationController
           qf: 'marcrecord_xml^0.25 call_number_search^0.5 subject_search^1.0 title_1_search^2.5 title_2_search^1.5 author_creator_1_search^3 author_creator_2_search^2 isbn_isxn^0.25',
           pf: 'marcrecord_xml^0.25 call_number_search^0.5 subject_search^1.0 title_1_search^2.5 title_2_search^1.5 author_creator_1_search^3 author_creator_2_search^2 isbn_isxn^0.25'
       }
+      field.include_in_advanced_search = false
     end
 
     config.add_search_field('title_xfacet') do |field|
