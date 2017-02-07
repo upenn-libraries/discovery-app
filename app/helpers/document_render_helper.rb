@@ -27,8 +27,7 @@ module DocumentRenderHelper
       electronic_holdings.each do |electronic_holdings_json|
         electronic_holdings_struct = JSON.parse(electronic_holdings_json)
         content = electronic_holdings_struct.map do |holding|
-          url = holding['url'].gsub(/rft.mms_id=[^&]/, '') +
-              "&rfr_id=info:sid/primo.exlibrisgroup.com&svc_dat=viewit&portfolio_pid=#{holding['portfolio_pid']}"
+          url = alma_electronic_resource_direct_link(holding['portfolio_pid'])
           coverage = holding['coverage'] ? content_tag('span', ' - ' + holding['coverage']) : ''
           link = content_tag('a', holding['collection'], { href: url })
           content_tag('div', link + coverage)
