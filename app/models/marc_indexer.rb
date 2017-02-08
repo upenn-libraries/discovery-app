@@ -76,7 +76,7 @@ class MarcIndexer < Blacklight::Marc::Indexer
     # end
 
     to_field "access_f_stored" do |rec, acc|
-      pennlibmarc.get_access_values(rec)
+      acc.concat(pennlibmarc.get_access_values(rec))
     end
 
     to_field "format_f_stored_single", get_format
@@ -101,121 +101,122 @@ class MarcIndexer < Blacklight::Marc::Indexer
     end
 
     to_field 'subject_f_stored' do |rec, acc|
-      pennlibmarc.get_subject_facet_values(rec)
+      acc.concat(pennlibmarc.get_subject_facet_values(rec))
     end
 
     to_field 'subject_search' do |rec, acc|
-      pennlibmarc.get_subject_search_values(rec)
+      acc.concat(pennlibmarc.get_subject_search_values(rec))
     end
 
     to_field 'subject_xfacet' do |rec, acc|
-      pennlibmarc.get_subject_xfacet_values(rec)
+      acc.concat(pennlibmarc.get_subject_xfacet_values(rec))
     end
 
     to_field "language_f_stored", marc_languages("008[35-37]")
 
     to_field "library_f_stored" do |rec, acc|
-      pennlibmarc.get_library_values(rec)
+      acc.concat(pennlibmarc.get_library_values(rec))
     end
 
     to_field "specific_location_f_stored" do |rec, acc|
-      pennlibmarc.get_specific_location_values(rec)
+      acc.concat(pennlibmarc.get_specific_location_values(rec))
     end
 
     to_field "publication_date_f_stored" do |rec, acc|
-      pennlibmarc.get_publication_date_values(rec)
+      acc.concat(pennlibmarc.get_publication_date_values(rec))
     end
 
     to_field "classification_f_stored" do |rec, acc|
-      pennlibmarc.get_classification_values(rec)
+      acc.concat(pennlibmarc.get_classification_values(rec))
     end
 
     to_field "genre_f_stored" do |rec, acc|
-      pennlibmarc.get_genre_values(rec)
+      acc.concat(pennlibmarc.get_genre_values(rec))
     end
 
     to_field "genre_search" do |rec, acc|
-      pennlibmarc.get_genre_search_values(rec)
+      acc.concat(pennlibmarc.get_genre_search_values(rec))
     end
 
     # Title fields
 
     to_field 'title_1_search' do |rec, acc|
-      pennlibmarc.get_title_1_search_values(rec)
+      acc.concat(pennlibmarc.get_title_1_search_values(rec))
     end
 
     to_field 'title_2_search' do |rec, acc|
-      pennlibmarc.get_title_2_search_values(rec)
+      acc.concat(pennlibmarc.get_title_2_search_values(rec))
     end
 
     to_field 'journal_title_1_search' do |rec, acc|
-      pennlibmarc.get_journal_title_1_search_values(rec)
+      acc.concat(pennlibmarc.get_journal_title_1_search_values(rec))
     end
 
     to_field 'journal_title_2_search' do |rec, acc|
-      pennlibmarc.get_journal_title_2_search_values(rec)
+      acc.concat(pennlibmarc.get_journal_title_2_search_values(rec))
     end
 
     to_field 'author_creator_1_search' do |rec, acc|
-      pennlibmarc.get_author_creator_1_search_values(rec)
+      acc.concat(pennlibmarc.get_author_creator_1_search_values(rec))
     end
 
     to_field 'author_creator_2_search' do |rec, acc|
-      pennlibmarc.get_author_creator_2_search_values(rec)
+      acc.concat(pennlibmarc.get_author_creator_2_search_values(rec))
     end
 
     to_field 'author_creator_a' do |rec, acc|
-      pennlibmarc.get_author_creator_values(rec)
+      acc.concat(pennlibmarc.get_author_creator_values(rec))
     end
 
     to_field 'title' do |rec, acc|
-      pennlibmarc.get_title_values(rec)
+      acc.concat(pennlibmarc.get_title_values(rec))
     end
 
     to_field 'standardized_title_a' do |rec, acc|
-      pennlibmarc.get_standardized_title_values(rec)
+      acc.concat(pennlibmarc.get_standardized_title_values(rec))
     end
 
     to_field 'title_xfacet' do |rec, acc|
-      pennlibmarc.get_title_xfacet_values(rec).map { |v| references(v) }
+      acc.concat(pennlibmarc.get_title_xfacet_values(rec))
+      acc.map! { |v| references(v) }
     end
 
     to_field 'title_ssort' do |rec, acc|
-      pennlibmarc.get_title_sort_values(rec)
+      acc.concat(pennlibmarc.get_title_sort_values(rec))
     end
 
     # Author fields
 
     to_field 'author_creator_ssort' do |rec, acc|
-      pennlibmarc.get_author_creator_sort_values(rec)
+      acc.concat(pennlibmarc.get_author_creator_sort_values(rec))
     end
 
     to_field 'edition' do |rec, acc|
-      pennlibmarc.get_edition_values(rec)
+      acc.concat(pennlibmarc.get_edition_values(rec))
     end
 
     to_field 'conference_a' do |rec, acc|
-      pennlibmarc.get_conference_values(rec)
+      acc.concat(pennlibmarc.get_conference_values(rec))
     end
 
     to_field 'series' do |rec, acc|
-      pennlibmarc.get_series_values(rec)
+      acc.concat(pennlibmarc.get_series_values(rec))
     end
 
     to_field 'publication_a' do |rec, acc|
-      pennlibmarc.get_publication_values(rec)
+      acc.concat(pennlibmarc.get_publication_values(rec))
     end
 
     to_field 'contained_within_a'  do |rec, acc|
-      pennlibmarc.get_contained_within_values(rec)
+      acc.concat(pennlibmarc.get_contained_within_values(rec))
     end
 
     to_field 'publication_date_ssort' do |rec, acc|
-      pennlibmarc.get_publication_date_sort_values(rec)
+      acc.concat(pennlibmarc.get_publication_date_sort_values(rec))
     end
 
     to_field 'recently_added_ssort' do |rec, acc|
-      pennlibmarc.get_recently_added_sort_values(rec)
+      acc.concat(pennlibmarc.get_recently_added_sort_values(rec))
     end
 
     to_field "isbn_isxn_stored",  extract_marc(%W{020az 022alz}, :separator=>nil) do |rec, acc|
@@ -227,7 +228,7 @@ class MarcIndexer < Blacklight::Marc::Indexer
     end
 
     to_field 'call_number_search' do |rec, acc|
-      pennlibmarc.get_call_number_search_values(rec)
+      acc.concat(pennlibmarc.get_call_number_search_values(rec))
     end
 
     to_field 'physical_holdings_json' do |rec, acc|
