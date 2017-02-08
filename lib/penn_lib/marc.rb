@@ -496,10 +496,14 @@ module PennLib
     def get_library_values(rec)
       acc = []
       rec.fields('hld').each do |field|
-        # TODO: might be a, b, or c, it's hard to tell. need to verify against final data.
-        field.find_all { |sf| sf.code == 'a' }
-            .map { |sf| locations[sf.value] || "Van Pelt (TODO)" }
-            .each { |library| acc << library }
+        field.find_all { |sf| sf.code == 'c' }
+            .map { |sf|
+          if locations[sf.value].present?
+            locations[sf.value]['library']
+          else
+            puts "WARNING: unknown hld subfield c code = #{sf.value}"
+          end
+        }.select { |loc| loc.present? }.each { |library| acc << library }
       end
       acc
     end
@@ -507,10 +511,14 @@ module PennLib
     def get_specific_location_values(rec)
       acc = []
       rec.fields('hld').each do |field|
-        # TODO: might be a, b, or c, it's hard to tell. need to verify against final data.
         field.find_all { |sf| sf.code == 'c' }
-            .map { |sf| locations[sf.value] || "1st Floor (TODO)" }
-            .each { |loc| acc << loc }
+            .map { |sf|
+          if locations[sf.value].present?
+            locations[sf.value]['specific_location']
+          else
+            puts "WARNING: unknown hld subfield c code = #{sf.value}"
+          end
+        }.select { |loc| loc.present? }.each { |library| acc << library }
       end
       acc
     end
@@ -1102,11 +1110,12 @@ module PennLib
       #   <subfield code="8">226026380000541</subfield>
       # </datafield>
       rec.fields('hld').map do |item|
-        # these are MARC 852 subfield codes
+        # Alma never populates subfield 'a' which is 'location'
+        # it appears to store the location code in 'c'
+        # and display name in 'b'
         {
             holding_id: item['8'],
-            location: item['a'],
-            shelving_location: item['c'],
+            location: item['c'],
             classification_part: item['h'],
             item_part: item['i'],
         }

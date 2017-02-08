@@ -65,7 +65,8 @@ class MarcIndexer < Blacklight::Marc::Indexer
 
     to_field "id", trim(extract_marc("001"), :first => true)
 
-    to_field 'marcrecord_xml_stored_single', get_plain_marc_xml
+    # do NOT use *_xml_stored_single because it uses a Str (max 32k) for storage
+    to_field 'marcrecord_xml_stored_single_large', get_plain_marc_xml
 
     # Our keyword searches use pf/qf to search multiple fields, so
     # we don't need this field; leaving it commented out here just in case.
