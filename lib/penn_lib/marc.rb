@@ -1374,9 +1374,9 @@ module PennLib
       acc = []
       acc += rec.fields('650')
                  .select { |f| f.indicator2 == '4' }
+                 .select { |f| f.any? { |sf| sf.code == 'a' && sf.value =~ /^(#{value}|%#{value})/ } }
                  .map do |field|
-        suba = field.select(&subfield_in(%w{a})).select { |sf| sf.value =~ /^(#{value}|%#{value})/ }
-                   .map {|sf| sf.value.gsub(/^%?#{value}/, '') }.join(' ')
+        suba = field.select(&subfield_in(%w{a})).map {|sf| sf.value.gsub(/^%?#{value}/, '') }.join(' ')
         sub_others = join_subfields(field, &subfield_not_in(%w{a 6 8 e w}))
         value = [ suba, sub_others ].join(' ')
         { value: value, link_type: 'subject_search' } if value.present?
@@ -1384,9 +1384,9 @@ module PennLib
       acc += rec.fields('880')
                  .select { |f| f.indicator2 == '4' }
                  .select { |f| has_subfield6_value(f,/^650/) }
+                 .select { |f| f.any? { |sf| sf.code == 'a' && sf.value =~ /^(#{value}|%#{value})/ } }
                  .map do |field|
-        suba = field.select(&subfield_in(%w{a})).select { |sf| sf.value =~ /^(#{value}|%#{value})/ }
-                   .map {|sf| sf.value.gsub(/^%?#{value}/, '') }.join(' ')
+        suba = field.select(&subfield_in(%w{a})).map {|sf| sf.value.gsub(/^%?#{value}/, '') }.join(' ')
         sub_others = join_subfields(field, &subfield_not_in(%w{a 6 8 e w}))
         value = [ suba, sub_others ].join(' ')
         { value: value, link_type: 'subject_search' } if value.present?
