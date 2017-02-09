@@ -17,6 +17,7 @@ class MarcIndexer < Blacklight::Marc::Indexer
 
     def initialize(record)
       @record = record
+      @valid_tag_regex ||= /^\d\d\d$/
     end
 
     def method_missing(*args)
@@ -24,7 +25,6 @@ class MarcIndexer < Blacklight::Marc::Indexer
     end
 
     def each
-      @valid_tag_regex ||= /^\d\d\d$/
       for field in @record.fields
         yield field if field.tag =~ @valid_tag_regex
       end
@@ -49,6 +49,10 @@ class MarcIndexer < Blacklight::Marc::Indexer
       provide "marc_source.type", "xml"
       # set this to be non-negative if threshold should be enforced
       provide 'solr_writer.max_skipped', -1
+
+      # uncomment these lines to write to a file
+      #store "writer_class_name", "Traject::JsonWriter"
+      #store 'output_file', "traject_output.json"
 
       if defined? JRUBY_VERSION
         # 'store' overrides existing settings, 'provide' does not

@@ -73,11 +73,11 @@ module PennLib
     end
 
     def trim_trailing_colon(s)
-      s.sub(/:$/, '')
+      s.sub(/\s*:\s*$/, '')
     end
 
     def trim_trailing_semicolon(s)
-      s.sub(/;$/, '')
+      s.sub(/\s*;\s*$/, '')
     end
 
     def trim_trailing_equal(s)
@@ -93,7 +93,11 @@ module PennLib
     end
 
     def trim_trailing_period(s)
-      s.sub(/\s*\.\s*$/, '')
+      if s.end_with?('etc.') || s =~ /(^|[^a-zA-Z])[A-Z]\.$/
+        s
+      else
+        s.sub(/\.\s*$/, '')
+      end
     end
 
     def normalize_space(s)
@@ -690,7 +694,7 @@ module PennLib
       @title_2_search_aux_tags ||= %w{773 774 780 785}
     end
 
-    def title_2_search_7xx_tags(rec)
+    def title_2_search_7xx_tags
       @title_2_search_7xx_tags ||= %w{700 710 711}
     end
 
@@ -714,7 +718,7 @@ module PennLib
 
     def get_title_2_search_7xx_values(rec, format_filter: false)
       format = get_format_from_leader(rec)
-      rec.fields(title_2_search_aux_tags).map do |field|
+      rec.fields(title_2_search_7xx_tags).map do |field|
         if !format_filter || format.end_with?('s')
           join_and_trim_whitespace(field.find_all(&subfield_in(%w{t})).map(&:value))
         end
@@ -1461,10 +1465,10 @@ module PennLib
 
     # if there's a subfield i, extract its value, and if there's something
     # in parentheses in that value, extract that.
-    def get_subfield_i_value_from_parens(field)
+    def remove_paren_value_from_subfield_i(field)
       val = field.select { |sf| sf.code == 'i' }.map do |sf|
-        if match = /\((.+)\)/.match(sf.value)
-          match[1]
+        if match = /\((.+?)\)/.match(sf.value)
+          sf.value.sub('(' + match[1] + ')', '')
         else
           sf.value
         end
@@ -1478,7 +1482,7 @@ module PennLib
                  .select { |f| ['', ' '].member?(f.indicator2) }
                  .select { |f| f.any? { |sf| sf.code == 't' } }
                  .map do |field|
-        subi = get_subfield_i_value_from_parens(field) || ''
+        subi = remove_paren_value_from_subfield_i(field) || ''
         related = field.map do |sf|
           if ! %w{0 4 i}.member?(sf.code)
             " #{sf.value}"
@@ -1486,14 +1490,14 @@ module PennLib
             ", #{relator_codes[sf.value]}"
           end
         end.compact.join
-        [ subi, related ].select(&:present?).join(' ')
+        [ subi, related ].select(&:present?).join(':')
       end
       acc += rec.fields('880')
                  .select { |f| ['', ' '].member?(f.indicator2) }
                  .select { |f| has_subfield6_value(f, /^(700|710|711|730)/) }
                  .select { |f| f.any? { |sf| sf.code == 't' } }
                  .map do |field|
-        subi = get_subfield_i_value_from_parens(field) || ''
+        subi = remove_paren_value_from_subfield_i(field) || ''
         related = field.map do |sf|
           if ! %w{0 4 i}.member?(sf.code)
             " #{sf.value}"
@@ -1501,7 +1505,7 @@ module PennLib
             ", #{relator_codes[sf.value]}"
           end
         end.compact.join
-        [ subi, related ].select(&:present?).join(' ')
+        [ subi, related ].select(&:present?).join(':')
       end
       acc
     end
@@ -1511,7 +1515,7 @@ module PennLib
       acc += rec.fields(%w{700 710 711 730 740})
                  .select { |f| f.indicator2 == '2' }
                  .map do |field|
-        subi = get_subfield_i_value_from_parens(field) || ''
+        subi = remove_paren_value_from_subfield_i(field) || ''
         contains = field.map do |sf|
           if ! %w{0 4 5 6 8 i}.member?(sf.code)
             " #{sf.value}"
@@ -1519,21 +1523,21 @@ module PennLib
             ", #{relator_codes[sf.value]}"
           end
         end.compact.join
-        [ subi, contains ].select(&:present?).join(' ')
+        [ subi, contains ].select(&:present?).join(':')
       end
       acc += rec.fields('880')
                  .select { |f| f.indicator2 == '2' }
                  .select { |f| has_subfield6_value(f, /^(700|710|711|730|740)/) }
                  .map do |field|
-        subi = get_subfield_i_value_from_parens(field) || ''
+        subi = remove_paren_value_from_subfield_i(field) || ''
         contains = join_subfields(field, &subfield_not_in(%w{0 5 6 8 i}))
-        [ subi, contains ].select(&:present?).join(' ')
+        [ subi, contains ].select(&:present?).join(':')
       end
       acc
     end
 
     def get_other_edition_value(field)
-      subi = get_subfield_i_value_from_parens(field) || ''
+      subi = remove_paren_value_from_subfield_i(field) || ''
       other_editions = field.map do |sf|
         if %w{s x z}.member?(sf.code)
           " #{sf.value}"
@@ -1550,7 +1554,7 @@ module PennLib
       end.compact.join
       {
           value: other_editions,
-          value_prepend: trim_trailing_period(subi),
+          value_prepend: trim_trailing_period(subi) + ':',
           value_append: other_editions_append,
           link_type: 'author_creator_xfacet'
       }
