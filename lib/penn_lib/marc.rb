@@ -213,6 +213,7 @@ module PennLib
     # if double_dash is true, then some subfields are joined together with --
     def join_subject_parts(field, double_dash: false)
       parts = field.find_all(&subfield_in(['a'])).map(&:value)
+                  .select { |v| v !~ /^%?(PRO|CHR)/ }
       parts += field.find_all(&subfield_not_in(%w{a 6 5})).map do |sf|
         (double_dash && !%w{b c d q t}.member?(sf.code) ? ' -- ' : ' ') + sf.value
       end
@@ -220,9 +221,14 @@ module PennLib
     end
 
     def get_subject_facet_values(rec)
-      rec.fields.find_all { |f| is_subject_field(f) }.map do |f|
-        join_subject_parts(f)
-      end
+      rec.fields.find_all { |f| is_subject_field(f) }.map do |field|
+        just_a = nil
+        if field.any? { |sf| sf.code == 'a' } && field.any? { |sf| sf.code != 'a' }
+          just_a = field.find_all(&subfield_in(%w{a})).map(&:value)
+              .select { |v| v !~ /^%?(PRO|CHR)/ }.join(' ')
+        end
+        [ join_subject_parts(field), just_a ].compact
+      end.flatten(1)
     end
 
     def get_subject_xfacet_values(rec)
@@ -655,7 +661,7 @@ module PennLib
             value += subk.gsub(/^\[/, "[\t")
           end
         end
-        value = [ value, join_subfields(field, &subfield_in(%w{bnp})) ].join(' ')
+        value = [ value, join_subfields(field, &subfield_in(%w{b n p})) ].join(' ')
         acc << value
       end
       acc
