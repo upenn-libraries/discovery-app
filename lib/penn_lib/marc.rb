@@ -106,12 +106,12 @@ module PennLib
 
     # this logic matches substring-before in XSLT: if no match for sub, returns an empty string
     def substring_before(s, sub)
-      s.scan(sub).present? ? s.split(sub, 1)[0] : ''
+      s.scan(sub).present? ? s.split(sub, 2)[0] : ''
     end
 
     # this logic matches substring-after in XSLT: if no match for sub, returns an empty string
     def substring_after(s, sub)
-      s.scan(sub).present? ? s.split(sub, 1)[1] : ''
+      s.scan(sub).present? ? s.split(sub, 2)[1] : ''
     end
 
     def join_and_trim_whitespace(array)
@@ -216,7 +216,7 @@ module PennLib
                   .select { |v| v !~ /^%?(PRO|CHR)/ }
       parts += field.find_all(&subfield_not_in(%w{a 6 5})).map do |sf|
         (double_dash && !%w{b c d q t}.member?(sf.code) ? ' -- ' : ' ') + sf.value
-      end
+      end.map(&:strip)
       parts.join(' ')
     end
 
@@ -227,13 +227,14 @@ module PennLib
           just_a = field.find_all(&subfield_in(%w{a})).map(&:value)
               .select { |v| v !~ /^%?(PRO|CHR)/ }.join(' ')
         end
-        [ join_subject_parts(field), just_a ].compact
+        [ join_subject_parts(field), just_a ].compact.map{ |v| trim_trailing_period(v) }
       end.flatten(1)
     end
 
     def get_subject_xfacet_values(rec)
       rec.fields.find_all { |f| is_subject_field(f) }
           .map { |f| join_subject_parts(f, double_dash: true) }
+          .map { |v| trim_trailing_period(v) }
           .map { |s| references(s, refs: get_subject_references(s)) }
     end
 
@@ -808,7 +809,7 @@ module PennLib
       acc += rec.fields(%w{100 110}).map do |field|
         pieces = field.map do |sf|
           if sf.code == 'a'
-            after_comma = join_and_trim_whitespace([ trim_trailing_comma(substring_before(sf.value, ', ')) ])
+            after_comma = join_and_trim_whitespace([ trim_trailing_comma(substring_after(sf.value, ', ')) ])
             before_comma = substring_before(sf.value, ', ')
             " #{after_comma} #{before_comma}"
           elsif(! %W{a 4 6 8}.member?(sf.code))
@@ -843,8 +844,8 @@ module PennLib
                  .select { |f| f.any? { |sf| sf.code =='6' && sf.value =~ /^(100|110)/ } }
                  .map do |field|
         suba = field.find_all(&subfield_in(%w{a})).map do |sf|
-          after_comma = join_and_trim_whitespace([ trim_trailing_comma(substring_before(sf.value, ',')) ])
-          before_comma = substring_before(sf.value, ', ')
+          after_comma = join_and_trim_whitespace([ trim_trailing_comma(substring_after(sf.value, ',')) ])
+          before_comma = substring_before(sf.value, ',')
           "#{after_comma} #{before_comma}"
         end.first
         oth = join_and_trim_whitespace(field.find_all(&subfield_not_in(%w{6 8 a t})).map(&:value))
@@ -876,8 +877,8 @@ module PennLib
 
         pieces2 = field.map do |sf|
           if sf.code == 'a'
-            after_comma = join_and_trim_whitespace([ trim_trailing_comma(substring_before(sf.value, ', ')) ])
-            before_comma = substring_before(sf.value, ', ')
+            after_comma = join_and_trim_whitespace([ trim_trailing_comma(substring_after(sf.value, ', ')) ])
+            before_comma = substring_before(sf.value, ',')
             " #{after_comma} #{before_comma}"
           elsif(! %W{a 4 5 6 8 t}.member?(sf.code))
             " #{sf.value}"
@@ -900,8 +901,8 @@ module PennLib
         value1 = join_and_trim_whitespace(field.find_all(&subfield_not_in(%w{5 6 8 t})).map(&:value))
 
         suba = field.find_all(&subfield_in(%w{a})).map do |sf|
-          after_comma = join_and_trim_whitespace([ trim_trailing_comma(substring_before(sf.value, ',')) ])
-          before_comma = substring_before(sf.value, ', ')
+          after_comma = join_and_trim_whitespace([ trim_trailing_comma(substring_after(sf.value, ',')) ])
+          before_comma = substring_before(sf.value, ',')
           "#{after_comma} #{before_comma}"
         end.first
         oth = join_and_trim_whitespace(field.find_all(&subfield_not_in(%w{5 6 8 a t})).map(&:value))
