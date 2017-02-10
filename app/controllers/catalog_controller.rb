@@ -371,10 +371,103 @@ class CatalogController < ApplicationController
 
     # only show these fields on Advanced Search
 
-    config.add_search_field('blah') do |field|
-      field.label = 'Blah'
+    config.add_search_field('series_search') do |field|
+      field.label = 'Series'
       field.if = Proc.new { false }
       field.include_in_advanced_search = true
+      field.solr_local_parameters = {
+          qf: 'series_search',
+          pf: 'series_search'
+      }
+    end
+
+    config.add_search_field('publisher_search') do |field|
+      field.label = 'Publisher'
+      field.if = Proc.new { false }
+      field.include_in_advanced_search = true
+      field.solr_local_parameters = {
+          qf: 'publisher_search',
+          pf: 'publisher_search'
+      }
+    end
+
+    config.add_search_field('place_of_publication_search') do |field|
+      field.label = 'Place of publication'
+      field.if = Proc.new { false }
+      field.include_in_advanced_search = true
+      field.solr_local_parameters = {
+          qf: 'place_of_publication_search',
+          pf: 'place_of_publication_search'
+      }
+    end
+
+    config.add_search_field('conference_search') do |field|
+      field.label = 'Conference'
+      field.if = Proc.new { false }
+      field.include_in_advanced_search = true
+      field.solr_local_parameters = {
+          qf: 'conference_search',
+          pf: 'conference_search'
+      }
+    end
+
+    config.add_search_field('corporate_author_search') do |field|
+      field.label = 'Corporate author'
+      field.if = Proc.new { false }
+      field.include_in_advanced_search = true
+      field.solr_local_parameters = {
+          qf: 'corporate_author_search',
+          pf: 'corporate_author_search'
+      }
+    end
+
+    config.add_search_field('pubnum_search') do |field|
+      field.label = 'Publisher number'
+      field.if = Proc.new { false }
+      field.include_in_advanced_search = true
+      field.solr_local_parameters = {
+          qf: 'pubnum_search',
+          pf: 'pubnum_search'
+      }
+    end
+
+    config.add_search_field('call_number_search') do |field|
+      field.label = 'Call Number'
+      field.if = Proc.new { false }
+      field.include_in_advanced_search = true
+      field.solr_local_parameters = {
+          qf: 'call_number_search',
+          pf: 'call_number_search'
+      }
+    end
+
+    config.add_search_field('language_search') do |field|
+      field.label = 'Language'
+      field.if = Proc.new { false }
+      field.include_in_advanced_search = true
+      field.solr_local_parameters = {
+          qf: 'language_search',
+          pf: 'language_search'
+      }
+    end
+
+    config.add_search_field('contents_note_search') do |field|
+      field.label = 'Contents note'
+      field.if = Proc.new { false }
+      field.include_in_advanced_search = true
+      field.solr_local_parameters = {
+          qf: 'contents_note_search',
+          pf: 'contents_note_search'
+      }
+    end
+
+    config.add_search_field('id_search') do |field|
+      field.if = Proc.new { false }
+      field.include_in_advanced_search = true
+      field.solr_local_parameters = {
+          qf: 'id',
+          pf: 'id'
+      }
     end
 
     # "sort results by" select (pulldown)
