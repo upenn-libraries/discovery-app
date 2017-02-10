@@ -794,6 +794,18 @@ module PennLib
           get_title_2_search_800_values(rec, format_filter: true)
     end
 
+    # this gets called directly by ShowPresenter rather than via
+    # Blacklight's show field definition plumbing, so we return a single string
+    def get_title_display(rec)
+      acc = []
+      acc += rec.fields('245').map do |field|
+        join_subfields(field, &subfield_not_in(%w{6 8}))
+      end
+      acc += get_880(rec, '245', &subfield_not_in(%w{6 8}))
+                 .map { |value| " = #{value}" }
+      acc.join(' ')
+    end
+
     def author_creator_tags
       @author_creator_tags ||= %w{100 110}
     end

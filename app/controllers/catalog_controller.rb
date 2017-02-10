@@ -73,6 +73,9 @@ class CatalogController < ApplicationController
     config.index.title_field = 'title'
     config.index.display_type_field = 'format'
 
+    # our custom ShowPresenter: we use this to override the heading
+    config.show.document_presenter_class = PennLib::ShowPresenter
+
     # solr field configuration for document/show views
     #config.show.title_field = 'title_display'
     #config.show.display_type_field = 'format'
