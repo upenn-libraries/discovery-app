@@ -964,6 +964,12 @@ module PennLib
       acc
     end
 
+    def get_corporate_author_search_values(rec)
+      rec.fields(%w{110 710 810}).map do |field|
+        join_and_trim_whitespace(field.select(&subfield_in(%w{a b c d})).map(&:value))
+      end
+    end
+
     def get_standardized_title_values(rec)
       rec.fields(%w{130 240}).map do |field|
         results = field.find_all(&subfield_not_in(%W{6 8})).map(&:value)
@@ -1030,6 +1036,12 @@ module PennLib
     def get_conference_values(rec)
       rec.fields('111').map do |field|
         get_name_1xx_field(field)
+      end
+    end
+
+    def get_conference_search_values(rec)
+      rec.fields(%w{111 711 811}).map do |field|
+        join_and_trim_whitespace(field.select(&subfield_in(%w{a c d e})).map(&:value))
       end
     end
 
@@ -1112,6 +1124,40 @@ module PennLib
         acc << { value: series, link: false }
       end
 
+      acc
+    end
+
+    def get_series_search_values(rec)
+      acc = []
+      acc += rec.fields(%w{400 410 411})
+          .select { |f| f.indicator2 == '0' }
+          .map do |field|
+        join_subfields(field, &subfield_not_in(%w{4 6 8}))
+      end
+      acc += rec.fields(%w{400 410 411})
+                 .select { |f| f.indicator2 == '1' }
+                 .map do |field|
+        join_subfields(field, &subfield_not_in(%w{4 6 8 a}))
+      end
+      acc += rec.fields(%w{440})
+                 .map do |field|
+        join_subfields(field, &subfield_not_in(%w{0 5 6 8 w}))
+      end
+      acc += rec.fields(%w{800 810 811})
+                 .map do |field|
+        join_subfields(field, &subfield_not_in(%w{0 4 5 6 7 8 w}))
+      end
+      acc += rec.fields(%w{830})
+                 .map do |field|
+        join_subfields(field, &subfield_not_in(%w{0 5 6 7 8 w}))
+      end
+      acc += rec.fields(%w{533})
+                 .map do |field|
+        field.find_all { |sf| sf.code == 'f' }
+            .map(&:value)
+            .map { |v| v.gsub(/\(|\)/, '') }
+            .join(' ')
+      end
       acc
     end
 
@@ -1345,6 +1391,12 @@ module PennLib
         join_subfields(field, &subfield_not_6_or_8).split('--')
       end
       acc
+    end
+
+    def get_contents_note_search_values(rec)
+      rec.fields('505').map do |field|
+        join_and_trim_whitespace(field.to_a.map(&:value))
+      end
     end
 
     def get_participant_display(rec)

@@ -123,6 +123,8 @@ class MarcIndexer < Blacklight::Marc::Indexer
 
     to_field "language_f_stored", marc_languages("008[35-37]")
 
+    to_field "language_search", marc_languages("008[35-37]")
+
     to_field "library_f_stored" do |rec, acc|
       acc.concat(pennlibmarc.get_library_values(rec))
     end
@@ -252,6 +254,28 @@ class MarcIndexer < Blacklight::Marc::Indexer
       if result.present?
         acc << result.to_json
       end
+    end
+
+    to_field 'conference_search' do |rec, acc|
+      acc.concat(pennlibmarc.get_conference_search_values(rec))
+    end
+
+    to_field 'contents_note_search' do |rec, acc|
+      acc.concat(pennlibmarc.get_contents_note_search_values(rec))
+    end
+
+    to_field 'corporate_author_search' do |rec, acc|
+      acc.concat(pennlibmarc.get_corporate_author_search_values(rec))
+    end
+
+    to_field 'place_of_publication_search', extract_marc('260a:264|*1|a')
+
+    to_field 'publisher_search', extract_marc('260b:264|*1|b')
+
+    to_field 'pubnum_search', extract_marc('024a:028a')
+
+    to_field 'series_search' do |rec, acc|
+      acc.concat(pennlibmarc.get_series_search_values(rec))
     end
 
   end
