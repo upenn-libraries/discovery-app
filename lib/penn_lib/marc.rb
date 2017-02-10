@@ -1660,9 +1660,20 @@ module PennLib
       acc
     end
 
-    def get_oclc_display(rec)
-      # TODO: how to get OCLC? from holdings?
-      []
+    def subfield_a_is_oclc(sf)
+      sf.code == 'a' && sf.value =~ /^\(OCoLC\).*/
+    end
+
+    def get_oclc_id_values(rec)
+      rec.fields('035')
+          .select { |f| f.any? { |sf| subfield_a_is_oclc(sf) } }
+          .take(1)
+          .flat_map do |field|
+        field.find_all { |sf| subfield_a_is_oclc(sf) }.map do |sf|
+          sf.value =~ /^\s*\(OCoLC\)[^1-9]*([1-9][0-9]*).*$/
+          $1
+        end
+      end
     end
 
     def get_publisher_number_display(rec)

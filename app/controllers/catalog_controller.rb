@@ -212,7 +212,7 @@ class CatalogController < ApplicationController
         { dynamic_name: 'other_format_display', label: 'Other format' },
         { dynamic_name: 'isbn_display', label: 'ISBN' },
         { dynamic_name: 'issn_display', label: 'ISSN' },
-        { dynamic_name: 'oclc_display', label: 'OCLC' },
+        { name: 'oclc_id', label: 'OCLC' },
         { dynamic_name: 'publisher_number_display', label: 'Publisher Number' },
         { dynamic_name: 'access_restriction_display', label: 'Access Restriction' },
         { dynamic_name: 'bound_with_display', label: 'Bound with' },

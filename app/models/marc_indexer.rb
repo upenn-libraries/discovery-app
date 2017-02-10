@@ -69,6 +69,10 @@ class MarcIndexer < Blacklight::Marc::Indexer
 
     to_field "id", trim(extract_marc("001"), :first => true)
 
+    to_field 'oclc_id' do |rec, acc|
+      acc.concat(pennlibmarc.get_oclc_id_values(rec))
+    end
+
     # do NOT use *_xml_stored_single because it uses a Str (max 32k) for storage
     to_field 'marcrecord_xml_stored_single_large', get_plain_marc_xml
 
