@@ -1216,7 +1216,7 @@ module PennLib
 
     def get_subfield_4ew(field)
       field.select(&subfield_in(%W{4 e w}))
-          .map { |sf| (sf.code == '4' ? ', ' : ' ') + "#{relator_codes[sf.value]}" }
+          .map { |sf| (sf.code == '4' ? ", #{relator_codes[sf.value]}" : " #{sf.value}") }
           .join('')
     end
 
