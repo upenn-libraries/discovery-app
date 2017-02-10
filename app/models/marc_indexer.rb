@@ -17,6 +17,7 @@ class MarcIndexer < Blacklight::Marc::Indexer
 
     def initialize(record)
       @record = record
+      @valid_tag_regex ||= /^\d\d\d$/
     end
 
     def method_missing(*args)
@@ -24,7 +25,6 @@ class MarcIndexer < Blacklight::Marc::Indexer
     end
 
     def each
-      @valid_tag_regex ||= /^\d\d\d$/
       for field in @record.fields
         yield field if field.tag =~ @valid_tag_regex
       end
@@ -50,6 +50,10 @@ class MarcIndexer < Blacklight::Marc::Indexer
       # set this to be non-negative if threshold should be enforced
       provide 'solr_writer.max_skipped', -1
 
+      # uncomment these lines to write to a file
+      #store "writer_class_name", "Traject::JsonWriter"
+      #store 'output_file', "traject_output.json"
+
       if defined? JRUBY_VERSION
         # 'store' overrides existing settings, 'provide' does not
         store 'reader_class_name', "Traject::Marc4JReader"
@@ -64,6 +68,10 @@ class MarcIndexer < Blacklight::Marc::Indexer
     pennlibmarc = PennLib::Marc.new(Rails.root.join('indexing'))
 
     to_field "id", trim(extract_marc("001"), :first => true)
+
+    to_field 'oclc_id' do |rec, acc|
+      acc.concat(pennlibmarc.get_oclc_id_values(rec))
+    end
 
     # do NOT use *_xml_stored_single because it uses a Str (max 32k) for storage
     to_field 'marcrecord_xml_stored_single_large', get_plain_marc_xml
@@ -114,6 +122,8 @@ class MarcIndexer < Blacklight::Marc::Indexer
     end
 
     to_field "language_f_stored", marc_languages("008[35-37]")
+
+    to_field "language_search", marc_languages("008[35-37]")
 
     to_field "library_f_stored" do |rec, acc|
       acc.concat(pennlibmarc.get_library_values(rec))
@@ -244,6 +254,28 @@ class MarcIndexer < Blacklight::Marc::Indexer
       if result.present?
         acc << result.to_json
       end
+    end
+
+    to_field 'conference_search' do |rec, acc|
+      acc.concat(pennlibmarc.get_conference_search_values(rec))
+    end
+
+    to_field 'contents_note_search' do |rec, acc|
+      acc.concat(pennlibmarc.get_contents_note_search_values(rec))
+    end
+
+    to_field 'corporate_author_search' do |rec, acc|
+      acc.concat(pennlibmarc.get_corporate_author_search_values(rec))
+    end
+
+    to_field 'place_of_publication_search', extract_marc('260a:264|*1|a')
+
+    to_field 'publisher_search', extract_marc('260b:264|*1|b')
+
+    to_field 'pubnum_search', extract_marc('024a:028a')
+
+    to_field 'series_search' do |rec, acc|
+      acc.concat(pennlibmarc.get_series_search_values(rec))
     end
 
   end
