@@ -623,7 +623,7 @@ module PennLib
       rec.fields('245').take(1).each do |field|
         a_or_k = field.find_all(&subfield_in(%w{a k}))
                      .map { |sf| trim_trailing_comma(trim_trailing_slash(sf.value).rstrip) }
-                     .first
+                     .first || ''
         joined = field.find_all(&subfield_in(%w{b n p}))
                      .map{ |sf| trim_trailing_slash(sf.value) }
                      .join(' ')
@@ -638,7 +638,8 @@ module PennLib
                   [apunct, hpunct].member?(':') ? ':' : nil
                 end
 
-        acc << [ trim_trailing_colon(trim_trailing_equal(a_or_k)), punct, joined ].compact.join(' ')
+        acc << [ trim_trailing_colon(trim_trailing_equal(a_or_k)), punct, joined ]
+              .select(&:present?).join(' ')
       end
       acc
     end
@@ -1722,8 +1723,8 @@ module PennLib
           .take(1)
           .flat_map do |field|
         field.find_all { |sf| subfield_a_is_oclc(sf) }.map do |sf|
-          sf.value =~ /^\s*\(OCoLC\)[^1-9]*([1-9][0-9]*).*$/
-          $1
+          m = /^\s*\(OCoLC\)[^1-9]*([1-9][0-9]*).*$/.match(sf.value)
+          m[1]
         end
       end
     end
