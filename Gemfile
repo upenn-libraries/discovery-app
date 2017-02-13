@@ -79,7 +79,7 @@ gem 'devise-guests', '0.5.0'
 
 gem 'blacklight_range_limit', '6.0.0'
 
-gem 'traject', '2.3.2'
+gem 'traject', '2.3.3'
 
 # TODO: Using this version, corrects error for getting format from 008 field,
 # currently breaks in original project.  PR out to original project,
