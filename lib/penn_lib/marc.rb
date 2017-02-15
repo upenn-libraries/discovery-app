@@ -4,6 +4,31 @@ require 'nokogiri'
 
 module PennLib
 
+  # Constants for Alma's MARC enrichment
+  module EnrichedMarc
+    # terminology follows the Publishing Profile screen
+    TAG_HOLDING = 'hld'
+    TAG_ITEM = 'itm'
+    TAG_ELECTRONIC_INVENTORY = 'prt'
+    TAG_DIGITAL_INVENTORY = 'dig'
+
+    # these are 852 subfield codes; terminology comes from MARC spec
+    SUB_HOLDING_SHELVING_LOCATION = 'c'
+    SUB_HOLDING_SEQUENCE_NUMBER = '8'
+    SUB_HOLDING_CLASSIFICATION_PART = 'h'
+    SUB_HOLDING_ITEM_PART = 'i'
+
+    SUB_ITEM_CURRENT_LOCATION = 'cloc'
+    SUB_ITEM_CURRENT_LIBRARY = 'clib'
+    SUB_ITEM_CALL_NUMBER_TYPE = 'cntype'
+    SUB_ITEM_CALL_NUMBER = 'cnf'
+
+    SUB_ELEC_PORTFOLIO_PID = 'pid'
+    SUB_ELEC_ACCESS_URL = 'url'
+    SUB_ELEC_COLLECTION_NAME = 'collection'
+    SUB_ELEC_COVERAGE = 'coverage'
+  end
+
   # Class for doing extraction and processing on MARC::Record objects.
   # This is intended to be used in both indexing code and front-end templating code
   # (since MARC is stored in Solr). As such, there should NOT be any traject-specific
@@ -382,9 +407,9 @@ module PennLib
       # CRL records are 'Offsite'
       rec.each do |f|
         case f.tag
-          when 'hld'
+          when EnrichedMarc::TAG_HOLDING
             acc << 'At the library'
-          when 'prt'
+          when EnrichedMarc::TAG_ELECTRONIC_INVENTORY
             acc << 'Online'
         end
       end
@@ -506,13 +531,13 @@ module PennLib
 
     def get_library_values(rec)
       acc = []
-      rec.fields('hld').each do |field|
-        field.find_all { |sf| sf.code == 'c' }
+      rec.fields(EnrichedMarc::TAG_HOLDING).each do |field|
+        field.find_all { |sf| sf.code == EnrichedMarc::SUB_HOLDING_SHELVING_LOCATION }
             .map { |sf|
           if locations[sf.value].present?
             locations[sf.value]['library']
           else
-            puts "WARNING: unknown hld subfield c code = #{sf.value}"
+            puts "WARNING: unknown code in physical holding record = #{sf.value}"
           end
         }.select { |loc| loc.present? }.each { |library| acc << library }
       end
@@ -521,13 +546,13 @@ module PennLib
 
     def get_specific_location_values(rec)
       acc = []
-      rec.fields('hld').each do |field|
-        field.find_all { |sf| sf.code == 'c' }
+      rec.fields(EnrichedMarc::TAG_HOLDING).each do |field|
+        field.find_all { |sf| sf.code == EnrichedMarc::SUB_HOLDING_SHELVING_LOCATION }
             .map { |sf|
           if locations[sf.value].present?
             locations[sf.value]['specific_location']
           else
-            puts "WARNING: unknown hld subfield c code = #{sf.value}"
+            puts "WARNING: unknown code in physical holding record = #{sf.value}"
           end
         }.select { |loc| loc.present? }.each { |library| acc << library }
       end
@@ -554,10 +579,10 @@ module PennLib
       acc = []
       # TODO: Alma has "Call number", "Alternative call number" and "Temporary call number" subfields;
       # use 'hld' instead?
-      rec.fields('itm').each do |item|
-        cn_type = item.find_all { |sf| sf.code == 'cntype' }.map { |sf| cn_type = sf.value }.first
+      rec.fields(EnrichedMarc::TAG_ITEM).each do |item|
+        cn_type = item.find_all { |sf| sf.code == EnrichedMarc::SUB_ITEM_CALL_NUMBER_TYPE }.map(&:value).first
 
-        results = item.find_all { |sf| sf.code == 'cnf' }
+        results = item.find_all { |sf| sf.code == EnrichedMarc::SUB_ITEM_CALL_NUMBER }
                       .map(&:value)
                       .select { |call_num| call_num.present? }
                       .map { |call_num| call_num[0] }
@@ -1179,15 +1204,15 @@ module PennLib
       #   <subfield code="i">.G63 2009</subfield>
       #   <subfield code="8">226026380000541</subfield>
       # </datafield>
-      rec.fields('hld').map do |item|
+      rec.fields(EnrichedMarc::TAG_HOLDING).map do |item|
         # Alma never populates subfield 'a' which is 'location'
         # it appears to store the location code in 'c'
         # and display name in 'b'
         {
-            holding_id: item['8'],
-            location: item['c'],
-            classification_part: item['h'],
-            item_part: item['i'],
+            holding_id: item[EnrichedMarc::SUB_HOLDING_SEQUENCE_NUMBER],
+            location: item[EnrichedMarc::SUB_HOLDING_SHELVING_LOCATION],
+            classification_part: item[EnrichedMarc::SUB_HOLDING_CLASSIFICATION_PART],
+            item_part: item[EnrichedMarc::SUB_HOLDING_ITEM_PART],
         }
       end
     end
@@ -1205,12 +1230,12 @@ module PennLib
       #   <subfield code="czcolid">61111058563444000</subfield>
       #   <subfield code="8">5310486800000521</subfield>
       # </datafield>
-      rec.fields('prt').map do |item|
+      rec.fields(EnrichedMarc::TAG_ELECTRONIC_INVENTORY).map do |item|
         {
-            portfolio_pid: item['pid'],
-            url: item['url'],
-            collection: item['collection'],
-            coverage: item['coverage'],
+            portfolio_pid: item[EnrichedMarc::SUB_ELEC_PORTFOLIO_PID],
+            url: item[EnrichedMarc::SUB_ELEC_ACCESS_URL],
+            collection: item[EnrichedMarc::SUB_ELEC_COLLECTION_NAME],
+            coverage: item[EnrichedMarc::SUB_ELEC_COVERAGE],
         }
       end
     end
@@ -1757,10 +1782,10 @@ module PennLib
     def get_call_number_search_values(rec)
       # TODO: Alma has "Call number", "Alternative call number" and "Temporary call number" subfields;
       # use 'hld' instead?
-      rec.fields('itm').map do |item|
-        cn_type = item.find_all { |sf| sf.code == 'cntype' }.map { |sf| cn_type = sf.value }.first
+      rec.fields(EnrichedMarc::TAG_ITEM).map do |item|
+        cn_type = item.find_all { |sf| sf.code == EnrichedMarc::SUB_ITEM_CALL_NUMBER_TYPE }.map(&:value).first
 
-        item.find_all { |sf| sf.code == 'cnf' }
+        item.find_all { |sf| sf.code == EnrichedMarc::SUB_ITEM_CALL_NUMBER }
                       .map(&:value)
                       .select { |call_num| call_num.present? }
                       .map { |call_num| call_num[0] }
