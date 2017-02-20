@@ -1,5 +1,9 @@
 $(document).ready(function() {
 
+    function clearLoggedInClasses() {
+        $(".ezproxy-login-status").removeClass("ezproxy-is-logged-in ezproxy-is-not-logged-in");
+    }
+
     // if there exist elements with the ezproxy-login-status class,
     // then check status.... and add some classes to parts of the subtree
     // according to whether user is logged in or not.
@@ -12,12 +16,12 @@ $(document).ready(function() {
         //module.setLoggedInPingIntervalSeconds(60);
         //module.setTimeoutMillis(2000); // to determine a failed jsonp authentication request
 
-        // add classes to summon-results container instead of alert link
-
         module.addOnLoggedIn('main', function(data){
+            clearLoggedInClasses();
             $(".ezproxy-login-status").addClass("ezproxy-is-logged-in");
         });
         module.addOnNotLoggedIn('main', function(){
+            clearLoggedInClasses();
             $(".ezproxy-login-status").addClass("ezproxy-is-not-logged-in");
         });
         module.init();
