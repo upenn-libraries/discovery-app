@@ -18,9 +18,6 @@
 //= require blacklight_solrplugins/blacklight_solrplugins
 //= require blacklight_alma/blacklight_alma
 
-//= require_tree .
-
-
 // For blacklight_range_limit built-in JS, if you don't want it you don't need
 // this:
 //= require 'blacklight_range_limit'
@@ -28,3 +25,5 @@
 //= require 'blacklight_advanced_search'
 
 //= require 'bento_search/ajax_load'
+
+//= require_tree .

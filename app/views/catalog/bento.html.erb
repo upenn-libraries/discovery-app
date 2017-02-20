@@ -1,6 +1,6 @@
 <div class="row">
 
-    <div class="col-sm-6">
+    <div class="col-sm-6 catalog-results">
       <h3>Catalog</h3>
 
       <div class="view-and-filter text-right">
@@ -14,8 +14,8 @@
       <%- end %>
     </div>
 
-    <div class="col-sm-6">
-      <%= bento_search 'summon', :query => params[:q], :load => :ajax_auto %>
+    <div class="col-sm-6 summon-results ezproxy-login-status">
+      <%= bento_search 'summon', :query => params[:q], :per_page => 25, :load => :ajax_auto %>
     </div>
 
 </div>

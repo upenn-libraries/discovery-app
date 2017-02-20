@@ -30,6 +30,8 @@ gem 'tzinfo-data', '1.2016.7', platforms: [:mingw, :mswin, :x64_mingw]
 
 gem "solr_wrapper", '0.18.1'
 
+gem 'browserify-rails', '4.0.0'
+
 # Use jquery as the JavaScript library
 gem 'jquery-rails', '4.2.1'
 
@@ -88,7 +90,7 @@ gem 'blacklight-marc', '~> 6.0', :git => 'https://github.com/magibney/blacklight
 
 gem 'blacklight_solrplugins', :git => 'https://github.com/upenn-libraries/blacklight_solrplugins.git'
 
-gem 'bento_search', '1.6.1'
+gem 'bento_search', '1.7'
 
 gem 'blacklight_alma', :git => 'https://github.com/upenn-libraries/blacklight_alma.git'
 

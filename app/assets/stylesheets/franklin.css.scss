@@ -172,11 +172,18 @@ ul.footerlinks {
 .bento_item {
   margin-top: 0;
   padding-top: 6px;
-  border-bottom: 1px solid #d2d2d2;
+  border-top: 1px solid #d2d2d2;
 }
 
-.bento_item:nth-child(odd) {
+.bento_item:nth-child(even) {
   background: #ececec;
+}
+
+/* this copies some weird css from Blacklight in order to get bento_item's
+bg color to fill document-metadata's bottom margin */
+.bento_item::after {
+  content: " ";
+  display: table;
 }
 
 .bento_item_about {
@@ -186,7 +193,6 @@ ul.footerlinks {
 .view-and-filter {
   padding: 6px;
   background: #ececec;
-  border-bottom: 1px solid #d2d2d2;
 }
 
 /*******
@@ -201,6 +207,19 @@ ul.footerlinks {
 
 .summon-form .limit-options label {
   margin-right: 2em;
+}
+
+.summon-results .summon-alert {
+  background-color: #ffa;
+  padding: 0.5em;
+}
+
+.summon-results.ezproxy-is-logged-in .summon-alert {
+  display: none;
+}
+
+.summon-results.ezproxy-is-not-logged-in .summon-alert {
+  display: block;
 }
 
 /*******
