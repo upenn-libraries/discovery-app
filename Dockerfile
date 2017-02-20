@@ -10,6 +10,8 @@
 
 FROM phusion/passenger-ruby23:0.9.19
 
+RUN apt-get update && apt-get install -y --no-install-recommends npm
+
 # Set correct environment variables.
 ENV HOME /root
 
@@ -20,13 +22,16 @@ CMD ["/sbin/my_init"]
 
 RUN mkdir -p /home/app/webapp
 
+WORKDIR /home/app/webapp
+
 # copy Gemfiles first: this takes advantage of caching during build
 ADD Gemfile /home/app/webapp
 ADD Gemfile.lock /home/app/webapp
-
-WORKDIR /home/app/webapp
-
 RUN bundle install
+
+ADD package.json /home/app/webapp
+ADD jslib /home/app/webapp/jslib
+RUN npm install
 
 # everything after this ADD typically won't get cached by docker build
 ADD . /home/app/webapp
