@@ -19,6 +19,10 @@ module DocumentRenderHelper
     join ? values.join('<br/>').html_safe : values
   end
 
+  def render_author_with_880(options)
+    render_values_with_breaks(options[:value] + options[:document].fetch('author_880_a', []))
+  end
+
   def render_electronic_holdings(options)
     buf = ''
     electronic_holdings = options[:value]

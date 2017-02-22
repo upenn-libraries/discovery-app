@@ -33,12 +33,15 @@ class CatalogController < ApplicationController
       # in the search request handler in solrconfig.xml
       fl: %w{
         id
+        alma_mms_id
         score
         format
         isbn_isxn
         language_a
         title
+        title_880_a
         author_creator_a
+        author_880_a
         standardized_title_a
         edition
         conference_a
@@ -72,6 +75,7 @@ class CatalogController < ApplicationController
     # solr field configuration for search results/index views
     config.index.title_field = 'title'
     config.index.display_type_field = 'format'
+    config.index.document_presenter_class = PennLib::IndexPresenter
 
     # our custom ShowPresenter: we use this to override the heading
     config.show.document_presenter_class = PennLib::ShowPresenter
@@ -138,7 +142,7 @@ class CatalogController < ApplicationController
 
     # solr fields to be displayed in the index (search results) view
     #   The ordering of the field names is the order of the display
-    config.add_index_field 'author_creator_a', label: 'Author/Creator'
+    config.add_index_field 'author_creator_a', label: 'Author/Creator', helper_method: 'render_author_with_880'
     config.add_index_field 'standardized_title_a', label: 'Standardized Title'
     config.add_index_field 'edition', label: 'Edition'
     config.add_index_field 'conference_a', label: 'Conference name'
