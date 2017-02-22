@@ -94,7 +94,7 @@ class MarcIndexer < Blacklight::Marc::Indexer
       acc.concat(pennlibmarc.get_access_values(rec))
     end
 
-    to_field "format_f_stored_single", get_format
+    to_field "format_f_stored", get_format
 
     author_creator_spec = %W{
       100abcdjq
