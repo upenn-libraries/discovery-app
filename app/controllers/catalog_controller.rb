@@ -485,7 +485,7 @@ class CatalogController < ApplicationController
     config.add_sort_field 'author_creator_ssort desc', label: 'Author (z-a)'
     config.add_sort_field 'publication_date_ssort desc, title_ssort asc', label: 'Pub date (new-old)'
     config.add_sort_field 'publication_date_ssort asc, title_ssort asc', label: 'Pub date (old-new)'
-    config.add_sort_field 'recently_added_ssort desc', label: 'Date added (new-old)'
+    config.add_sort_field 'recently_added_isort desc', label: 'Date added (new-old)'
 
     # If there are more than this many search results, no spelling ("did you
     # mean") suggestion is offered.

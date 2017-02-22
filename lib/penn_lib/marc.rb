@@ -1834,8 +1834,18 @@ module PennLib
     end
 
     def get_recently_added_sort_values(rec)
-      # TODO: this data doesn't seem to be available from Alma's enriched marc
-      []
+      # TODO: we're not able to find or get a "date record was added to Alma"
+      # which is what we want here. so we use 005 for now, but that date reflects updates.
+      # Note that 008 has the date that the MARC record was created,
+      # but that's not useful here.
+      acc = rec.fields('005').map do |field|
+        DateTime.iso8601(field.value).to_i
+      end
+      # records without a date should be considered very old
+      if acc.size == 0
+        acc += [0]
+      end
+      acc
     end
 
   end
