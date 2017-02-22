@@ -399,7 +399,7 @@ module PennLib
           []
         end
       end
-      results
+      results.select { |value| value.present? }
     end
 
     def get_access_values(rec)
@@ -669,6 +669,37 @@ module PennLib
       acc
     end
 
+    def get_title_880_values(rec)
+      rec.fields('880')
+          .select { |f| has_subfield6_value(f, /^245/) }
+          .map do |field|
+        suba_value = field.find_all(&subfield_in(%w{a})).first.try(:value)
+        subk_value = field.find_all(&subfield_in(%w{k})).first.try(:value) || ''
+        title_with_slash = suba_value.present? ? suba_value : (subk_value + ' ')
+        title_ak = trim_trailing_comma(join_and_trim_whitespace([ trim_trailing_slash(title_with_slash) ]))
+
+        subh = join_and_trim_whitespace(field.find_all(&subfield_in(%w{h})).map(&:value))
+
+        apunct = title_ak[-1]
+        hpunct = subh[-1]
+
+        punct = if [apunct, hpunct].member?('=') then
+                  '='
+                else
+                  [apunct, hpunct].member?(':') ? ':' : nil
+                end
+
+        [ trim_trailing_equal(title_ak),
+          punct,
+          trim_trailing_slash(field.find_all(&subfield_in(%w{b})).first.try(:value) || ''),
+          trim_trailing_slash(field.find_all(&subfield_in(%w{n})).first.try(:value) || ''),
+          trim_trailing_slash(field.find_all(&subfield_in(%w{p})).first.try(:value) || '')
+        ]
+        .select { |value| value.present? }
+        .join(' ')
+      end
+    end
+
     def get_title_245(rec)
       acc = []
       # TODO: odd use of tabs; do we still need to do this?
@@ -839,6 +870,14 @@ module PennLib
     def get_author_creator_values(rec)
       rec.fields(author_creator_tags).map do |field|
         get_name_1xx_field(field)
+      end
+    end
+
+    def get_author_880_values(rec)
+      rec.fields('880')
+          .select { |f| has_subfield6_value(f, /^(100|110)/) }
+          .map do |field|
+        join_and_trim_whitespace(field.find_all(&subfield_not_in(%w{4 6 8})).map(&:value))
       end
     end
 
@@ -1053,7 +1092,8 @@ module PennLib
         join_subfields(field, &subfield_not_in(%W{6 8}))
       end
       acc += rec.fields('880')
-          .map do |field|
+                 .select { |f| has_subfield6_value(f, /^250/)}
+                 .map do |field|
         join_subfields(field, &subfield_not_in(%W{6 8}))
       end
       acc

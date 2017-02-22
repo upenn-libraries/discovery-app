@@ -97,4 +97,9 @@ class SolrDocument
     end
   end
 
+  # used by blacklight_alma
+  def alma_mms_id
+    fetch('alma_mms_id', nil)
+  end
+
 end

@@ -67,7 +67,13 @@ class MarcIndexer < Blacklight::Marc::Indexer
 
     pennlibmarc = PennLib::Marc.new(Rails.root.join('indexing'))
 
-    to_field "id", trim(extract_marc("001"), :first => true)
+    to_field "id", trim(extract_marc("001"), :first => true) do |rec, acc|
+      # TODO: prepend FRANKLIN_, HATHI_, etc. based on an environment variable?
+      # or some other way to identify source of records
+      acc.map! { |id| "FRANKLIN_#{id}" }
+    end
+
+    to_field "alma_mms_id", trim(extract_marc("001"), :first => true)
 
     to_field 'oclc_id' do |rec, acc|
       acc.concat(pennlibmarc.get_oclc_id_values(rec))
@@ -179,8 +185,16 @@ class MarcIndexer < Blacklight::Marc::Indexer
       acc.concat(pennlibmarc.get_author_creator_values(rec))
     end
 
+    to_field 'author_880_a' do |rec, acc|
+      acc.concat(pennlibmarc.get_author_880_values(rec))
+    end
+
     to_field 'title' do |rec, acc|
       acc.concat(pennlibmarc.get_title_values(rec))
+    end
+
+    to_field 'title_880_a' do |rec,acc|
+      acc.concat(pennlibmarc.get_title_880_values(rec))
     end
 
     to_field 'standardized_title_a' do |rec, acc|
