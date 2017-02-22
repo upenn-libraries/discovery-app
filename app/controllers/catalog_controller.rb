@@ -35,7 +35,7 @@ class CatalogController < ApplicationController
         id
         alma_mms_id
         score
-        format
+        format_a
         isbn_isxn
         language_a
         title
@@ -74,7 +74,7 @@ class CatalogController < ApplicationController
 
     # solr field configuration for search results/index views
     config.index.title_field = 'title'
-    config.index.display_type_field = 'format'
+    # config.index.display_type_field = 'format'
     config.index.document_presenter_class = PennLib::IndexPresenter
 
     # our custom ShowPresenter: we use this to override the heading
@@ -131,7 +131,7 @@ class CatalogController < ApplicationController
     config.add_facet_field 'subject_xfacet', label: 'Topic', limit: 20, show: false,
                            xfacet: true, facet_for_filtering: 'subject_f'
     config.add_facet_field 'title_xfacet', label: 'Title', limit: 20, show: false,
-                           xfacet: true, xfacet_rbrowse_fields: %w(publication format)
+                           xfacet: true, xfacet_rbrowse_fields: %w(publication format_a)
     config.add_facet_field 'author_creator_xfacet', label: 'Author', limit: 20, show: false,
                            xfacet: true, facet_for_filtering: 'author_creator_f'
 
@@ -149,7 +149,7 @@ class CatalogController < ApplicationController
     config.add_index_field 'series', label: 'Series'
     config.add_index_field 'publication_a', label: 'Publication'
     config.add_index_field 'contained_within_a', label: 'Contained in'
-    config.add_index_field 'format', label: 'Format/Description'
+    config.add_index_field 'format_a', label: 'Format/Description'
     config.add_index_field 'electronic_holdings_json', label: 'Online resource', helper_method: 'render_electronic_holdings'
 
     is_field_present = lambda { |context, field_config, document|
@@ -485,7 +485,7 @@ class CatalogController < ApplicationController
     config.add_sort_field 'author_creator_ssort desc', label: 'Author (z-a)'
     config.add_sort_field 'publication_date_ssort desc, title_ssort asc', label: 'Pub date (new-old)'
     config.add_sort_field 'publication_date_ssort asc, title_ssort asc', label: 'Pub date (old-new)'
-    config.add_sort_field 'recently_added_ssort desc', label: 'Date added (new-old)'
+    config.add_sort_field 'recently_added_isort desc', label: 'Date added (new-old)'
 
     # If there are more than this many search results, no spelling ("did you
     # mean") suggestion is offered.

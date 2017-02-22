@@ -94,7 +94,7 @@ class MarcIndexer < Blacklight::Marc::Indexer
       acc.concat(pennlibmarc.get_access_values(rec))
     end
 
-    to_field "format_f_stored_single", get_format
+    to_field "format_f_stored", get_format
 
     author_creator_spec = %W{
       100abcdjq
@@ -240,7 +240,7 @@ class MarcIndexer < Blacklight::Marc::Indexer
       acc.concat(pennlibmarc.get_publication_date_sort_values(rec))
     end
 
-    to_field 'recently_added_ssort' do |rec, acc|
+    to_field 'recently_added_isort' do |rec, acc|
       acc.concat(pennlibmarc.get_recently_added_sort_values(rec))
     end
 

@@ -76,7 +76,7 @@ class SolrDocument
   end
 
   def format_display
-    @format_display ||= [ fetch('format') ] + pennlibmarc.get_format_display(to_marc)
+    @format_display ||= [ fetch('format_a') ] + pennlibmarc.get_format_display(to_marc)
   end
 
   def genre_display
