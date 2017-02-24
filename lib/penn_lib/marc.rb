@@ -18,15 +18,15 @@ module PennLib
     SUB_HOLDING_CLASSIFICATION_PART = 'h'
     SUB_HOLDING_ITEM_PART = 'i'
 
-    SUB_ITEM_CURRENT_LOCATION = 'cloc'
-    SUB_ITEM_CURRENT_LIBRARY = 'clib'
-    SUB_ITEM_CALL_NUMBER_TYPE = 'cntype'
-    SUB_ITEM_CALL_NUMBER = 'cnf'
+    SUB_ITEM_CURRENT_LOCATION = 'g'
+    SUB_ITEM_CURRENT_LIBRARY = 'f'
+    SUB_ITEM_CALL_NUMBER_TYPE = 'h'
+    SUB_ITEM_CALL_NUMBER = 'i'
 
-    SUB_ELEC_PORTFOLIO_PID = 'pid'
-    SUB_ELEC_ACCESS_URL = 'url'
-    SUB_ELEC_COLLECTION_NAME = 'collection'
-    SUB_ELEC_COVERAGE = 'coverage'
+    SUB_ELEC_PORTFOLIO_PID = 'a'
+    SUB_ELEC_ACCESS_URL = 'b'
+    SUB_ELEC_COLLECTION_NAME = 'c'
+    SUB_ELEC_COVERAGE = 'g'
   end
 
   # Class for doing extraction and processing on MARC::Record objects.
@@ -538,6 +538,7 @@ module PennLib
             locations[sf.value]['library']
           else
             puts "WARNING: unknown code in physical holding record = #{sf.value}"
+            sf.value
           end
         }.select { |loc| loc.present? }.each { |library| acc << library }
       end
@@ -553,6 +554,7 @@ module PennLib
             locations[sf.value]['specific_location']
           else
             puts "WARNING: unknown code in physical holding record = #{sf.value}"
+            sf.value
           end
         }.select { |loc| loc.present? }.each { |library| acc << library }
       end
@@ -1838,7 +1840,9 @@ module PennLib
       # which is what we want here. so we use 005 for now, but that date reflects updates.
       # Note that 008 has the date that the MARC record was created,
       # but that's not useful here.
-      acc = rec.fields('005').map do |field|
+      acc = rec.fields('005')
+                .select { |f| f.value.present? && !f.value.start_with?('0000') }
+                .map do |field|
         DateTime.iso8601(field.value).to_i
       end
       # records without a date should be considered very old
