@@ -1272,7 +1272,14 @@ module PennLib
       #   <subfield code="czcolid">61111058563444000</subfield>
       #   <subfield code="8">5310486800000521</subfield>
       # </datafield>
-      rec.fields(EnrichedMarc::TAG_ELECTRONIC_INVENTORY).map do |item|
+
+      # do NOT index electronic holdings where collection name is blank:
+      # these are records created from 856 fields from Voyager
+      # that don't have actual links.
+
+      rec.fields(EnrichedMarc::TAG_ELECTRONIC_INVENTORY)
+          .select { |item| item[EnrichedMarc::SUB_ELEC_COLLECTION_NAME].present? }
+          .map do |item|
         {
             portfolio_pid: item[EnrichedMarc::SUB_ELEC_PORTFOLIO_PID],
             url: item[EnrichedMarc::SUB_ELEC_ACCESS_URL],
@@ -1819,6 +1826,29 @@ module PennLib
       rec.fields('501').map do |field|
         join_subfields(field, &subfield_not_in(%w{a}))
       end.select(&:present?)
+    end
+
+    # some logic to extract link text and link url from an 856 field
+    def linktext_and_url(field)
+      linktext_3 = join_subfields(field, &subfield_in(%w{3}))
+      linktext_zy = field.find_all(&subfield_in(%w{z})).map(&:value).first ||
+          field.find_all(&subfield_in(%w{y})).map(&:value).first || ''
+      linktext = [ linktext_3, linktext_zy ].join(' ')
+      linkurl = field.find_all(&subfield_in(%w{u})).map(&:value).first || ''
+      linkurl = linkurl.sub(' target=_blank', '')
+      [linktext, linkurl]
+    end
+
+    def get_online_display(rec)
+      rec.fields('856')
+          .select { |f| %w{0 1}.member?(f.indicator2) }
+          .map do |field|
+        linktext, linkurl = linktext_and_url(field)
+        {
+            linktext: linktext,
+            linkurl: linkurl
+        }
+      end
     end
 
     def get_call_number_search_values(rec)

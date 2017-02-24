@@ -13,10 +13,12 @@
   <dt class="blacklight-availability">Status/Location:</dt>
   <dd class="blacklight-availability availability-ajax-load" data-availability-id="<%= document.alma_mms_id %>">Loading...</dd>
   <% end %>
+  <% if display_alma_fulfillment_iframe?(document) %>
   <dt></dt>
   <dd>
     <button class="btn btn-default availability-toggle-details" data-show-text="Show Availability Details" data-hide-text="Hide Availability Details">Show Availability Details</button>
   </dd>
+  <% end %>
 </dl>
 
 <div class="availability-details-container" data-availability-iframe-url="<%= alma_app_fulfillment_url(document) %>"></div>

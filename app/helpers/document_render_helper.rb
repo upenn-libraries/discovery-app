@@ -28,8 +28,9 @@ module DocumentRenderHelper
     electronic_holdings = options[:value]
     if electronic_holdings.present?
       # options[:value] is multi-valued even if Solr field is single-valued
-      electronic_holdings.each do |electronic_holdings_json|
-        electronic_holdings_struct = JSON.parse(electronic_holdings_json)
+      electronic_holdings
+          .map { |v| JSON.parse(v) }
+          .each do |electronic_holdings_struct|
         content = electronic_holdings_struct.map do |holding|
           url = alma_electronic_resource_direct_link(holding['portfolio_pid'])
           coverage = holding['coverage'] ? content_tag('span', ' - ' + holding['coverage']) : ''
@@ -41,6 +42,21 @@ module DocumentRenderHelper
       end
     end
     buf.html_safe
+  end
+
+  def render_online_display_for_show_view(options)
+    online_display_values = options[:value]
+    online_display_values.map do |online_display|
+      content_tag('a', online_display[:linktext], { href: online_display[:linkurl] }) + '<br/>'.html_safe +
+          online_display[:linkurl]
+    end.join.html_safe
+  end
+
+  def render_online_display_for_index_view(options)
+    online_display_values = options[:value]
+    online_display_values.map do |online_display|
+      content_tag('a', online_display[:linktext], { href: online_display[:linkurl] })
+    end.join.html_safe
   end
 
   # creates a URL for the given hash record. based on 'link_type' key and other keys
