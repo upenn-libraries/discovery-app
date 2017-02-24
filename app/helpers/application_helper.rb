@@ -42,7 +42,11 @@ module ApplicationHelper
   # return true if availability info HTML should be rendered (and loaded dynamically in-page)
   def show_availability?(document)
     # TODO: env var check should be removed eventually
-    (ENV['SUPPRESS_AVAILABILITY'] != 'true') && document.has?(:physical_holdings_json)
+    (ENV['SUPPRESS_AVAILABILITY'] != 'true') && document.has_any_holdings?
+  end
+
+  def display_alma_fulfillment_iframe?(document)
+    document.has_any_holdings?
   end
 
 end

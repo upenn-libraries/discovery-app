@@ -102,4 +102,8 @@ class SolrDocument
     fetch('alma_mms_id', nil)
   end
 
+  def has_any_holdings?
+    has?(:electronic_holdings_json) || has?(:physical_holdings_json)
+  end
+
 end

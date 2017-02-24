@@ -50,6 +50,7 @@ class CatalogController < ApplicationController
         contained_within_a
         physical_holdings_json
         electronic_holdings_json
+        marcrecord_text
       }.join(','),
       'facet.threads': 2,
       rows: 10
@@ -140,21 +141,51 @@ class CatalogController < ApplicationController
     # handler defaults, or have no facets.
     config.add_facet_fields_to_solr_request!
 
+    is_field_present = lambda { |context, field_config, document|
+      document.fetch(field_config.field, nil).present? ||
+          (document.respond_to?(field_config.field.to_sym) && document.send(field_config.field.to_sym).present?)
+    }
+
+    # we can't use def from inside the configure_blacklight block,
+    # so this is a lambda
+    add_fields = lambda { |config, field_type, field_defs|
+      field_defs.each do |record|
+        field_struct = record.dup
+        if field_struct[:dynamic_name].present?
+          name = field_struct.delete(:dynamic_name)
+          defaults = {
+              accessor: name,
+              helper_method: 'render_values_with_breaks',
+              if: is_field_present
+          }
+        else
+          name = field_struct.delete(:name)
+          defaults = {
+              helper_method: 'render_values_with_breaks',
+          }
+        end
+        if field_type == 'show'
+          config.add_show_field(name, **defaults.merge(field_struct))
+        elsif field_type == 'index'
+          config.add_index_field(name, **defaults.merge(field_struct))
+        end
+      end
+    }
+
     # solr fields to be displayed in the index (search results) view
     #   The ordering of the field names is the order of the display
-    config.add_index_field 'author_creator_a', label: 'Author/Creator', helper_method: 'render_author_with_880'
-    config.add_index_field 'standardized_title_a', label: 'Standardized Title'
-    config.add_index_field 'edition', label: 'Edition'
-    config.add_index_field 'conference_a', label: 'Conference name'
-    config.add_index_field 'series', label: 'Series'
-    config.add_index_field 'publication_a', label: 'Publication'
-    config.add_index_field 'contained_within_a', label: 'Contained in'
-    config.add_index_field 'format_a', label: 'Format/Description'
-    config.add_index_field 'electronic_holdings_json', label: 'Online resource', helper_method: 'render_electronic_holdings'
-
-    is_field_present = lambda { |context, field_config, document|
-      document.send(field_config.field.to_sym).present?
-    }
+    add_fields.call(config, 'index', [
+        { name: 'author_creator_a', label: 'Author/Creator', helper_method: 'render_author_with_880' },
+        { name: 'standardized_title_a', label: 'Standardized Title' },
+        { name: 'edition', label: 'Edition' },
+        { name: 'conference_a', label: 'Conference name' },
+        { name: 'series', label: 'Series' },
+        { name: 'publication_a', label: 'Publication' },
+        { name: 'contained_within_a', label: 'Contained in' },
+        { name: 'format_a', label: 'Format/Description' },
+        { dynamic_name: 'online_display', label: 'Online resource',
+          helper_method: 'render_online_display_for_index_view' },
+    ])
 
     # Most show field values are generated dynamically from MARC stored in Solr.
     # This is because there's sometimes complex logic for extracting granular bits
@@ -166,7 +197,7 @@ class CatalogController < ApplicationController
     #   helper_method: defaults to 'render_values_with_breaks' if not specified
     #   if: if dynamic, defaults to 'is_field_present' lambda if not specified
 
-    show_fields = [
+    add_fields.call(config, 'show', [
         { dynamic_name: 'author_display', label: 'Author/Creator', helper_method: 'render_linked_values' },
         { dynamic_name: 'standardized_title_display', label: 'Standardized Title', helper_method: 'render_linked_values' },
         { dynamic_name: 'other_title_display', label: 'Other Title' },
@@ -220,26 +251,9 @@ class CatalogController < ApplicationController
         { dynamic_name: 'publisher_number_display', label: 'Publisher Number' },
         { dynamic_name: 'access_restriction_display', label: 'Access Restriction' },
         { dynamic_name: 'bound_with_display', label: 'Bound with' },
-        # TODO: Online (for Hathi; do we need this?)
+        { dynamic_name: 'online_display', label: 'Online', helper_method: 'render_online_display_for_show_view' },
         { name: 'electronic_holdings_json', label: 'Online resource', helper_method: 'render_electronic_holdings' },
-    ]
-    show_fields.each do |record|
-      field_struct = record.dup
-      if field_struct[:dynamic_name].present?
-        name = field_struct.delete(:dynamic_name)
-        defaults = {
-          accessor: name,
-          helper_method: 'render_values_with_breaks',
-          if: is_field_present
-        }
-      else
-        name = field_struct.delete(:name)
-        defaults = {
-            helper_method: 'render_values_with_breaks',
-        }
-      end
-      config.add_show_field(name, **defaults.merge(field_struct))
-    end
+    ])
 
     # "fielded" search configuration. Used by pulldown among other places.
     # For supported keys in hash, see rdoc for Blacklight::SearchFields
