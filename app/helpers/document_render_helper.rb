@@ -59,6 +59,18 @@ module DocumentRenderHelper
     end.join.html_safe
   end
 
+  def render_web_link_display(options)
+    web_link_display_values = options[:value]
+    web_link_display_values.map do |web_link_display|
+      if web_link_display.has_key?(:img_src)
+        img = content_tag('img', '', { src: web_link_display[:img_src], alt: web_link_display[:img_alt] })
+        content_tag('a', img, { href: web_link_display[:linkurl] })
+      else
+        content_tag('a', web_link_display[:linktext], { href: web_link_display[:linkurl] })
+      end
+    end.join('<br/>').html_safe
+  end
+
   # creates a URL for the given hash record. based on 'link_type' key and other keys
   # @param record [Hash]
   # @return [String] url
