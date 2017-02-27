@@ -1851,6 +1851,42 @@ module PennLib
       end
     end
 
+    def words_to_remove_from_web_link
+      @words_to_remove_from_web_link ||=
+          %w(fund funds collection collections endowment
+          endowed trust and for of the memorial)
+    end
+
+    def get_web_link_display(rec)
+      rec.fields('856')
+          .select { |f| ['2', ' ', ''].member?(f.indicator2) }
+          .flat_map do |field|
+        links = []
+        linktext, linkurl = linktext_and_url(field)
+        links << {
+            linktext: linktext,
+            linkurl: linkurl
+        }
+
+        if linktext =~ /(Funds?|Collections?( +Gifts)?|Trust|Development) +Home +Page|A +Penn +Libraries +Collection +Gift/
+          imagename = linktext.gsub(/- A Penn Libraries Collection Gift/i, '')
+              .gsub(/ Home Page/i, '')
+              .gsub(/[&.]/, '')
+              .split(/\W+/)
+              .select { |word| !words_to_remove_from_web_link.member?(word.downcase) }
+              .join('')
+          imagesource = "http://www.library.upenn.edu/images/alum/bookplates/#{imagename}.gif"
+          links << {
+              img_src: imagesource,
+              img_alt: "#{linktext} Bookplate",
+              linkurl: linkurl,
+          }
+        end
+
+        links
+      end
+    end
+
     def get_call_number_search_values(rec)
       # TODO: Alma has "Call number", "Alternative call number" and "Temporary call number" subfields;
       # use 'hld' instead?

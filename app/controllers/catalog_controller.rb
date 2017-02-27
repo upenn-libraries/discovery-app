@@ -249,6 +249,7 @@ class CatalogController < ApplicationController
         { dynamic_name: 'issn_display', label: 'ISSN' },
         { name: 'oclc_id', label: 'OCLC' },
         { dynamic_name: 'publisher_number_display', label: 'Publisher Number' },
+        { dynamic_name: 'web_link_display', label: 'Web link', helper_method: 'render_web_link_display' },
         { dynamic_name: 'access_restriction_display', label: 'Access Restriction' },
         { dynamic_name: 'bound_with_display', label: 'Bound with' },
         { dynamic_name: 'online_display', label: 'Online', helper_method: 'render_online_display_for_show_view' },
