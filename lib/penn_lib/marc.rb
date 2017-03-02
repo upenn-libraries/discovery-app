@@ -253,7 +253,7 @@ module PennLib
               .select { |v| v !~ /^%?(PRO|CHR)/ }.join(' ')
         end
         [ join_subject_parts(field), just_a ].compact.map{ |v| trim_trailing_period(v) }
-      end.flatten(1)
+      end.flatten(1).select { |v| v.present? }
     end
 
     def get_subject_xfacet_values(rec)
@@ -529,36 +529,29 @@ module PennLib
           .any? { |f| f.any?(&subfield_in(%w{a b})) }
     end
 
-    def get_library_values(rec)
+    # fieldname = name of field in the locations data structure to use
+    def holdings_location_mappings(rec, display_fieldname)
       acc = []
       rec.fields(EnrichedMarc::TAG_HOLDING).each do |field|
         field.find_all { |sf| sf.code == EnrichedMarc::SUB_HOLDING_SHELVING_LOCATION }
             .map { |sf|
+          # sometimes "happening locations" are mistakenly
+          # used in holdings records. that's a data problem that should be fixed.
+          # here, if we encounter a code we can't map, we ignore it, for faceting purposes.
           if locations[sf.value].present?
-            locations[sf.value]['library']
-          else
-            puts "WARNING: unknown code in physical holding record = #{sf.value}"
-            sf.value
+            locations[sf.value][display_fieldname]
           end
-        }.select { |loc| loc.present? }.each { |library| acc << library }
+        }.select { |value| value.present? }.each { |value| acc << value }
       end
       acc
     end
 
+    def get_library_values(rec)
+      holdings_location_mappings(rec, 'library')
+    end
+
     def get_specific_location_values(rec)
-      acc = []
-      rec.fields(EnrichedMarc::TAG_HOLDING).each do |field|
-        field.find_all { |sf| sf.code == EnrichedMarc::SUB_HOLDING_SHELVING_LOCATION }
-            .map { |sf|
-          if locations[sf.value].present?
-            locations[sf.value]['specific_location']
-          else
-            puts "WARNING: unknown code in physical holding record = #{sf.value}"
-            sf.value
-          end
-        }.select { |loc| loc.present? }.each { |library| acc << library }
-      end
-      acc
+      holdings_location_mappings(rec, 'specific_location')
     end
 
     def publication_date_digits(rec)

@@ -109,16 +109,16 @@ class CatalogController < ApplicationController
     #  (useful when user clicks "more" on a large facet and wants to navigate alphabetically across a large set of results)
     # :index_range can be an array or range of prefixes that will be used to create the navigation (note: It is case sensitive when searching values)
 
-    config.add_facet_field 'access_f', label: 'Access'
-    config.add_facet_field 'format_f', label: 'Format'
-    config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z'
-    config.add_facet_field 'subject_f', label: 'Subject', limit: 5, index_range: 'A'..'Z'
-    config.add_facet_field 'language_f', label: 'Language', limit: true
-    config.add_facet_field 'library_f', label: 'Library', limit: true
-    config.add_facet_field 'specific_location_f', label: 'Specific location', limit: true
-    config.add_facet_field 'publication_date_f', label: 'Publication date', limit: true
-    config.add_facet_field 'classification_f', label: 'Classification', limit: true
-    config.add_facet_field 'genre_f', label: 'Form/Genre', limit: true
+    config.add_facet_field 'access_f', label: 'Access', collapse: false
+    config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false
+    config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z', collapse: false
+    config.add_facet_field 'subject_f', label: 'Subject', limit: 5, index_range: 'A'..'Z', collapse: false
+    config.add_facet_field 'language_f', label: 'Language', limit: 5, collapse: false
+    config.add_facet_field 'library_f', label: 'Library', limit: 5, collapse: false
+    config.add_facet_field 'specific_location_f', label: 'Specific location', limit: 5
+    config.add_facet_field 'publication_date_f', label: 'Publication date', limit: 5, collapse: false
+    config.add_facet_field 'classification_f', label: 'Classification', limit: 5, collapse: false
+    config.add_facet_field 'genre_f', label: 'Form/Genre', limit: 5
 
     #config.add_facet_field 'example_pivot_field', label: 'Pivot Field', :pivot => ['format_f', 'language_f']
     # config.add_facet_field 'example_query_facet_field', label: 'Publish Date', :query => {
