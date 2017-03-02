@@ -253,7 +253,7 @@ module PennLib
               .select { |v| v !~ /^%?(PRO|CHR)/ }.join(' ')
         end
         [ join_subject_parts(field), just_a ].compact.map{ |v| trim_trailing_period(v) }
-      end.flatten(1)
+      end.flatten(1).select { |v| v.present? }
     end
 
     def get_subject_xfacet_values(rec)
