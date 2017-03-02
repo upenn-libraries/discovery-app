@@ -9,7 +9,15 @@ $(document).ready(function() {
 
     Franklin.prototype.formatHolding = function (holding) {
         if (holding['inventory_type'] == 'physical') {
-            return [holding['availability'], holding['location'], holding['call_number']]
+            var availability = "Unknown";
+            if(holding['availability'] == 'check_holdings') {
+                availability = "Check holdings";
+            } else if(holding['availability'] == 'unavailable') {
+                availability = "Requestable";
+            } else if(holding['availability'] == 'available') {
+                availability = "Available";
+            }
+            return [availability, holding['location'], holding['call_number']]
                 .filter(function (item) {
                     return item != null && item.length > 0;
                 }).join(". ");
