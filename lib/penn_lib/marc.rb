@@ -572,8 +572,9 @@ module PennLib
 
     def get_classification_values(rec)
       acc = []
-      # TODO: Alma has "Call number", "Alternative call number" and "Temporary call number" subfields;
-      # use 'hld' instead?
+      # not sure whether it's better to use 'item' or 'holding' records here.
+      # we use 'item' only because it has a helpful call number type subfield,
+      # which the holding doesn't.
       rec.fields(EnrichedMarc::TAG_ITEM).each do |item|
         cn_type = item.find_all { |sf| sf.code == EnrichedMarc::SUB_ITEM_CALL_NUMBER_TYPE }.map(&:value).first
 
@@ -603,9 +604,9 @@ module PennLib
     def get_genre_values(rec)
       acc = []
 
-      # TODO: not sure this check is totally right
-      is_manuscript = rec.fields('itm').any? do |item|
-        item['cloc'] =~ /manuscript/
+      is_manuscript = rec.fields(EnrichedMarc::TAG_ITEM).any? do |item|
+        loc = item[EnrichedMarc::SUB_ITEM_CURRENT_LOCATION]
+        locations[loc].present? && (locations[loc]['specific_location'] =~ /manuscript/)
       end
 
       if rec['007'].try { |r| r.value.start_with?('v') } || is_manuscript
@@ -1881,8 +1882,9 @@ module PennLib
     end
 
     def get_call_number_search_values(rec)
-      # TODO: Alma has "Call number", "Alternative call number" and "Temporary call number" subfields;
-      # use 'hld' instead?
+      # not sure whether it's better to use 'item' or 'holding' records here.
+      # we use 'item' only because it has a helpful call number type subfield,
+      # which the holding doesn't.
       rec.fields(EnrichedMarc::TAG_ITEM).map do |item|
         cn_type = item.find_all { |sf| sf.code == EnrichedMarc::SUB_ITEM_CALL_NUMBER_TYPE }.map(&:value).first
 
