@@ -17,7 +17,8 @@ footer="</collection>"
 chunk=0
 begin=0
 end=0
-file="chunk_${chunk}.xml"
+prefix=`basename $1 .xml`
+file="${prefix}_${chunk}.xml"
 
 while read -r line
 do
@@ -31,7 +32,7 @@ do
     dd if=$in_xml of=$file skip=$begin count=$((end-begin)) iflag=skip_bytes,count_bytes oflag=append conv=notrunc 2> /dev/null
     echo "$footer" >> $file
     chunk=$((chunk+1))
-    file="chunk_${chunk}.xml"
+    file="${prefix}_${chunk}.xml"
   fi
 
 done < <(grep -ob '<record>' $in_xml | sed 's/:.*//' | stdbuf -o0 awk "{if(NR==1 || NR % $((chunksize)) == 1) print}")

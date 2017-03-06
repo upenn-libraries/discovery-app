@@ -14,7 +14,7 @@ def parse_options
     log_dir: 'log/indexing'
   }
   opt_parser = OptionParser.new do |opts|
-    opts.banner = 'Usage: index_solr.rb [options] FILE_OR_DIR [FILE_OR_DIR ...]'
+    opts.banner = 'Usage: index_solr.rb [options] FILE_OR_GLOB_OR_DIR [FILE_OR_GLOB_OR_DIR ...]'
     opts.on('-l', '--log-dir LOG_DIR', 'Log directory') do |v|
       options[:log_dir] = v
     end
@@ -31,7 +31,7 @@ def parse_options
 end
 
 # takes a list of args (from ARGV, usually)
-# and returns a list of expanded real paths.
+# and returns a list of paths that can be passed as args to 'ls'.
 # if arg is a directory, '*.xml' is appended to it.
 def args_to_paths(args)
   args.map do |arg|
@@ -43,6 +43,8 @@ def args_to_paths(args)
       elsif realpath.file?
         realpath.to_s
       end
+    elsif Dir.glob(arg).size > 0
+      arg
     else
       abort "ERROR: Argument '#{arg}' doesn't seem to exist, can't continue."
     end
