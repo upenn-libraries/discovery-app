@@ -1904,8 +1904,12 @@ module PennLib
       acc = rec.fields('005')
                 .select { |f| f.value.present? && !f.value.start_with?('0000') }
                 .map do |field|
-        DateTime.iso8601(field.value).to_i
-      end
+        begin
+          DateTime.iso8601(field.value).to_i
+        rescue ArgumentError => e
+          nil
+        end
+      end.compact
       # records without a date should be considered very old
       if acc.size == 0
         acc += [0]

@@ -1,11 +1,18 @@
 #!/usr/bin/env ruby
+#
+# For parallelism, you can run this using xargs as follows:
+#
+# time ls ~/marc/alma_prod_sandbox/2017_03_03_oai_million_set_large_batch/*.xml | sort | xargs --verbose -I{} -P 4 ./index_preprocess.rb -o {}
 
 require 'optparse'
+require 'pathname'
 
 def parse_options
   options = {
-      chunk_size: nil,
-      format: false,
+    chunk_size: nil,
+    oai: false,
+    resume: false,
+    format: false,
   }
   opt_parser = OptionParser.new do |opts|
     opts.banner = 'Usage: index_preprocess.rb [options] FILE'
@@ -18,6 +25,12 @@ def parse_options
 
     opts.on('-c', '--chunk-size SIZE', 'Number of records per chunk file') do |v|
       options[:chunk_size] = v.to_i
+    end
+    opts.on('-o', '--oai', 'Convert from OAI') do |v|
+      options[:oai] = true
+    end
+    opts.on('-r', '--resume', 'Resume mode (skip already processed files)') do |v|
+      options[:resume] = true
     end
     opts.on('-f', '--format', 'Format (prettify) XML using xmllint (defaults to false)') do |v|
       options[:format] = true
@@ -47,6 +60,16 @@ def check_file_exists(path)
   end
 end
 
+def rm_if_not_original(filename, original_filename)
+  if filename != original_filename
+    File.delete(filename)
+  end
+end
+
+def final_filename(filename)
+  "part#{filename.scan(/\d+/)[0]}.xml"
+end
+
 def main
   options, opt_parser = parse_options
 
@@ -55,35 +78,64 @@ def main
     exit
   end
 
-  export_path = ARGV[0]
-  export_file = File.basename(File.expand_path(export_path))
-  export_file_dir = File.dirname(File.expand_path(export_path))
-
   script_dir = File.expand_path(File.dirname(__FILE__))
   xsl_dir = "#{script_dir}/xsl"
 
-  Dir.chdir(export_file_dir)
+  # as the Hash moves through this pipeline, 'file' is always the
+  # result of the most recent transformation.
 
-  run("#{script_dir}/split.sh #{export_file} #{options[:chunk_size]}")
-
-  Dir.glob('chunk*.xml').each do |file|
-    # fix various problems in Alma's MARC XML
-    fixed_file = file.gsub('chunk', 'fixed')
-    run(%Q!JAVA_OPTS="-Xms3g -Xmx3g" saxon -s:#{file} -xsl:#{xsl_dir}/fix_alma_prod_marc_records.xsl -o:#{fixed_file}!)
+  ARGV.lazy.map { |path|
+    {
+      original_file: File.basename(File.expand_path(path)),
+      file: File.basename(File.expand_path(path)),
+      dir: File.dirname(File.expand_path(path))
+    }
+  }.select { |struct|
+    !options[:resume] || !File.exist?(final_filename(struct[:file]))
+  }.map { |struct|
+    if options[:oai]
+      Dir.chdir(struct[:dir])
+      marc_file = struct[:file].gsub('.xml', '_marc.xml')
+      run(%Q!JAVA_OPTS="-Xms3g -Xmx3g" saxon -s:#{struct[:file]} -xsl:#{xsl_dir}/oai2marc.xsl -o:#{marc_file}!)
+      struct[:file] = marc_file
+    end
+    struct
+  }.flat_map { |struct|
+    if !options[:chunk_size].nil?
+      Dir.chdir(struct[:dir])
+      run("#{script_dir}/split.sh #{struct[:file]} #{options[:chunk_size]}")
+      rm_if_not_original(struct[:file], struct[:original_file])
+      Dir.glob("#{struct[:file]}_*.xml").map do |path|
+        { file: path, original_file: struct[:original_file], dir: struct[:dir] }
+      end
+    else
+      [ struct ]
+    end
+  }.map { |struct|
+    fixed_file = Pathname.new(struct[:file]).basename('.xml').to_s + '_fixed.xml'
+    Dir.chdir(struct[:dir])
+    run(%Q!JAVA_OPTS="-Xms3g -Xmx3g" saxon -s:#{struct[:file]} -xsl:#{xsl_dir}/fix_alma_prod_marc_records.xsl -o:#{fixed_file}!)
     check_file_exists(fixed_file)
-
-    part_file = file.gsub('chunk', 'part')
+    rm_if_not_original(struct[:file], struct[:original_file])
+    struct[:file] = fixed_file
+    struct
+  }.map { |struct|
+    file = struct[:file]
+    part_file = final_filename(struct[:file])
     if options[:format]
       run("xmllint --format #{fixed_file} > #{part_file}")
       check_file_exists(part_file)
-      File.delete(fixed_file)
+      rm_if_not_original(file, struct[:original_file])
     else
-      File.rename(fixed_file, part_file)
+      File.rename(file, part_file)
       check_file_exists(part_file)
     end
+    struct[:file] = part_file
+    struct
+  }.each { |struct|
+    puts "done with #{struct[:file]}"
+  }
 
-    File.delete(file)
-  end
 end
 
 main

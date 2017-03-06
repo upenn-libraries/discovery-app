@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="2.0">
-    <!-- This stylesheet is for fixing some of the egregiously bad data in the Alma test sandbox
-         that was making our code choke.
+    <!-- This stylesheet is for fixing bad data in the Alma prod environment
+         that was making some code (in particular, the marc-ruby gem) choke.
     -->
     <xsl:param name="uri">http://www.loc.gov/MARC21/slim</xsl:param>
     <xsl:template match="*">
