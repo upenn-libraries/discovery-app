@@ -1,26 +1,48 @@
 #!/usr/bin/env ruby
-#
-# For parallelism, you can run this using xargs as follows:
-#
-# time ls ~/marc/alma_prod_sandbox/2017_03_03_oai_million_set_large_batch/*.xml | sort | xargs --verbose -I{} -P 4 ./index_preprocess.rb -o {}
 
 require 'optparse'
 require 'pathname'
+
+# takes a list of args (from ARGV, usually)
+# and returns a list of paths that can be passed as args to 'ls'.
+# if arg is a directory, '*.xml' is appended to it.
+# deliberately does NOT expand globs because we'll eventually pass this to
+# ls in a shell, and a large number of expanded paths will cause problems.
+def args_to_paths(args)
+  args.map do |arg|
+    path = Pathname.new(arg)
+    if path.exist?
+      realpath = path.realpath
+      if realpath.directory?
+        realpath.join('*.xml').to_s
+      elsif realpath.file?
+        realpath.to_s
+      end
+    elsif Dir.glob(arg).size > 0
+      arg
+    else
+      abort "ERROR: Argument '#{arg}' doesn't seem to exist, can't continue."
+    end
+  end
+end
 
 def parse_options
   options = {
     chunk_size: nil,
     oai: false,
+    num_processes: nil,
     resume: false,
     format: false,
   }
   opt_parser = OptionParser.new do |opts|
-    opts.banner = 'Usage: index_preprocess.rb [options] FILE'
+    opts.banner = 'Usage: index_preprocess.rb [options] FILE_OR_GLOB_OR_DIR'
 
     opts.separator ""
     opts.separator "This utility preprocesses Alma MARC XML exports so they're ready"
     opts.separator "for indexing. This includes splitting up files, fixing namespace"
     opts.separator "and data problems in the MARC XML, and formatting for readability."
+    opts.separator ""
+    opts.separator "Globs should be quoted when invoking through a shell."
     opts.separator ""
 
     opts.on('-c', '--chunk-size SIZE', 'Number of records per chunk file') do |v|
@@ -28,6 +50,9 @@ def parse_options
     end
     opts.on('-o', '--oai', 'Convert from OAI') do |v|
       options[:oai] = true
+    end
+    opts.on('-p', '--processes PROCESSES', 'Number of parallel processes') do |v|
+      options[:num_processes] = v
     end
     opts.on('-r', '--resume', 'Resume mode (skip already processed files)') do |v|
       options[:resume] = true
@@ -75,6 +100,13 @@ def main
 
   if ARGV.length == 0
     puts opt_parser.help
+    exit
+  end
+
+  if options[:num_processes]
+    paths = args_to_paths(ARGV).map { |p| p.gsub(' ', '\ ') }.join(' ')
+    cmd = "ls #{paths} | sort | xargs -P #{options[:num_processes]} --verbose -I FILENAME ./index_preprocess.rb FILENAME"
+    exec cmd
     exit
   end
 
