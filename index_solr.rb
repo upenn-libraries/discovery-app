@@ -15,6 +15,13 @@ def parse_options
   }
   opt_parser = OptionParser.new do |opts|
     opts.banner = 'Usage: index_solr.rb [options] FILE_OR_GLOB_OR_DIR [FILE_OR_GLOB_OR_DIR ...]'
+
+    opts.separator ""
+    opts.separator "This indexes XML files into Solr."
+    opts.separator ""
+    opts.separator "Globs should be quoted when invoking through a shell."
+    opts.separator ""
+
     opts.on('-l', '--log-dir LOG_DIR', 'Log directory') do |v|
       options[:log_dir] = v
     end
@@ -33,6 +40,8 @@ end
 # takes a list of args (from ARGV, usually)
 # and returns a list of paths that can be passed as args to 'ls'.
 # if arg is a directory, '*.xml' is appended to it.
+# deliberately does NOT expand globs because we'll eventually pass this to
+# ls in a shell, and a large number of expanded paths will cause problems.
 def args_to_paths(args)
   args.map do |arg|
     path = Pathname.new(arg)
