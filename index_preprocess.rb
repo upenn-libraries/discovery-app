@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+require 'fileutils'
 require 'optparse'
 require 'pathname'
 
@@ -28,37 +29,54 @@ end
 
 def parse_options
   options = {
+    oai2marc: false,
     chunk_size: nil,
-    oai: false,
-    num_processes: nil,
-    resume: false,
+    fix_oai: false,
+    fix_marc: false,
     format: false,
+    resume: false,
+    num_processes: nil
   }
   opt_parser = OptionParser.new do |opts|
     opts.banner = 'Usage: index_preprocess.rb [options] FILE_OR_GLOB_OR_DIR'
 
-    opts.separator ""
-    opts.separator "This utility preprocesses Alma MARC XML exports so they're ready"
-    opts.separator "for indexing. This includes splitting up files, fixing namespace"
-    opts.separator "and data problems in the MARC XML, and formatting for readability."
-    opts.separator ""
-    opts.separator "Globs should be quoted when invoking through a shell."
-    opts.separator ""
+    opts.separator ''
+    opts.separator 'This utility preprocesses Alma export XML files to prepare them'
+    opts.separator 'for indexing. This is basically a simple pipeline that can perform'
+    opts.separator 'the following sequence of transformations, in this exact order:'
+    opts.separator ''
+    opts.separator '- convert from OAI to pure MARC XML'
+    opts.separator '- split MARC XML files into smaller ones'
+    opts.separator '- fix either MARC XML or OAI XML'
+    opts.separator '- format XML'
+    opts.separator ''
+    opts.separator 'Note that you MUST opt in to EACH step. See options. If you'
+    opts.separator 'don\'t specify any options, this program just makes a copy'
+    opts.separator 'of the input files.'
+    opts.separator ''
+    opts.separator 'Globs should be quoted when invoking through a shell.'
+    opts.separator ''
 
-    opts.on('-c', '--chunk-size SIZE', 'Number of records per chunk file') do |v|
+    opts.on('-o', '--oai2marc', 'Convert from OAI to MARC XML') do |v|
+      options[:oai2marc] = true
+    end
+    opts.on('-c', '--chunk-size SIZE', 'Split MARC XML records into files of SIZE records') do |v|
       options[:chunk_size] = v.to_i
     end
-    opts.on('-o', '--oai', 'Convert from OAI') do |v|
-      options[:oai] = true
+    opts.on('-a', '--fix-oai', 'Fix OAI XML') do |v|
+      options[:fix_oai] = true
     end
-    opts.on('-p', '--processes PROCESSES', 'Number of parallel processes') do |v|
-      options[:num_processes] = v
+    opts.on('-b', '--fix-marc-xml', 'Fix MARC XML') do |v|
+      options[:fix_marc] = true
+    end
+    opts.on('-f', '--format', 'Format XML using xmllint') do |v|
+      options[:format] = true
     end
     opts.on('-r', '--resume', 'Resume mode (skip already processed files)') do |v|
       options[:resume] = true
     end
-    opts.on('-f', '--format', 'Format (prettify) XML using xmllint (defaults to false)') do |v|
-      options[:format] = true
+    opts.on('-p', '--processes PROCESSES', 'Number of parallel processes') do |v|
+      options[:num_processes] = v
     end
     opts.on_tail('-h', '--help', 'Show this message') do
       puts opts
@@ -92,10 +110,35 @@ def rm_if_not_original(filename, original_filename)
 end
 
 def final_filename(filename)
-  "part#{filename.scan(/\d+/)[0]}.xml"
+  "part#{filename.scan(/\d+/)[-1]}.xml"
+end
+
+def options_to_arg_string(options)
+  args = []
+  if options[:oai2marc]
+    args << '--oai2marc'
+  end
+  if options[:chunk_size]
+    args << "--chunk-size #{options[:chunk_size]}"
+  end
+  if options[:fix_oai]
+    args << '--fix-oai'
+  end
+  if options[:fix_marc]
+    args << '--fix-marc'
+  end
+  if options[:format]
+    args << '--format'
+  end
+  if options[:resume]
+    args << '--resume'
+  end
+  args.join(' ')
 end
 
 def main
+  argv_original = ARGV.dup
+
   options, opt_parser = parse_options
 
   if ARGV.length == 0
@@ -105,7 +148,7 @@ def main
 
   if options[:num_processes]
     paths = args_to_paths(ARGV).map { |p| p.gsub(' ', '\ ') }.join(' ')
-    cmd = "ls #{paths} | sort | xargs -P #{options[:num_processes]} --verbose -I FILENAME ./index_preprocess.rb FILENAME"
+    cmd = "ls #{paths} | sort | xargs -P #{options[:num_processes]} --verbose -I FILENAME ./index_preprocess.rb #{options_to_arg_string(options)} FILENAME"
     exec cmd
     exit
   end
@@ -125,7 +168,7 @@ def main
   }.select { |struct|
     !options[:resume] || !File.exist?(final_filename(struct[:file]))
   }.map { |struct|
-    if options[:oai]
+    if options[:oai2marc]
       Dir.chdir(struct[:dir])
       marc_file = struct[:file].gsub('.xml', '_marc.xml')
       run(%Q!JAVA_OPTS="-Xms3g -Xmx3g" saxon -s:#{struct[:file]} -xsl:#{xsl_dir}/oai2marc.xsl -o:#{marc_file}!)
@@ -144,12 +187,19 @@ def main
       [ struct ]
     end
   }.map { |struct|
-    fixed_file = Pathname.new(struct[:file]).basename('.xml').to_s + '_fixed.xml'
-    Dir.chdir(struct[:dir])
-    run(%Q!JAVA_OPTS="-Xms3g -Xmx3g" saxon -s:#{struct[:file]} -xsl:#{xsl_dir}/fix_alma_prod_marc_records.xsl -o:#{fixed_file}!)
-    check_file_exists(fixed_file)
-    rm_if_not_original(struct[:file], struct[:original_file])
-    struct[:file] = fixed_file
+    if options[:fix_oai] || options[:fix_marc]
+      if options[:fix_oai]
+        xsl_file = 'fix_oai_marc_records.xsl'
+      else
+        xsl_file = 'fix_alma_prod_marc_records.xsl'
+      end
+      fixed_file = Pathname.new(struct[:file]).basename('.xml').to_s + '_fixed.xml'
+      Dir.chdir(struct[:dir])
+      run(%Q!JAVA_OPTS="-Xms3g -Xmx3g" saxon -s:#{struct[:file]} -xsl:#{xsl_dir}/#{xsl_file} -o:#{fixed_file}!)
+      check_file_exists(fixed_file)
+      rm_if_not_original(struct[:file], struct[:original_file])
+      struct[:file] = fixed_file
+    end
     struct
   }.map { |struct|
     file = struct[:file]
@@ -159,13 +209,15 @@ def main
       check_file_exists(part_file)
       rm_if_not_original(file, struct[:original_file])
     else
-      File.rename(file, part_file)
+      Dir.chdir(struct[:dir])
+      FileUtils.cp(file, part_file)
       check_file_exists(part_file)
+      rm_if_not_original(file, struct[:original_file])
     end
     struct[:file] = part_file
     struct
   }.each { |struct|
-    puts "done with #{struct[:file]}"
+    puts "created #{struct[:file]}"
   }
 
 end
