@@ -67,10 +67,15 @@ class MarcIndexer < Blacklight::Marc::Indexer
 
     pennlibmarc = PennLib::Marc.new(Rails.root.join('indexing'))
 
-    to_field "id", trim(extract_marc("001"), :first => true) do |rec, acc|
+    to_field "id", trim(extract_marc("001"), :first => true) do |rec, acc, context|
       # TODO: prepend FRANKLIN_, HATHI_, etc. based on an environment variable?
       # or some other way to identify source of records
       acc.map! { |id| "FRANKLIN_#{id}" }
+
+      # we do this check in the first 'id' field so that it happens early
+      if pennlibmarc.is_boundwith_record(rec)
+        context.skip!("Skipping boundwith record #{acc.first}")
+      end
     end
 
     to_field "alma_mms_id", trim(extract_marc("001"), :first => true)
