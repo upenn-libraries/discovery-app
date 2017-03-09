@@ -77,7 +77,7 @@ def main
   log_dir = log_dir.realpath.to_s
 
   # this is a bit nuts, be careful when editing this!
-  cmd = "ls #{paths} | sort | xargs -P #{options[:num_processes]} --verbose -I FILENAME bash -c \"bundle exec rake solr:marc:index MARC_FILE=FILENAME >> #{log_dir}/\\$(basename FILENAME .xml).log 2>> #{log_dir}/\\$(basename FILENAME .xml).log\""
+  cmd = "ls #{paths} | sort | xargs -P #{options[:num_processes]} --verbose -I FILENAME bash -c \"bundle exec rake pennlib:marc:index MARC_FILE=FILENAME >> #{log_dir}/\\$(basename FILENAME .xml).log 2>> #{log_dir}/\\$(basename FILENAME .xml).log\""
 
   exec cmd
 end

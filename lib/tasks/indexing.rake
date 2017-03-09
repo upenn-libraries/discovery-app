@@ -20,6 +20,17 @@ namespace :pennlib do
       files.each do |file|
         puts "Started indexing #{file} at #{DateTime.now}"
         ENV['MARC_FILE'] = file
+
+        SolrMarc.indexer =
+          case ENV['MARC_SOURCE']
+            when 'CRL'
+              CrlIndexer.new
+            when 'HATHI'
+              HathiIndexer.new
+            else
+              FranklinIndexer.new
+          end
+
         Rake::Task['solr:marc:index:work'].execute
         puts "Finished indexing #{file} at #{DateTime.now}"
       end
@@ -61,4 +72,15 @@ namespace :pennlib do
     end
 
   end
+
+  namespace :oai do
+
+    desc 'Parse IDs from OAI file and delete them from Solr index'
+    task :delete_ids => :environment do |t, args|
+      oai_file = ENV['OAI_FILE']
+      PennLib::OAI.delete_ids_in_file(oai_file)
+    end
+
+  end
+
 end

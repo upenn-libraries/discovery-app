@@ -404,7 +404,6 @@ module PennLib
 
     def get_access_values(rec)
       acc = []
-      # CRL records are 'Offsite'
       rec.each do |f|
         case f.tag
           when EnrichedMarc::TAG_HOLDING
@@ -1915,6 +1914,16 @@ module PennLib
         acc += [0]
       end
       acc
+    end
+
+    # It's not clear whether Alma can suppress these auto-generated
+    # records (Primo instances seem to show these records!) so we filter
+    # them out here just in case
+    def is_boundwith_record(rec)
+      rec.fields('245').any? { |f|
+        title = join_subfields(f, &subfield_in(%w{a}))
+        title.include?('Host bibliographic record for boundwith')
+      }
     end
 
   end
