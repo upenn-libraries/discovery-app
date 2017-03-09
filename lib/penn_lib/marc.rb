@@ -404,7 +404,6 @@ module PennLib
 
     def get_access_values(rec)
       acc = []
-      # CRL records are 'Offsite'
       rec.each do |f|
         case f.tag
           when EnrichedMarc::TAG_HOLDING

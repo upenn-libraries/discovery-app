@@ -20,6 +20,17 @@ namespace :pennlib do
       files.each do |file|
         puts "Started indexing #{file} at #{DateTime.now}"
         ENV['MARC_FILE'] = file
+
+        SolrMarc.indexer =
+          case ENV['MARC_SOURCE']
+            when 'CRL'
+              CrlIndexer.new
+            when 'HATHI'
+              HathiIndexer.new
+            else
+              FranklinIndexer.new
+          end
+
         Rake::Task['solr:marc:index:work'].execute
         puts "Finished indexing #{file} at #{DateTime.now}"
       end
