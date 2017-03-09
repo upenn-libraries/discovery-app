@@ -61,4 +61,15 @@ namespace :pennlib do
     end
 
   end
+
+  namespace :oai do
+
+    desc 'Parse IDs from OAI file and delete them from Solr index'
+    task :delete_ids => :environment do |t, args|
+      oai_file = ENV['OAI_FILE']
+      PennLib::OAI.delete_ids_in_file(oai_file)
+    end
+
+  end
+
 end
