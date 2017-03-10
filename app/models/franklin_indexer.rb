@@ -71,6 +71,11 @@ class FranklinIndexer < Blacklight::Marc::Indexer
 
     end
 
+    define_all_fields
+  end
+
+  def define_all_fields
+
     define_id
 
     to_field "alma_mms_id", trim(extract_marc("001"), :first => true)
@@ -226,6 +231,10 @@ class FranklinIndexer < Blacklight::Marc::Indexer
 
     to_field 'publication_a' do |rec, acc|
       acc.concat(pennlibmarc.get_publication_values(rec))
+    end
+
+    to_field 'full_text_link_a' do |rec, acc|
+      acc.concat(pennlibmarc.get_full_text_link_values(rec))
     end
 
     to_field 'contained_within_a'  do |rec, acc|

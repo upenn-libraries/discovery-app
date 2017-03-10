@@ -36,6 +36,7 @@ class CatalogController < ApplicationController
         alma_mms_id
         score
         format_a
+        full_text_link_a
         isbn_isxn
         language_a
         title
@@ -183,8 +184,9 @@ class CatalogController < ApplicationController
         { name: 'publication_a', label: 'Publication' },
         { name: 'contained_within_a', label: 'Contained in' },
         { name: 'format_a', label: 'Format/Description' },
-        { dynamic_name: 'online_display', label: 'Online resource',
-          helper_method: 'render_online_display_for_index_view' },
+        # in this view, 'Online' is simply full_text_link; note that
+        # 'Online' is deliberately different in show view
+        { name: 'full_text_link_a', label: 'Online resource' },
     ])
 
     # Most show field values are generated dynamically from MARC stored in Solr.

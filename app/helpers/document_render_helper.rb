@@ -44,18 +44,13 @@ module DocumentRenderHelper
     buf.html_safe
   end
 
+  # TODO: need to port 'DYNAMICALLY INSERTED HATHITRUST WEB LINK' from detailed.xsl?
+  # figure out how that works, as it looks for a somewhat odd element in the MARC XML
   def render_online_display_for_show_view(options)
     online_display_values = options[:value]
     online_display_values.map do |online_display|
       content_tag('a', online_display[:linktext], { href: online_display[:linkurl] }) + '<br/>'.html_safe +
           online_display[:linkurl]
-    end.join.html_safe
-  end
-
-  def render_online_display_for_index_view(options)
-    online_display_values = options[:value]
-    online_display_values.map do |online_display|
-      content_tag('a', online_display[:linktext], { href: online_display[:linkurl] })
     end.join.html_safe
   end
 
