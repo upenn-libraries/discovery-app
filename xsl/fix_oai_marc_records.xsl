@@ -9,6 +9,10 @@
             <xsl:when test="(local-name() = 'datafield') and (@tag = '')">
                 <xsl:comment>removed datafield with blank string for tag attribute</xsl:comment>
             </xsl:when>
+            <!-- filter out controlfields where tag is not numeric (this occurs in some NON_SFX records) -->
+            <xsl:when test="(local-name() = 'controlfield') and (not(matches(@tag, '[0-9][0-9][0-9]')))">
+                <xsl:comment>removed controlfield with non-numeric string for tag attribute</xsl:comment>
+            </xsl:when>
             <xsl:otherwise>
                 <xsl:copy-of select="."/>
             </xsl:otherwise>

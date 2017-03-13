@@ -205,7 +205,7 @@ def main
     file = struct[:file]
     part_file = final_filename(struct[:file])
     if options[:format]
-      run("xmllint --format #{fixed_file} > #{part_file}")
+      run("xmllint --format #{file} > #{part_file}")
       check_file_exists(part_file)
       rm_if_not_original(file, struct[:original_file])
     else

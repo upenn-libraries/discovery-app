@@ -412,7 +412,7 @@ module PennLib
             acc << 'Online'
         end
       end
-      acc
+      acc.uniq
     end
 
     # examines a 1xx datafield and constructs a string out of select
@@ -542,7 +542,7 @@ module PennLib
           end
         }.select { |value| value.present? }.each { |value| acc << value }
       end
-      acc
+      acc.uniq
     end
 
     def get_library_values(rec)
@@ -597,7 +597,7 @@ module PennLib
           end
         end
       end
-      acc
+      acc.uniq
     end
 
     def get_genre_values(rec)
@@ -1791,8 +1791,10 @@ module PennLib
           .flat_map do |field|
         field.find_all { |sf| subfield_a_is_oclc(sf) }.map do |sf|
           m = /^\s*\(OCoLC\)[^1-9]*([1-9][0-9]*).*$/.match(sf.value)
-          m[1]
-        end
+          if m
+            m[1]
+          end
+        end.compact
       end
     end
 
@@ -1914,6 +1916,15 @@ module PennLib
         acc += [0]
       end
       acc
+    end
+
+    def get_full_text_link_values(rec)
+      rec.fields('856')
+          .select { |f| (f.indicator1 == '4') && %w{0 1}.member?(f.indicator2) }
+          .map do |field|
+        linktext, linkurl = linktext_and_url(field)
+        %Q{<a href="#{linkurl}">#{linktext.present? ? linktext : linkurl}</a>}
+      end
     end
 
     # It's not clear whether Alma can suppress these auto-generated
