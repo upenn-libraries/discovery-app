@@ -49,8 +49,12 @@ module DocumentRenderHelper
   def render_online_display_for_show_view(options)
     online_display_values = options[:value]
     online_display_values.map do |online_display|
-      content_tag('a', online_display[:linktext], { href: online_display[:linkurl] }) + '<br/>'.html_safe +
-          online_display[:linkurl]
+      linked_text = online_display[:linktext].present? ? online_display[:linktext] : online_display[:linkurl]
+      html = content_tag('a', linked_text, { href: online_display[:linkurl] })
+      if online_display[:linktext].present?
+        html += '<br/>'.html_safe + online_display[:linkurl]
+      end
+      html
     end.join.html_safe
   end
 
