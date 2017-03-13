@@ -318,13 +318,15 @@ module PennLib
           eandw_with_hyphens = field.select(&subfield_in(%w{e w})).map do |sf|
             ' -- ' + sf.value
           end.join(' ')
-          {
-              value: sub_with_hyphens,
-              value_for_link: value_for_link,
-              value_append: eandw_with_hyphens,
-              link_type: 'subject_xfacet'
-          }
-        end
+          if sub_with_hyphens.present?
+            {
+                value: sub_with_hyphens,
+                value_for_link: value_for_link,
+                value_append: eandw_with_hyphens,
+                link_type: 'subject_xfacet'
+            }
+          end
+        end.compact
       elsif indicator2 == '4'
         # Local subjects
         acc += rec.fields(subject_600s)
@@ -340,12 +342,14 @@ module PennLib
           subj_display = [ suba, sub_oth ].join(' ')
           sub_oth_no_hyphens = join_subfields(field, &subfield_not_in(%w{a 6 8}))
           subj_search = [ suba, sub_oth_no_hyphens ].join(' ')
-          {
-              value: subj_display,
-              value_for_link: subj_search,
-              link_type: 'subject_search'
-          }
-        end
+          if subj_display.present?
+            {
+                value: subj_display,
+                value_for_link: subj_search,
+                link_type: 'subject_search'
+            }
+          end
+        end.compact
       end
       acc
     end
