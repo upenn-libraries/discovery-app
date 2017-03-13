@@ -1791,8 +1791,10 @@ module PennLib
           .flat_map do |field|
         field.find_all { |sf| subfield_a_is_oclc(sf) }.map do |sf|
           m = /^\s*\(OCoLC\)[^1-9]*([1-9][0-9]*).*$/.match(sf.value)
-          m[1]
-        end
+          if m
+            m[1]
+          end
+        end.compact
       end
     end
 
