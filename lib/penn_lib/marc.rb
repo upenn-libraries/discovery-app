@@ -407,14 +407,23 @@ module PennLib
     end
 
     def get_access_values(rec)
-      acc = []
-      rec.each do |f|
+      acc = rec.map do |f|
         case f.tag
           when EnrichedMarc::TAG_HOLDING
-            acc << 'At the library'
+            'At the library'
           when EnrichedMarc::TAG_ELECTRONIC_INVENTORY
-            acc << 'Online'
+            'Online'
         end
+      end.compact
+      acc += rec.fields('856')
+                 .select { |f| f.indicator1 == '4' && f.indicator2 != '2' }
+                 .flat_map do |field|
+        subz = join_subfields(field, &subfield_in(%w{z}))
+        field.find_all(&subfield_in(%w{u})).map do |sf|
+          if !subz.include?('Finding aid') && sf.value.include?('hdl.library.upenn.edu')
+            'Online'
+          end
+        end.compact
       end
       acc.uniq
     end
@@ -1939,6 +1948,41 @@ module PennLib
         title = join_subfields(f, &subfield_in(%w{a}))
         title.include?('Host bibliographic record for boundwith')
       }
+    end
+
+    # values for passed-in args come from Solr, not extracted directly from MARC.
+    # TODO: this code should return more data-ish values; the HTML should be moved into a render method
+    def get_offsite_display(rec, crl_id, title, author, oclc_id)
+      id = crl_id
+      html = %Q{<a href="#{"http://catalog.crl.edu/record=#{id}~S1"}">Center for Research Libraries Holdings</a>}
+
+      f260  = rec.fields('260')
+      place = f260.map { |f| join_subfields(f, &subfield_in(%w{a})) }.join(' ')
+      publisher = f260.map { |f| join_subfields(f, &subfield_in(%w{b})) }.join(' ')
+      pubdate = f260.map { |f| join_subfields(f, &subfield_in(%w{c})) }.join(' ')
+
+      atlas_params = {
+          crl_id: id,
+          title: title,
+          author: author,
+          oclc: oclc_id,
+          place: place,
+          publisher: publisher,
+          pubdate: pubdate,
+      }
+      atlas_url = "https://atlas.library.upenn.edu/cgi-bin/forms/illcrl.cgi?#{atlas_params.to_query}"
+
+      html += %Q{<a href="#{atlas_url}">Place request</a>}
+
+      f590  = rec.fields('590')
+      if f590.size > 0
+        html += '<div>'
+        f590.each do |field|
+          html += field.join(' ')
+        end
+        html += '</div>'
+      end
+      [ html ]
     end
 
   end

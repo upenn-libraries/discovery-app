@@ -194,10 +194,15 @@ class CatalogController < ApplicationController
     # used for linking, which differs from fields stored in Solr for faceting/search.
     #
     # For brevity and DRY, we define show fields in a data-driven way, following a few conventions:
-    #   name/dynamic_name: use one or the other, depending on whether field is dynamic or a regular Solr field
-    #   accessor: if dynamic, set to same string as 'dynamic_name'
-    #   helper_method: defaults to 'render_values_with_breaks' if not specified
-    #   if: if dynamic, defaults to 'is_field_present' lambda if not specified
+    #
+    #   name/dynamic_name: use one or the other, depending on whether field value(s)
+    #       are dynamically generated on-the-fly, or a regular Solr field
+    #   accessor: if dynamic, set to same string as 'dynamic_name'. This is the name
+    #       of the method that gets called on the SolrDocument
+    #   helper_method: defaults to 'render_values_with_breaks' if not specified.
+    #       helper_method is used to render values for presentation.
+    #   if: if dynamic, defaults to 'is_field_present' lambda if not specified,
+    #       so that only fields containing non-blank values are displayed.
 
     add_fields.call(config, 'show', [
         { dynamic_name: 'author_display', label: 'Author/Creator', helper_method: 'render_linked_values' },
@@ -231,7 +236,7 @@ class CatalogController < ApplicationController
         { dynamic_name: 'credits_display', label: 'Credits' },
         { dynamic_name: 'notes_display', label: 'Notes' },
         { dynamic_name: 'local_notes_display', label: 'Local notes' },
-        # TODO: Offsite (for CRL; do we need this?)
+        { dynamic_name: 'offsite_display', label: 'Offsite' },
         { dynamic_name: 'finding_aid_display', label: 'Finding Aid/Index' },
         { dynamic_name: 'provenance_display', label: 'Provenance', helper_method: 'render_linked_values' },
         { dynamic_name: 'chronology_display', label: 'Chronology', helper_method: 'render_linked_values' },
