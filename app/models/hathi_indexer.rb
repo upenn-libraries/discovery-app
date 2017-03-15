@@ -61,8 +61,8 @@ class HathiIndexer < FranklinIndexer
 
   def define_full_text_link_hathi
     to_field 'full_text_link_a' do |rec, acc|
-      id_and_type = get_ids_and_types_from_035a(rec).first
-      url = hathi_link(id_and_type[:id], id_and_type[:type])
+      ids_and_types = get_ids_and_types_from_035a(rec)
+      id_and_type = ids_and_types.first
 
       links = rec.fields('856').map do |field|
         pennlibmarc.linktext_and_url(field)
@@ -77,6 +77,7 @@ class HathiIndexer < FranklinIndexer
       remainder = links_html[5..-1].join(', ')
       remainder_count = links_html.size - 5
 
+      url = hathi_link(id_and_type[:id], id_and_type[:type])
       html = %Q{<a href="#{url}" class="hathi_dynamic">HathiTrust Digital Library Connect to full text</a>}
       html += '<div class="hathi_dynamic">Volumes available: '
       html += first5
@@ -87,7 +88,20 @@ class HathiIndexer < FranklinIndexer
         html += '</span>'
       end
       html += '</div>'
+
       acc << html
+
+      # deal with Hathi full text links that don't have Hathi in link text
+
+      more_links = rec.fields('856')
+                       .select { |f| f.indicator1 == '4' && %w(0 1).member?(f.indicator2) }
+                       .map do |field|
+        pennlibmarc.linktext_and_url(field)
+      end
+      if !more_links.select { |link_struct| link_struct[1] =~ /[Hh]athi/ }.present?
+        oclc_id = ids_and_types.select { |v| v[:type] == 'oclc' }.map { |v| v[:id] }.first
+        acc <<  %Q{<a href="#{"http://catalog.hathitrust.org/api/volumes/oclc/#{oclc_id}.html"}" class="hathi_dynamic">HathiTrust Digital Library Connect to full text</a>}
+      end
     end
   end
 

@@ -97,6 +97,22 @@ class SolrDocument
     end
   end
 
+  def local_notes_display
+    if !is_crl?
+      pennlibmarc.get_local_notes_display(to_marc)
+    end
+  end
+
+  def offsite_display
+    if is_crl?
+      crl_id = fetch('id', '').gsub('CRL_', '')
+      title = fetch('title', '')
+      author = fetch('author_creator_a', []).first
+      oclc_id = fetch('oclc_id', '')
+      pennlibmarc.get_offsite_display(to_marc, crl_id, title, author, oclc_id)
+    end
+  end
+
   # used by blacklight_alma
   def alma_mms_id
     fetch('alma_mms_id', nil)
@@ -104,6 +120,10 @@ class SolrDocument
 
   def has_any_holdings?
     has?(:electronic_holdings_json) || has?(:physical_holdings_json)
+  end
+
+  def is_crl?
+    fetch('id', '').start_with?('CRL')
   end
 
 end
