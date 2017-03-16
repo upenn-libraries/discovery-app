@@ -1,8 +1,7 @@
 module ApplicationHelper
 
   def summon_url(query)
-    # TODO
-    return "http://upenn.summon.serialssolutions.com/search#!/search?q=#{url_encode(query)}"
+    return "http://soaupenn.summon.serialssolutions.com/#!/search?q=#{url_encode(query)}"
   end
 
   # returns the css classes needed for elements that should be considered 'active'
