@@ -12,6 +12,12 @@ class PennSummonEngine < BentoSearch::SummonEngine
     end
     super(args)
   end
+
+  # whitelist 'auth' URL param, which base search engine does NOT allow by default
+  def public_settable_search_args
+    super + [:auth]
+  end
+
 end
 
 
