@@ -518,6 +518,9 @@ class CatalogController < ApplicationController
     config.autocomplete_path = 'suggest'
 
     config.index.document_actions.delete(:bookmark)
+
+    config.show.document_actions.delete(:bookmark)
+    config.show.document_actions.delete(:sms)
   end
 
   # extend 'index' so we can override views
