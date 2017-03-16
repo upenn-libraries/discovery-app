@@ -15,7 +15,7 @@ class PennSummonEngine < BentoSearch::SummonEngine
 
   def is_user_logged_in?
     # TODO: validate user's token against signing service behind ezproxy
-    false
+    true
   end
 
   def search(*arguments)
