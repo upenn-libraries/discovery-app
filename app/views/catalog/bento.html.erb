@@ -15,9 +15,7 @@
     </div>
 
     <div class="col-sm-6 summon-results ezproxy-login-status">
-      <%# TODO: set the right value for auth depending on a determination of whether user is logged in, which we don't have yet %>
-      <%# this doesn't actually work yet b/c of a bug in BentoSearch::SummonEngine's detection of auth argument; a PR is pending %>
-      <%= bento_search 'summon', :query => params[:q], :auth => 'true', :per_page => 25, :load => :ajax_auto %>
+      <%= bento_search 'summon', :query => params[:q], :per_page => 25, :load => :ajax_auto %>
     </div>
 
 </div>

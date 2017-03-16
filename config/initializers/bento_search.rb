@@ -13,11 +13,17 @@ class PennSummonEngine < BentoSearch::SummonEngine
     super(args)
   end
 
-  # whitelist 'auth' URL param, which base search engine does NOT allow by default
-  def public_settable_search_args
-    super + [:auth]
+  def is_user_logged_in?
+    # TODO: validate user's token against signing service behind ezproxy
+    false
   end
 
+  def search(*arguments)
+    if is_user_logged_in?
+      arguments.last[:auth] = true
+    end
+    super(*arguments)
+  end
 end
 
 
