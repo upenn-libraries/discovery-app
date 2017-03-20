@@ -71,6 +71,23 @@ namespace :pennlib do
       end
     end
 
+    desc "Create boundwiths index"
+    task :create_boundwiths_index => :environment do |t, args|
+      PennLib::BoundWithIndex.create(
+          ENV['BOUND_WITHS_DB_FILENAME'],
+          ENV['BOUND_WITHS_GLOB']
+      )
+    end
+
+    desc "Merge boundwiths into records"
+    task :merge_boundwiths => :environment do |t, args|
+      PennLib::BoundWithIndex.merge(
+          ENV['BOUND_WITHS_DB_FILENAME'],
+          ENV['BOUND_WITHS_INPUT_FILE'],
+          ENV['BOUND_WITHS_OUTPUT_FILE']
+      )
+    end
+
   end
 
   namespace :oai do

@@ -146,6 +146,11 @@ module FilePipeline
       end
     end
 
+    # convenience method for chdir
+    def chdir(dir)
+      Dir.chdir(dir)
+    end
+
     private
 
     def check_file_exists(path)
