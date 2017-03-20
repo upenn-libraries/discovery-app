@@ -19,6 +19,11 @@
 require 'optparse'
 require 'pathname'
 
+unless RUBY_VERSION.split('.').first.to_i >= 2
+  puts 'WARNING: ruby >= 2.0 is required, otherwise calls to Enumerable#lazy will fail.'
+end
+
+# FilePipeline namespace
 module FilePipeline
 
   # Members pertaining to the current working file (i.e. the result of
@@ -37,6 +42,7 @@ module FilePipeline
     def filename
       File.basename(complete_path)
     end
+
     # directory of the working file
     def dir
       File.dirname(complete_path)
@@ -108,22 +114,18 @@ module FilePipeline
 
     # executes the passed-in list of steps
     def execute(*args)
-      if args.size == 0
+      if args.empty?
         args = ARGV
       end
-      args_original = args.dup
       parse_args(args)
 
-      if input_files.size == 0
+      if input_files.empty?
         puts "No input files specified.\n\n"
         puts @option_parser
         exit 0
       end
 
       if @options[:processes]
-        start = args_original.index('-p') || args_original.index('--processes')
-        new_args = args_original.slice!(start, 2)
-
         paths = @input_file_spec
         cmd = "ls #{paths} | sort | xargs -P #{@options[:processes]} --verbose -I FILENAME #{$PROGRAM_NAME} #{options_and_values} -i FILENAME #{@actual_steps.join(' ')}"
         exec cmd
@@ -156,10 +158,16 @@ module FilePipeline
     def parse_args(argv)
       @options = {}
       @option_parser = OptionParser.new do |opts|
+
+        opts.separator ''
+        opts.separator 'NOTE: when using a shell and specifying a glob for input files,'
+        opts.separator 'be sure to quote the glob to avoid expansion.'
+        opts.separator ''
+
         # all options should define a long format whose name is
         # exactly the same as the var name in @options; this lets us
         # easily pass them along when constructing the command for xargs
-        opts.on('-i', '--input-files SPEC', 'Input files') do |v|
+        opts.on('-i', '--input-files SPEC', 'Input files (can be a file, a dir, or a glob)') do |v|
           @input_file_spec = v
         end
         opts.on('-o', '--output-dir DIR', 'Output directory') do |v|
@@ -189,11 +197,11 @@ module FilePipeline
       @option_parser.top.each_option do |opt|
         # TODO: I'm not sure this really finds all options but it's good enough for now
         if opt.is_a?(OptionParser::Switch::RequiredArgument) || opt.is_a?(OptionParser::Switch::NoArgument)
-          key = opt.long.first[2..-1].gsub('-', '_').to_sym
+          key = opt.long.first[2..-1].tr('-', '_').to_sym
           val = @options[key]
           if (key != :input_files && key != :processes) && val
             array << opt.long.first
-            if !['true', 'false'].member?(val.to_s)
+            if !%w(true false).member?(val.to_s)
               array << val
             end
           end
@@ -222,25 +230,25 @@ module FilePipeline
     # Builds the lazy enumerable (i.e. stream) for this pipeline
     def stream
       if !@stream
-        @stream = input_files.lazy.map { |file|
+        @stream = input_files.lazy.map do |file|
           expanded = File.expand_path(file)
           stage = Stage.new
           stage.output_dir = @options[:output_dir]
           stage.original = expanded
           stage.complete_path = expanded
           stage
-        }
+        end
         @actual_steps.each do |actual_step|
-          step = @steps.find { |step| step.name == actual_step.to_s }
+          step = @steps.find { |step_item| step_item.name == actual_step.to_s }
           if !step
             puts "Error: couldn't find a step named #{actual_step}, exiting."
             exit 1
           end
           # TODO: handle different step_types like flat_map
-          @stream = @stream.map { |stage|
+          @stream = @stream.map do |stage|
             Dir.chdir(stage.dir)
 
-            result = self.instance_exec(stage, &step.run)
+            result = instance_exec(stage, &step.run)
 
             new_stage = stage.dup
 
@@ -256,7 +264,7 @@ module FilePipeline
             end
 
             new_stage
-          }
+          end
         end
       end
       @stream
@@ -277,14 +285,13 @@ module FilePipeline
           elsif realpath.file?
             realpath.to_s
           end
-        elsif Dir.glob(arg).size > 0
+        elsif !Dir.glob(arg).empty?
           arg
         else
           abort "ERROR: Argument '#{arg}' doesn't seem to exist, can't continue."
         end
       end
     end
-
   end
 
   class << self
@@ -292,5 +299,4 @@ module FilePipeline
       Pipeline.new(&block)
     end
   end
-
 end
