@@ -12,7 +12,7 @@ module PennLib
       def create(db_filename, glob)
         db = SQLite3::Database.new(db_filename)
 
-        db.execute 'CREATE TABLE bound_withs (id varchar(100), holdings_xml text);'
+        db.execute 'CREATE TABLE IF NOT EXISTS bound_withs (id varchar(100) PRIMARY KEY, holdings_xml text);'
 
         # wrap in a single transaction for speediness
         db.execute 'begin'
@@ -22,12 +22,11 @@ module PennLib
           doc.xpath("/bound_withs/record").each do |record|
             id = record.xpath("id").text
             holdings = record.xpath("holdings").first.to_s
-            db.execute "insert into bound_withs values ( ?, ? )", [id, holdings]
+            db.execute "REPLACE INTO bound_withs VALUES ( ?, ? )", [id, holdings]
           end
         end
 
         db.execute 'end'
-        db.execute 'CREATE INDEX id_idx ON bound_withs (id);'
         db.close
       end
 

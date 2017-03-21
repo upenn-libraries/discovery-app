@@ -89,7 +89,8 @@ module FilePipeline
       @step.run = block
     end
 
-    # delete the input file?
+    # @param delete_input_file [Boolean] if true, the input file will be deleted
+    # after the step is executed, UNLESS it's the original file
     def delete_input_file(delete_input_file)
       @step.delete_input_file = delete_input_file
     end
@@ -107,6 +108,7 @@ module FilePipeline
     attr_accessor :steps, :stream, :options, :option_parser, :option_parser_cb
 
     def initialize(&block)
+      @options = {}
       @steps = []
       dsl = PipelineDSL.new(self)
       dsl.instance_eval(&block)
@@ -161,7 +163,6 @@ module FilePipeline
     end
 
     def parse_args(argv)
-      @options = {}
       @option_parser = OptionParser.new do |opts|
 
         opts.separator ''
@@ -177,6 +178,9 @@ module FilePipeline
         end
         opts.on('-o', '--output-dir DIR', 'Output directory') do |v|
           @options[:output_dir] = v
+        end
+        opts.on('-a', '--allow-original-deletion', 'Allow deleting original files') do |v|
+          @options[:allow_original_deletion] = true
         end
         opts.on('-p', '--processes PROCESSES', 'Number of parallel processes (defaults to 1)') do |v|
           @options[:processes] = v
@@ -262,7 +266,11 @@ module FilePipeline
               if !step.skip_output_file_check
                 check_file_exists(output_file)
               end
-              if step.delete_input_file && output_file && output_file != stage.complete_path && stage.complete_path != stage.original
+              # only delete input file if:
+              # - an output file exists
+              # - it's not the same as the input file
+              # - it's not the original file OR we're allowed to delete original files
+              if step.delete_input_file && output_file && output_file != stage.complete_path && (@options[:allow_original_deletion] || stage.complete_path != stage.original)
                 File.delete(stage.complete_path)
               end
               new_stage.complete_path = output_file

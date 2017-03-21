@@ -1,10 +1,7 @@
 #!/usr/bin/env ruby
 #
-# Preprocessing of Alma export files in preparation for indexing into Solr
-#
-# time ./index_preprocess.rb -x /home/jeffchiu/blacklight_dev/xsl -p 4 -i "~/marc/alma_prod_sandbox/20170315_full/raw/fulltest*.xml" fix_namespace create_bound_withs
-# time bundle exec rake pennlib:marc:create_boundwiths_index BOUND_WITHS_DB_FILENAME=bound_withs.sqlite3 BOUND_WITHS_GLOB="/home/jeffchiu/marc/alma_prod_sandbox/20170315_full/raw/boundwiths_*.xml"
-# time ./index_preprocess.rb -x /home/jeffchiu/blacklight_dev/xsl -p 4 -i "~/marc/alma_prod_sandbox/20170315_full/raw/fulltest*.xml" fix_marc merge_bound_withs format rename_to_final_filename
+# File processing script using FilePipeline to define steps for
+# preprocessing Alma export files, and for indexing into Solr.
 
 load 'file_pipeline.rb'
 
@@ -14,7 +11,10 @@ pipeline = FilePipeline.define do
 
   option_parser do |parser, options|
     parser.on('-x', '--xsl-dir XSL_DIR', 'Directory where .xsl files are stored') do |v|
-      options[:xsl_dir] = v
+      options[:xsl_dir] = File.expand_path(v)
+    end
+    parser.on('-l', '--log-dir LOG_DIR', 'Directory where log files should be written') do |v|
+      options[:log_dir] = File.expand_path(v)
     end
   end
 
@@ -43,7 +43,7 @@ pipeline = FilePipeline.define do
   step :convert_oai_to_marc
   delete_input_file true
   run do |stage|
-    marc_file = stage.filename.gsub('.xml', '_marc.xml')
+    marc_file = Pathname.new(stage.filename).basename('.xml').to_s + '_marc.xml'
     run_command(%(JAVA_OPTS="-Xms3g -Xmx3g" saxon -s:#{stage.filename} -xsl:#{options[:xsl_dir]}/oai2marc.xsl -o:#{marc_file}))
     { output_file: marc_file }
   end
@@ -52,7 +52,7 @@ pipeline = FilePipeline.define do
   delete_input_file true
   run do |stage|
     fixed_file = Pathname.new(stage.filename).basename('.xml').to_s + '_fixed.xml'
-    run_command(%(JAVA_OPTS="-Xms3g -Xmx3g" saxon -s:#{stage.filename} -xsl:#{options[:xsl_dir]}/fix_alma_prod_marc_records.xsl -o:#{fixed_file} bound_with_dir=#{stage.dir}))
+    run_command(%(JAVA_OPTS="-Xms3g -Xmx3g" saxon -s:#{stage.filename} -xsl:#{options[:xsl_dir]}/fix_alma_prod_marc_records.xsl -o:#{fixed_file}))
     { output_file: fixed_file }
   end
 
@@ -69,6 +69,15 @@ pipeline = FilePipeline.define do
     part_file = "part#{stage.filename.scan(/\d+/)[-1]}.xml"
     File.rename(stage.filename, part_file)
   end
+
+  step :index_into_solr
+  run do |stage|
+    chdir(script_dir)
+    base = Pathname.new(stage.filename).basename('.xml')
+    log_filename = Pathname.new(options[:log_dir]).join(base).to_s + '.log'
+    run_command("bundle exec rake pennlib:marc:index MARC_FILE=#{stage.complete_path} >> #{log_filename} 2>> #{log_filename}")
+  end
+
 end
 
 pipeline.execute
