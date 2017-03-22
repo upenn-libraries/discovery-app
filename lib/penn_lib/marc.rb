@@ -370,15 +370,97 @@ module PennLib
       get_subjects_from_600s_and_800(rec, '4')
     end
 
-    def get_format
-      # TODO: there's some complex logic for determining the format of a record,
-      # depending on location, 008, and other things
+    def get_format(rec)
+      acc = []
+
+      format_code = get_format_from_leader(rec)
+      f008 = rec.fields('008').map { |field| field.value }.first || ''
+      f007 = rec.fields('007').map { |field| field.value }
+      f260press = rec.fields('260').any? do |field|
+        field.select { |sf| sf.code == 'b' && sf.value =~ /press/i }.any?
+      end
+      # first letter of every 006
+      f006firsts = rec.fields('006').map do |field|
+        field.value[0]
+      end
+      f245k = rec.fields('245').flat_map do |field|
+        field.select { |sf| sf.code == 'k' }.map { |sf| sf.value }
+      end
+      f245h = rec.fields('245').flat_map do |field|
+        field.select { |sf| sf.code == 'h' }.map { |sf| sf.value }
+      end
+      f337a = rec.fields('337').flat_map do |field|
+        field.select { |sf| sf.code == 'a' }.map { |sf| sf.value }
+      end
+      call_nums = get_call_number_search_values(rec)
+      locations = get_specific_location_values(rec)
+
+      if locations.any? { |loc| loc =~ /manuscripts/i }
+        acc << 'Manuscript'
+      elsif locations.any? { |loc| loc =~ /archives/i } &&
+          locations.none? { |loc| loc =~ /cajs/i } &&
+          locations.none? { |loc| loc =~ /nursing/i }
+        acc << 'Archive'
+      elsif locations.any? { |loc| loc =~ /micro/i } ||
+          f245h.any? { |val| val =~ /micro/i } ||
+          call_nums.any? { |val| val =~ /micro/i } ||
+          f337a.any? { |val| val =~ /microform/i }
+        acc << 'Microformat'
+      else
+        # these next 4 can have this format plus ONE of the formats down farther below
+        if rec.fields('502').any? && format_code == 'tm'
+          acc << 'Thesis/Dissertation'
+        end
+        if rec.fields('111').any? || rec.fields('711').any?
+          acc << 'Conference/Event'
+        end
+        if (!%w{c d i j}.member?(format_code[0])) && %w{f i o}.member?(f008[28]) && (!f260press)
+          acc << 'Government document'
+        end
+        if format_code == 'as' && (f008[21] == 'n' || f008[22] == 'e')
+          acc << 'Newspaper'
+        end
+
+        # only one of these
+        if format_code.end_with?('i') || (format_code == 'am' && f006firsts.member?('m') && f006firsts.member?('s'))
+          acc << 'Database/Website'
+        elsif %w(aa ac am tm).member?(format_code) &&
+            f245k.none? { |v| v =~ /kit/i } &&
+            f245h.none? { |v| v =~ /micro/i }
+          acc << 'Book'
+        elsif %w(ca cb cd cm cs dm).member?(format_code)
+          acc << 'Musical score'
+        elsif format_code.start_with?('e') || format_code == 'fm'
+          acc << 'Map/Atlas'
+        elsif format_code == 'gm'
+          if f007.any? { |v| v.start_with?('v') }
+            acc << 'Video'
+          elsif f007.any? { |v| v.start_with?('g') }
+            acc << 'Projected graphic'
+          else
+            acc << 'Video'
+          end
+        elsif %w(im jm jc jd js).member?(format_code)
+          acc << 'Sound recording'
+        elsif %w(km kd).member?(format_code)
+          acc << 'Image'
+        elsif format_code == 'mm'
+          acc << 'Datafile'
+        elsif %w(as gs).member?(format_code)
+          acc << 'Journal/Periodical'
+        elsif format_code.start_with?('r')
+          acc << '3D object'
+        else
+          acc << 'Other'
+        end
+      end
+      acc
     end
 
     # returns two-char format code from MARC leader, representing two fields:
     # "Type of record" and "Bibliographic level"
     def get_format_from_leader(rec)
-      rec.leader[6..8]
+      rec.leader[6..7]
     end
 
     def get_format_display(rec)
@@ -1451,7 +1533,7 @@ module PennLib
         get_sub3_and_other_subs(field, &subfield_in(%w{a b c d e f}))
       end
       acc
-   end
+    end
 
     def get_biography_display(rec)
       get_datafield_and_880(rec, '545')
@@ -1905,7 +1987,7 @@ module PennLib
         item.find_all { |sf| sf.code == EnrichedMarc::SUB_ITEM_CALL_NUMBER }
                       .map(&:value)
                       .select { |call_num| call_num.present? }
-                      .map { |call_num| call_num[0] }
+                      .map { |call_num| call_num }
                       .compact
       end.flatten(1)
     end

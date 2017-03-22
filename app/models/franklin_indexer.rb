@@ -95,7 +95,9 @@ class FranklinIndexer < Blacklight::Marc::Indexer
 
     define_access_facet
 
-    to_field "format_f_stored", get_format
+    to_field 'format_f_stored' do |rec, acc|
+      acc.concat(pennlibmarc.get_format(rec))
+    end
 
     author_creator_spec = %W{
       100abcdjq
