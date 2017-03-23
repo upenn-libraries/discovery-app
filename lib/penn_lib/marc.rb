@@ -392,7 +392,10 @@ module PennLib
       f337a = rec.fields('337').flat_map do |field|
         field.select { |sf| sf.code == 'a' }.map { |sf| sf.value }
       end
-      call_nums = get_call_number_search_values(rec)
+      call_nums = rec.fields(EnrichedMarc::TAG_HOLDING).map do |field|
+        # h gives us the 'Classification part' which contains strings like 'Microfilm'
+        join_subfields(field, &subfield_in(%w(h i)))
+      end
       locations = get_specific_location_values(rec)
 
       if locations.any? { |loc| loc =~ /manuscripts/i }
