@@ -105,11 +105,12 @@ module FilePipeline
 
   # Execute steps in a data pipeline of file transformations.
   class Pipeline
-    attr_accessor :steps, :stream, :options, :option_parser, :option_parser_cb
+    attr_accessor :input_file_specs, :steps, :actual_steps, :stream, :options, :option_parser, :option_parser_cb
 
     def initialize(&block)
       @options = {}
       @steps = []
+      @input_file_specs = []
       dsl = PipelineDSL.new(self)
       dsl.instance_eval(&block)
     end
@@ -121,15 +122,21 @@ module FilePipeline
       end
       parse_args(args)
 
-      if input_files.empty?
+      if input_file_specs.empty?
         puts "No input files specified.\n\n"
         puts @option_parser
         exit 0
       end
 
+      if actual_steps.empty?
+        puts "No steps specified.\n\n"
+        puts @option_parser
+        exit 0
+      end
+
       if @options[:processes]
-        paths = @input_file_spec
-        cmd = "ls #{paths} | sort | xargs -P #{@options[:processes]} --verbose -I FILENAME #{$PROGRAM_NAME} #{options_and_values} -i FILENAME #{@actual_steps.join(' ')}"
+        paths = @input_file_specs.join(' ')
+        cmd = "ls #{paths} | sort | xargs -P #{@options[:processes]} --verbose -I FILENAME #{$PROGRAM_NAME} #{options_and_values} FILENAME"
         exec cmd
         exit
       end
@@ -155,6 +162,10 @@ module FilePipeline
 
     private
 
+    def actual_steps
+      options[:steps]
+    end
+
     def check_file_exists(path)
       if !File.exist?(path)
         puts "Error: expected file #{path} to exist. Stopping."
@@ -173,8 +184,8 @@ module FilePipeline
         # all options should define a long format whose name is
         # exactly the same as the var name in @options; this lets us
         # easily pass them along when constructing the command for xargs
-        opts.on('-i', '--input-files SPEC', 'Input files (can be a file, a dir, or a glob)') do |v|
-          @input_file_spec = v
+        opts.on('-s', '--steps STEPS', 'list of steps as comma-sep string') do |v|
+          @options[:steps] = v.split(',')
         end
         opts.on('-o', '--output-dir DIR', 'Output directory') do |v|
           @options[:output_dir] = v
@@ -195,8 +206,8 @@ module FilePipeline
         option_parser_cb.call(opts, @options)
       end
       @option_parser.parse!(argv)
-      # what's left after parsing are the steps
-      @actual_steps = argv
+      # what's left after parsing are the input files
+      @input_file_specs = argv
     end
 
     # returns a string of CLI options and values that user specified
@@ -208,9 +219,11 @@ module FilePipeline
         if opt.is_a?(OptionParser::Switch::RequiredArgument) || opt.is_a?(OptionParser::Switch::NoArgument)
           key = opt.long.first[2..-1].tr('-', '_').to_sym
           val = @options[key]
-          if (key != :input_files && key != :processes) && val
+          if (key != :processes) && val
             array << opt.long.first
-            if !%w(true false).member?(val.to_s)
+            if val.is_a?(Array)
+              array << val.join(',')
+            elsif !%w(true false).member?(val.to_s)
               array << val
             end
           end
@@ -219,27 +232,25 @@ module FilePipeline
       array.join(' ')
     end
 
-    def input_files
-      @input_files ||=
-        begin
-          if @input_file_spec
-            path = Pathname.new(@input_file_spec)
-            if path.directory?
-              full_path = path.join('*').to_s
-            else
-              full_path = @input_file_spec
-            end
-            Dir.glob(File.expand_path(full_path))
-          else
-            Array.new
-          end
+    # Transform the input file specs to arguments appropriate for the
+    # 'ls' program. Namely this means appending * to directory paths.
+    def input_file_specs_for_ls
+      @input_file_specs.flat_map do |spec|
+        path = Pathname.new(spec)
+        if path.directory?
+          full_path = path.join('*').to_s
+        else
+          full_path = spec
         end
+        # this works even when full_path is a glob
+        File.expand_path(full_path)
+      end
     end
 
     # Builds the lazy enumerable (i.e. stream) for this pipeline
     def stream
       if !@stream
-        @stream = input_files.lazy.map do |file|
+        @stream = input_file_specs_for_ls.lazy.map do |file|
           expanded = File.expand_path(file)
           stage = Stage.new
           stage.output_dir = @options[:output_dir]
@@ -247,7 +258,7 @@ module FilePipeline
           stage.complete_path = expanded
           stage
         end
-        @actual_steps.each do |actual_step|
+        actual_steps.each do |actual_step|
           step = @steps.find { |step_item| step_item.name == actual_step.to_s }
           if !step
             puts "Error: couldn't find a step named #{actual_step}, exiting."
@@ -283,28 +294,6 @@ module FilePipeline
       @stream
     end
 
-    # takes a list of args (from ARGV, usually)
-    # and returns a list of paths that can be passed as args to 'ls'.
-    # if arg is a directory, '*.xml' is appended to it.
-    # deliberately does NOT expand globs because we'll eventually pass this to
-    # ls in a shell, and a large number of expanded paths will cause problems.
-    def args_to_paths(args)
-      args.map do |arg|
-        path = Pathname.new(arg)
-        if path.exist?
-          realpath = path.realpath
-          if realpath.directory?
-            realpath.join('*.xml').to_s
-          elsif realpath.file?
-            realpath.to_s
-          end
-        elsif !Dir.glob(arg).empty?
-          arg
-        else
-          abort "ERROR: Argument '#{arg}' doesn't seem to exist, can't continue."
-        end
-      end
-    end
   end
 
   class << self
