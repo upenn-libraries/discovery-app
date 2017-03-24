@@ -2,6 +2,10 @@ $:.unshift './config'
 
 require 'date'
 
+# This fixes a bug in older versions of glibc, where name resolution under high load sometimes fails.
+# We require this here, because indexing jobs don't load Rails initializers
+require 'resolv-replace'
+
 require 'traject'
 
 require 'penn_lib/marc'
