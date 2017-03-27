@@ -84,7 +84,7 @@ module DocumentRenderHelper
         search_catalog_path(q: val)
       when /_search$/
         search_catalog_path(q: val, search_field: record[:link_type])
-      when /_xfacet$/
+      when /_xfacet/
         xbrowse_catalog_path(record[:link_type], q: val)
       else
         "#UNKNOWN"

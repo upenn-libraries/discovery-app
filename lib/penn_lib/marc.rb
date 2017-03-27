@@ -323,7 +323,7 @@ module PennLib
                 value: sub_with_hyphens,
                 value_for_link: value_for_link,
                 value_append: eandw_with_hyphens,
-                link_type: 'subject_xfacet'
+                link_type: 'subject_xfacet2'
             }
           end
         end.compact
