@@ -27,21 +27,25 @@ module DocumentRenderHelper
     buf = ''
     electronic_holdings = options[:value]
     if electronic_holdings.present?
-      # options[:value] is multi-valued even if Solr field is single-valued
-      electronic_holdings
-          .map { |v| JSON.parse(v) }
-          .each do |electronic_holdings_struct|
-        content = electronic_holdings_struct.map do |holding|
-          url = alma_electronic_resource_direct_link(holding['portfolio_pid'])
-          coverage = holding['coverage'] ? content_tag('span', ' - ' + holding['coverage']) : ''
-          link = content_tag('a', holding['collection'], { href: url })
-          content_tag('div', link + coverage)
-        end.join('')
-        content = content.present? ? content : 'No electronic holdings information available'
-        buf << content
-      end
+      # options[:value] is multi-valued
+      content = electronic_holdings.map do |electronic_holdings_str|
+        render_electronic_holdings_links(electronic_holdings_str)
+      end.join
+      content = content.present? ? content : 'No electronic holdings information available'
+      buf << content
     end
     buf.html_safe
+  end
+
+  def render_electronic_holdings_links(electronic_holdings_str)
+    if electronic_holdings_str.present?
+      JSON.parse(electronic_holdings_str).map do |holding|
+        url = alma_electronic_resource_direct_link(holding['portfolio_pid'])
+        coverage = holding['coverage'] ? content_tag('span', ' - ' + holding['coverage']) : ''
+        link = content_tag('a', holding['collection'], { href: url })
+        content_tag('div', link + coverage)
+      end.join.html_safe
+    end
   end
 
   # TODO: need to port 'DYNAMICALLY INSERTED HATHITRUST WEB LINK' from detailed.xsl?

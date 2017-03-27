@@ -11,7 +11,10 @@
 
   <% if show_availability?(document) %>
   <dt class="blacklight-availability">Status/Location:</dt>
-  <dd class="blacklight-availability availability-ajax-load" data-availability-id="<%= document.alma_mms_id %>">Loading...</dd>
+  <dd class="blacklight-availability">
+    <%= render_electronic_holdings_links(document.fetch('electronic_holdings_json', []))%>
+    <div class="availability-ajax-load" data-availability-id="<%= document.alma_mms_id %>">Loading...</div>
+  </dd>
   <% end %>
   <% if display_alma_fulfillment_iframe?(document) %>
   <dt></dt>
