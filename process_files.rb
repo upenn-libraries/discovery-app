@@ -71,6 +71,12 @@ pipeline = FilePipeline.define do
     run_command("bundle exec rake pennlib:marc:index MARC_FILE=#{stage.complete_path} >> #{log_filename} 2>> #{log_filename}")
   end
 
+  step :delete_from_solr
+  chdir :script_dir
+  run do |stage|
+    run_command("bundle exec rake pennlib:oai:delete_ids OAI_FILE=#{stage.complete_path}")
+  end
+
 end
 
 pipeline.execute

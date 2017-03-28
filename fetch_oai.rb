@@ -1,12 +1,15 @@
 #!/usr/bin/env ruby
 
-if ARGV.size != 2
-  puts "Usage: fetch_oai.rb SET_NAME OUTPUT_DIRECTORY"
+require 'pathname'
+
+if ARGV.size != 3
+  puts "Usage: fetch_oai.rb SET_NAME FROM OUTPUT_DIRECTORY"
   exit
 end
 
 set_name = ARGV[0]
-output_dir = ARGV[1]
+from = ARGV[1]
+output_dir = ARGV[2]
 
 start = Time.new.to_f
 batch_size = -1
@@ -17,7 +20,7 @@ loop do
   url = if resumption_token
           "https://upenn.alma.exlibrisgroup.com/view/oai/01UPENN_INST/request?verb=ListRecords&resumptionToken=#{resumption_token}"
         else
-          "https://upenn.alma.exlibrisgroup.com/view/oai/01UPENN_INST/request?verb=ListRecords&set=#{set_name}&metadataPrefix=marc21"
+          "https://upenn.alma.exlibrisgroup.com/view/oai/01UPENN_INST/request?verb=ListRecords&set=#{set_name}&metadataPrefix=marc21&from=#{from}"
         end
   puts "Fetching #{url}"
   output = `curl -s "#{url}"`
