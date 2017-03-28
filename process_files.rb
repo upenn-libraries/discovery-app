@@ -17,18 +17,21 @@ pipeline = FilePipeline.define do
   end
 
   step :fix_namespace
+  desc 'Add MARC21 XML ns to collection element in files'
   run do |stage|
     # this modifies the file in-place
     run_command(%(sed -i 's/<collection>/<collection xmlns=\\"http:\\/\\/www.loc.gov\\/MARC21\\/slim\\">/' #{stage.filename}))
   end
 
   step :create_bound_withs
+  desc 'Create boundwiths_*.xml files'
   run do |stage|
     boundwiths_file = "boundwiths_#{stage.filename.scan(/\d+/)[-1]}.xml"
     run_command(%(JAVA_OPTS="-Xms3g -Xmx3g" saxon -s:#{stage.filename} -xsl:#{options[:xsl_dir]}/boundwith_holdings.xsl -o:#{boundwiths_file}))
   end
 
   step :merge_bound_withs
+  desc 'Merge holdings from boundwiths_*.xml files into MARC records'
   chdir :script_dir
   run do |stage|
     merged_file = Pathname.new(stage.dir).join("merged_#{stage.filename.scan(/\d+/)[-1]}.xml").to_s
@@ -37,6 +40,7 @@ pipeline = FilePipeline.define do
   end
 
   step :convert_oai_to_marc
+  desc 'Convert output from OAI endpoint into standard MARC files'
   run do |stage|
     marc_file = Pathname.new(stage.filename).basename('.xml').to_s + '_marc.xml'
     run_command(%(JAVA_OPTS="-Xms3g -Xmx3g" saxon -s:#{stage.filename} -xsl:#{options[:xsl_dir]}/oai2marc.xsl -o:#{marc_file}))
@@ -44,6 +48,7 @@ pipeline = FilePipeline.define do
   end
 
   step :fix_marc
+  desc 'Fix bad or corrupt values that make MARC readers choke'
   run do |stage|
     fixed_file = Pathname.new(stage.filename).basename('.xml').to_s + '_fixed.xml'
     run_command(%(JAVA_OPTS="-Xms3g -Xmx3g" saxon -s:#{stage.filename} -xsl:#{options[:xsl_dir]}/fix_alma_prod_marc_records.xsl -o:#{fixed_file}))
@@ -51,6 +56,7 @@ pipeline = FilePipeline.define do
   end
 
   step :format
+  desc 'Run XML through xmllint --format'
   run do |stage|
     formatted_file = Pathname.new(stage.filename).basename('.xml').to_s + '_formatted.xml'
     run_command("xmllint --format #{stage.filename} > #{formatted_file}")
@@ -58,12 +64,14 @@ pipeline = FilePipeline.define do
   end
 
   step :rename_to_final_filename
+  desc 'Rename file to part*.xml'
   run do |stage|
     part_file = "part#{stage.filename.scan(/\d+/)[-1]}.xml"
     File.rename(stage.filename, part_file)
   end
 
   step :index_into_solr
+  desc 'Index into Solr'
   chdir :script_dir
   run do |stage|
     base = Pathname.new(stage.filename).basename('.xml')
@@ -72,6 +80,7 @@ pipeline = FilePipeline.define do
   end
 
   step :delete_from_solr
+  desc 'Delete from Solr'
   chdir :script_dir
   run do |stage|
     run_command("bundle exec rake pennlib:oai:delete_ids OAI_FILE=#{stage.complete_path}")
