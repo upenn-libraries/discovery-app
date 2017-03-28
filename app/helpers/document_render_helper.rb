@@ -42,7 +42,7 @@ module DocumentRenderHelper
       JSON.parse(electronic_holdings_str).map do |holding|
         url = alma_electronic_resource_direct_link(holding['portfolio_pid'])
         coverage = holding['coverage'] ? content_tag('span', ' - ' + holding['coverage']) : ''
-        link = content_tag('a', holding['collection'], { href: url })
+        link = content_tag('a', holding['collection'], { href: url, target: '_blank' })
         content_tag('div', link + coverage)
       end.join.html_safe
     end
