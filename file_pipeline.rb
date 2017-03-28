@@ -52,7 +52,7 @@ module FilePipeline
   end
 
   class Step
-    attr_accessor :name, :step_type, :chdir, :run, :skip_output_file_check
+    attr_accessor :name, :desc, :step_type, :chdir, :run, :skip_output_file_check
     def initialize(name)
       @name = name
       @step_type = :map
@@ -79,6 +79,11 @@ module FilePipeline
       end
       @step = Step.new(name.to_s)
       pipeline.steps << @step
+    end
+
+    # description of step
+    def desc(desc)
+      @step.desc = desc
     end
 
     # define the step type
@@ -173,7 +178,11 @@ module FilePipeline
     private
 
     def actual_steps
-      options[:steps]
+      if options[:all_steps]
+        @steps.map(&:name)
+      else
+        options[:steps]
+      end
     end
 
     def check_file_exists(path)
@@ -194,6 +203,9 @@ module FilePipeline
         # all options should define a long format whose name is
         # exactly the same as the var name in @options; this lets us
         # easily pass them along when constructing the command for xargs
+        opts.on('-a', '--all-steps', 'Run all steps in the pipeline') do |v|
+          @options[:all_steps] = true
+        end
         opts.on('-s', '--steps STEPS', 'list of steps as comma-sep string') do |v|
           @options[:steps] = v.split(',')
         end
@@ -214,6 +226,11 @@ module FilePipeline
         end
         opts.on_tail('-h', '--help', 'Show this help message') do
           puts opts
+          puts "\nSteps defined:\n\n"
+          steps.each do |step|
+            puts "#{[step.name, step.desc].compact.join(' - ')}"
+          end
+          puts "\n"
           exit
         end
         option_parser_cb.call(opts, @options)
