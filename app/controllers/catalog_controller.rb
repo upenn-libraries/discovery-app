@@ -54,6 +54,7 @@ class CatalogController < ApplicationController
         marcrecord_text
       }.join(','),
       'facet.threads': 2,
+      'mm': '100%',
       rows: 10
     }
 
