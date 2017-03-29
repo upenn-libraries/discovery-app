@@ -151,7 +151,9 @@ module FilePipeline
 
       if @options[:processes]
         paths = @input_file_specs.join(' ')
-        cmd = "ls #{paths} | sort | xargs -P #{@options[:processes]} --verbose -I FILENAME #{$PROGRAM_NAME} #{options_and_values} FILENAME"
+        verbose_flag = !RUBY_PLATFORM.include?('darwin') ? '--verbose' : ''
+        cmd = "ls #{paths} | sort | xargs -P #{@options[:processes]} #{verbose_flag} -I FILENAME #{$PROGRAM_NAME} #{options_and_values} FILENAME"
+        puts "running: #{cmd}" if @options[:verbose]
         exec cmd
         exit
       end

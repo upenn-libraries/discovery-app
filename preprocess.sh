@@ -1,6 +1,12 @@
 #!/bin/bash
 
-XSL_DIR=${XSL_DIR:-/home/jeffchiu/blacklight_dev/xsl}
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    SCRIPT_DIR="$(dirname "$(stat -f "$0")")"
+else
+    SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
+fi
+
+XSL_DIR=${XSL_DIR:-$SCRIPT_DIR/xsl}
 
 # figure out the dir portion of passed-in glob
 dir=`dirname "$1"`
