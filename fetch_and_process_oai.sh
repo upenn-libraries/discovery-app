@@ -13,9 +13,13 @@ else
     oai_dir="$1"
 fi
 
+set_dir="$oai_dir/$set_name"
+dir=$set_dir/`date +"%Y_%m_%d_%k_%M"`
+mkdir -p $dir
+
 if [ -z "$2" ]
 then
-    last_run=`cat $oai_dir/LAST_RUN`
+    last_run=`cat $set_dir/LAST_RUN`
 else
     last_run="$2"
 fi
@@ -26,16 +30,12 @@ then
     exit
 fi
 
-dir=$oai_dir/`date +"%Y_%m_%d_%k_%M"`
-
 # format date as ISO8601, as expected by OAI
 now=`date -u +"%Y-%m-%dT%H:%M:%SZ"`
 
-mkdir -p $dir
-
 ./fetch_oai.rb $set_name "$last_run" $dir
 
-echo $now > $oai_dir/LAST_RUN
+echo $now > $set_dir/LAST_RUN
 
 ./preprocess_oai.sh "$dir/$set_name*.xml"
 
