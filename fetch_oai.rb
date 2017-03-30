@@ -25,6 +25,7 @@ http.use_ssl = (uri.scheme == "https")
 
 http.start do |http_obj|
   http_obj.use_ssl = (uri.scheme == "https")
+  http_obj.read_timeout = 300 # Default is 60 seconds
   while keep_going
     puts "Fetching #{uri}"
     request = Net::HTTP::Get.new(uri)
