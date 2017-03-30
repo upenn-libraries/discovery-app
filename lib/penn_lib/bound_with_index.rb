@@ -1,5 +1,6 @@
 
 require 'nokogiri'
+require 'pathname'
 require 'sqlite3'
 
 module PennLib
@@ -9,7 +10,8 @@ module PennLib
 
     class << self
 
-      def create(db_filename, glob)
+      # xml_dir = directory containing the boundwiths_*.xml files to index
+      def create(db_filename, xml_dir)
         db = SQLite3::Database.new(db_filename)
 
         db.execute 'CREATE TABLE IF NOT EXISTS bound_withs (id varchar(100) PRIMARY KEY, holdings_xml text);'
@@ -17,6 +19,7 @@ module PennLib
         # wrap in a single transaction for speediness
         db.execute 'begin'
 
+        glob = Pathname.new(xml_dir).join("boundwiths_*.xml").to_s
         Dir.glob(glob).each do |file|
           doc = Nokogiri::XML(File.open(file))
           doc.xpath("/bound_withs/record").each do |record|

@@ -235,7 +235,9 @@ module FilePipeline
           puts "\n"
           exit
         end
-        option_parser_cb.call(opts, @options)
+        if option_parser_cb
+          option_parser_cb.call(opts, @options)
+        end
       end
       @option_parser.parse!(argv)
       # what's left after parsing are the input files
