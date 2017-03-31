@@ -25,7 +25,7 @@ pipeline = FilePipeline.define do
   desc 'Create boundwiths_*.xml files'
   run do |stage|
     boundwiths_file = "boundwiths_#{stage.filename.scan(/\d+/)[-1]}.xml"
-    run_command(%(JAVA_OPTS="-Xms3g -Xmx3g" saxon -s:#{stage.filename} -xsl:#{xsl_dir}/boundwith_holdings.xsl -o:#{boundwiths_file}))
+    run_command(%(saxon -s:#{stage.filename} -xsl:#{xsl_dir}/boundwith_holdings.xsl -o:#{boundwiths_file}))
   end
 
   step :merge_bound_withs
@@ -41,7 +41,7 @@ pipeline = FilePipeline.define do
   desc 'Convert output from OAI endpoint into standard MARC files'
   run do |stage|
     marc_file = Pathname.new(stage.filename).basename('.xml').to_s + '_marc.xml'
-    run_command(%(JAVA_OPTS="-Xms3g -Xmx3g" saxon -s:#{stage.filename} -xsl:#{xsl_dir}/oai2marc.xsl -o:#{marc_file}))
+    run_command(%(saxon -s:#{stage.filename} -xsl:#{xsl_dir}/oai2marc.xsl -o:#{marc_file}))
     { output_file: marc_file }
   end
 
@@ -49,7 +49,7 @@ pipeline = FilePipeline.define do
   desc 'Fix bad or corrupt values that make MARC readers choke'
   run do |stage|
     fixed_file = Pathname.new(stage.filename).basename('.xml').to_s + '_fixed.xml'
-    run_command(%(JAVA_OPTS="-Xms3g -Xmx3g" saxon -s:#{stage.filename} -xsl:#{xsl_dir}/fix_alma_prod_marc_records.xsl -o:#{fixed_file}))
+    run_command(%(saxon -s:#{stage.filename} -xsl:#{xsl_dir}/fix_alma_prod_marc_records.xsl -o:#{fixed_file}))
     { output_file: fixed_file }
   end
 
