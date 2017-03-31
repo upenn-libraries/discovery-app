@@ -793,37 +793,46 @@ module PennLib
       end
     end
 
+    def separate_leading_bracket_into_prefix_and_filing_hash(s)
+      if s.start_with?('[')
+        { 'prefix' => '[', 'filing' => s[1..-1] }
+      else
+        { 'prefix' => '', 'filing' => s }
+      end
+    end
+
     def get_title_245(rec)
-      acc = []
-      # TODO: odd use of tabs; do we still need to do this?
-      rec.fields('245').take(1).each do |field|
-        value = ''
+      rec.fields('245').take(1).map do |field|
+        value = {}
         offset = (field.indicator2 == ' ' ? '0' : field.indicator2).to_i
         suba = join_subfields(field, &subfield_in(%w{a}))
         if offset > 0 && offset < 10
           part1 = suba[0..offset-1]
-          part2 = suba[offset-1..-1]
-          value += [ part1, part2 ].join("\t")
+          part2 = suba[offset..-1]
+          value = { 'prefix' => part1, 'filing' => part2 }
         else
           if suba.present?
-            value += suba.gsub(/^\[/, "[\t")
+            value = separate_leading_bracket_into_prefix_and_filing_hash(suba)
           else
             subk = join_subfields(field, &subfield_in(%w{k}))
-            value += subk.gsub(/^\[/, "[\t")
+            value = separate_leading_bracket_into_prefix_and_filing_hash(subk)
           end
         end
-        value = [ value, join_subfields(field, &subfield_in(%w{b n p})) ].join(' ')
-        acc << value
+        value['filing'] = [ value['filing'], join_subfields(field, &subfield_in(%w{b n p})) ].join(' ')
+        value
       end
-      acc
     end
 
     def get_title_xfacet_values(rec)
-      get_title_245(rec)
+      get_title_245(rec).map do |v|
+        references(v)
+      end
     end
 
     def get_title_sort_values(rec)
-      get_title_245(rec).map { |v| v.gsub(/^.*\t/, '') }
+      get_title_245(rec).map do |v|
+        v['prefix'] + v['filing']
+      end
     end
 
     def get_title_1_search_main_values(rec, format_filter: false)
