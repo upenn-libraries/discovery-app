@@ -2004,6 +2004,12 @@ module PennLib
       end.flatten(1)
     end
 
+    def get_call_number_xfacet_values(rec)
+      get_call_number_search_values(rec).map do |v|
+        references(v)
+      end
+    end
+
     def get_recently_added_sort_values(rec)
       # TODO: we're not able to find or get a "date record was added to Alma"
       # which is what we want here. so we use 005 for now, but that date reflects updates.
