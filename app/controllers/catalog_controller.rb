@@ -134,7 +134,7 @@ class CatalogController < ApplicationController
     config.add_facet_field 'subject_xfacet', label: 'Topic', limit: 20, show: false,
                            xfacet: true, facet_for_filtering: 'subject_f'
     config.add_facet_field 'title_xfacet', label: 'Title', limit: 20, show: false,
-                           xfacet: true, xfacet_rbrowse_fields: %w(publication format_a)
+                           xfacet: true, xfacet_rbrowse_fields: %w(author_creator_a format_a publication_a)
     config.add_facet_field 'author_creator_xfacet', label: 'Author', limit: 20, show: false,
                            xfacet: true, facet_for_filtering: 'author_creator_f'
     config.add_facet_field 'call_number_xfacet', label: 'Call number', limit: 20, show: false,
