@@ -134,6 +134,10 @@ class FranklinIndexer < Blacklight::Marc::Indexer
       acc.concat(pennlibmarc.get_subject_xfacet_values(rec))
     end
 
+    to_field 'call_number_xfacet' do |rec, acc|
+      acc.concat(pennlibmarc.get_call_number_xfacet_values(rec))
+    end
+
     to_field "language_f_stored", marc_languages("008[35-37]")
 
     to_field "language_search", marc_languages("008[35-37]")
