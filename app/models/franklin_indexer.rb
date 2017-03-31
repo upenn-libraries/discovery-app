@@ -210,7 +210,6 @@ class FranklinIndexer < Blacklight::Marc::Indexer
 
     to_field 'title_xfacet' do |rec, acc|
       acc.concat(pennlibmarc.get_title_xfacet_values(rec))
-      acc.map! { |v| references(v) }
     end
 
     to_field 'title_ssort' do |rec, acc|
