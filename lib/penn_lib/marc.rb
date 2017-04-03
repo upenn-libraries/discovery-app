@@ -232,7 +232,7 @@ module PennLib
     end
 
     def is_subject_field(field)
-      subject_codes.member?(field.tag) && ['0','2','4'].member?(field.indicator2)
+      subject_codes.member?(field.tag) && %w(0 2 4).member?(field.indicator2)
     end
 
     # if double_dash is true, then some subfields are joined together with --
@@ -523,7 +523,7 @@ module PennLib
           ", #{relator_codes[sf.value]}"
         end
       end.compact.join
-      s2 = s + (!['.', '-'].member?(s[-1]) ? '.' : '')
+      s2 = s + (!%w(. -).member?(s[-1]) ? '.' : '')
       normalize_space(s2)
     end
 
@@ -535,7 +535,7 @@ module PennLib
           ", #{relator_codes[sf.value]}"
         end
       end.compact.join
-      s2 = s + (!['.', '-'].member?(s[-1]) ? '.' : '')
+      s2 = s + (!%w(. -).member?(s[-1]) ? '.' : '')
       normalize_space(s2)
     end
 
@@ -547,7 +547,7 @@ module PennLib
           ", #{relator_codes[sf.value]}"
         end
       end.compact.join
-      s2 = s + (!['.', '-'].member?(s[-1]) ? '.' : '')
+      s2 = s + (!%w(. -).member?(s[-1]) ? '.' : '')
       normalize_space(s2)
     end
 
@@ -750,7 +750,7 @@ module PennLib
         hpunct = field.find_all { |sf| sf.code == 'h' }
                      .map{ |sf| sf.value[-1] }
                      .first
-        punct = if [apunct, hpunct].member?('=') then
+        punct = if [apunct, hpunct].member?('=')
                   '='
                 else
                   [apunct, hpunct].member?(':') ? ':' : nil
@@ -776,7 +776,7 @@ module PennLib
         apunct = title_ak[-1]
         hpunct = subh[-1]
 
-        punct = if [apunct, hpunct].member?('=') then
+        punct = if [apunct, hpunct].member?('=')
                   '='
                 else
                   [apunct, hpunct].member?(':') ? ':' : nil
