@@ -111,4 +111,9 @@ module DocumentRenderHelper
     render_values_with_breaks(values)
   end
 
+  # translates the subject xfacet value to a value suitable for the linked facet field
+  def subject_xfacet_to_facet(value)
+    value.gsub('--', '').gsub(/\s{2,}/, ' ')
+  end
+
 end
