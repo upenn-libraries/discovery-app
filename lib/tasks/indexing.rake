@@ -75,7 +75,7 @@ namespace :pennlib do
     task :create_boundwiths_index => :environment do |t, args|
       PennLib::BoundWithIndex.create(
           ENV['BOUND_WITHS_DB_FILENAME'],
-          ENV['BOUND_WITHS_GLOB']
+          ENV['BOUND_WITHS_XML_DIR']
       )
     end
 

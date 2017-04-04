@@ -54,6 +54,7 @@ class CatalogController < ApplicationController
         marcrecord_text
       }.join(','),
       'facet.threads': 2,
+      'mm': '100%',
       rows: 10
     }
 
@@ -133,9 +134,11 @@ class CatalogController < ApplicationController
     config.add_facet_field 'subject_xfacet2', label: 'Topic', limit: 20, show: false,
                            xfacet: true, facet_for_filtering: 'subject_f'
     config.add_facet_field 'title_xfacet', label: 'Title', limit: 20, show: false,
-                           xfacet: true, xfacet_rbrowse_fields: %w(publication format_a)
+                           xfacet: true, xfacet_rbrowse_fields: %w(author_creator_a format_a publication_a)
     config.add_facet_field 'author_creator_xfacet', label: 'Author', limit: 20, show: false,
                            xfacet: true, facet_for_filtering: 'author_creator_f'
+    config.add_facet_field 'call_number_xfacet', label: 'Call number', limit: 20, show: false,
+                           xfacet: true, xfacet_rbrowse_fields: %w(publication format_a)
 
     # Have BL send all facet field names to Solr, which has been the default
     # previously. Simply remove these lines if you'd rather use Solr request
@@ -381,9 +384,9 @@ class CatalogController < ApplicationController
       }
     end
 
-    config.add_search_field('call_num_xfacet') do |field|
+    config.add_search_field('call_number_xfacet') do |field|
       field.label = 'Call Number Browse'
-      field.action = '/catalog/xbrowse/call_num_xfacet'
+      field.action = '/catalog/xbrowse/call_number_xfacet'
       field.include_in_advanced_search = false
     end
 

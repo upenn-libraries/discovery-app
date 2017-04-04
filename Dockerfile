@@ -10,7 +10,13 @@
 
 FROM phusion/passenger-ruby23:0.9.19
 
-RUN apt-get update && apt-get install -y --no-install-recommends npm
+RUN apt-get update && apt-get install -y --no-install-recommends npm libxml2-utils unzip openjdk-8-jre
+
+# docker caches this step, but it does download the file each time.
+ADD https://downloads.sourceforge.net/project/saxon/Saxon-HE/9.7/SaxonHE9-7-0-15J.zip /tmp
+RUN mkdir -p /opt/saxon && cd /opt/saxon && unzip /tmp/SaxonHE9-7-0-15J.zip && rm /tmp/SaxonHE9-7-0-15J.zip
+RUN echo "#!/bin/bash\nexec java \$JAVA_OPTS -cp /opt/saxon/saxon9he.jar net.sf.saxon.Transform \$@" > /usr/local/bin/saxon
+RUN chmod a+x /usr/local/bin/saxon
 
 # Set correct environment variables.
 ENV HOME /root

@@ -19,7 +19,7 @@ module PennLib
       def delete(ids)
         url = Rails.application.config_for(:blacklight)['url']
 
-        solr = RSolr.connect :url => url, update_format: :xml
+        solr = RSolr.connect :url => url, update_format: :xml, read_timeout: 300
         solr.delete_by_id(ids)
         solr.commit
       end

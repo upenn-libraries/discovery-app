@@ -232,7 +232,7 @@ module PennLib
     end
 
     def is_subject_field(field)
-      subject_codes.member?(field.tag) && ['0','2','4'].member?(field.indicator2)
+      subject_codes.member?(field.tag) && %w(0 2 4).member?(field.indicator2)
     end
 
     # if double_dash is true, then some subfields are joined together with --
@@ -523,7 +523,7 @@ module PennLib
           ", #{relator_codes[sf.value]}"
         end
       end.compact.join
-      s2 = s + (!['.', '-'].member?(s[-1]) ? '.' : '')
+      s2 = s + (!%w(. -).member?(s[-1]) ? '.' : '')
       normalize_space(s2)
     end
 
@@ -535,7 +535,7 @@ module PennLib
           ", #{relator_codes[sf.value]}"
         end
       end.compact.join
-      s2 = s + (!['.', '-'].member?(s[-1]) ? '.' : '')
+      s2 = s + (!%w(. -).member?(s[-1]) ? '.' : '')
       normalize_space(s2)
     end
 
@@ -547,7 +547,7 @@ module PennLib
           ", #{relator_codes[sf.value]}"
         end
       end.compact.join
-      s2 = s + (!['.', '-'].member?(s[-1]) ? '.' : '')
+      s2 = s + (!%w(. -).member?(s[-1]) ? '.' : '')
       normalize_space(s2)
     end
 
@@ -750,7 +750,7 @@ module PennLib
         hpunct = field.find_all { |sf| sf.code == 'h' }
                      .map{ |sf| sf.value[-1] }
                      .first
-        punct = if [apunct, hpunct].member?('=') then
+        punct = if [apunct, hpunct].member?('=')
                   '='
                 else
                   [apunct, hpunct].member?(':') ? ':' : nil
@@ -776,7 +776,7 @@ module PennLib
         apunct = title_ak[-1]
         hpunct = subh[-1]
 
-        punct = if [apunct, hpunct].member?('=') then
+        punct = if [apunct, hpunct].member?('=')
                   '='
                 else
                   [apunct, hpunct].member?(':') ? ':' : nil
@@ -793,37 +793,46 @@ module PennLib
       end
     end
 
+    def separate_leading_bracket_into_prefix_and_filing_hash(s)
+      if s.start_with?('[')
+        { 'prefix' => '[', 'filing' => s[1..-1] }
+      else
+        { 'prefix' => '', 'filing' => s }
+      end
+    end
+
     def get_title_245(rec)
-      acc = []
-      # TODO: odd use of tabs; do we still need to do this?
-      rec.fields('245').take(1).each do |field|
-        value = ''
+      rec.fields('245').take(1).map do |field|
+        value = {}
         offset = (field.indicator2 == ' ' ? '0' : field.indicator2).to_i
         suba = join_subfields(field, &subfield_in(%w{a}))
         if offset > 0 && offset < 10
           part1 = suba[0..offset-1]
-          part2 = suba[offset-1..-1]
-          value += [ part1, part2 ].join("\t")
+          part2 = suba[offset..-1]
+          value = { 'prefix' => part1, 'filing' => part2 }
         else
           if suba.present?
-            value += suba.gsub(/^\[/, "[\t")
+            value = separate_leading_bracket_into_prefix_and_filing_hash(suba)
           else
             subk = join_subfields(field, &subfield_in(%w{k}))
-            value += subk.gsub(/^\[/, "[\t")
+            value = separate_leading_bracket_into_prefix_and_filing_hash(subk)
           end
         end
-        value = [ value, join_subfields(field, &subfield_in(%w{b n p})) ].join(' ')
-        acc << value
+        value['filing'] = [ value['filing'], join_subfields(field, &subfield_in(%w{b n p})) ].join(' ')
+        value
       end
-      acc
     end
 
     def get_title_xfacet_values(rec)
-      get_title_245(rec)
+      get_title_245(rec).map do |v|
+        references(v)
+      end
     end
 
     def get_title_sort_values(rec)
-      get_title_245(rec).map { |v| v.gsub(/^.*\t/, '') }
+      get_title_245(rec).map do |v|
+        v['prefix'] + v['filing']
+      end
     end
 
     def get_title_1_search_main_values(rec, format_filter: false)
@@ -1610,14 +1619,16 @@ module PennLib
       get_datafield_and_880(rec, '555')
     end
 
-    # get 650/880 for provenance and chronology: value should be 'PRO' or 'CHR'
-    def get_650_and_880(rec, value)
+    # get 650/880 for provenance and chronology: prefix should be 'PRO' or 'CHR'
+    def get_650_and_880(rec, prefix)
       acc = []
       acc += rec.fields('650')
                  .select { |f| f.indicator2 == '4' }
-                 .select { |f| f.any? { |sf| sf.code == 'a' && sf.value =~ /^(#{value}|%#{value})/ } }
+                 .select { |f| f.any? { |sf| sf.code == 'a' && sf.value =~ /^(#{prefix}|%#{prefix})/ } }
                  .map do |field|
-        suba = field.select(&subfield_in(%w{a})).map {|sf| sf.value.gsub(/^%?#{value}/, '') }.join(' ')
+        suba = field.select(&subfield_in(%w{a})).map {|sf|
+          sf.value.gsub(/^%?#{prefix}/, '')
+        }.join(' ')
         sub_others = join_subfields(field, &subfield_not_in(%w{a 6 8 e w}))
         value = [ suba, sub_others ].join(' ')
         { value: value, link_type: 'subject_search' } if value.present?
@@ -1625,9 +1636,9 @@ module PennLib
       acc += rec.fields('880')
                  .select { |f| f.indicator2 == '4' }
                  .select { |f| has_subfield6_value(f,/^650/) }
-                 .select { |f| f.any? { |sf| sf.code == 'a' && sf.value =~ /^(#{value}|%#{value})/ } }
+                 .select { |f| f.any? { |sf| sf.code == 'a' && sf.value =~ /^(#{prefix}|%#{prefix})/ } }
                  .map do |field|
-        suba = field.select(&subfield_in(%w{a})).map {|sf| sf.value.gsub(/^%?#{value}/, '') }.join(' ')
+        suba = field.select(&subfield_in(%w{a})).map {|sf| sf.value.gsub(/^%?#{prefix}/, '') }.join(' ')
         sub_others = join_subfields(field, &subfield_not_in(%w{a 6 8 e w}))
         value = [ suba, sub_others ].join(' ')
         { value: value, link_type: 'subject_search' } if value.present?
@@ -1993,6 +2004,12 @@ module PennLib
                       .map { |call_num| call_num }
                       .compact
       end.flatten(1)
+    end
+
+    def get_call_number_xfacet_values(rec)
+      get_call_number_search_values(rec).map do |v|
+        references(v)
+      end
     end
 
     def get_recently_added_sort_values(rec)
