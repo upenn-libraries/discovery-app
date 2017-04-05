@@ -6,6 +6,7 @@ module PennLib
 
       def delete_ids_in_file(filepath)
         id_list = parse_ids_to_delete(filepath)
+        puts "Deleting IDs=#{id_list}"
         delete(id_list)
       end
 

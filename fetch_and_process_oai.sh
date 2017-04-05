@@ -33,12 +33,21 @@ fi
 # format date as ISO8601, as expected by OAI
 now=`date -u +"%Y-%m-%dT%H:%M:%SZ"`
 
+echo "#### OAI fetch and process started at `date`"
+
+echo "Fetching from OAI"
 ./fetch_oai.rb $set_name "$last_run" $dir
 
+echo "Updating LAST_RUN file"
 echo $now > $set_dir/LAST_RUN
 
+echo "Running preprocessing tasks"
 ./preprocess_oai.sh "$dir/$set_name*.xml"
 
+echo "Indexing into Solr"
 ./index_solr.sh "$dir/part*.xml"
 
+echo "Deleting from Solr"
 ./process_files.rb -p 4 -s delete_from_solr "$dir/$set_name*.xml"
+
+echo "#### OAI fetch and process ended at `date`"
