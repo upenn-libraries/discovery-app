@@ -51,6 +51,9 @@ Rails.application.routes.draw do
     get 'alma/social_login_callback' => 'sessions#social_login_callback'
   end
 
+  get 'accounts/login' => 'accounts#login'
+  get 'accounts/headers_debug' => 'accounts#headers_debug'
+
   BentoSearch::Routes.new(self).draw
 
   # The priority is based upon order of creation: first created -> highest priority.
