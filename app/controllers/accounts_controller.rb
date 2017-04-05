@@ -2,7 +2,7 @@
 class AccountsController < ApplicationController
 
   def login
-    next_url = params[:next]
+    next_url = params[:next] || '/'
     # log user into devise for now
 
     # TODO: figure out what we should do to make the user considered "logged in"
