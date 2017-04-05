@@ -24,5 +24,9 @@ module Blacklight
     config.active_record.raise_in_transactional_callbacks = true
 
     config.eager_load_paths << Rails.root.join('lib')
+
+    # TODO: fix the underlying problem, which is that CLIENT_IP doesn't match X_FORWARDED_FOR in headers
+    # sent by Apache proxy
+    config.action_dispatch.ip_spoofing_check = false
   end
 end
