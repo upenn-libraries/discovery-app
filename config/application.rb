@@ -26,7 +26,8 @@ module Blacklight
     config.eager_load_paths << Rails.root.join('lib')
 
     # TODO: fix the underlying problem, which is that CLIENT_IP doesn't match X_FORWARDED_FOR in headers
-    # sent by Apache proxy
+    # sent by Apache proxy. The only reason this is here is to allow some debugging code to iterate over
+    # headers in request.headers without triggering an ActionDispatch::RemoteIp::IpSpoofAttackError exception
     config.action_dispatch.ip_spoofing_check = false
   end
 end

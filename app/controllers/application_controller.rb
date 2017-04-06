@@ -7,12 +7,18 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
-  # TODO: hack to spoof X-Forwarded-Proto header so that links are rendered as https
-  before_action :set_x_forwarded_proto
+  def headers_debug
+    content = '<html><body>'
+    keys = request.headers.map { |header| header[0] }
+    keys.sort.each do |key|
+      content += "#{key} = #{request.headers[key]}<br/>"
+    end
+    content += '</body></html>'
 
-  def set_x_forwarded_proto
-    if Rails.env.production?
-      request.headers['X-Forwarded-Proto'] = 'https'
+    respond_to do |format|
+      format.html {
+        render html: content.html_safe
+      }
     end
   end
 

@@ -18,7 +18,7 @@
                   Login <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
-                  <li class="small"><a href="#">Login with PennKey (TODO)</a></li>
+                  <li class="small"><a href="<%= accounts_login_url(next: request.original_url) %>">Login with PennKey</a></li>
                   <li role="separator" class="divider"></li>
                   <li class="small"><a href="<%= nopennkey_path %>">No PennKey? Click here.</a></li>
                 </ul>
