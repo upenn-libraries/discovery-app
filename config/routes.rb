@@ -49,10 +49,10 @@ Rails.application.routes.draw do
 
   devise_scope :user do
     get 'alma/social_login_callback' => 'sessions#social_login_callback'
+    get 'accounts/login' => 'sessions#sso_login_callback'
   end
 
-  get 'accounts/login' => 'accounts#login'
-  get 'accounts/headers_debug' => 'accounts#headers_debug'
+  get '/headers_debug' => 'application#headers_debug'
 
   BentoSearch::Routes.new(self).draw
 
