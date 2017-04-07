@@ -97,6 +97,12 @@ module PennLib
       end
     end
 
+    def languages
+      @languages ||= load_xml_lookup_file("languages2.xml", "/languages/lang") do |element|
+        { element['code'] => element.text }
+      end
+    end
+
     def trim_trailing_colon(s)
       s.sub(/\s*:\s*$/, '')
     end
@@ -624,6 +630,15 @@ module PennLib
           .select { |f| f.indicator2 == '1' }
           .take(1)
           .any? { |f| f.any?(&subfield_in(%w{a b})) }
+    end
+
+    def get_language_values(rec)
+      rec.fields('008').map do |field|
+        lang_code = field.value[35..37]
+        if lang_code
+          languages[lang_code]
+        end
+      end.compact
     end
 
     # fieldname = name of field in the locations data structure to use
