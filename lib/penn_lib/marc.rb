@@ -245,7 +245,8 @@ module PennLib
     def join_subject_parts(field, double_dash: false)
       parts = field.find_all(&subfield_in(['a'])).map(&:value)
                   .select { |v| v !~ /^%?(PRO|CHR)/ }
-      parts += field.find_all(&subfield_not_in(%w{a 6 5})).map do |sf|
+      # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
+      parts += field.find_all(&subfield_not_in(%w{a 0 6 5})).map do |sf|
         (double_dash && !%w{b c d q t}.member?(sf.code) ? ' -- ' : ' ') + sf.value
       end.map(&:strip)
       parts.join(' ')
@@ -316,8 +317,9 @@ module PennLib
                       (f.tag == '800' && has_subfield6_value(f, /^(#{subject_600s.join('|')})/)) }
                    .select { |f| f.indicator2 == indicator2 }
                    .map do |field|
-          value_for_link = join_subfields(field, &subfield_not_in(%w{6 8 2 e w}))
-          sub_with_hyphens = field.select(&subfield_not_in(%w{6 8 2 e w})).map do |sf|
+          # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
+          value_for_link = join_subfields(field, &subfield_not_in(%w{0 6 8 2 e w}))
+          sub_with_hyphens = field.select(&subfield_not_in(%w{0 6 8 2 e w})).map do |sf|
             pre = !%w{a b c d p q t}.member?(sf.code) ? ' -- ' : ' '
             pre + sf.value + (sf.code == 'p' ? '.' : '')
           end.join(' ')
@@ -341,12 +343,14 @@ module PennLib
           suba = field.select(&subfield_in(%w{a}))
                      .select { |sf| sf.value !~ /^%?(PRO|CHR)/ }
                      .map(&:value).join(' ')
-          sub_oth = field.select(&subfield_not_in(%w{a 6 8})).map do |sf|
+          # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
+          sub_oth = field.select(&subfield_not_in(%w{0 a 6 8})).map do |sf|
             pre = !%w{b c d p q t}.member?(sf.code) ? ' -- ' : ' '
             pre + sf.value + (sf.code == 'p' ? '.' : '')
           end
           subj_display = [ suba, sub_oth ].join(' ')
-          sub_oth_no_hyphens = join_subfields(field, &subfield_not_in(%w{a 6 8}))
+          # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
+          sub_oth_no_hyphens = join_subfields(field, &subfield_not_in(%w{0 a 6 8}))
           subj_search = [ suba, sub_oth_no_hyphens ].join(' ')
           if subj_display.present?
             {
@@ -523,7 +527,8 @@ module PennLib
     # subfields, including expansion of 'relator' code
     def get_name_1xx_field(field)
       s = field.map do |sf|
-        if(! %W{4 6 8}.member?(sf.code))
+        # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
+        if(! %W{0 4 6 8}.member?(sf.code))
           " #{sf.value}"
         elsif sf.code == '4'
           ", #{relator_codes[sf.value]}"
@@ -535,7 +540,8 @@ module PennLib
 
     def get_series_8xx_field(field)
       s = field.map do |sf|
-        if(! %W{4 5 6 8}.member?(sf.code))
+        # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
+        if(! %W{0 4 5 6 8}.member?(sf.code))
           " #{sf.value}"
         elsif sf.code == '4'
           ", #{relator_codes[sf.value]}"
@@ -547,7 +553,8 @@ module PennLib
 
     def get_series_4xx_field(field)
       s = field.map do |sf|
-        if(! %W{4 6 8}.member?(sf.code))
+        # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
+        if(! %W{0 4 6 8}.member?(sf.code))
           " #{sf.value}"
         elsif sf.code == '4'
           ", #{relator_codes[sf.value]}"
@@ -1119,7 +1126,8 @@ module PennLib
         subf4 = get_subfield_4ew(field)
         author_parts = []
         field.each do |sf|
-          if !%W{4 6 8 e w}.member?(sf.code)
+          # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
+          if !%W{0 4 6 8 e w}.member?(sf.code)
             author_parts << sf.value
           end
         end
@@ -1133,7 +1141,8 @@ module PennLib
           subf4 = get_subfield_4ew(field)
           author_parts = []
           field.each do |sf|
-            if !%W{4 6 8 e w}.member?(sf.code)
+            # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
+            if !%W{0 4 6 8 e w}.member?(sf.code)
               author_parts << sf.value.gsub(/\?$/, '')
             end
           end
@@ -1276,7 +1285,8 @@ module PennLib
 
       if %w{800 810 811 400 410 411}.member?(tags_present.first)
         rec.fields(tags_present.first).each do |field|
-          series = join_subfields(field, &subfield_not_in(%w{5 6 8 e t w v n}))
+          # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
+          series = join_subfields(field, &subfield_not_in(%w{0 5 6 8 e t w v n}))
           pairs = field.map do |sf|
             if %w{e w v n t}.member?(sf.code)
               [ ' ', sf.value ]
@@ -1289,14 +1299,16 @@ module PennLib
         end
       elsif %w{830 440 490}.member?(tags_present.first)
         rec.fields(tags_present.first).each do |field|
-          series = join_subfields(field, &subfield_not_in(%w{5 6 8 c e w v n}))
+          # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
+          series = join_subfields(field, &subfield_not_in(%w{0 5 6 8 c e w v n}))
           series_append = join_subfields(field, &subfield_in(%w{c e w v n}))
           acc << { value: series, value_append: series_append, link_type: 'title_search' }
         end
       end
 
       rec.fields(tags_present.drop(1)).each do |field|
-        series = join_subfields(field, &subfield_not_in(%w{5 6 8}))
+        # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
+        series = join_subfields(field, &subfield_not_in(%w{0 5 6 8}))
         acc << { value: series, link: false }
       end
 
