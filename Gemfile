@@ -6,6 +6,10 @@ gem 'rails', '4.2.7'
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3', '1.3.12', platforms: :ruby
 
+group :test, :production do
+  gem 'mysql', '2.9.1'
+end
+
 gem 'jdbc-sqlite3', '3.8.11.2', platforms: :jruby
 
 gem 'activerecord-jdbcmysql-adapter', '1.3.21', platforms: :jruby
