@@ -21,7 +21,7 @@ GIT
 
 GIT
   remote: https://github.com/upenn-libraries/blacklight_alma.git
-  revision: 9fc0dc4eb11a9367261df40b00c262b2448547f1
+  revision: 22dd4b99f9156333adca9b89a9ec87c6783f6e14
   specs:
     blacklight_alma (0.0.1)
       blacklight (~> 6.0)
@@ -195,6 +195,7 @@ GEM
     multi_json (1.12.1)
     multi_xml (0.6.0)
     multipart-post (2.0.0)
+    mysql (2.9.1)
     nokogiri (1.6.8.1)
       mini_portile2 (~> 2.1.0)
     openurl (1.0.0)
@@ -327,6 +328,7 @@ DEPENDENCIES
   jdbc-sqlite3 (= 3.8.11.2)
   jettywrapper (= 2.0.4)
   jquery-rails (= 4.2.1)
+  mysql (= 2.9.1)
   passenger (= 5.0.30)
   rails (= 4.2.7)
   rsolr (= 1.1.2)
