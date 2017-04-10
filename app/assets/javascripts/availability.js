@@ -11,7 +11,7 @@ $(document).ready(function() {
         if (holding['inventory_type'] == 'physical') {
             var availability = "Unknown";
             if (holding['availability'] == 'check_holdings') {
-                availability = "Check holdings";
+                availability = "See availability details";
             } else if (holding['availability'] == 'unavailable') {
                 availability = "Requestable";
             } else if (holding['availability'] == 'available') {
