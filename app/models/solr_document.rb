@@ -62,7 +62,7 @@ class SolrDocument
   define_display_methods
 
   def pennlibmarc
-    @pennlibmarc ||= PennLib::Marc.new(Rails.root.join('indexing'))
+    @pennlibmarc ||= PennLib::Marc.new(Rails.root.join('config').join('translation_maps'))
   end
 
   def publication_display
