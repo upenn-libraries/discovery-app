@@ -18,3 +18,5 @@
 /jetty
 /*.mrc
 /node_modules
+
+/public/version.txt
