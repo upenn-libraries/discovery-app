@@ -52,7 +52,10 @@ Rails.application.routes.draw do
     get 'accounts/login' => 'sessions#sso_login_callback'
   end
 
-  get '/headers_debug' => 'application#headers_debug'
+  if ENV['ENABLE_DEBUG_URLS'] == 'true'
+    get '/headers_debug' => 'application#headers_debug'
+    get '/session_debug' => 'application#session_debug'
+  end
 
   BentoSearch::Routes.new(self).draw
 
