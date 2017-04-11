@@ -30,4 +30,18 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def session_debug
+    content = '<html><body>'
+    session.keys.sort.each do |key|
+      content += "#{key} = #{session[key]}<br/>"
+    end
+    content += '</body></html>'
+
+    respond_to do |format|
+      format.html {
+        render html: content.html_safe
+      }
+    end
+  end
+
 end

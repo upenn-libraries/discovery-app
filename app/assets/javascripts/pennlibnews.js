@@ -4,6 +4,7 @@ $(document).ready(function() {
             ".collection-news",
             "https://pennlibnews.wordpress.com/category/collection-news/feed/",
             {
+                ssl: location.protocol === 'https:',
                 outputMode: 'json_xml',
                 limit: '3',
                 maxCharacters: '150',

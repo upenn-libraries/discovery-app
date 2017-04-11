@@ -131,7 +131,7 @@ class CatalogController < ApplicationController
     # config.add_facet_field 'pub_date_isort', label: 'Publication Year', range: true, collapse: false,
     #                        include_in_advanced_search: false
 
-    config.add_facet_field 'subject_xfacet', label: 'Topic', limit: 20, show: false,
+    config.add_facet_field 'subject_xfacet', label: 'Subject', limit: 20, show: false,
                            xfacet: true, facet_for_filtering: 'subject_f',
                            xfacet_value_helper: 'subject_xfacet_to_facet'
     config.add_facet_field 'title_xfacet', label: 'Title', limit: 20, show: false,

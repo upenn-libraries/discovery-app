@@ -1,1 +1,3 @@
 This is the directory in which you should place locally defined translation maps.
+
+This is where Traject looks for its .properties mapping files. It's also where our Penn-created .xml mapping files are stored, used by PennLib::Marc.
