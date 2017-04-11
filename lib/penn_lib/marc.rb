@@ -70,13 +70,13 @@ module PennLib
     end
 
     def relator_codes
-      @relator_codes ||= load_xml_lookup_file("relatorcodes.xml", "/relatorcodes/relator") do |element|
+      @relator_codes ||= load_xml_lookup_file('relatorcodes.xml', '/relatorcodes/relator') do |element|
           { element['code'] => element.text }
       end
     end
 
     def locations
-      @locations ||= load_xml_lookup_file("locations.xml", "/locations/location") do |element|
+      @locations ||= load_xml_lookup_file('locations.xml', '/locations/location') do |element|
         struct = element.element_children.map { |c| [c.name, c.text] }.reduce(Hash.new) do |acc, rec|
           acc[rec[0]] = rec[1]
           acc
@@ -86,19 +86,19 @@ module PennLib
     end
 
     def loc_classifications
-      @loc_classifications ||= load_xml_lookup_file("ClassOutline.xml", "/list/class") do |element|
+      @loc_classifications ||= load_xml_lookup_file('ClassOutline.xml', '/list/class') do |element|
         { element['value'] => element.text }
       end
     end
 
     def dewey_classifications
-      @dewey_classifications ||= load_xml_lookup_file("DeweyClass.xml", "/list/class") do |element|
+      @dewey_classifications ||= load_xml_lookup_file('DeweyClass.xml', '/list/class') do |element|
         { element['value'] => element.text }
       end
     end
 
     def languages
-      @languages ||= load_xml_lookup_file("languages2.xml", "/languages/lang") do |element|
+      @languages ||= load_xml_lookup_file('languages2.xml', '/languages/lang') do |element|
         { element['code'] => element.text }
       end
     end
@@ -384,8 +384,8 @@ module PennLib
       acc = []
 
       format_code = get_format_from_leader(rec)
-      f008 = rec.fields('008').map { |field| field.value }.first || ''
-      f007 = rec.fields('007').map { |field| field.value }
+      f008 = rec.fields('008').map(&:value).first || ''
+      f007 = rec.fields('007').map(&:value)
       f260press = rec.fields('260').any? do |field|
         field.select { |sf| sf.code == 'b' && sf.value =~ /press/i }.any?
       end
@@ -394,13 +394,13 @@ module PennLib
         field.value[0]
       end
       f245k = rec.fields('245').flat_map do |field|
-        field.select { |sf| sf.code == 'k' }.map { |sf| sf.value }
+        field.select { |sf| sf.code == 'k' }.map(&:value)
       end
       f245h = rec.fields('245').flat_map do |field|
-        field.select { |sf| sf.code == 'h' }.map { |sf| sf.value }
+        field.select { |sf| sf.code == 'h' }.map(&:value)
       end
       f337a = rec.fields('337').flat_map do |field|
-        field.select { |sf| sf.code == 'a' }.map { |sf| sf.value }
+        field.select { |sf| sf.code == 'a' }.map(&:value)
       end
       call_nums = rec.fields(EnrichedMarc::TAG_HOLDING).map do |field|
         # h gives us the 'Classification part' which contains strings like 'Microfilm'
@@ -1742,7 +1742,8 @@ module PennLib
     # in parentheses in that value, extract that.
     def remove_paren_value_from_subfield_i(field)
       val = field.select { |sf| sf.code == 'i' }.map do |sf|
-        if match = /\((.+?)\)/.match(sf.value)
+        match = /\((.+?)\)/.match(sf.value)
+        if match
           sf.value.sub('(' + match[1] + ')', '')
         else
           sf.value
