@@ -7,7 +7,7 @@ gem 'rails', '4.2.8'
 gem 'sqlite3', '1.3.12', platforms: :ruby
 
 group :test, :production do
-  gem 'mysql', '2.9.1'
+  gem 'mysql2', '0.4.5'
 end
 
 gem 'jdbc-sqlite3', '3.8.11.2', platforms: :jruby
