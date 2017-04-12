@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160311143546) do
+ActiveRecord::Schema.define(version: 20170412132456) do
 
   create_table "bookmarks", force: :cascade do |t|
     t.integer  "user_id",       limit: 4,   null: false
@@ -26,11 +26,11 @@ ActiveRecord::Schema.define(version: 20160311143546) do
   add_index "bookmarks", ["user_id"], name: "index_bookmarks_on_user_id", using: :btree
 
   create_table "searches", force: :cascade do |t|
-    t.text     "query_params", limit: 65535
+    t.text     "query_params", limit: 16777215
     t.integer  "user_id",      limit: 4
     t.string   "user_type",    limit: 255
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
   end
 
   add_index "searches", ["user_id"], name: "index_searches_on_user_id", using: :btree
