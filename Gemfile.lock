@@ -31,7 +31,7 @@ GIT
 
 GIT
   remote: https://github.com/upenn-libraries/blacklight_solrplugins.git
-  revision: 5ba9cc868293c8fb0d094dc4220c0d22e9b62964
+  revision: beb47baa7adf632bd1d9a2617edddaa1d90a64f9
   specs:
     blacklight_solrplugins (0.0.1)
       blacklight (~> 6.0)

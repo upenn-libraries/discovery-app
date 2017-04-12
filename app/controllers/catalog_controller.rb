@@ -135,11 +135,11 @@ class CatalogController < ApplicationController
                            xfacet: true, facet_for_filtering: 'subject_f',
                            xfacet_value_helper: 'subject_xfacet_to_facet'
     config.add_facet_field 'title_xfacet', label: 'Title', limit: 20, show: false,
-                           xfacet: true, xfacet_rbrowse_fields: %w(author_creator_a format_a publication_a)
+                           xfacet: true, xfacet_rbrowse_fields: %w(author_creator_a format_a publication_a availability)
     config.add_facet_field 'author_creator_xfacet', label: 'Author', limit: 20, show: false,
                            xfacet: true, facet_for_filtering: 'author_creator_f'
     config.add_facet_field 'call_number_xfacet', label: 'Call number', limit: 20, show: false,
-                           xfacet: true, xfacet_rbrowse_fields: %w(publication format_a)
+                           xfacet: true, xfacet_rbrowse_fields: %w(publication_a format_a availability)
 
     # Have BL send all facet field names to Solr, which has been the default
     # previously. Simply remove these lines if you'd rather use Solr request
