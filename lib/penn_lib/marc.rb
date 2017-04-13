@@ -414,7 +414,7 @@ module PennLib
       end
       call_nums = rec.fields(EnrichedMarc::TAG_HOLDING).map do |field|
         # h gives us the 'Classification part' which contains strings like 'Microfilm'
-        join_subfields(field, &subfield_in(%w(h i)))
+        join_subfields(field, &subfield_in([ EnrichedMarc::SUB_HOLDING_CLASSIFICATION_PART, EnrichedMarc::SUB_HOLDING_ITEM_PART ]))
       end
       locations = get_specific_location_values(rec)
 
