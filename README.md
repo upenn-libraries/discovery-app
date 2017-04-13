@@ -4,15 +4,38 @@
 Installation:
 
 - Checkout this repo.
-- Make sure you have ruby 2.3.1 installed. The easiest way to do this is to use [rvm](https://rvm.io/).
-- Run `bundle install`
-- Install Solr 6.3.0 with
+
+- Make sure you have ruby 2.3.1 installed. It's recommended that you
+  use [rbenv](https://github.com/rbenv/rbenv), but it may be
+  quicker/easier to get running with [rvm](https://rvm.io/).
+
+- Run `bundle install` to install all gem dependencies.
+
+- Run `npm install` to install javascript libraries.
+
+- Edit the `local_dev_env` file and populate the variables with
+  appropriate values. Then source it in your shell.
+
+  ```bash
+  source local_dev_env
+  ```
+
+- Run `bundle exec rake db:migrate` to initialize the database. You'll
+  also have run this again whenever you pull code that includes new
+  migrations (if you forget, it's fine; Rails will refuse to serve
+  requests if you have migrations that aren't loaded yet.)
+
+- Install Solr with
   [solrplugins](https://github.com/upenn-libraries/solrplugins). The following line should be added 
-  to the file `solr-6.3.0/server/contexts/solr-jetty-context.xml` inside the 'Configure' tag:
+  to the file `solr-x.x.x/server/contexts/solr-jetty-context.xml` inside the 'Configure' tag:
 
   ```
   <Set name="extraClasspath">/path/to/solrplugins-0.1-SNAPSHOT.jar</Set>
   ```
+
+- Add a solr core from the
+  [library-solr-schema](https://gitlab.library.upenn.edu/discovery/library-solr-schema)
+  repo.
 
 - Load some test marc data into Solr:
 
@@ -33,7 +56,7 @@ Installation:
   2016-03-03T12:29:41-05:00  INFO finished Indexer#process: 30 records in 0.471 seconds; 63.8 records/second overall.
   ```
 
-* Start the rails server:
+- Start the rails server:
 
   ```bash
   bundle exec rails s
