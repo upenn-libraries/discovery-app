@@ -14,8 +14,8 @@ else
 fi
 
 set_dir="$oai_dir/$set_name"
-dir=$set_dir/`date +"%Y_%m_%d_%k_%M"`
-mkdir -p $dir
+batch_dir=$set_dir/`date +"%Y_%m_%d_%k_%M"`
+mkdir -p $batch_dir
 
 if [ -z "$2" ]
 then
@@ -33,21 +33,16 @@ fi
 # format date as ISO8601, as expected by OAI
 now=`date -u +"%Y-%m-%dT%H:%M:%SZ"`
 
+echo "############################################################"
 echo "#### OAI fetch and process started at `date`"
 
 echo "Fetching from OAI"
-./fetch_oai.rb $set_name "$last_run" $dir
+./fetch_oai.rb $set_name "$last_run" "$now" $batch_dir
 
 echo "Updating LAST_RUN file"
 echo $now > $set_dir/LAST_RUN
 
-echo "Running preprocessing tasks"
-./preprocess_oai.sh "$dir/$set_name*.xml"
-
-echo "Indexing into Solr"
-./index_solr.sh "$dir/part*.xml"
-
-echo "Deleting from Solr"
-./process_files.rb -p 4 -s delete_from_solr "$dir/$set_name*.xml"
+echo "Running process_oai.sh"
+./process_oai.sh "$batch_dir" "$set_name"
 
 echo "#### OAI fetch and process ended at `date`"
