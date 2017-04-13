@@ -51,6 +51,7 @@ class CatalogController < ApplicationController
         contained_within_a
         physical_holdings_json
         electronic_holdings_json
+        bound_with_ids_a
         marcrecord_text
       }.join(','),
       'facet.threads': 2,

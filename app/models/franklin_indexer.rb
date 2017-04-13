@@ -288,6 +288,14 @@ class FranklinIndexer < Blacklight::Marc::Indexer
       end
     end
 
+    # store IDs of associated boundwith records, where the actual holdings are attached.
+    # this is a multi-valued field because a bib may have multiple copies, each associated
+    # with a different boundwith record (a few such cases do exist).
+    # we use this to pass to the Availability API.
+    to_field 'bound_with_ids_a' do |rec, acc|
+      acc.concat(pennlibmarc.get_bound_with_id_values(rec))
+    end
+
     to_field 'conference_search' do |rec, acc|
       acc.concat(pennlibmarc.get_conference_search_values(rec))
     end

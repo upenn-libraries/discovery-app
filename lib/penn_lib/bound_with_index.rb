@@ -3,6 +3,8 @@ require 'nokogiri'
 require 'pathname'
 require 'sqlite3'
 
+require 'penn_lib/marc'
+
 module PennLib
 
   # Build an index for bound with records and provide a way to merge them in.
@@ -14,18 +16,31 @@ module PennLib
       def create(db_filename, xml_dir)
         db = SQLite3::Database.new(db_filename)
 
-        db.execute 'CREATE TABLE IF NOT EXISTS bound_withs (id varchar(100) PRIMARY KEY, holdings_xml text);'
+        db.execute 'CREATE TABLE IF NOT EXISTS bound_withs (id varchar(100), bound_with_id varchar(100), holdings_xml text, PRIMARY KEY (id, bound_with_id));'
 
         # wrap in a single transaction for speediness
         db.execute 'begin'
+
+        subfield_code = PennLib::EnrichedMarc::SUB_BOUND_WITH_ID
 
         glob = Pathname.new(xml_dir).join("boundwiths_*.xml").to_s
         Dir.glob(glob).each do |file|
           doc = Nokogiri::XML(File.open(file))
           doc.xpath("/bound_withs/record").each do |record|
             id = record.xpath("id").text
-            holdings = record.xpath("holdings").first.to_s
-            db.execute "REPLACE INTO bound_withs VALUES ( ?, ? )", [id, holdings]
+            boundwith_id = record.xpath("boundwith_id").text
+            holdings = record.xpath("holdings").first
+
+            # only add boundwith ID for physical holdings
+            holdings.children.select { |datafield| datafield['tag'] == PennLib::EnrichedMarc::TAG_HOLDING }.each do |datafield|
+              if datafield.children.find { |sf| sf['code'] == subfield_code }
+                puts "WARNING: subfield '#{subfield_code}' found in MARC XML that we're trying to add a subfield #{subfield_code} to! id=#{id} boundwith=#{boundwith_id}"
+              end
+              datafield << '<!-- added by preprocessing -->'
+              datafield << "<subfield code=\"#{subfield_code}\">#{boundwith_id}</subfield>"
+            end
+
+            db.execute "REPLACE INTO bound_withs VALUES ( ?, ?, ? )", [id, boundwith_id, holdings.to_s]
           end
         end
 

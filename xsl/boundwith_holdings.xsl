@@ -27,6 +27,9 @@
                         <boundwith_id><xsl:value-of select="$boundwith_id"/></boundwith_id>
                         <xsl:comment><xsl:value-of select="base-uri()"/></xsl:comment>
                         <holdings>
+                            <!-- we copy not just 'hld' physical holdings but everything else too,
+                                 since they should logically pertain to each bib, and our traject code
+                                 looks at the other inventory types -->
                             <xsl:copy-of select="$record/*[local-name()='datafield' and (@tag='hld' or @tag='itm' or @tag='prt' or @tag='dig')]"/>
                         </holdings>
                     </record>

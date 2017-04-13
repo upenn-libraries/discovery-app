@@ -27,6 +27,10 @@ module PennLib
     SUB_ELEC_ACCESS_URL = 'b'
     SUB_ELEC_COLLECTION_NAME = 'c'
     SUB_ELEC_COVERAGE = 'g'
+
+    # a subfield code NOT used by the MARC 21 spec for 852 holdings records.
+    # we add this subfield during preprocessing to store boundwith record IDs.
+    SUB_BOUND_WITH_ID = 'y'
   end
 
   # Class for doing extraction and processing on MARC::Record objects.
@@ -1413,6 +1417,12 @@ module PennLib
             collection: item[EnrichedMarc::SUB_ELEC_COLLECTION_NAME],
             coverage: item[EnrichedMarc::SUB_ELEC_COVERAGE],
         }
+      end
+    end
+
+    def get_bound_with_id_values(rec)
+      rec.fields(EnrichedMarc::TAG_HOLDING).flat_map do |field|
+        field.select(&subfield_in([ EnrichedMarc::SUB_BOUND_WITH_ID ])).map { |sf| sf.value }
       end
     end
 
