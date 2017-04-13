@@ -11,7 +11,7 @@ $(document).ready(function() {
     if($(".ezproxy-login-status").length > 0) {
         var LOGIN = require('ezproxy-login-status');
         var module = LOGIN.getModule('ezproxyStatus');
-        module.setURL("https://proxy.library.upenn.edu/login?url=http://127.0.0.1:8080/");
+        module.setURL("https://proxy.library.upenn.edu/login?url=https://127.0.0.1:8080/");
         //module.setLoggedOutPingIntervalSeconds(60);
         //module.setLoggedInPingIntervalSeconds(60);
         //module.setTimeoutMillis(2000); // to determine a failed jsonp authentication request
