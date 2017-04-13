@@ -2,6 +2,6 @@
     <dt class="blacklight-availability">Status/Location:</dt>
     <dd class="blacklight-availability">
       <%= render_electronic_holdings_links(document.fetch('electronic_holdings_json', []))%>
-      <div class="availability-ajax-load" data-availability-id="<%= document.alma_mms_id %>">Loading...</div>
+      <div class="availability-ajax-load" data-availability-ids="<%= document.alma_availability_mms_ids.join(',') %>">Loading...</div>
     </dd>
 <% end %>

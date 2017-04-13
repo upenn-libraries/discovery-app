@@ -118,6 +118,10 @@ class SolrDocument
     fetch('alma_mms_id', nil)
   end
 
+  def alma_availability_mms_ids
+    fetch('bound_with_ids_a', [alma_mms_id])
+  end
+
   def has_any_holdings?
     has?(:electronic_holdings_json) || has?(:physical_holdings_json)
   end
