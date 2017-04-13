@@ -3,14 +3,15 @@
 require 'net/http'
 require 'pathname'
 
-if ARGV.size != 3
-  puts "Usage: fetch_oai.rb SET_NAME FROM OUTPUT_DIRECTORY"
+if ARGV.size != 4
+  puts 'Usage: fetch_oai.rb SET_NAME FROM UNTIL OUTPUT_DIRECTORY'
   exit
 end
 
 set_name = ARGV[0]
 from = ARGV[1]
-output_dir = ARGV[2]
+until_arg = ARGV[2]
+output_dir = ARGV[3]
 
 start = Time.new.to_f
 batch_size = -1
@@ -18,13 +19,17 @@ count = 0
 resumption_token = nil
 keep_going = true
 
-uri = URI("https://upenn.alma.exlibrisgroup.com/view/oai/01UPENN_INST/request?verb=ListRecords&set=#{set_name}&metadataPrefix=marc21&from=#{from}")
+uri_str = "https://upenn.alma.exlibrisgroup.com/view/oai/01UPENN_INST/request?verb=ListRecords&set=#{set_name}&metadataPrefix=marc21&from=#{from}&until=#{until_arg}"
+uri = URI(uri_str)
+is_https = uri.scheme == 'https'
+
+File.write(Pathname.new(output_dir).join('OAI_REQUEST'), "#{uri_str}\n")
 
 http = Net::HTTP.new(uri.host, uri.port)
-http.use_ssl = (uri.scheme == "https")
+http.use_ssl = is_https
 
 http.start do |http_obj|
-  http_obj.use_ssl = (uri.scheme == "https")
+  http_obj.use_ssl = is_https
   http_obj.read_timeout = 300 # Default is 60 seconds
   while keep_going
     puts "Fetching #{uri}"

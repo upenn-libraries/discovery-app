@@ -1,4 +1,6 @@
 #!/bin/bash
+#
+# Arguments should be a list of files (can be globs) to preprocess.
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
     SCRIPT_DIR="$(dirname "$(stat -f "$0")")"

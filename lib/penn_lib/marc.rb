@@ -82,7 +82,13 @@ module PennLib
     def locations
       @locations ||= load_xml_lookup_file('locations.xml', '/locations/location') do |element|
         struct = element.element_children.map { |c| [c.name, c.text] }.reduce(Hash.new) do |acc, rec|
-          acc[rec[0]] = rec[1]
+          value = rec[1]
+          # 'library' is multivalued
+          if rec[0] == 'library'
+            value = (acc[rec[0]] || Array.new)
+            value << rec[1]
+          end
+          acc[rec[0]] = value
           acc
         end
         { element['location_code'] =>  struct }
@@ -654,9 +660,8 @@ module PennLib
 
     # fieldname = name of field in the locations data structure to use
     def holdings_location_mappings(rec, display_fieldname)
-      acc = []
-      rec.fields(EnrichedMarc::TAG_HOLDING).each do |field|
-        field.find_all { |sf| sf.code == EnrichedMarc::SUB_HOLDING_SHELVING_LOCATION }
+      rec.fields(EnrichedMarc::TAG_HOLDING).flat_map do |field|
+        results = field.find_all { |sf| sf.code == EnrichedMarc::SUB_HOLDING_SHELVING_LOCATION }
             .map { |sf|
           # sometimes "happening locations" are mistakenly
           # used in holdings records. that's a data problem that should be fixed.
@@ -664,9 +669,10 @@ module PennLib
           if locations[sf.value].present?
             locations[sf.value][display_fieldname]
           end
-        }.select { |value| value.present? }.each { |value| acc << value }
-      end
-      acc.uniq
+        }
+        # flatten multiple 'library' values
+        results.select(&:present?).flatten
+      end.uniq
     end
 
     def get_library_values(rec)

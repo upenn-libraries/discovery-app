@@ -8,7 +8,6 @@ load 'file_pipeline.rb'
 pipeline = FilePipeline.define do
 
   xsl_dir = ENV['XSL_DIR'] ? File.expand_path(ENV['XSL_DIR']) : nil
-  log_dir = ENV['LOG_DIR'] ? File.expand_path(ENV['LOG_DIR']) : nil
 
   step :fix_namespace
   desc 'Add MARC21 XML ns to collection element in files'
@@ -72,6 +71,10 @@ pipeline = FilePipeline.define do
   desc 'Index into Solr'
   chdir :script_dir
   run do |stage|
+    log_dir = Pathname.new(stage.complete_path).dirname.join('log').to_s
+    # ruby's Dir.mkdir doesn't support -p functionality, so we use 'mkdir -p' to avoid errors
+    system("mkdir -p #{log_dir}")
+
     base = Pathname.new(stage.filename).basename('.xml')
     log_filename = Pathname.new(log_dir).join(base).to_s + '.log'
     run_command("bundle exec rake pennlib:marc:index MARC_FILE=#{stage.complete_path} >> #{log_filename} 2>> #{log_filename}")
