@@ -18,7 +18,6 @@ module PennLib
     SUB_HOLDING_CLASSIFICATION_PART = 'h'
     SUB_HOLDING_ITEM_PART = 'i'
 
-    SUB_ITEM_STATUS = 'b'
     SUB_ITEM_CURRENT_LOCATION = 'g'
     SUB_ITEM_CURRENT_LIBRARY = 'f'
     SUB_ITEM_CALL_NUMBER_TYPE = 'h'
@@ -659,15 +658,10 @@ module PennLib
       end.compact
     end
 
-    # extract locations from unsuppressed item records and map them
-    # to the passed-in 'display_fieldname' field in our 'locations' mapping file.
-    def items_location_mappings(rec, display_fieldname)
-      # use items because they have a status field that indicates whether it's suppressed;
-      # suppressed holdings shouldn't appear in export at all.
-      rec.fields(EnrichedMarc::TAG_ITEM)
-        .select { |field| field.any? { |sf| sf.code == EnrichedMarc:: SUB_ITEM_STATUS && sf.value != '0' } }
-        .flat_map do |field|
-        results = field.find_all { |sf| sf.code == EnrichedMarc::SUB_ITEM_CURRENT_LOCATION }
+    # fieldname = name of field in the locations data structure to use
+    def holdings_location_mappings(rec, display_fieldname)
+      rec.fields(EnrichedMarc::TAG_HOLDING).flat_map do |field|
+        results = field.find_all { |sf| sf.code == EnrichedMarc::SUB_HOLDING_SHELVING_LOCATION }
             .map { |sf|
           # sometimes "happening locations" are mistakenly
           # used in holdings records. that's a data problem that should be fixed.
@@ -682,13 +676,11 @@ module PennLib
     end
 
     def get_library_values(rec)
-      # for facetting, there is a one-to-many relationship between locations and libraries.
-      # that's why we don't use the library code in the MARC, but consult our own mappings instead.
-      items_location_mappings(rec, 'library')
+      holdings_location_mappings(rec, 'library')
     end
 
     def get_specific_location_values(rec)
-      items_location_mappings(rec, 'specific_location')
+      holdings_location_mappings(rec, 'specific_location')
     end
 
     def publication_date_digits(rec)
