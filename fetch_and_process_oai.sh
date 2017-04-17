@@ -42,7 +42,10 @@ echo "Fetching from OAI"
 echo "Updating LAST_RUN file"
 echo $now > $set_dir/LAST_RUN
 
-echo "Running process_oai.sh"
-./process_oai.sh "$batch_dir" "$set_name"
+echo "Running preprocessing tasks"
+./preprocess_oai.sh "$batch_dir/$set_name*.xml"
+
+echo "Running index_and_deletions.sh"
+./index_and_deletions.sh "$batch_dir" "$set_name"
 
 echo "#### OAI fetch and process ended at `date`"
