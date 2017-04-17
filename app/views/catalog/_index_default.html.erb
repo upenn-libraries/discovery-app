@@ -11,12 +11,8 @@
 
   <%= render partial: 'status_location_field', locals: { document: document } %>
 
-  <% if display_alma_fulfillment_iframe?(document) %>
-  <dt></dt>
-  <dd>
-    <button class="btn btn-default availability-toggle-details" data-show-text="Show Availability Details" data-hide-text="Hide Availability Details">Show Availability Details</button>
-  </dd>
-  <% end %>
+  <%= render partial: 'alma_availability_button', locals: { document: document } %>
+
 </dl>
 
-<div class="availability-details-container" data-availability-iframe-url="<%= alma_app_fulfillment_url(document) %>"></div>
+<%= render partial: 'alma_availability_iframe_ajax_container', locals: { document: document } %>
