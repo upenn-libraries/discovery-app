@@ -22,8 +22,8 @@ Installation:
 
 - Run `bundle exec rake db:migrate` to initialize the database. You'll
   also have run this again whenever you pull code that includes new
-  migrations (if you forget, it's fine; Rails will refuse to serve
-  requests if you have migrations that aren't loaded yet.)
+  migrations (if you forget, Rails will raise an exception when serving
+  requests because there are unloaded migrations.)
 
 - Install Solr with
   [solrplugins](https://github.com/upenn-libraries/solrplugins). The following line should be added 
@@ -49,7 +49,7 @@ Installation:
   If the test data is successfully indexed, you should see output
   something like:
   
-  ```bash
+  ```
   2016-03-03T12:29:40-05:00  INFO    Traject::SolrJsonWriter writing to 'http://127.0.0.1:8983/solr/blacklight-core/update/json' in batches of 100 with 1 bg threads
   2016-03-03T12:29:40-05:00  INFO    Indexer with 1 processing threads, reader: Traject::MarcReader and writer: Traject::SolrJsonWriter
   2016-03-03T12:29:41-05:00  INFO Traject::SolrJsonWriter sending commit to solr at url http://127.0.0.1:8983/solr/blacklight-core/update/json...
@@ -66,6 +66,45 @@ Installation:
   everything went well, you should see the generic Blacklight homepage
   and have 30 faceted records to search.
 
+# Solr Indexing
+
+We handle two types of data exports from Alma: full exports and
+incremental updates via OAI.
+
+The commands in this section can be run directly, or in an application
+container. See the `run_in_container.sh` script in the ansible
+repository.
+
+## Full exports
+
+Unpack the *.tar.gz files created by the Alma publishing job. I
+usually put them in a subdirectory called `raw`. Then run the
+preprocessing and indexing scripts as follows:
+
+```bash
+# note that we quote the glob
+./preprocess.sh "/var/solr_input_data/alma_prod_sandbox/20170412_full/raw/fulltest*.xml"
+
+./index_solr.sh "/var/solr_input_data/alma_prod_sandbox/20170412_full/raw/part*.xml"
+```
+
+## Incremental updates (OAI)
+
+This runs via a cron job, which fetches the updates available via OAI
+since the last time the job was run.
+
+```bash
+./fetch_and_process_oai.sh /var/solr_input_data/alma_prod_sandbox/oai
+```
+
+If you do a full index using an older full data export, and you want
+to apply a set of already fetched and processed OAI updates manually,
+you can do so like this:
+
+```bash
+# run this for each dated directory
+./index_and_deletions.sh /var/solr_input_data/alma_prod_sandbox/oai/allTitles/2017_04_10_00_00 allTitles
+```
 
 # JRuby and Traject
 
