@@ -321,7 +321,8 @@ class FranklinIndexer < Blacklight::Marc::Indexer
   end
 
   def pennlibmarc
-    @pennlibmarc ||= PennLib::Marc.new(Rails.root.join('config').join('translation_maps'))
+    @code_mappings ||= PennLib::CodeMappings.new(Rails.root.join('config').join('translation_maps'))
+    @pennlibmarc ||= PennLib::Marc.new(@code_mappings)
   end
 
   def define_id
