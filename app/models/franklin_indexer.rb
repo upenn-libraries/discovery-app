@@ -9,6 +9,7 @@ require 'resolv-replace'
 require 'traject'
 
 require 'penn_lib/marc'
+require 'penn_lib/code_mappings'
 
 # Indexer for Franklin-native records (i.e. from Alma).
 # This is also used as a parent class for Hathi and CRL
