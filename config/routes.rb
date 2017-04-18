@@ -18,6 +18,8 @@ Rails.application.routes.draw do
 
   get 'nopennkey' => 'catalog#nopennkey'
 
+  get 'collection_news' => 'collection_news#index'
+
   Blacklight::Marc.add_routes(self)
   concern :searchable, Blacklight::Routes::Searchable.new
   concern :xbrowsable, BlacklightSolrplugins::Routes::XBrowsable.new
