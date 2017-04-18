@@ -43,9 +43,7 @@ Rails.application.routes.draw do
     end
   end
 
-  scope module: 'blacklight_alma' do
-    get 'alma/availability' => 'alma#availability'
-  end
+  get 'alma/availability' => 'franklin_alma#availability'
 
   devise_scope :user do
     get 'alma/social_login_callback' => 'sessions#social_login_callback'
