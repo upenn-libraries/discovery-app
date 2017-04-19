@@ -181,7 +181,7 @@ GEM
       activerecord
       kaminari-core (= 1.0.1)
     kaminari-core (1.0.1)
-    language_list (1.2.0)
+    language_list (1.1.0)
     library_stdnums (1.4.1)
     libv8 (3.16.14.19)
     logger (1.2.8)
@@ -333,6 +333,7 @@ DEPENDENCIES
   jdbc-sqlite3 (= 3.8.11.2)
   jettywrapper (= 2.0.4)
   jquery-rails (= 4.3.1)
+  language_list (= 1.1.0)
   mysql2 (= 0.4.5)
   nokogiri (= 1.7.1)
   passenger (= 5.1.2)
