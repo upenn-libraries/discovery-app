@@ -96,11 +96,9 @@ gem 'blacklight-marc', '~> 6.0', :git => 'https://github.com/magibney/blacklight
 
 gem 'blacklight_solrplugins', :git => 'https://github.com/upenn-libraries/blacklight_solrplugins.git'
 
-# TODO: language_list 1.2.0 has backwards-incompat behavior that breaks bento_search's
-# parsing of nil language fields, so we pin language_list to 1.1.0 until
-# bento_search > 1.7.0 is released (fix is in commit 82151d9)
-gem 'language_list', '1.1.0'
-gem 'bento_search', '1.7'
+gem 'bento_search', :git => 'https://github.com/magibney/bento_search', :branch => 'search_controller_engine_params' #'1.7'
+
+gem 'summon', :git => 'https://github.com/magibney/summon.rb', :branch => 'sign-empty-param-values'
 
 gem 'blacklight_alma', :git => 'https://github.com/upenn-libraries/blacklight_alma.git'
 
