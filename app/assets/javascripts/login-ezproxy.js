@@ -1,5 +1,7 @@
 $(document).ready(function() {
 
+    var SUMMON_ROLE_AUTH_HEADER_NAME = "x-summon-role-auth";
+
     function clearLoggedInClasses() {
         $(".ezproxy-login-status").removeClass("ezproxy-is-logged-in ezproxy-is-not-logged-in");
     }
@@ -16,17 +18,30 @@ $(document).ready(function() {
         //module.setLoggedInPingIntervalSeconds(60);
         //module.setTimeoutMillis(2000); // to determine a failed jsonp authentication request
 
+	var loginStatusDiv = $(".ezproxy-login-status");
         module.addOnLoggedIn('main', function(data){
             clearLoggedInClasses();
-            $(".ezproxy-login-status").addClass("ezproxy-is-logged-in");
+            loginStatusDiv.addClass("ezproxy-is-logged-in");
         });
         module.addOnNotLoggedIn('main', function(){
             clearLoggedInClasses();
-            $(".ezproxy-login-status").addClass("ezproxy-is-not-logged-in");
+            loginStatusDiv.addClass("ezproxy-is-not-logged-in");
         });
+
+	// first ("fail") param undefined (handled by BentoSearch)
+	// last ("instance") param is window; we don't care about "this", so global scope
+	module.requestSubmit(undefined, function(fail, auth) {
+            var beforeSend = undefined;
+            if (auth !== null && auth !== undefined) {
+	        beforeSend = function beforeSend(xhr, settings) {
+		   xhr.setRequestHeader(SUMMON_ROLE_AUTH_HEADER_NAME, auth.iv + ';' + auth.ciphertext);
+		};
+	    }
+	    BentoSearch.ajax_load(loginStatusDiv.children(".bento_search_ajax_wait"), undefined, beforeSend);
+	}, window);
         module.init();
 
-        $(".ezproxy-login-status").on("click", ".ezproxy-login-link", function() {
+        loginStatusDiv.on("click", ".ezproxy-login-link", function() {
             module.loginOnclick();
         });
     }

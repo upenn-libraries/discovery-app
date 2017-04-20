@@ -96,7 +96,9 @@ gem 'blacklight-marc', '~> 6.0', :git => 'https://github.com/magibney/blacklight
 
 gem 'blacklight_solrplugins', :git => 'https://github.com/upenn-libraries/blacklight_solrplugins.git'
 
-gem 'bento_search', '1.7'
+gem 'bento_search', :git => 'https://github.com/magibney/bento_search', :branch => 'search_controller_engine_params' #'1.7'
+
+gem 'summon', :git => 'https://github.com/magibney/summon.rb', :branch => 'sign-empty-param-values'
 
 gem 'blacklight_alma', :git => 'https://github.com/upenn-libraries/blacklight_alma.git'
 

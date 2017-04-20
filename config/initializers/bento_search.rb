@@ -6,24 +6,13 @@ class PennSummonEngine < BentoSearch::SummonEngine
   # send a space char so Summon API doesn't return an error page
   # when 's.q' param is a blank string.
   # TODO: figure out why this hack isn't needed in DLA Franklin.
-  def construct_request(args)
-    if !args[:query] || args[:query] == ''
-      args[:query] = ' '
-    end
-    super(args)
-  end
+  #def construct_request(args)
+    #if !args[:query] || args[:query] == ''
+    #  args[:query] = ' '
+    #end
+  #  super(args)
+  #end
 
-  def is_user_logged_in?
-    # TODO: validate user's token against signing service behind ezproxy
-    true
-  end
-
-  def search(*arguments)
-    if is_user_logged_in?
-      arguments.last[:auth] = true
-    end
-    super(*arguments)
-  end
 end
 
 
@@ -56,4 +45,22 @@ BentoSearch.register_engine('summon') do |conf|
     #display.decorator = "RefworksAndOpenUrlLinkDecorator"
   end
 
+  conf.check_auth = lambda do |param_hash, request|
+    summon_auth = request.headers['x-summon-role-auth']
+    if summon_auth.blank?
+      param_hash[:auth] = false
+    else
+      param_hash[:auth] = true
+    end
+    param_hash
+  end
+end
+
+BentoSearch::SearchController.before_action do |controller|
+  check_auth = controller.engine.configuration.check_auth
+  if check_auth != nil
+    engine_args = controller.safe_search_args(controller.engine, controller.params)
+    engine_args = check_auth.call(engine_args, controller.request)
+    controller.engine_args = engine_args
+  end
 end
