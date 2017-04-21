@@ -2,7 +2,6 @@
 # Blacklight overrides
 module BlacklightHelper
   include Blacklight::BlacklightHelperBehavior
-  include BlacklightSolrplugins::BlacklightOverride
 
   # override Blacklight to replace the default bar (containing simple search form)
   # with our fancy tabbed search bar

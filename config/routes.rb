@@ -22,12 +22,10 @@ Rails.application.routes.draw do
 
   Blacklight::Marc.add_routes(self)
   concern :searchable, Blacklight::Routes::Searchable.new
-  concern :xbrowsable, BlacklightSolrplugins::Routes::XBrowsable.new
 
   resource :catalog, only: [:index], as: 'catalog', path: '/catalog', controller: 'catalog' do
     concerns :searchable
     concerns :range_searchable
-    concerns :xbrowsable
   end
 
   # override devise's sessions controller w/ our own

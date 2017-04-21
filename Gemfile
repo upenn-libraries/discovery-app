@@ -94,7 +94,7 @@ gem 'nokogiri', '1.7.1'
 # will switch back when applied.
 gem 'blacklight-marc', '~> 6.0', :git => 'https://github.com/magibney/blacklight-marc.git', :branch => 'fix-extract_marc-format-008'
 
-gem 'blacklight_solrplugins', :git => 'https://github.com/upenn-libraries/blacklight_solrplugins.git'
+gem 'blacklight_solrplugins', :git => 'https://github.com/upenn-libraries/blacklight_solrplugins.git', :branch => 'integrated-search'
 
 gem 'bento_search', :git => 'https://github.com/magibney/bento_search', :branch => 'search_controller_engine_params' #'1.7'
 
