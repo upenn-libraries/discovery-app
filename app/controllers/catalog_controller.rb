@@ -133,14 +133,14 @@ class CatalogController < ApplicationController
     #                        include_in_advanced_search: false
 
     config.add_facet_field 'subject_xfacet', label: 'Subject', limit: 20, show: false,
-                           xfacet: true, facet_for_filtering: 'subject_f',
+                           xfacet: true, xfacet_view_type: 'xbrowse', facet_for_filtering: 'subject_f',
                            xfacet_value_helper: 'subject_xfacet_to_facet'
     config.add_facet_field 'title_xfacet', label: 'Title', limit: 20, show: false,
-                           xfacet: true, xfacet_rbrowse_fields: %w(author_creator_a format_a publication_a availability)
+                           xfacet: true, xfacet_view_type: 'rbrowse', xfacet_rbrowse_fields: %w(author_creator_a format_a publication_a availability)
     config.add_facet_field 'author_creator_xfacet', label: 'Author', limit: 20, show: false,
-                           xfacet: true, facet_for_filtering: 'author_creator_f'
+                           xfacet: true, xfacet_view_type: 'xbrowse', facet_for_filtering: 'author_creator_f'
     config.add_facet_field 'call_number_xfacet', label: 'Call number', limit: 20, show: false,
-                           xfacet: true, xfacet_rbrowse_fields: %w(publication_a format_a availability)
+                           xfacet: true, xfacet_view_type: 'xbrowse', xfacet_rbrowse_fields: %w(publication_a format_a availability)
 
     # Have BL send all facet field names to Solr, which has been the default
     # previously. Simply remove these lines if you'd rather use Solr request
@@ -312,7 +312,6 @@ class CatalogController < ApplicationController
 
     config.add_search_field('title_xfacet') do |field|
       field.label = 'Title Browse (omit initial article: a, the, la, ...)'
-      field.action = '/catalog/rbrowse/title_xfacet'
       field.include_in_advanced_search = false
     end
 
@@ -347,7 +346,6 @@ class CatalogController < ApplicationController
 
     config.add_search_field('author_creator_xfacet') do |field|
       field.label = 'Author Browse (last name first)'
-      field.action = '/catalog/xbrowse/author_creator_xfacet'
       field.include_in_advanced_search = false
     end
 
@@ -363,7 +361,6 @@ class CatalogController < ApplicationController
 
     config.add_search_field('subject_xfacet') do |field|
       field.label = 'Subject Heading Browse (Library of Congress)'
-      field.action = '/catalog/xbrowse/subject_xfacet'
       field.include_in_advanced_search = false
     end
 
@@ -388,7 +385,6 @@ class CatalogController < ApplicationController
 
     config.add_search_field('call_number_xfacet') do |field|
       field.label = 'Call Number Browse'
-      field.action = '/catalog/xbrowse/call_number_xfacet'
       field.include_in_advanced_search = false
     end
 
