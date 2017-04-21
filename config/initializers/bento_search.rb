@@ -1,23 +1,8 @@
 
 # Configuration for bento_search gem
 
-class PennSummonEngine < BentoSearch::SummonEngine
-
-  # send a space char so Summon API doesn't return an error page
-  # when 's.q' param is a blank string.
-  # TODO: figure out why this hack isn't needed in DLA Franklin.
-  #def construct_request(args)
-    #if !args[:query] || args[:query] == ''
-    #  args[:query] = ' '
-    #end
-  #  super(args)
-  #end
-
-end
-
-
 BentoSearch.register_engine('summon') do |conf|
-  conf.engine     = 'PennSummonEngine'
+  conf.engine     = 'BentoSearch::SummonEngine'
   conf.access_id  = ENV['SUMMON_ACCESS_ID']
   conf.secret_key = ENV['SUMMON_SECRET_KEY']
   #conf.lang       = 'en'
