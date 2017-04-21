@@ -15,7 +15,7 @@
     </div>
 
     <div class="col-sm-6 summon-results ezproxy-login-status">
-      <%= bento_search 'summon', :query => params[:q], :per_page => 25, :load => :ajax_triggered %>
+      <%= bento_search 'summon', :query => params[:q] || '', :per_page => 25, :load => :ajax_triggered %>
     </div>
 
 </div>
