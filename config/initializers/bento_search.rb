@@ -35,6 +35,7 @@ BentoSearch.register_engine('summon') do |conf|
     if summon_auth.blank?
       param_hash[:auth] = false
     else
+      #TODO actually verify the header value
       param_hash[:auth] = true
     end
     param_hash
