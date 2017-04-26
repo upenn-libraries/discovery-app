@@ -9,9 +9,18 @@ class ApplicationController < ActionController::Base
 
   before_action :check_hard_session_expiration
 
+  def has_shib_session?
+    session[:alma_sso_user].present? || request.headers['HTTP_REMOTE_USER'].present?
+  end
+
+  def shib_session_valid?
+    session[:alma_sso_user] != request.headers['HTTP_REMOTE_USER']
+  end
+
   def check_hard_session_expiration
-    if session[:hard_expiration] && session[:hard_expiration] < Time.now.to_i
-      reset_session
+    if (session[:hard_expiration] && session[:hard_expiration] < Time.now.to_i) ||
+      (has_shib_session? && !shib_session_valid?)
+      redirect_to '/', alert: 'Your session has expired, please log in again'
     end
   end
 
