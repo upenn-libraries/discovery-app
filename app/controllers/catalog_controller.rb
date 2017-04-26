@@ -9,6 +9,27 @@ class CatalogController < ApplicationController
 
   include BlacklightSolrplugins::XBrowse
 
+  before_action :expire_session
+
+  def has_shib_session?
+    session[:alma_sso_user].present?
+  end
+
+  def shib_session_valid?
+    session[:alma_sso_user] == request.headers['HTTP_REMOTE_USER']
+  end
+
+  # manually expire the session if user has exceeded 'hard expiration' or whether
+  # shib session has become inactive
+  def expire_session
+    invalid_shib = has_shib_session? && !shib_session_valid?
+    if (session[:hard_expiration] && session[:hard_expiration] < Time.now.to_i) || invalid_shib
+      reset_session
+      url = invalid_shib ? "/Shibboleth.sso/Logout?return=#{root_url}" : root_url
+      redirect_to url, alert: 'Your session has expired, please log in again'
+    end
+  end
+
   configure_blacklight do |config|
     # default advanced config values
     config.advanced_search ||= Blacklight::OpenStructWithHashAccess.new
