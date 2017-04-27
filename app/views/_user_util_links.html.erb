@@ -8,7 +8,7 @@
             </li>
             <% unless current_user.to_s.blank? -%>
                 <li>
-                  <%= link_to current_user, edit_user_registration_path %>
+                  <a><%= current_user %></a>
                 </li>
             <% end %>
         <% else %>
