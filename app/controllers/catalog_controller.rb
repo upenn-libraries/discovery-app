@@ -19,13 +19,22 @@ class CatalogController < ApplicationController
     session[:alma_sso_user] == request.headers['HTTP_REMOTE_USER']
   end
 
+  # should return true if page isn't protected behind Shib
+  def is_unprotected_url?
+    true
+  end
+
+  def expire_shib_session_return_url
+    is_unprotected_url? ? request.original_url : root_url
+  end
+
   # manually expire the session if user has exceeded 'hard expiration' or whether
   # shib session has become inactive
   def expire_session
     invalid_shib = has_shib_session? && !shib_session_valid?
     if (session[:hard_expiration] && session[:hard_expiration] < Time.now.to_i) || invalid_shib
       reset_session
-      url = invalid_shib ? "/Shibboleth.sso/Logout?return=#{root_url}" : root_url
+      url = invalid_shib ? "/Shibboleth.sso/Logout?return=#{expire_shib_session_return_url}" : expire_shib_session_return_url
       redirect_to url, alert: 'Your session has expired, please log in again'
     end
   end
