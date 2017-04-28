@@ -1,6 +1,6 @@
 # Be sure to restart your server when you modify this file.
 
-Rails.application.config.session_store :cookie_store, key: '_blacklight_session', expire_after: 2.hours
+Rails.application.config.session_store :cookie_store, key: '_blacklight_session'
 
 # monkey patch Session to fix issue with #keys and #values not returning data
 # See https://github.com/rails/rails/pull/28895
