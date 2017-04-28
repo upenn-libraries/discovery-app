@@ -1,6 +1,8 @@
 <% if show_availability?(document) %>
     <dt class="blacklight-availability">Status/Location:</dt>
     <dd class="blacklight-availability">
+      <%# TODO: we render electronic holdings from the Solr doc, and filter them out of Availability/Bibs API response
+          because Alma doesn't yet provide portfolio status via the API. See FRANKLIN-4 in Jira. %>
       <%= render_electronic_holdings_links(document.fetch('electronic_holdings_json', []))%>
       <div class="availability-ajax-load" data-availability-ids="<%= document.alma_availability_mms_ids.join(',') %>">Loading...</div>
     </dd>
