@@ -12,8 +12,8 @@ class SessionsController < Devise::SessionsController
   def sso_login_populate_session
     super
     # TODO: a PennKey session expires in 10 hours, but could be less if the user is
-    # already authenticated when they hit shibboleth. we need to handle this: it would
-    # be ideal if shib gave us an expiration time
+    # already authenticated when they hit shibboleth? maybe? we may need to
+    # adjust this to be deliberately lower.
     session['hard_expiration'] = Time.now.to_i + (10 * 60 * 60)
   end
 

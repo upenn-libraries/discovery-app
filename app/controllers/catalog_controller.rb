@@ -28,7 +28,7 @@ class CatalogController < ApplicationController
     is_unprotected_url? ? request.original_url : root_url
   end
 
-  # manually expire the session if user has exceeded 'hard expiration' or whether
+  # manually expire the session if user has exceeded 'hard expiration' or if
   # shib session has become inactive
   def expire_session
     invalid_shib = has_shib_session? && !shib_session_valid?
