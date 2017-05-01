@@ -8,7 +8,7 @@
 # expects things, how to do container start-up scripts, etc) so it's
 # worth spending some time with the docs.
 
-FROM codeforkjeff/passenger-ruby23:0.9.19-ruby-build
+FROM codeforkjeff/passenger-ruby23:0.9.20-ruby-build
 
 RUN apt-get update && apt-get install -y --no-install-recommends npm libxml2-utils unzip openjdk-8-jre
 
