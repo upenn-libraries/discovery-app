@@ -1,3 +1,3 @@
 #!/bin/bash
 
-./process_files.rb -p 4 -s index_into_solr "$@" 
+./process_files.rb -p $NUM_INDEXING_PROCESSES -s index_into_solr "$@" 

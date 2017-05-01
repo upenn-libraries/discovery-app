@@ -22,11 +22,11 @@ export BOUND_WITHS_XML_DIR="$INPUT_FILES_DIR"
 export XSL_DIR=${XSL_DIR:-$SCRIPT_DIR/xsl}
 
 echo "Converting OAI to MARC and creating boundwith_.*xml files"
-./process_files.rb -p 4 -s convert_oai_to_marc,create_bound_withs "$@"
+./process_files.rb -p $NUM_INDEXING_PROCESSES -s convert_oai_to_marc,create_bound_withs "$@"
 
 echo "Indexing derived boundwith_*.xml files into a sqlite database"
 bundle exec rake pennlib:marc:create_boundwiths_index
 
 echo "Fixing MARC and merging in boundwith holdings"
 # note that we use -d and -i to delete original and intermediate files in this pipeline
-./process_files.rb -d -i -p 4 -s fix_marc,merge_bound_withs,format,rename_to_final_filename "$INPUT_FILES_DIR/*_marc.xml"
+./process_files.rb -d -i -p $NUM_INDEXING_PROCESSES -s fix_marc,merge_bound_withs,format,rename_to_final_filename "$INPUT_FILES_DIR/*_marc.xml"
