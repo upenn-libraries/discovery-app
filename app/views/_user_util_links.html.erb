@@ -4,14 +4,12 @@
       <ul class="nav navbar-nav">
         <% if current_user %>
             <li>
+              <div><span class="user-first-name"><%= session['first_name'] || 'Name unknown' %></span><%# : <a href="#TODO">PennKey Library Account (TODO)</a> %></div>
+            </li>
+            <li>
               <%= link_to t('blacklight.header_links.logout'), destroy_user_session_path %>
             </li>
-            <% unless current_user.to_s.blank? -%>
-                <li>
-                  <a><%= current_user %></a>
-                </li>
-            <% end %>
-        <% else %>
+      <% else %>
             <li>
               <div class="btn-group">
                 <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

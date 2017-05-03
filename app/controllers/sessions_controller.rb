@@ -4,9 +4,15 @@ class SessionsController < Devise::SessionsController
   include BlacklightAlma::SocialLogin
   include BlacklightAlma::Sso
 
+  def set_session_first_name(id)
+    session['first_name'] = BlacklightAlma::UsersApi.instance.get_name(id)['user']['first_name']
+  end
+
   def social_login_populate_session(jwt)
     super(jwt)
     session['hard_expiration'] = jwt['exp']
+
+    set_session_first_name(jwt['id'])
   end
 
   def sso_login_populate_session
@@ -15,6 +21,9 @@ class SessionsController < Devise::SessionsController
     # already authenticated when they hit shibboleth? maybe? we may need to
     # adjust this to be deliberately lower.
     session['hard_expiration'] = Time.now.to_i + (10 * 60 * 60)
+
+    pennkey_username = request.headers['HTTP_REMOTE_USER'].split('@').first
+    set_session_first_name(pennkey_username)
   end
 
   # override from Devise
