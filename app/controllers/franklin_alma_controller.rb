@@ -2,7 +2,7 @@
 class FranklinAlmaController < BlacklightAlma::AlmaController
 
   def alma_api_class
-    PennLib::BlacklightAlma::Api
+    PennLib::BlacklightAlma::AvailabilityApi
   end
 
 end

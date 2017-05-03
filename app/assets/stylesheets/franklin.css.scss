@@ -36,6 +36,31 @@ span.site-name, span.site-name a {
   }
 }
 
+.user-first-name {
+  color: #c60;
+}
+
+.navbar-nav > li > div {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  line-height: 20px;
+}
+
+.navbar-nav > li > div > a {
+  color: white;
+}
+
+@media (min-width: 768px) {
+  .navbar-nav > li > div {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    color: white;
+  }
+  .navbar-nav > li > div > a {
+    color: white;
+  }
+}
+
 #search_field {
   width: 200px;
 }

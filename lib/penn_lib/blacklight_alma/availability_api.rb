@@ -15,7 +15,7 @@ module PennLib
       end
     end
 
-    class Api < ::BlacklightAlma::Api
+    class AvailabilityApi < ::BlacklightAlma::AvailabilityApi
 
       def code_mappings
         CodeMappingsSingleton.instance.code_mappings
