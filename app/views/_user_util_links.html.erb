@@ -2,6 +2,9 @@
 
   <% if has_user_authentication_provider? %>
       <ul class="nav navbar-nav">
+        <li>
+          <a href="http://www.library.upenn.edu">Library Home</a>
+        </li>
         <% if current_user %>
             <li>
               <div><span class="user-first-name"><%= session['first_name'] || 'Name unknown' %></span><%# : <a href="#TODO">PennKey Library Account (TODO)</a> %></div>
