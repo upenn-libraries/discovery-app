@@ -630,9 +630,26 @@ module PennLib
 
     # fieldname = name of field in the locations data structure to use
     def holdings_location_mappings(rec, display_fieldname)
-      rec.fields(EnrichedMarc::TAG_HOLDING).flat_map do |field|
-        results = field.find_all { |sf| sf.code == EnrichedMarc::SUB_HOLDING_SHELVING_LOCATION }
-            .map { |sf|
+
+      # in holdings records, the shelving location is always the permanent location.
+      # in item records, the current location takes into account
+      # temporary locations and permanent locations. if you update the item's perm location,
+      # the holding's shelving location changes.
+      #
+      # Since item records may reflect locations more accurately, we use them if they exist;
+      # if not, we use the holdings.
+
+      tag = EnrichedMarc::TAG_HOLDING
+      subfield_code = EnrichedMarc::SUB_HOLDING_SHELVING_LOCATION
+
+      if rec.fields(EnrichedMarc::TAG_ITEM).size > 0
+        tag = EnrichedMarc::TAG_ITEM
+        subfield_code = EnrichedMarc::SUB_ITEM_CURRENT_LOCATION
+      end
+
+      rec.fields(tag).flat_map do |field|
+        results = field.find_all { |sf| sf.code == subfield_code }
+                    .map { |sf|
           # sometimes "happening locations" are mistakenly
           # used in holdings records. that's a data problem that should be fixed.
           # here, if we encounter a code we can't map, we ignore it, for faceting purposes.
