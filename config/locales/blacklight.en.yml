@@ -1,6 +1,7 @@
 en:
   blacklight:
     application_name: 'Franklin'
+    back_to_search: 'Back to Search Results'
     search:
       form:
         search:
