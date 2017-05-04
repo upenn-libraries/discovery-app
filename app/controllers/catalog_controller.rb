@@ -550,6 +550,8 @@ class CatalogController < ApplicationController
 
     config.index.document_actions.delete(:bookmark)
 
+    add_show_tools_partial(:print, partial: 'print')
+
     config.show.document_actions.delete(:bookmark)
     config.show.document_actions.delete(:sms)
   end
