@@ -34,7 +34,21 @@ namespace :pennlib do
         Rake::Task['solr:marc:index:work'].execute
         puts "Finished indexing #{file} at #{DateTime.now}"
       end
+    end
 
+    desc "Index MARC data from stdin"
+    task :index_from_stdin  => :environment do |t, args|
+      SolrMarc.indexer =
+        case ENV['MARC_SOURCE']
+          when 'CRL'
+            CrlIndexer.new
+          when 'HATHI'
+            HathiIndexer.new
+          else
+            FranklinIndexer.new
+        end
+
+      SolrMarc.indexer.process(STDIN)
     end
 
     # for debugging
@@ -81,11 +95,11 @@ namespace :pennlib do
 
     desc "Merge boundwiths into records"
     task :merge_boundwiths => :environment do |t, args|
-      PennLib::BoundWithIndex.merge(
-          ENV['BOUND_WITHS_DB_FILENAME'],
-          ENV['BOUND_WITHS_INPUT_FILE'],
-          ENV['BOUND_WITHS_OUTPUT_FILE']
-      )
+      input_filename = ENV['BOUND_WITHS_INPUT_FILE']
+      output_filename = ENV['BOUND_WITHS_OUTPUT_FILE']
+      input = (input_filename && File.exist?(input_filename)) ? File.open(input_filename) : STDIN
+      output = (output_filename && File.exist?(output_filename)) ? File.open(output_filename) : STDOUT
+      PennLib::BoundWithIndex.merge(ENV['BOUND_WITHS_DB_FILENAME'], input, output)
     end
 
   end

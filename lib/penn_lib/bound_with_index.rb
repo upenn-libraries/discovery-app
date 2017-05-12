@@ -23,9 +23,10 @@ module PennLib
 
         subfield_code = PennLib::EnrichedMarc::SUB_BOUND_WITH_ID
 
-        glob = Pathname.new(xml_dir).join("boundwiths_*.xml").to_s
+        glob = Pathname.new(xml_dir).join("boundwiths_*.xml.gz").to_s
         Dir.glob(glob).each do |file|
-          doc = Nokogiri::XML(File.open(file))
+          io = Zlib::GzipReader.new(File.open(file), :external_encoding => 'UTF-8')
+          doc = Nokogiri::XML(io)
           doc.xpath("/bound_withs/record").each do |record|
             id = record.xpath("id").text
             boundwith_id = record.xpath("boundwith_id").text
@@ -52,7 +53,8 @@ module PennLib
         ns_map = { 'marc' => 'http://www.loc.gov/MARC21/slim' }
 
         db = SQLite3::Database.new(db_filename)
-        doc = Nokogiri::XML(File.open(input_file))
+        # TODO: use streaming reader!
+        doc = Nokogiri::XML(input_file)
         doc.xpath('.//marc:record', ns_map).each do |record|
           record.xpath("./marc:controlfield[@tag='001']", ns_map).each do |element001|
             id = element001.text
@@ -65,7 +67,7 @@ module PennLib
             end
           end
         end
-        File.write(output_file, doc.to_xml)
+        output_file.write(doc.to_xml)
       end
 
     end
