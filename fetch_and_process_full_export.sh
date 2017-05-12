@@ -1,9 +1,9 @@
 #!/bin/bash
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    SCRIPT_DIR="$(dirname "$(stat -f "$0")")"
+    script_dir="$(dirname "$(stat -f "$0")")"
 else
-    SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
+    script_dir="$(dirname "$(readlink -f "$0")")"
 fi
 
 job_id=S4741763270003681
@@ -38,17 +38,17 @@ echo "#### Full export ssh transfer and process started at `date`"
 echo "Transferring via ssh"
 # TODO
 
-mkdir -p "$export_dir/$export_name/raw"
-cd "$export_dir/$export_name/raw"
+mkdir -p "$export_dir/$export_name/processed"
+cd "$export_dir/$export_name/processed"
 ls ../*.tar.gz | xargs -i tar xf {}
 chmod a+r *
 
-cd $SCRIPT_DIR
+cd $script_dir
 
 echo "Running preprocessing tasks"
-./preprocess.sh "$export_dir/$export_name/raw/$set_name*.xml"
+./preprocess.sh "$export_dir/$export_name" "$set_name"
 
-echo "Running index.sh"
-./index_solr.sh "$export_dir/$export_name/raw/part*.xml"
+echo "Running indexing"
+./index_solr.sh "$export_dir/$export_name/processed"
 
 echo "#### full export fetch and process ended at `date`"

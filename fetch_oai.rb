@@ -39,8 +39,12 @@ http.start do |http_obj|
       output = response.body
 
       basename = "#{set_name}_#{count.to_s.rjust(7, '0')}"
-      output_filename = Pathname.new(output_dir).join("#{basename}.xml").to_s
-      File.write(output_filename, output)
+      output_filename = Pathname.new(output_dir).join("#{basename}.xml.gz").to_s
+
+      Zlib::GzipWriter.open(output_filename) do |gz|
+        gz.write(output)
+      end
+
       match = output.match(%r{<resumptionToken>(.+)</resumptionToken>})
       resumption_token = match ? match[1] : nil
 
