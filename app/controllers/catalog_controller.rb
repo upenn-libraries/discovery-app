@@ -548,12 +548,16 @@ class CatalogController < ApplicationController
     config.autocomplete_enabled = false
     config.autocomplete_path = 'suggest'
 
-    config.index.document_actions.delete(:bookmark)
-
     add_show_tools_partial(:print, partial: 'print')
 
-    config.show.document_actions.delete(:bookmark)
     config.show.document_actions.delete(:sms)
+
+    config.navbar.partials.delete(:search_history)
+  end
+
+  def render_saved_searches?
+    # don't ever show saved searches link to the user
+    false
   end
 
   # extend 'index' so we can override views
