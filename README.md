@@ -77,15 +77,13 @@ repository.
 
 ## Full exports
 
-Unpack the *.tar.gz files created by the Alma publishing job. I
-usually put them in a subdirectory called `raw`. Then run the
-preprocessing and indexing scripts as follows:
+Transfer the *.tar.gz files created by the Alma publishing job to the
+directory where they will be preprocessed and indexed. Run these commands:
 
 ```bash
-# note that we quote the glob
-./preprocess.sh "/var/solr_input_data/alma_prod_sandbox/20170412_full/raw/fulltest*.xml"
+./preprocess.sh /var/solr_input_data/alma_prod_sandbox/20170412_full allTitles
 
-./index_solr.sh "/var/solr_input_data/alma_prod_sandbox/20170412_full/raw/part*.xml"
+./index_solr.sh /var/solr_input_data/alma_prod_sandbox/20170412_full/processed
 ```
 
 ## Incremental updates (OAI)

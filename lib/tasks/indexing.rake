@@ -97,8 +97,8 @@ namespace :pennlib do
     task :merge_boundwiths => :environment do |t, args|
       input_filename = ENV['BOUND_WITHS_INPUT_FILE']
       output_filename = ENV['BOUND_WITHS_OUTPUT_FILE']
-      input = (input_filename && File.exist?(input_filename)) ? File.open(input_filename) : STDIN
-      output = (output_filename && File.exist?(output_filename)) ? File.open(output_filename) : STDOUT
+      input = (input_filename && File.exist?(input_filename)) ? PennLib::Util.openfile(input_filename) : STDIN
+      output = (output_filename && File.exist?(output_filename)) ? PennLib::Util.openfile(output_filename) : STDOUT
       PennLib::BoundWithIndex.merge(ENV['BOUND_WITHS_DB_FILENAME'], input, output)
     end
 
@@ -108,8 +108,9 @@ namespace :pennlib do
 
     desc 'Parse IDs from OAI file and delete them from Solr index'
     task :delete_ids => :environment do |t, args|
-      oai_file = ENV['OAI_FILE']
-      PennLib::OAI.delete_ids_in_file(oai_file)
+      input_filename = ENV['OAI_FILE']
+      input = (input_filename && File.exist?(input_filename)) ? PennLib::Util.openfile(input_filename) : STDIN
+      PennLib::OAI.delete_ids_in_file(input)
     end
 
   end
