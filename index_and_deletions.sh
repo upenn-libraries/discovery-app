@@ -9,4 +9,4 @@ echo "Indexing into Solr"
 ./index_solr.sh "$batch_dir/processed"
 
 echo "Deleting from Solr"
-find $INPUT_FILES_DIR -name $set_name'*.xml' | xargs -P $NUM_INDEXING_PROCESSES -t -I FILENAME bundle exec rake pennlib:oai:delete_ids OAI_FILE=FILENAME
+find "$batch_dir" -name $set_name'*.xml.gz' | xargs -P $NUM_INDEXING_PROCESSES -t -I FILENAME bundle exec rake pennlib:oai:delete_ids OAI_FILE=FILENAME
