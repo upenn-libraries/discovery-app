@@ -1,8 +1,8 @@
 #!/bin/bash
 
-CAT=cat
+cat_program=cat
 # if [ -f /home/jeffchiu/bypass_page_cache/direct_io.sh ]; then
-#     CAT="/home/jeffchiu/bypass_page_cache/direct_io.sh -r"
+#     cat_program="/home/jeffchiu/bypass_page_cache/direct_io.sh -r"
 # fi
 
 filename=$1
@@ -14,7 +14,7 @@ num=`echo $base_filename | grep -E -o "[0-9]+$"`
 
 mkdir -p $output_dir
 
-$CAT $filename \
+$cat_program $filename \
     | gunzip --stdout \
     | saxon -xsl:$XSL_DIR/oai2marc.xsl - \
     | gzip --stdout \
