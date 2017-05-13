@@ -53,8 +53,10 @@ http.start do |http_obj|
         batch_size = output.scan("<record>").size
       end
 
-      rate = (Time.new.to_f - start) / ((count + 1) * batch_size)
-      puts "overall rate: #{rate} records/s"
+      elapsed = Time.new.to_f - start
+      elapsed = elapsed > 0 ? elapsed : 1
+      rate = ((count + 1) * batch_size) / elapsed
+      puts "overall transfer rate: #{rate.to_i} records/s"
 
       count += 1
 
