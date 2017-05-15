@@ -1160,7 +1160,8 @@ module PennLib
 
     def get_standardized_title_values(rec)
       rec.fields(%w{130 240}).map do |field|
-        results = field.find_all(&subfield_not_in(%W{6 8})).map(&:value)
+        # added 2017/05/15: filter out 0 (authority record numbers) added by Alma
+        results = field.find_all(&subfield_not_in(%W{0 6 8})).map(&:value)
         join_and_trim_whitespace(results)
       end
     end
@@ -1168,8 +1169,9 @@ module PennLib
     def get_standardized_title_display(rec)
       acc = []
       rec.fields(%w{130 240}).each do |field|
-        title = join_subfields(field, &subfield_not_in(%W{6 8 e w}))
-        title_param_value = join_subfields(field, &subfield_not_in(%W{5 6 8 e w}))
+        # added 2017/05/15: filter out 0 (authority record numbers) added by Alma
+        title = join_subfields(field, &subfield_not_in(%W{0 6 8 e w}))
+        title_param_value = join_subfields(field, &subfield_not_in(%W{0 5 6 8 e w}))
         title_append = get_title_extra(field)
         acc << {
             value: title,
