@@ -9,13 +9,6 @@ module BlacklightHelper
     render partial: 'catalog/franklin_search_bar'
   end
 
-  # override Blacklight so Start Over always goes to catalog start page
-  def start_over_path(query_params = params)
-    # we do NOT call #search_action_path because it might take us to an
-    # "blank" browse page, which is never what we want
-    root_path
-  end
-
   # override so that we can insert separators
   def search_fields
     super.map do |option|
