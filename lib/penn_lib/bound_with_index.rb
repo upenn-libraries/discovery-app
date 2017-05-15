@@ -9,6 +9,7 @@ module PennLib
 
   # Build an index for bound with records and provide a way to merge them in.
   module BoundWithIndex
+    NS_MARC = 'http://www.loc.gov/MARC21/slim'
 
     class << self
 
@@ -50,24 +51,47 @@ module PennLib
       end
 
       def merge(db_filename, input_file, output_file)
-        ns_map = { 'marc' => 'http://www.loc.gov/MARC21/slim' }
-
         db = SQLite3::Database.new(db_filename)
-        # TODO: use streaming reader!
-        doc = Nokogiri::XML(input_file)
-        doc.xpath('.//marc:record', ns_map).each do |record|
-          record.xpath("./marc:controlfield[@tag='001']", ns_map).each do |element001|
-            id = element001.text
+
+        # Ugh, Nokogiri::XML::Reader is slooow...
+        reader = Nokogiri::XML::Reader(input_file)
+
+        record = nil
+
+        output_file.write(%Q{<?xml version="1.0" encoding="UTF-8"?><collection xmlns="#{NS_MARC}" xmlns:marc="#{NS_MARC}">})
+
+        reader.each do |node|
+          # node is an instance of Nokogiri::XML::Reader
+
+          if node.node_type == Nokogiri::XML::Reader::TYPE_ELEMENT &&
+            node.namespace_uri == NS_MARC &&
+            node.name == 'record'
+            record = Nokogiri::XML(node.outer_xml)
+          elsif node.node_type == Nokogiri::XML::Reader::TYPE_END_ELEMENT &&
+            node.namespace_uri == NS_MARC &&
+            node.name == 'record'
+            output_file.write(record.root.to_s)
+            record = nil
+          elsif node.node_type == Nokogiri::XML::Reader::TYPE_ELEMENT &&
+            node.namespace_uri == NS_MARC &&
+            node.name == 'controlfield' &&
+            node.attribute('tag') == '001'
+
+            id = node.inner_xml
+
             db.execute('select holdings_xml from bound_withs where id = ?', [id]) do |row|
               holdings_doc = Nokogiri::XML(row[0])
-              record << '<!-- Holdings copied from boundwith record -->'
+              record.root << '<!-- Holdings copied from boundwith record -->'
               holdings_doc.root.children.each do |holding_datafield|
-                record << holding_datafield
+                record.root << holding_datafield
               end
             end
           end
+
         end
-        output_file.write(doc.to_xml)
+
+        output_file.write('</collection>')
+
       end
 
     end
