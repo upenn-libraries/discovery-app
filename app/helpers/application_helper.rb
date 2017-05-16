@@ -48,4 +48,8 @@ module ApplicationHelper
     document.has_any_holdings?
   end
 
+  def my_library_card_url
+    "https://#{ ENV['ALMA_DELIVERY_DOMAIN'] }/discovery/account?vid=#{ ENV['ALMA_INSTITUTION_CODE'] }:Services&lang=en&section=overview"
+  end
+
 end
