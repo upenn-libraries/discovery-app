@@ -59,7 +59,7 @@ module DocumentRenderHelper
         html += '<br/>'.html_safe + online_display[:linkurl]
       end
       html
-    end.join.html_safe
+    end.join('<br/>').html_safe
   end
 
   def render_web_link_display(options)

@@ -6,6 +6,10 @@ en:
       form:
         search:
           placeholder: 'Find books, journals, videos, & more'
+      librarian_view:
+        title: 'Staff View'
+    tools:
+      librarian_view: 'Staff View'
 
   franklin:
     bento_search:
