@@ -5,7 +5,13 @@ class SessionsController < Devise::SessionsController
   include BlacklightAlma::Sso
 
   def set_session_first_name(id)
-    session['first_name'] = BlacklightAlma::UsersApi.instance.get_name(id)['user']['first_name']
+    if id
+      response = BlacklightAlma::UsersApi.instance.get_name(id)
+      if response && response['user']
+        session['first_name'] = response['user']['first_name']
+      end
+    end
+    session['first_name'] ||= 'Unknown'
   end
 
   def social_login_populate_session(jwt)
@@ -22,7 +28,9 @@ class SessionsController < Devise::SessionsController
     # adjust this to be deliberately lower.
     session['hard_expiration'] = Time.now.to_i + (10 * 60 * 60)
 
-    pennkey_username = request.headers['HTTP_REMOTE_USER'].split('@').first
+    remote_user_header = request.headers['HTTP_REMOTE_USER'] || 'none@upenn.edu'
+
+    pennkey_username = remote_user_header.split('@').first
     set_session_first_name(pennkey_username)
   end
 

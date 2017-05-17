@@ -31,6 +31,8 @@ class CatalogController < ApplicationController
   # manually expire the session if user has exceeded 'hard expiration' or if
   # shib session has become inactive
   def expire_session
+    Rails.logger.debug("in expire_session: checking ORIGINAL_URL=#{request.original_url}")
+
     invalid_shib = has_shib_session? && !shib_session_valid?
     if (session[:hard_expiration] && session[:hard_expiration] < Time.now.to_i) || invalid_shib
       reset_session
