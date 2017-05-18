@@ -100,6 +100,10 @@ span.site-name, span.site-name a {
   background: #ececec;
 }
 
+#documents .document .document-title-heading {
+  line-height: 1.42857143;
+}
+
 .direct-link-trigger {
   cursor: pointer;
 }
@@ -129,11 +133,9 @@ span.site-name, span.site-name a {
   background-image: asset-url('holdnumbers.png');
   background-repeat: repeat-x;
   width: 100%;
-}
-
-.footer-bar {
   padding-top: 1em;
   padding-bottom: 1em;
+  margin-top: 2em;
 }
 
 .footer-bar a, a:visited, a:hover {
