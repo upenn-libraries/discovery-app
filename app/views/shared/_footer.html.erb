@@ -1,14 +1,12 @@
 <%# TODO: should this bar float at bottom of browser window? is that accessible/responsive? %>
-<nav class="questions-nav">
+<nav class="footer-bar">
   <div class="container">
     <div class="row">
-      <div class="questions col-sm-12"><a href="http://faq.library.upenn.edu/ask">Questions or comments</a></div>
-      <%# TODO: keep this?
-      <div class="holdclassiclink">
-        <a href="http://classicfranklin.library.upenn.edu/" id="classiclink">Classic Franklin</a> &nbsp;
-        <a href="index-status.xml" id="index-status"><img src="images/franklin/indexstatus.png" alt="index status" title="index status"></a>
+      <div class="col-sm-3"><a href="http://faq.library.upenn.edu/ask">Questions or comments</a></div>
+      <div class="col-sm-9">
+        <div class="footer-bar-links-right">
+          <%= yield :footer_bar_nav_links %>
       </div>
-      %>
     </div>
   </div>
 </nav>

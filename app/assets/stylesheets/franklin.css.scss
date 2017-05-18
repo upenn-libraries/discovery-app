@@ -100,19 +100,55 @@ span.site-name, span.site-name a {
   background: #ececec;
 }
 
-.questions-nav {
+.direct-link-trigger {
+  cursor: pointer;
+}
+
+.direct-link-popup {
+  position: absolute;
+  bottom: 2em;
+  right: .5em;
+  background-color: #fff;
+  padding: .25em 0 .25em .5em;
+  border: solid 1px #bbb;
+  box-shadow: 1px 1px 3px rgba(50, 50, 50, 0.35);
+}
+
+.direct-link-close {
+  border: solid 1px #ccc;
+  cursor: pointer;
+  display: block;
+  float: right;
+  font-size: 0.92em;
+  line-height: 100%;
+  margin: -.08em 2px 0 .5em;
+  padding: 2px 4px 2px 3px;
+}
+
+.footer-bar {
   background-image: asset-url('holdnumbers.png');
   background-repeat: repeat-x;
   width: 100%;
 }
 
-.questions-nav .questions {
+.footer-bar {
   padding-top: 1em;
   padding-bottom: 1em;
 }
 
-.questions-nav a, .questions-nav a:visited {
+.footer-bar a, a:visited, a:hover {
   color: #000;
+  background-color: transparent;
+}
+
+.footer-bar-links-right {
+  float: right;
+}
+
+.footer-bar-links-right .link-item {
+  display: inline;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .footer {
