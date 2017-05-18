@@ -607,7 +607,7 @@ module PennLib
           .each do |field|
         acc << join_subfields(field, &subfield_in(['f']))
       end
-      acc
+      acc.select(&:present?)
     end
 
     # used to determine whether to include faceted publication values
@@ -1242,7 +1242,8 @@ module PennLib
           .map do |field|
         conf = ''
         if field.none? { |sf| sf.code == 'i' }
-          conf = join_subfields(field, &subfield_not_in(%w{4 5 6 8 e j w}))
+          # added 2017/05/18: filter out 0 (authority record numbers) added by Alma
+          conf = join_subfields(field, &subfield_not_in(%w{0 4 5 6 8 e j w}))
         end
         conf_append = join_subfields(field, &subfield_in(%w{e j w}))
         { value: conf, value_append: conf_append, link_type: 'author_creator_xfacet' }
@@ -1251,7 +1252,8 @@ module PennLib
           .select { |f| has_subfield6_value(f, /^(111|711)/) }
           .select { |f| f.none? { |sf| sf.code == 'i' } }
           .map do |field|
-        conf = join_subfields(field, &subfield_not_in(%w{4 5 6 8 e j w}))
+        # added 2017/05/18: filter out 0 (authority record numbers) added by Alma
+        conf = join_subfields(field, &subfield_not_in(%w{0 4 5 6 8 e j w}))
         conf_extra = join_subfields(field, &subfield_in(%w{4 e j w}))
         { value: conf, value_append: conf_extra, link_type: 'author_creator_xfacet' }
       end
