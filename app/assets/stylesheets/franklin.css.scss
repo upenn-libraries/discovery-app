@@ -28,11 +28,11 @@ span.site-name, span.site-name a {
 
 #header-navbar {
   background: $upenn-blue asset-url('orrerybg.jpg') top left repeat-x;
+  height: 99px;
 
   .navbar-brand {
     background-image: asset-url('logo.png');
     margin-top: 15px;
-    margin-bottom: 34px;
   }
 }
 
@@ -51,18 +51,30 @@ span.site-name, span.site-name a {
 }
 
 @media (min-width: 768px) {
+
   .navbar-nav > li > div {
     padding-top: 15px;
     padding-bottom: 15px;
     color: white;
   }
+
   .navbar-nav > li > div > a {
     color: white;
   }
+
+  #search_field {
+    width: 200px;
+  }
 }
 
-#search_field {
-  width: 200px;
+@media (max-width: 768px) {
+  .navbar-brand {
+    clear: break;
+  }
+
+  #search_field {
+    width: 80px;
+  }
 }
 
 .btn-primary {
