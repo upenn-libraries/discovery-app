@@ -555,6 +555,10 @@ class CatalogController < ApplicationController
 
     config.show.document_actions.delete(:sms)
 
+    PennLib::Util.reorder_document_actions(
+      config.show.document_actions,
+      :bookmark, :email, :citation, :print, :refworks, :endnote, :librarian_view)
+
     config.navbar.partials.delete(:search_history)
   end
 
