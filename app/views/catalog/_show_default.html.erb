@@ -10,3 +10,15 @@
 </dl>
 
 <%= render partial: 'alma_availability_iframe', locals: { document: document } %>
+
+<% content_for :footer_bar_nav_links do %>
+  <div class="link-item">
+    <div class="direct-link-popup" data-direct-link-id="<%= document.id %>" style="display: none;">
+      <a class="direct-link-close">✕</a><a href="<%= solr_document_url(document) %>"><%= solr_document_url(document) %></a>
+    </div>
+    <a class="direct-link-trigger" data-direct-link-id="<%= document.id %>">Direct Link</a>
+  </div>
+  <% if document.alma_mms_id.present? %>
+    <div class="link-item">MMS ID <%= document.alma_mms_id %></div>
+  <% end %>
+<% end %>
