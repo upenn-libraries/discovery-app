@@ -36,4 +36,8 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def known_issues
+    render :template => "/known_issues"
+  end
+
 end
