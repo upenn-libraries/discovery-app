@@ -1,6 +1,9 @@
 <div class="navbar-right">
 
   <ul class="nav navbar-nav">
+    <% if ENV['SHOW_KNOWN_ISSUES'].present? %>
+    <li><a style="color:red" href="<%= known_issues_url %>">Known Issues</a></li>
+    <% end %>
     <%= render_nav_actions do |config, action|%>
         <li><%= action %></li>
     <% end %>

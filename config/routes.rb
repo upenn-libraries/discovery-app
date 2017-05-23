@@ -20,6 +20,8 @@ Rails.application.routes.draw do
 
   get 'collection_news' => 'collection_news#index'
 
+  get 'known_issues' => 'application#known_issues'
+
   Blacklight::Marc.add_routes(self)
   concern :searchable, Blacklight::Routes::Searchable.new
 
