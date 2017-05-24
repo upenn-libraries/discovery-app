@@ -556,10 +556,6 @@ class CatalogController < ApplicationController
 
     config.show.document_actions.delete(:sms)
 
-    # delete and re-add refworks
-    # config.show.document_actions.delete(:refworks)
-    # add_show_tools_partial(:refworks, if: :render_refworks_action?, modal: false)
-
     PennLib::Util.reorder_document_actions(
       config.show.document_actions,
       :bookmark, :email, :citation, :print, :refworks, :endnote, :ris, :librarian_view)
