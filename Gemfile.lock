@@ -45,7 +45,7 @@ GIT
 
 GIT
   remote: https://github.com/upenn-libraries/blacklight-ris.git
-  revision: ddf5fdbb4517e7fbbb06e2b1f8b28d43aee6a168
+  revision: 88b4f1defc441c49d2408b3881ee4482b203eb7c
   specs:
     blacklight-ris (0.1.0)
       rails (> 4.2)
