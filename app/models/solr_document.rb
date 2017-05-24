@@ -19,7 +19,28 @@ class SolrDocument
                          :format => "format"
                          )
 
+  include Blacklight::Solr::Document::RisFields
+  use_extension(Blacklight::Solr::Document::RisExport)
 
+  ris_field_mappings.merge!(
+    :TY => Proc.new {
+      format = fetch('format_a', [])
+      if format.member?('Book')
+        'BOOK'
+      elsif format.member?('Journal/Periodical')
+        'JOUR'
+      else
+        'GEN'
+      end
+    },
+    :TI => 'title',
+    :AU => 'author_creator_a',
+    :PY => 'publication_date_a',
+    :CY => Proc.new { pennlibmarc.get_ris_cy_field(to_marc) },
+    :PB => Proc.new { pennlibmarc.get_ris_pb_field(to_marc) },
+    :ET => 'edition',
+    :SN => Proc.new { pennlibmarc.get_ris_sn_field(to_marc) },
+  )
 
   # self.unique_key = 'id'
   
