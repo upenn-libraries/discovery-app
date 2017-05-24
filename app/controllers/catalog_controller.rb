@@ -9,6 +9,7 @@ class CatalogController < ApplicationController
 
   include Blacklight::Catalog
   include Blacklight::Marc::Catalog
+  include Blacklight::Ris::Catalog
 
   include BlacklightSolrplugins::XBrowse
 
@@ -557,7 +558,7 @@ class CatalogController < ApplicationController
 
     PennLib::Util.reorder_document_actions(
       config.show.document_actions,
-      :bookmark, :email, :citation, :print, :refworks, :endnote, :librarian_view)
+      :bookmark, :email, :citation, :print, :refworks, :endnote, :ris, :librarian_view)
 
     config.navbar.partials.delete(:search_history)
   end

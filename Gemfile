@@ -107,3 +107,4 @@ gem 'blacklight_alma', :git => 'https://github.com/upenn-libraries/blacklight_al
 #gem 'blacklight_advanced_search', '6.1.0'
 gem 'blacklight_advanced_search', :git => 'https://github.com/codeforkjeff/blacklight_advanced_search.git'
 
+gem 'blacklight-ris', :git => 'https://github.com/upenn-libraries/blacklight-ris.git'

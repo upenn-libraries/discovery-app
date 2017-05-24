@@ -44,6 +44,13 @@ GIT
       json (~> 1.8)
 
 GIT
+  remote: https://github.com/upenn-libraries/blacklight-ris.git
+  revision: ddf5fdbb4517e7fbbb06e2b1f8b28d43aee6a168
+  specs:
+    blacklight-ris (0.1.0)
+      rails (> 4.2)
+
+GIT
   remote: https://github.com/upenn-libraries/blacklight_alma.git
   revision: a8a6941c12735345a7274ff3ae8636445375146f
   specs:
@@ -331,6 +338,7 @@ DEPENDENCIES
   bento_search!
   blacklight (= 6.8.0)
   blacklight-marc (~> 6.0)!
+  blacklight-ris!
   blacklight_advanced_search!
   blacklight_alma!
   blacklight_range_limit (= 6.0.0)
