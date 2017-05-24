@@ -556,11 +556,21 @@ class CatalogController < ApplicationController
 
     config.show.document_actions.delete(:sms)
 
+    # delete and re-add refworks
+    # config.show.document_actions.delete(:refworks)
+    # add_show_tools_partial(:refworks, if: :render_refworks_action?, modal: false)
+
     PennLib::Util.reorder_document_actions(
       config.show.document_actions,
       :bookmark, :email, :citation, :print, :refworks, :endnote, :ris, :librarian_view)
 
     config.navbar.partials.delete(:search_history)
+  end
+
+  # override from Blacklight::Marc::Catalog so that action appears on bookmarks page
+  def render_refworks_action? config, options = {}
+    doc = options[:document] || (options[:document_list] || []).first
+    doc && doc.respond_to?(:export_formats) && doc.export_formats.keys.include?(:refworks_marc_txt)
   end
 
   def render_saved_searches?

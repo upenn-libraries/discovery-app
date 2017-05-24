@@ -52,4 +52,16 @@ module ApplicationHelper
     "https://#{ ENV['ALMA_DELIVERY_DOMAIN'] }/discovery/account?vid=#{ ENV['ALMA_INSTITUTION_CODE'] }:Services&lang=en&section=overview"
   end
 
+  def refworks_bookmarks_path(opts = {})
+    # we can't direct refworks to the user's bookmarks page since that's private.
+    # so we construct an advanced search query instead to return the bookmarked records
+    id_search_value = @document_list.map { |doc| doc.id }.join(' OR ')
+    url = search_catalog_url(
+      id_search: id_search_value,
+      search_field: 'advanced',
+      commit: 'Search',
+      format: 'refworks_marc_txt')
+    refworks_export_url(url: url)
+  end
+
 end
