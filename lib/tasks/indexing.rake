@@ -55,7 +55,7 @@ namespace :pennlib do
     desc "Index MARC records and output to file (for debugging)"
     task :index_to_file => :environment do |t, args|
 
-      class MyMarcIndexer < MarcIndexer
+      class MyMarcIndexer < HathiIndexer
         def initialize
           super
           settings do
@@ -65,7 +65,8 @@ namespace :pennlib do
         end
       end
 
-      MyMarcIndexer.new.process('/home/jeffchiu/marc/alma_prod_sandbox/smallbatch/fixed/fixed.xml')
+      io = Zlib::GzipReader.new(File.open('/home/jeffchiu/hathi-oai-marc/processed/part_929.xml.gz'), :external_encoding => 'UTF-8')
+      MyMarcIndexer.new.process(io)
     end
 
     # for debugging: this seems braindead but is actually useful: the
@@ -82,6 +83,23 @@ namespace :pennlib do
       rescue Exception => e
         puts "last record successfully read=#{last_id}"
         raise e
+      end
+    end
+
+    desc "Dump OCLC IDs"
+    task :dump_oclc_ids => :environment do |t, args|
+      code_mappings ||= PennLib::CodeMappings.new(Rails.root.join('config').join('translation_maps'))
+      pennlibmarc ||= PennLib::Marc.new(code_mappings)
+
+      Dir.glob('/home/jeffchiu/hathi-oai-marc/processed/part*.xml.gz').each do |file|
+        io = Zlib::GzipReader.new(File.open(file), :external_encoding => 'UTF-8')
+        reader = MARC::XMLReader.new(io)
+        reader.each do |record|
+          pennlibmarc.get_oclc_id_values(record).each do |oclc_id|
+            puts oclc_id
+          end
+        end
+        io.close()
       end
     end
 

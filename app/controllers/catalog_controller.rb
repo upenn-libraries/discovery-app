@@ -89,6 +89,26 @@ class CatalogController < ApplicationController
         marcrecord_text
       }.join(','),
       'facet.threads': 2,
+      fq: '{!tag=cluster}{!collapse field=cluster_id nullPolicy=expand size=5000000 min=record_source_id}',
+      'json.facet': JSON.dump(
+        {
+          access_f: {
+            type: 'terms',
+            field: 'access_f',
+            sort: 'index asc',
+            method: 'stream',
+            facet: {
+              cluster_count: 'unique(cluster_id)'
+            },
+            domain: {
+              excludeTags: ['cluster']
+            }
+          }
+        }
+      ),
+      expand: 'true',
+      'expand.q': '*:*',
+      'expand.fq': '*:*',
       'mm': '100%',
       rows: 10
     }
@@ -583,6 +603,37 @@ class CatalogController < ApplicationController
   # certain BL view partials used on landing page won't resolve correctly.
   def landing
     index
+  end
+
+  def search_results(params)
+    (response, document_list) = super(params)
+
+    # be careful to work with Response using Hash key access and NOT
+    # any of the convenience methods that cache.
+
+    pairs = response['facet_counts']['facet_fields']['access_f']
+    if pairs && response['facets']
+      extra_facet = response['facets']['access_f']
+      if extra_facet
+        bucket_structs = extra_facet['buckets']
+        if bucket_structs
+          new_pairs = bucket_structs.flat_map do |struct|
+            [ struct['val'], struct['cluster_count'] ]
+          end
+          # replace the list of sequential pair values in facet_fields
+          # so that subsequent Blacklight code doesn't know any different.
+          #puts "ORIGINAL FACET VALUES=#{response['facet_counts']['facet_fields']['access_f']}"
+          response['facet_counts']['facet_fields']['access_f'] = new_pairs
+          #puts "NEW FACET VALUES=#{new_pairs}"
+        end
+      end
+    end
+
+    # reset cached instance vars on Response
+    response.instance_variable_set(:@facet_fields, nil)
+    response.instance_variable_set(:@facet_counts, nil)
+
+    [ response, document_list ]
   end
 
 end

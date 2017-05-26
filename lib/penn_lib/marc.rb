@@ -1978,7 +1978,7 @@ module PennLib
       [linktext, linkurl]
     end
 
-    def get_online_display(rec)
+    def get_online_display_for_non_hathi(rec)
       rec.fields('856')
           .select { |f| %w{0 1}.member?(f.indicator2) }
           .map do |field|
@@ -2060,7 +2060,7 @@ module PennLib
         rescue ArgumentError => e
           nil
         end
-      end.compact
+      end.compact.slice(0, 1)
       # records without a date should be considered very old
       if acc.size == 0
         acc += [0]

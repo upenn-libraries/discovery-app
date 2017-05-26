@@ -135,6 +135,20 @@ class SolrDocument
     end
   end
 
+  def web_link_display
+    if !is_hathi?
+      pennlibmarc.get_web_link_display(to_marc)
+    end
+  end
+
+  def online_display
+    if is_hathi?
+      fetch('full_text_link_a', [])
+    else
+      pennlibmarc.get_online_display_for_non_hathi(to_marc)
+    end
+  end
+
   # used by blacklight_alma
   def alma_mms_id
     fetch('alma_mms_id', nil)
@@ -150,6 +164,10 @@ class SolrDocument
 
   def is_crl?
     fetch('id', '').start_with?('CRL')
+  end
+
+  def is_hathi?
+    fetch('id', '').start_with?('HATHI')
   end
 
 end
