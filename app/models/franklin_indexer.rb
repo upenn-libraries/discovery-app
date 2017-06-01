@@ -95,6 +95,8 @@ class FranklinIndexer < BaseIndexer
 
     define_cluster_id
 
+    define_full_text_link_text_a
+
     # do NOT use *_xml_stored_single because it uses a Str (max 32k) for storage
     to_field 'marcrecord_xml_stored_single_large', get_plain_marc_xml
 
@@ -255,10 +257,6 @@ class FranklinIndexer < BaseIndexer
       acc.concat(pennlibmarc.get_publication_values(rec))
     end
 
-    to_field 'full_text_link_a' do |rec, acc|
-      acc.concat(pennlibmarc.get_full_text_link_values(rec))
-    end
-
     to_field 'contained_within_a'  do |rec, acc|
       acc.concat(pennlibmarc.get_contained_within_values(rec))
     end
@@ -399,6 +397,15 @@ class FranklinIndexer < BaseIndexer
   def define_record_source_facet
     to_field 'record_source_f' do |rec, acc|
       acc << 'Franklin'
+    end
+  end
+
+  def define_full_text_link_text_a
+    to_field 'full_text_link_text_a' do |rec, acc|
+      result = pennlibmarc.get_full_text_link_values(rec)
+      if result.present?
+        acc << result.to_json
+      end
     end
   end
 

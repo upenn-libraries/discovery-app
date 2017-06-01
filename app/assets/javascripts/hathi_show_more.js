@@ -1,8 +1,8 @@
 
 $(document).ready(function() {
-    $(".show_hathi_extra_links").click(function (event) {
+    $(".show-hathi-extra-links").click(function (event) {
         $(event.currentTarget).hide();
-        $(event.currentTarget).parent().find(".hathi_extra_links").show();
+        $(event.currentTarget).parent().find(".hathi-extra-links").show();
         return false;
     });
 });

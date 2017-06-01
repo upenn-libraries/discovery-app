@@ -143,23 +143,15 @@ class SolrDocument
     end
   end
 
-  def online_display
-    if is_hathi?
-      fetch('full_text_link_a', [])
-    else
-      pennlibmarc.get_online_display_for_non_hathi(to_marc)
-    end
-  end
-
   # merge in field values from expanded docs
-  def online_resource_display_for_index_view
+  def full_text_links_display
     from_expanded = []
     if expanded_docs.size > 0
       from_expanded = expanded_docs.flat_map do |expanded_doc|
-        expanded_doc.fetch('full_text_link_a', [])
+        expanded_doc.fetch('full_text_link_text_a', [])
       end.compact
     end
-    from_expanded + fetch('full_text_link_a', [])
+    from_expanded + fetch('full_text_link_text_a', [])
   end
 
   # used by blacklight_alma

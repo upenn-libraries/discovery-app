@@ -73,7 +73,7 @@ class CatalogController < ApplicationController
         alma_mms_id
         score
         format_a
-        full_text_link_a
+        full_text_link_text_a
         isbn_isxn
         language_a
         title
@@ -236,7 +236,7 @@ class CatalogController < ApplicationController
         { name: 'format_a', label: 'Format/Description' },
         # in this view, 'Online resource' is full_text_link; note that
         # 'Online resource' is deliberately different here from what's on show view
-        { dynamic_name: 'online_resource_display_for_index_view', label: 'Online resource' },
+        { dynamic_name: 'full_text_links_display', label: 'Online resource', helper_method: 'render_online_resource_display_for_index_view' },
     ])
 
     # Most show field values are generated dynamically from MARC stored in Solr.
@@ -310,7 +310,7 @@ class CatalogController < ApplicationController
         { dynamic_name: 'access_restriction_display', label: 'Access Restriction' },
         { dynamic_name: 'bound_with_display', label: 'Bound with' },
         # 'Online' corresponds to the right-side box labeled 'Online' in DLA Franklin
-        { dynamic_name: 'online_display', label: 'Online', helper_method: 'render_online_display_for_show_view' },
+        { dynamic_name: 'full_text_links_display', label: 'Online', helper_method: 'render_online_display_for_show_view' },
         { name: 'electronic_holdings_json', label: 'Online resource', helper_method: 'render_electronic_holdings' },
     ])
 

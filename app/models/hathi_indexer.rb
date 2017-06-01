@@ -1,11 +1,6 @@
 
 class HathiIndexer < FranklinIndexer
 
-  def define_all_fields
-    super
-    define_full_text_link_hathi
-  end
-
   def define_mms_id
     # no-op
   end
@@ -80,55 +75,52 @@ class HathiIndexer < FranklinIndexer
     [url, id, suffix].join
   end
 
-  def define_full_text_link_hathi
-    to_field 'full_text_link_a' do |rec, acc|
+  def define_full_text_link_text_a
+    to_field 'full_text_link_text_a' do |rec, acc|
 
-      acc.concat(pennlibmarc.get_full_text_link_values(rec))
+      links = []
+
+      result = pennlibmarc.get_full_text_link_values(rec)
+      if result.present?
+        acc << result.to_json
+      end
 
       # this section is equivalent to the hathi-link XSL function
 
       ids_and_types = get_ids_and_types_from_035a(rec)
       id_and_type = ids_and_types.first
 
-      links = rec.fields('856').map do |field|
-        pennlibmarc.linktext_and_url(field)
-      end
-      links_html = links.map do |link_struct|
+      volumes_links = rec.fields('856').map do |field|
+        link_struct = pennlibmarc.linktext_and_url(field)
         url = link_struct[1]
         text = link_struct[0].present? ? link_struct[0] : url
-        %Q{<a href="#{url}">#{text}</a>}
+        {
+          linktext: text,
+          linkurl: url,
+        }
       end
 
-      first5 = links_html[0,5].join(', ')
-      remainder = (links_html[5..-1] || []).join(', ')
-      remainder_count = links_html.size - 5
-
-      url = hathi_link(id_and_type[:id], id_and_type[:type])
-      html = %Q{<a href="#{url}" class="hathi_dynamic">HathiTrust Digital Library Connect to full text</a>}
-      html += '<div class="hathi_dynamic">Volumes available: '
-      html += first5
-      if remainder.present?
-        html += %Q{, <a class="show_hathi_extra_links" href="">[show #{remainder_count} more]</a>}
-        html += '<span class="hathi_extra_links">'
-        html += remainder
-        html += '</span>'
-      end
-      html += '</div>'
-
-      acc << html
+      links << {
+        linktext: 'HathiTrust Digital Library Connect to full text',
+        linkurl: hathi_link(id_and_type[:id], id_and_type[:type]),
+        volumes: volumes_links,
+      }
 
       # deal with Hathi full text links that don't have Hathi in link text
 
-      more_links = rec.fields('856')
-                       .select { |f| f.indicator1 == '4' && %w(0 1).member?(f.indicator2) }
-                       .map do |field|
-        pennlibmarc.linktext_and_url(field)
-      end
-      # TODO: this condition should be false most of the time, but instead it's true WHY????
-      if !more_links.select { |link_struct| link_struct[0] =~ /[Hh]athi/ }.present?
-        oclc_id = ids_and_types.select { |v| v[:type] == 'oclc' }.map { |v| v[:id] }.first
-        acc <<  %Q{<a href="#{"http://catalog.hathitrust.org/api/volumes/oclc/#{oclc_id}.html"}" class="hathi_dynamic">HathiTrust Digital Library Connect to full text</a>}
-      end
+      # more_links = rec.fields('856')
+      #                  .select { |f| f.indicator1 == '4' && %w(0 1).member?(f.indicator2) }
+      #                  .map do |field|
+      #   pennlibmarc.linktext_and_url(field)
+      # end
+      # # TODO: this condition should be false most of the time, but instead it's true WHY????
+      # if !more_links.select { |link_struct| link_struct[0] =~ /[Hh]athi/ }.present?
+      #   oclc_id = ids_and_types.select { |v| v[:type] == 'oclc' }.map { |v| v[:id] }.first
+      #   acc <<  %Q{<a href="#{"http://catalog.hathitrust.org/api/volumes/oclc/#{oclc_id}.html"}" class="hathi_dynamic">HathiTrust Digital Library Connect to full text</a>}
+      # end
+
+      acc << links.to_json
+
     end
   end
 

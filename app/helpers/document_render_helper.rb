@@ -48,22 +48,51 @@ module DocumentRenderHelper
     end
   end
 
+  def render_online_resource_display_for_index_view(options)
+    values = options[:value]
+
+    values.map do |value|
+      JSON.parse(value).map do |link_struct|
+        url = link_struct['linkurl']
+        text = link_struct['linktext']
+        %Q{<a href="#{url}" class="hathi_dynamic">#{text}</a>}
+      end.join('<br/>')
+    end.join('<br/>').html_safe
+  end
+
   def render_online_display_for_show_view(options)
-    online_display_values = options[:value]
-    online_display_values.map do |online_display|
-      # "Online" values might be a list of Hashes or a list of Strings.
-      # This is gross, but an artifact of trying to port over logic from
-      # DLA Franklin as exactly as possible.
-      if online_display.is_a?(Hash)
-        linked_text = online_display[:linktext].present? ? online_display[:linktext] : online_display[:linkurl]
-        html = content_tag('a', linked_text, { href: online_display[:linkurl] })
-        if online_display[:linktext].present?
-          html += '<br/>'.html_safe + online_display[:linkurl]
+    values = options[:value]
+
+    values.map do |value|
+      JSON.parse(value).map do |link_struct|
+        url = link_struct['linkurl']
+        text = link_struct['linktext']
+        html = %Q{<a href="#{url}" class="hathi_dynamic">#{text}</a>}
+        html += '<br/>'.html_safe + url
+
+        if link_struct['volumes']
+          volumes_links = link_struct['volumes'].map do |link_struct2|
+            url2 = link_struct2['linkurl']
+            text2 = link_struct2['linktext']
+            %Q{<a href="#{url2}" class="hathi_dynamic">#{text2}</a>}
+          end
+          first5 = volumes_links[0,5].join(', ')
+          remainder = (volumes_links[5..-1] || []).join(', ')
+          remainder_count = volumes_links.size - 5
+
+          html += '<div class="volumes-available hathi_dynamic">Volumes available: '
+          html += first5
+          if remainder.present?
+            html += %Q{, <a class="show-hathi-extra-links" href="">[show #{remainder_count} more]</a>}
+            html += '<span class="hathi-extra-links">'
+            html += remainder
+            html += '</span>'
+          end
+          html += '</div>'
         end
+
         html
-      else
-        online_display
-      end
+      end.join('<br/>')
     end.join('<br/>').html_safe
   end
 

@@ -1977,19 +1977,7 @@ module PennLib
       linkurl = linkurl.sub(' target=_blank', '')
       [linktext, linkurl]
     end
-
-    def get_online_display_for_non_hathi(rec)
-      rec.fields('856')
-          .select { |f| %w{0 1}.member?(f.indicator2) }
-          .map do |field|
-        linktext, linkurl = linktext_and_url(field)
-        {
-            linktext: linktext,
-            linkurl: linkurl
-        }
-      end
-    end
-
+    
     def words_to_remove_from_web_link
       @words_to_remove_from_web_link ||=
           %w(fund funds collection collections endowment
@@ -2073,7 +2061,10 @@ module PennLib
           .select { |f| (f.indicator1 == '4') && %w{0 1}.member?(f.indicator2) }
           .map do |field|
         linktext, linkurl = linktext_and_url(field)
-        %Q{<a href="#{linkurl}">#{linktext.present? ? linktext : linkurl}</a>}
+        {
+          linktext: linktext.present? ? linktext : linkurl,
+          linkurl: linkurl
+        }
       end
     end
 
