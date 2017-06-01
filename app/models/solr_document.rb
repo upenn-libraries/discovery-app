@@ -4,7 +4,9 @@ require 'penn_lib/marc'
 # frozen_string_literal: true
 class SolrDocument
 
-  include Blacklight::Solr::Document    
+  include Blacklight::Solr::Document
+  include ExpandedDocs
+
       # The following shows how to setup this blacklight document to display marc documents
   extension_parameters[:marc_source_field] = :marcrecord_text
   extension_parameters[:marc_format_type] = :marcxml
@@ -147,6 +149,17 @@ class SolrDocument
     else
       pennlibmarc.get_online_display_for_non_hathi(to_marc)
     end
+  end
+
+  # merge in field values from expanded docs
+  def online_resource_display_for_index_view
+    from_expanded = []
+    if expanded_docs.size > 0
+      from_expanded = expanded_docs.flat_map do |expanded_doc|
+        expanded_doc.fetch('full_text_link_a', [])
+      end.compact
+    end
+    from_expanded + fetch('full_text_link_a', [])
   end
 
   # used by blacklight_alma

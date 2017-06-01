@@ -1,0 +1,17 @@
+<% if document.expanded_docs.size > 0 %>
+    <dt>
+      Other records:
+    </dt>
+    <dd>
+      <form class="form-inline">
+        <div class="form-group">
+          <select class="form-control document-cluster-select">
+            <option>Select one...</option>
+            <% document.expanded_docs.each do |expanded_doc| %>
+                <option value="<%= expanded_doc.id %>"><%= expanded_doc.id %></option>
+            <% end %>
+          </select>
+        </div>
+      </form>
+    </dd>
+<% end %>

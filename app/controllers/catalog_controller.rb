@@ -13,6 +13,8 @@ class CatalogController < ApplicationController
 
   include BlacklightSolrplugins::XBrowse
 
+  include AssociateExpandedDocs
+
   before_action :expire_session
 
   def has_shib_session?
@@ -67,6 +69,7 @@ class CatalogController < ApplicationController
       # in the search request handler in solrconfig.xml
       fl: %w{
         id
+        cluster_id
         alma_mms_id
         score
         format_a
@@ -90,22 +93,6 @@ class CatalogController < ApplicationController
       }.join(','),
       'facet.threads': 2,
       fq: '{!tag=cluster}{!collapse field=cluster_id nullPolicy=expand size=5000000 min=record_source_id}',
-      'json.facet': JSON.dump(
-        {
-          access_f: {
-            type: 'terms',
-            field: 'access_f',
-            sort: 'index asc',
-            method: 'stream',
-            facet: {
-              cluster_count: 'unique(cluster_id)'
-            },
-            domain: {
-              excludeTags: ['cluster']
-            }
-          }
-        }
-      ),
       expand: 'true',
       'expand.q': '*:*',
       'expand.fq': '*:*',
@@ -121,14 +108,11 @@ class CatalogController < ApplicationController
 
     ## Default parameters to send on single-document requests to Solr. These settings are the Blackligt defaults (see SearchHelper#solr_doc_params) or
     ## parameters included in the Blacklight-jetty document requestHandler.
-    #
-    #config.default_document_solr_params = {
-    #  qt: 'document',
-    #  ## These are hard-coded in the blacklight 'document' requestHandler
-    #  # fl: '*',
-    #  # rows: 1
-    #  # q: '{!term f=id v=$id}'
-    #}
+    config.default_document_solr_params = {
+      expand: 'true',
+      'expand.field': 'cluster_id',
+      'expand.q': '*:*',
+    }
 
     # solr field configuration for search results/index views
     config.index.title_field = 'title'
@@ -169,6 +153,10 @@ class CatalogController < ApplicationController
     config.add_facet_field 'access_f', label: 'Access', collapse: false, query: {
       'Online' => { :label => 'Online', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'Online\\'}'}"},
       'At the library' => { :label => 'At the library', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"}
+    }
+    config.add_facet_field 'record_source_f', label: 'Record Source', collapse: false, query: {
+      'Hathi' => { :label => 'Hathi', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Hathi\\'}'}"},
+      'Franklin' => { :label => 'Franklin', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Franklin\\'}'}"}
     }
     config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false
     config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z', collapse: false
@@ -246,9 +234,9 @@ class CatalogController < ApplicationController
         { name: 'publication_a', label: 'Publication' },
         { name: 'contained_within_a', label: 'Contained in' },
         { name: 'format_a', label: 'Format/Description' },
-        # in this view, 'Online' is simply full_text_link; note that
-        # 'Online' is deliberately different in show view
-        { name: 'full_text_link_a', label: 'Online resource' },
+        # in this view, 'Online resource' is full_text_link; note that
+        # 'Online resource' is deliberately different here from what's on show view
+        { dynamic_name: 'online_resource_display_for_index_view', label: 'Online resource' },
     ])
 
     # Most show field values are generated dynamically from MARC stored in Solr.
@@ -321,6 +309,7 @@ class CatalogController < ApplicationController
         { dynamic_name: 'web_link_display', label: 'Web link', helper_method: 'render_web_link_display' },
         { dynamic_name: 'access_restriction_display', label: 'Access Restriction' },
         { dynamic_name: 'bound_with_display', label: 'Bound with' },
+        # 'Online' corresponds to the right-side box labeled 'Online' in DLA Franklin
         { dynamic_name: 'online_display', label: 'Online', helper_method: 'render_online_display_for_show_view' },
         { name: 'electronic_holdings_json', label: 'Online resource', helper_method: 'render_electronic_holdings' },
     ])
@@ -606,37 +595,6 @@ class CatalogController < ApplicationController
   # certain BL view partials used on landing page won't resolve correctly.
   def landing
     index
-  end
-
-  def search_results(params)
-    (response, document_list) = super(params)
-
-    # be careful to work with Response using Hash key access and NOT
-    # any of the convenience methods that cache.
-
-    pairs = response['facet_counts']['facet_fields']['access_f']
-    if pairs && response['facets']
-      extra_facet = response['facets']['access_f']
-      if extra_facet
-        bucket_structs = extra_facet['buckets']
-        if bucket_structs
-          new_pairs = bucket_structs.flat_map do |struct|
-            [ struct['val'], struct['cluster_count'] ]
-          end
-          # replace the list of sequential pair values in facet_fields
-          # so that subsequent Blacklight code doesn't know any different.
-          #puts "ORIGINAL FACET VALUES=#{response['facet_counts']['facet_fields']['access_f']}"
-          response['facet_counts']['facet_fields']['access_f'] = new_pairs
-          #puts "NEW FACET VALUES=#{new_pairs}"
-        end
-      end
-    end
-
-    # reset cached instance vars on Response
-    response.instance_variable_set(:@facet_fields, nil)
-    response.instance_variable_set(:@facet_counts, nil)
-
-    [ response, document_list ]
   end
 
 end

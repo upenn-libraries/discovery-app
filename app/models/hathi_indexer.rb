@@ -138,6 +138,12 @@ class HathiIndexer < FranklinIndexer
     end
   end
 
+  def define_record_source_facet
+    to_field 'record_source_f' do |rec, acc|
+      acc << 'Hathi'
+    end
+  end
+
   def get_cluster_id(rec)
     pennlibmarc.get_oclc_id_values(rec).first || begin
       id = get_hathi_id(rec)
@@ -149,9 +155,6 @@ class HathiIndexer < FranklinIndexer
 
   def define_cluster_fields
     to_field 'cluster_id' do |rec, acc|
-      acc << get_cluster_id(rec)
-    end
-    to_field 'cluster_id_online' do |rec, acc|
       acc << get_cluster_id(rec)
     end
   end

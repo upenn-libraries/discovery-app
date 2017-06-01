@@ -87,11 +87,13 @@ class FranklinIndexer < BaseIndexer
 
     define_record_source_id
 
+    define_record_source_facet
+
     define_mms_id
 
     define_oclc_id
 
-    define_cluster_fields
+    define_cluster_id
 
     # do NOT use *_xml_stored_single because it uses a Str (max 32k) for storage
     to_field 'marcrecord_xml_stored_single_large', get_plain_marc_xml
@@ -363,24 +365,14 @@ class FranklinIndexer < BaseIndexer
     pennlibmarc.get_oclc_id_values(rec).first || begin
       id = rec.fields('001').take(1).map(&:value).first
       digest = Digest::MD5.hexdigest(id)
-      # first 8 hex digits = first 4 bytes. construct an int out of that hex str.
-      digest[0,8].hex
+      # first 16 hex digits = first 8 bytes. construct an int out of that hex str.
+      digest[0,16].hex
     end
   end
 
-  def define_cluster_fields
+  def define_cluster_id
     to_field 'cluster_id' do |rec, acc|
       acc << get_cluster_id(rec)
-    end
-    to_field 'cluster_id_online' do |rec, acc|
-      if pennlibmarc.get_access_values(rec).member?('Online')
-        acc << get_cluster_id(rec)
-      end
-    end
-    to_field 'cluster_id_at_library' do |rec, acc|
-      if pennlibmarc.get_access_values(rec).member?('At the library')
-        acc << get_cluster_id(rec)
-      end
     end
   end
 
@@ -401,6 +393,12 @@ class FranklinIndexer < BaseIndexer
   def define_record_source_id
     to_field 'record_source_id' do |rec, acc|
       acc << RecordSource::FRANKLIN
+    end
+  end
+
+  def define_record_source_facet
+    to_field 'record_source_f' do |rec, acc|
+      acc << 'Franklin'
     end
   end
 
