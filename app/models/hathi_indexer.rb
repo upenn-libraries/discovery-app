@@ -22,14 +22,18 @@ class HathiIndexer < FranklinIndexer
     end
   end
 
-  def get_hathi_id(rec)
+  def get_preferred_id_and_type(rec)
     ids_and_types = get_ids_and_types_from_035a(rec)
     %w(zephir oai oclc).map do |type|
       ids_and_types
         .select { |id_and_type| id_and_type[:type] == type && id_and_type[:id].present? }
-        .map { |id_and_type| "HATHI_#{type}-" + id_and_type[:id] }
         .first
     end.compact.first
+  end
+
+  def get_hathi_id(rec)
+    id_and_type = get_preferred_id_and_type(rec)
+    "HATHI_#{id_and_type[:type]}-#{id_and_type[:id]}"
   end
 
   def define_id
@@ -87,8 +91,7 @@ class HathiIndexer < FranklinIndexer
 
       # this section is equivalent to the hathi-link XSL function
 
-      ids_and_types = get_ids_and_types_from_035a(rec)
-      id_and_type = ids_and_types.first
+      id_and_type = get_preferred_id_and_type(rec)
 
       volumes_links = rec.fields('856').map do |field|
         link_struct = pennlibmarc.linktext_and_url(field)
@@ -98,26 +101,13 @@ class HathiIndexer < FranklinIndexer
           linktext: text,
           linkurl: url,
         }
-      end
+      end.sort { |x,y| x[:linktext] <=> y[:linktext] }
 
       links << {
         linktext: 'HathiTrust Digital Library Connect to full text',
         linkurl: hathi_link(id_and_type[:id], id_and_type[:type]),
         volumes: volumes_links,
       }
-
-      # deal with Hathi full text links that don't have Hathi in link text
-
-      # more_links = rec.fields('856')
-      #                  .select { |f| f.indicator1 == '4' && %w(0 1).member?(f.indicator2) }
-      #                  .map do |field|
-      #   pennlibmarc.linktext_and_url(field)
-      # end
-      # # TODO: this condition should be false most of the time, but instead it's true WHY????
-      # if !more_links.select { |link_struct| link_struct[0] =~ /[Hh]athi/ }.present?
-      #   oclc_id = ids_and_types.select { |v| v[:type] == 'oclc' }.map { |v| v[:id] }.first
-      #   acc <<  %Q{<a href="#{"http://catalog.hathitrust.org/api/volumes/oclc/#{oclc_id}.html"}" class="hathi_dynamic">HathiTrust Digital Library Connect to full text</a>}
-      # end
 
       acc << links.to_json
 
