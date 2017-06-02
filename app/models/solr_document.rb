@@ -144,14 +144,21 @@ class SolrDocument
   end
 
   # merge in field values from expanded docs
-  def full_text_links_display
-    from_expanded = []
-    if expanded_docs.size > 0
-      from_expanded = expanded_docs.flat_map do |expanded_doc|
-        expanded_doc.fetch('full_text_link_text_a', [])
-      end.compact
-    end
-    from_expanded + fetch('full_text_link_text_a', [])
+  def full_text_links_for_cluster_display
+    all_docs = [ self ] + expanded_docs
+
+    structs = all_docs.map do |expanded_doc|
+      field_value = expanded_doc.fetch('full_text_link_text_a', [])
+      if field_value.present?
+        {
+          id: expanded_doc.id,
+          value: field_value
+        }
+      end
+    end.compact
+
+    # sort so that order is always the same for any doc in cluster
+    structs.sort { |x,y| x[:id] <=> y[:id] }.map { |item| item[:value] }.flatten
   end
 
   # used by blacklight_alma
