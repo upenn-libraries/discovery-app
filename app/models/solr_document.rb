@@ -143,11 +143,18 @@ class SolrDocument
     end
   end
 
+  # returns all the documents in this cluster, including this one
+  def cluster_docs
+    [ self ] + expanded_docs
+  end
+
+  def all_doc_ids_for_cluster
+    cluster_docs.map { |doc| doc.id }
+  end
+
   # returns the full text link field values for all the documents in the cluster
   def full_text_links_for_cluster_display
-    all_docs = [ self ] + expanded_docs
-
-    structs = all_docs.map do |expanded_doc|
+    structs = cluster_docs.map do |expanded_doc|
       field_value = expanded_doc.fetch('full_text_link_text_a', [])
       if field_value.present?
         {

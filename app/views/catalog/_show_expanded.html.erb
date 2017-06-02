@@ -7,9 +7,8 @@
         <div class="form-group">
           <select class="form-control document-cluster-select">
             <option>Select one...</option>
-            <option value="<%= document.id %>"><%= document.id %> (currently shown)</option>
-            <% document.expanded_docs.each do |expanded_doc| %>
-                <option value="<%= expanded_doc.id %>"><%= expanded_doc.id %></option>
+            <% document.all_doc_ids_for_cluster.sort.each do |doc_id| %>
+                <option value="<%= doc_id %>"><%= doc_id %><%= document.id == doc_id ? ' (currently shown)' : '' %></option>
             <% end %>
           </select>
         </div>
