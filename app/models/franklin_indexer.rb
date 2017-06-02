@@ -16,7 +16,7 @@ require 'penn_lib/code_mappings'
 # since the vast majority of the indexing rules are the same.
 # Overrideable field definitions should go into define_* methods
 # and called in this constructor.
-class FranklinIndexer < Blacklight::Marc::Indexer
+class FranklinIndexer < BaseIndexer
 
   # this mixin defines lambda facotry method get_format for legacy marc formats
   include Blacklight::Marc::Indexer::Formats
@@ -83,9 +83,19 @@ class FranklinIndexer < Blacklight::Marc::Indexer
 
     define_id
 
-    to_field "alma_mms_id", trim(extract_marc("001"), :first => true)
+    define_grouped_id
+
+    define_record_source_id
+
+    define_record_source_facet
+
+    define_mms_id
 
     define_oclc_id
+
+    define_cluster_id
+
+    define_full_text_link_text_a
 
     # do NOT use *_xml_stored_single because it uses a Str (max 32k) for storage
     to_field 'marcrecord_xml_stored_single_large', get_plain_marc_xml
@@ -247,10 +257,6 @@ class FranklinIndexer < Blacklight::Marc::Indexer
       acc.concat(pennlibmarc.get_publication_values(rec))
     end
 
-    to_field 'full_text_link_a' do |rec, acc|
-      acc.concat(pennlibmarc.get_full_text_link_values(rec))
-    end
-
     to_field 'contained_within_a'  do |rec, acc|
       acc.concat(pennlibmarc.get_contained_within_values(rec))
     end
@@ -337,6 +343,10 @@ class FranklinIndexer < Blacklight::Marc::Indexer
     end
   end
 
+  def define_mms_id
+    to_field 'alma_mms_id', trim(extract_marc('001'), :first => true)
+  end
+
   def define_access_facet
     to_field "access_f_stored" do |rec, acc|
       acc.concat(pennlibmarc.get_access_values(rec))
@@ -346,6 +356,56 @@ class FranklinIndexer < Blacklight::Marc::Indexer
   def define_oclc_id
     to_field 'oclc_id' do |rec, acc|
       acc.concat(pennlibmarc.get_oclc_id_values(rec))
+    end
+  end
+
+  def get_cluster_id(rec)
+    pennlibmarc.get_oclc_id_values(rec).first || begin
+      id = rec.fields('001').take(1).map(&:value).first
+      digest = Digest::MD5.hexdigest(id)
+      # first 16 hex digits = first 8 bytes. construct an int out of that hex str.
+      digest[0,16].hex
+    end
+  end
+
+  def define_cluster_id
+    to_field 'cluster_id' do |rec, acc|
+      acc << get_cluster_id(rec)
+    end
+  end
+
+  def define_grouped_id
+    to_field 'grouped_id', trim(extract_marc('001'), :first => true) do |rec, acc, context|
+      oclc_ids = pennlibmarc.get_oclc_id_values(rec)
+      acc.map! { |id|
+        if oclc_ids.size > 1
+          puts 'Warning: Multiple OCLC IDs found, using the first one'
+        end
+        oclc_id = oclc_ids.first
+        prefix = oclc_id.present? ? "#{oclc_id}!" : ''
+        "#{prefix}FRANKLIN_#{id}"
+      }
+    end
+  end
+
+  def define_record_source_id
+    to_field 'record_source_id' do |rec, acc|
+      acc << RecordSource::FRANKLIN
+    end
+  end
+
+  def define_record_source_facet
+    to_field 'record_source_f' do |rec, acc|
+      acc << 'Franklin'
+    end
+  end
+
+  def define_full_text_link_text_a
+    to_field 'full_text_link_text_a' do |rec, acc|
+      result = pennlibmarc.get_full_text_link_values(rec)
+      if result.present?
+        acc << result.to_json
+      end
     end
   end
 

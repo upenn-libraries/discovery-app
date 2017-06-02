@@ -13,6 +13,8 @@ class CatalogController < ApplicationController
 
   include BlacklightSolrplugins::XBrowse
 
+  include AssociateExpandedDocs
+
   before_action :expire_session
 
   def has_shib_session?
@@ -67,10 +69,11 @@ class CatalogController < ApplicationController
       # in the search request handler in solrconfig.xml
       fl: %w{
         id
+        cluster_id
         alma_mms_id
         score
         format_a
-        full_text_link_a
+        full_text_link_text_a
         isbn_isxn
         language_a
         title
@@ -89,6 +92,13 @@ class CatalogController < ApplicationController
         marcrecord_text
       }.join(','),
       'facet.threads': 2,
+#      fq: '{!tag=cluster}{!collapse field=cluster_id nullPolicy=expand size=5000000 min=record_source_id}',
+      # this approach needs expand.field=cluster_id
+      fq: %q~{!tag=cluster}NOT ({!join from=cluster_id to=cluster_id v='record_source_f:"Franklin"'} AND record_source_f:"Hathi")~,
+      expand: 'true',
+      'expand.field': 'cluster_id',
+      'expand.q': '*:*',
+      'expand.fq': '*:*',
       'mm': '100%',
       rows: 10
     }
@@ -101,14 +111,11 @@ class CatalogController < ApplicationController
 
     ## Default parameters to send on single-document requests to Solr. These settings are the Blackligt defaults (see SearchHelper#solr_doc_params) or
     ## parameters included in the Blacklight-jetty document requestHandler.
-    #
-    #config.default_document_solr_params = {
-    #  qt: 'document',
-    #  ## These are hard-coded in the blacklight 'document' requestHandler
-    #  # fl: '*',
-    #  # rows: 1
-    #  # q: '{!term f=id v=$id}'
-    #}
+    config.default_document_solr_params = {
+      expand: 'true',
+      'expand.field': 'cluster_id',
+      'expand.q': '*:*',
+    }
 
     # solr field configuration for search results/index views
     config.index.title_field = 'title'
@@ -146,7 +153,14 @@ class CatalogController < ApplicationController
     #  (useful when user clicks "more" on a large facet and wants to navigate alphabetically across a large set of results)
     # :index_range can be an array or range of prefixes that will be used to create the navigation (note: It is case sensitive when searching values)
 
-    config.add_facet_field 'access_f', label: 'Access', collapse: false
+    config.add_facet_field 'access_f', label: 'Access', collapse: false, query: {
+      'Online' => { :label => 'Online', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'Online\\'}'}"},
+      'At the library' => { :label => 'At the library', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"}
+    }
+    config.add_facet_field 'record_source_f', label: 'Record Source', collapse: false, query: {
+      'Hathi' => { :label => 'Hathi', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Hathi\\'}'}"},
+      'Franklin' => { :label => 'Franklin', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Franklin\\'}'}"}
+    }
     config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false
     config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z', collapse: false
     config.add_facet_field 'subject_f', label: 'Subject', limit: 5, index_range: 'A'..'Z', collapse: false
@@ -223,9 +237,9 @@ class CatalogController < ApplicationController
         { name: 'publication_a', label: 'Publication' },
         { name: 'contained_within_a', label: 'Contained in' },
         { name: 'format_a', label: 'Format/Description' },
-        # in this view, 'Online' is simply full_text_link; note that
-        # 'Online' is deliberately different in show view
-        { name: 'full_text_link_a', label: 'Online resource' },
+        # in this view, 'Online resource' is full_text_link; note that
+        # 'Online resource' is deliberately different here from what's on show view
+        { dynamic_name: 'full_text_links_for_cluster_display', label: 'Online resource', helper_method: 'render_online_resource_display_for_index_view' },
     ])
 
     # Most show field values are generated dynamically from MARC stored in Solr.
@@ -298,7 +312,8 @@ class CatalogController < ApplicationController
         { dynamic_name: 'web_link_display', label: 'Web link', helper_method: 'render_web_link_display' },
         { dynamic_name: 'access_restriction_display', label: 'Access Restriction' },
         { dynamic_name: 'bound_with_display', label: 'Bound with' },
-        { dynamic_name: 'online_display', label: 'Online', helper_method: 'render_online_display_for_show_view' },
+        # 'Online' corresponds to the right-side box labeled 'Online' in DLA Franklin
+        { dynamic_name: 'full_text_links_for_cluster_display', label: 'Online', helper_method: 'render_online_display_for_show_view' },
         { name: 'electronic_holdings_json', label: 'Online resource', helper_method: 'render_electronic_holdings' },
     ])
 
