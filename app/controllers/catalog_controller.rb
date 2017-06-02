@@ -92,8 +92,11 @@ class CatalogController < ApplicationController
         marcrecord_text
       }.join(','),
       'facet.threads': 2,
-      fq: '{!tag=cluster}{!collapse field=cluster_id nullPolicy=expand size=5000000 min=record_source_id}',
+#      fq: '{!tag=cluster}{!collapse field=cluster_id nullPolicy=expand size=5000000 min=record_source_id}',
+      # this approach needs expand.field=cluster_id
+      fq: %q~{!tag=cluster}NOT ({!join from=cluster_id to=cluster_id v='record_source_f:"Franklin"'} AND record_source_f:"Hathi")~,
       expand: 'true',
+      'expand.field': 'cluster_id',
       'expand.q': '*:*',
       'expand.fq': '*:*',
       'mm': '100%',
