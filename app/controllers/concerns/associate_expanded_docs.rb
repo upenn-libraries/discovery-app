@@ -1,4 +1,7 @@
 
+# Mixin for CatalogController that extends search/retrieval
+# methods to populate the SolrDocuments with their expanded documents
+# from the Solr response.
 module AssociateExpandedDocs
 
   extend ActiveSupport::Concern

@@ -135,10 +135,4 @@ class HathiIndexer < FranklinIndexer
     end
   end
 
-  def define_cluster_fields
-    to_field 'cluster_id' do |rec, acc|
-      acc << get_cluster_id(rec)
-    end
-  end
-
 end

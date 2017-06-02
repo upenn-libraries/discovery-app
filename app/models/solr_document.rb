@@ -143,7 +143,7 @@ class SolrDocument
     end
   end
 
-  # merge in field values from expanded docs
+  # returns the full text link field values for all the documents in the cluster
   def full_text_links_for_cluster_display
     all_docs = [ self ] + expanded_docs
 
