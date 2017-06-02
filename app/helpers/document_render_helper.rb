@@ -55,7 +55,7 @@ module DocumentRenderHelper
       JSON.parse(value).map do |link_struct|
         url = link_struct['linkurl']
         text = link_struct['linktext']
-        %Q{<a href="#{url}" class="hathi_dynamic">#{text}</a>}
+        %Q{<a href="#{url}">#{text}</a>}
       end.join('<br/>')
     end.join('<br/>').html_safe
   end
@@ -67,33 +67,39 @@ module DocumentRenderHelper
       JSON.parse(value).map do |link_struct|
         url = link_struct['linkurl']
         text = link_struct['linktext']
-        html = %Q{<a href="#{url}" class="hathi_dynamic">#{text}</a>}
-        html += '<br/>'.html_safe + url
+        html = %Q{<div class="online-resource-link-group"><a href="#{url}">#{text}</a>}
+        html += '<br/>'.html_safe
+
+        if !text.start_with?('http')
+          html += + url
+        end
 
         if link_struct['volumes']
           volumes_links = link_struct['volumes'].map do |link_struct2|
             url2 = link_struct2['linkurl']
             text2 = link_struct2['linktext']
-            %Q{<a href="#{url2}" class="hathi_dynamic">#{text2}</a>}
+            %Q{<a href="#{url2}">#{text2}</a>}
           end
           first5 = volumes_links[0,5].join(', ')
           remainder = (volumes_links[5..-1] || []).join(', ')
           remainder_count = volumes_links.size - 5
 
-          html += '<div class="volumes-available hathi_dynamic">Volumes available: '
+          html += '<div class="volumes-available">Volumes available: '
           html += first5
           if remainder.present?
-            html += %Q{, <a class="show-hathi-extra-links" href="">[show #{remainder_count} more]</a>}
-            html += '<span class="hathi-extra-links">'
+            html += %Q{, <a class="show-online-resource-extra-links" href="">[show #{remainder_count} more]</a>}
+            html += '<span class="online-resource-extra-links">'
             html += remainder
             html += '</span>'
           end
           html += '</div>'
         end
 
+        html += '</div>'
+
         html
-      end.join('<br/>')
-    end.join('<br/>').html_safe
+      end.join
+    end.join.html_safe
   end
 
   def render_web_link_display(options)
