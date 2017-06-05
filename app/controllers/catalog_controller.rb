@@ -538,11 +538,23 @@ class CatalogController < ApplicationController
     end
 
     config.add_search_field('id_search') do |field|
+      field.label = 'ID'
       field.if = Proc.new { false }
       field.include_in_advanced_search = true
       field.solr_local_parameters = {
           qf: 'id',
           pf: 'id'
+      }
+    end
+
+    config.add_search_field('publication_date_ssort') do |field|
+      field.label = 'Publication Date (YYYY)'
+      field.if = Proc.new { false }
+      field.is_numeric_field = true
+      field.include_in_advanced_search = true
+      field.solr_local_parameters = {
+        qf: 'publication_date_ssort',
+        pf: 'publication_date_ssort'
       }
     end
 
