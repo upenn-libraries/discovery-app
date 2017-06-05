@@ -37,6 +37,9 @@ module DocumentRenderHelper
     buf.html_safe
   end
 
+  # this was used to render electronic holdings stored in Solr, prior to certain fields
+  # being available through Alma's availability API.
+  # it's now obsolete but keeping it around just in case.
   def render_electronic_holdings_links(electronic_holdings_str)
     if electronic_holdings_str.present?
       JSON.parse(electronic_holdings_str).map do |holding|

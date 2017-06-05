@@ -22,8 +22,24 @@ $(document).ready(function() {
                     return item != null && item.length > 0;
                 }).join(". ");
         } else if(holding['inventory_type'] == 'electronic') {
-            // filter out electronic holdings, which we display from Solr instead
-            return null;
+            var url = null;
+
+            if (holding['activation_status'] == 'Available' && holding['portfolio_pid']) {
+                url = "https://<%= ENV['ALMA_DELIVERY_DOMAIN'] %>/view/uresolver/<%= ENV['ALMA_INSTITUTION_CODE'] %>/openurl?Force_direct=true&portfolio_pid=" +
+                    holding['portfolio_pid'] + "&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com&u.ignore_date_coverage=true"
+            }
+
+            if (url !== null) {
+                var text = holding['collection'] || "Electronic resource";
+                url = '<a href="' + url + '">' + text + '</a>';
+            } else {
+                url = "Electronic Resource (no URL available)";
+            }
+
+            return [url, holding['coverage_statement']]
+                .filter(function (item) {
+                    return item != null && item.length > 0;
+                }).join(" - ");
         } else {
             return BlacklightAlma.prototype.formatHolding.call(this, holding);
         }
