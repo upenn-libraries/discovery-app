@@ -52,7 +52,7 @@ GIT
 
 GIT
   remote: https://github.com/upenn-libraries/blacklight_alma.git
-  revision: a8a6941c12735345a7274ff3ae8636445375146f
+  revision: 69d2614c4dde91c93f9d057202e60418877f69dd
   specs:
     blacklight_alma (0.0.1)
       blacklight (~> 6.0)
@@ -171,7 +171,7 @@ GEM
       activesupport (>= 4.1.0)
     hashie (3.5.5)
     htmlentities (4.3.4)
-    httparty (0.14.0)
+    httparty (0.15.5)
       multi_xml (>= 0.5.2)
     httpclient (2.8.3)
     i18n (0.8.1)
