@@ -21,6 +21,7 @@ module PennLib
     SUB_ITEM_CURRENT_LOCATION = 'g'
     SUB_ITEM_CALL_NUMBER_TYPE = 'h'
     SUB_ITEM_CALL_NUMBER = 'i'
+    SUB_ITEM_DATE_CREATED = 'q'
 
     SUB_ELEC_PORTFOLIO_PID = 'a'
     SUB_ELEC_ACCESS_URL = 'b'
@@ -2036,22 +2037,23 @@ module PennLib
     end
 
     def get_recently_added_sort_values(rec)
-      # TODO: we're not able to find or get a "date record was added to Alma"
-      # which is what we want here. so we use 005 for now, but that date reflects updates.
-      # Note that 008 has the date that the MARC record was created,
-      # but that's not useful here.
-      acc = rec.fields('005')
-                .select { |f| f.value.present? && !f.value.start_with?('0000') }
-                .map do |field|
-        begin
-          DateTime.iso8601(field.value).to_i
-        rescue ArgumentError => e
-          nil
-        end
-      end.compact.slice(0, 1)
+      acc = []
+      most_recent = rec.fields(EnrichedMarc::TAG_ITEM).flat_map do |item|
+        item.find_all(&subfield_in([EnrichedMarc::SUB_ITEM_DATE_CREATED])).map do |sf|
+          begin
+            DateTime.strptime(sf.value, '%Y-%m-%d %H:%M:%S').to_time.to_i
+          rescue Exception => e
+            puts "Error parsing date string for recently added field: #{sf.value} - #{e}"
+            nil
+          end
+        end.compact
+      end.max
+      if most_recent
+        acc << most_recent
+      end
       # records without a date should be considered very old
       if acc.size == 0
-        acc += [0]
+        acc << 0
       end
       acc
     end
