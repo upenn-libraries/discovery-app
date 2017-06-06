@@ -39,6 +39,11 @@ echo "#### OAI fetch and process started at `date`"
 echo "Fetching from OAI"
 ./fetch_oai.rb $set_name "$last_run" "$now" $batch_dir
 
+if [ $? != 0 ]; then
+    echo "ERROR: Something went wrong running fetch_oai.rb. Exiting script."
+    exit 1
+fi
+    
 echo "Updating LAST_RUN file"
 echo $now > $set_dir/LAST_RUN
 
