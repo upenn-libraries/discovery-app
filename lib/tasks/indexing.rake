@@ -34,14 +34,28 @@ namespace :pennlib do
         Rake::Task['solr:marc:index:work'].execute
         puts "Finished indexing #{file} at #{DateTime.now}"
       end
+    end
 
+    desc "Index MARC data from stdin"
+    task :index_from_stdin  => :environment do |t, args|
+      SolrMarc.indexer =
+        case ENV['MARC_SOURCE']
+          when 'CRL'
+            CrlIndexer.new
+          when 'HATHI'
+            HathiIndexer.new
+          else
+            FranklinIndexer.new
+        end
+
+      SolrMarc.indexer.process(STDIN)
     end
 
     # for debugging
     desc "Index MARC records and output to file (for debugging)"
     task :index_to_file => :environment do |t, args|
 
-      class MyMarcIndexer < MarcIndexer
+      class MyMarcIndexer < HathiIndexer
         def initialize
           super
           settings do
@@ -51,7 +65,8 @@ namespace :pennlib do
         end
       end
 
-      MyMarcIndexer.new.process('/home/jeffchiu/marc/alma_prod_sandbox/smallbatch/fixed/fixed.xml')
+      io = Zlib::GzipReader.new(File.open('/home/jeffchiu/hathi-oai-marc/processed/part_929.xml.gz'), :external_encoding => 'UTF-8')
+      MyMarcIndexer.new.process(io)
     end
 
     # for debugging: this seems braindead but is actually useful: the
@@ -71,6 +86,23 @@ namespace :pennlib do
       end
     end
 
+    desc "Dump OCLC IDs"
+    task :dump_oclc_ids => :environment do |t, args|
+      code_mappings ||= PennLib::CodeMappings.new(Rails.root.join('config').join('translation_maps'))
+      pennlibmarc ||= PennLib::Marc.new(code_mappings)
+
+      Dir.glob('/home/jeffchiu/hathi-oai-marc/processed/part*.xml.gz').each do |file|
+        io = Zlib::GzipReader.new(File.open(file), :external_encoding => 'UTF-8')
+        reader = MARC::XMLReader.new(io)
+        reader.each do |record|
+          pennlibmarc.get_oclc_id_values(record).each do |oclc_id|
+            puts oclc_id
+          end
+        end
+        io.close()
+      end
+    end
+
     desc "Create boundwiths index"
     task :create_boundwiths_index => :environment do |t, args|
       PennLib::BoundWithIndex.create(
@@ -81,11 +113,11 @@ namespace :pennlib do
 
     desc "Merge boundwiths into records"
     task :merge_boundwiths => :environment do |t, args|
-      PennLib::BoundWithIndex.merge(
-          ENV['BOUND_WITHS_DB_FILENAME'],
-          ENV['BOUND_WITHS_INPUT_FILE'],
-          ENV['BOUND_WITHS_OUTPUT_FILE']
-      )
+      input_filename = ENV['BOUND_WITHS_INPUT_FILE']
+      output_filename = ENV['BOUND_WITHS_OUTPUT_FILE']
+      input = (input_filename && File.exist?(input_filename)) ? PennLib::Util.openfile(input_filename) : STDIN
+      output = (output_filename && File.exist?(output_filename)) ? PennLib::Util.openfile(output_filename) : STDOUT
+      PennLib::BoundWithIndex.merge(ENV['BOUND_WITHS_DB_FILENAME'], input, output)
     end
 
   end
@@ -94,8 +126,9 @@ namespace :pennlib do
 
     desc 'Parse IDs from OAI file and delete them from Solr index'
     task :delete_ids => :environment do |t, args|
-      oai_file = ENV['OAI_FILE']
-      PennLib::OAI.delete_ids_in_file(oai_file)
+      input_filename = ENV['OAI_FILE']
+      input = (input_filename && File.exist?(input_filename)) ? PennLib::Util.openfile(input_filename) : STDIN
+      PennLib::OAI.delete_ids_in_file(input)
     end
 
   end

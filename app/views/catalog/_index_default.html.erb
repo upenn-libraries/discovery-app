@@ -9,19 +9,10 @@
       <% end -%>
   <% end -%>
 
-  <% if show_availability?(document) %>
-  <dt class="blacklight-availability">Status/Location:</dt>
-  <dd class="blacklight-availability">
-    <%= render_electronic_holdings_links(document.fetch('electronic_holdings_json', []))%>
-    <div class="availability-ajax-load" data-availability-id="<%= document.alma_mms_id %>">Loading...</div>
-  </dd>
-  <% end %>
-  <% if display_alma_fulfillment_iframe?(document) %>
-  <dt></dt>
-  <dd>
-    <button class="btn btn-default availability-toggle-details" data-show-text="Show Availability Details" data-hide-text="Hide Availability Details">Show Availability Details</button>
-  </dd>
-  <% end %>
+  <%= render partial: 'status_location_field', locals: { document: document } %>
+
+  <%= render partial: 'alma_availability_button', locals: { document: document } %>
+
 </dl>
 
-<div class="availability-details-container" data-availability-iframe-url="<%= alma_app_fulfillment_url(document) %>"></div>
+<%= render partial: 'alma_availability_iframe_ajax_container', locals: { document: document } %>

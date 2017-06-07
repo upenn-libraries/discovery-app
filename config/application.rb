@@ -24,5 +24,12 @@ module Blacklight
     config.active_record.raise_in_transactional_callbacks = true
 
     config.eager_load_paths << Rails.root.join('lib')
+
+    # TODO: fix the underlying problem, which is that CLIENT_IP doesn't match X_FORWARDED_FOR in headers
+    # sent by Apache proxy. The only reason this is here is to allow some debugging code to iterate over
+    # headers in request.headers without triggering an ActionDispatch::RemoteIp::IpSpoofAttackError exception
+    config.action_dispatch.ip_spoofing_check = false
+
+    config.log_level = ENV['RAILS_LOG_LEVEL'].present? ? ENV['RAILS_LOG_LEVEL'].to_sym : :debug
   end
 end

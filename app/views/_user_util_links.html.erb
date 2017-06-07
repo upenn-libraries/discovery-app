@@ -1,24 +1,34 @@
 <div class="navbar-right">
 
+  <ul class="nav navbar-nav">
+    <% if ENV['SHOW_KNOWN_ISSUES'].present? %>
+    <li><a style="color:red" href="<%= known_issues_url %>">Known Issues</a></li>
+    <% end %>
+    <%= render_nav_actions do |config, action|%>
+        <li><%= action %></li>
+    <% end %>
+  </ul>
+
   <% if has_user_authentication_provider? %>
       <ul class="nav navbar-nav">
+        <li>
+          <a href="http://www.library.upenn.edu">Library Home</a>
+        </li>
         <% if current_user %>
+            <li>
+              <a href="<%= my_library_card_url %>"><span class="user-first-name"><%= session['first_name'] || 'Name unknown' %> - </span> PennKey Library Account</a>
+            </li>
             <li>
               <%= link_to t('blacklight.header_links.logout'), destroy_user_session_path %>
             </li>
-            <% unless current_user.to_s.blank? -%>
-                <li>
-                  <%= link_to current_user, edit_user_registration_path %>
-                </li>
-            <% end %>
-        <% else %>
+      <% else %>
             <li>
               <div class="btn-group">
                 <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Login <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
-                  <li class="small"><a href="#">Login with PennKey (TODO)</a></li>
+                  <li class="small"><a href="<%= accounts_login_url(next: request.original_url) %>">Login with PennKey</a></li>
                   <li role="separator" class="divider"></li>
                   <li class="small"><a href="<%= nopennkey_path %>">No PennKey? Click here.</a></li>
                 </ul>

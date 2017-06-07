@@ -4,15 +4,38 @@
 Installation:
 
 - Checkout this repo.
-- Make sure you have ruby 2.3.1 installed. The easiest way to do this is to use [rvm](https://rvm.io/).
-- Run `bundle install`
-- Install Solr 6.3.0 with
+
+- Make sure you have ruby 2.3.1 installed. It's recommended that you
+  use [rbenv](https://github.com/rbenv/rbenv), but it may be
+  quicker/easier to get running with [rvm](https://rvm.io/).
+
+- Run `bundle install` to install all gem dependencies.
+
+- Run `npm install` to install javascript libraries.
+
+- Edit the `local_dev_env` file and populate the variables with
+  appropriate values. Then source it in your shell.
+
+  ```bash
+  source local_dev_env
+  ```
+
+- Run `bundle exec rake db:migrate` to initialize the database. You'll
+  also have run this again whenever you pull code that includes new
+  migrations (if you forget, Rails will raise an exception when serving
+  requests because there are unloaded migrations.)
+
+- Install Solr with
   [solrplugins](https://github.com/upenn-libraries/solrplugins). The following line should be added 
-  to the file `solr-6.3.0/server/contexts/solr-jetty-context.xml` inside the 'Configure' tag:
+  to the file `solr-x.x.x/server/contexts/solr-jetty-context.xml` inside the 'Configure' tag:
 
   ```
   <Set name="extraClasspath">/path/to/solrplugins-0.1-SNAPSHOT.jar</Set>
   ```
+
+- Add a solr core from the
+  [library-solr-schema](https://gitlab.library.upenn.edu/discovery/library-solr-schema)
+  repo.
 
 - Load some test marc data into Solr:
 
@@ -26,14 +49,14 @@ Installation:
   If the test data is successfully indexed, you should see output
   something like:
   
-  ```bash
+  ```
   2016-03-03T12:29:40-05:00  INFO    Traject::SolrJsonWriter writing to 'http://127.0.0.1:8983/solr/blacklight-core/update/json' in batches of 100 with 1 bg threads
   2016-03-03T12:29:40-05:00  INFO    Indexer with 1 processing threads, reader: Traject::MarcReader and writer: Traject::SolrJsonWriter
   2016-03-03T12:29:41-05:00  INFO Traject::SolrJsonWriter sending commit to solr at url http://127.0.0.1:8983/solr/blacklight-core/update/json...
   2016-03-03T12:29:41-05:00  INFO finished Indexer#process: 30 records in 0.471 seconds; 63.8 records/second overall.
   ```
 
-* Start the rails server:
+- Start the rails server:
 
   ```bash
   bundle exec rails s
@@ -43,6 +66,43 @@ Installation:
   everything went well, you should see the generic Blacklight homepage
   and have 30 faceted records to search.
 
+# Solr Indexing
+
+We handle two types of data exports from Alma: full exports and
+incremental updates via OAI.
+
+The commands in this section can be run directly, or in an application
+container. See the `run_in_container.sh` script in the ansible
+repository.
+
+## Full exports
+
+Transfer the *.tar.gz files created by the Alma publishing job to the
+directory where they will be preprocessed and indexed. Run these commands:
+
+```bash
+./preprocess.sh /var/solr_input_data/alma_prod_sandbox/20170412_full allTitles
+
+./index_solr.sh /var/solr_input_data/alma_prod_sandbox/20170412_full/processed
+```
+
+## Incremental updates (OAI)
+
+This runs via a cron job, which fetches the updates available via OAI
+since the last time the job was run.
+
+```bash
+./fetch_and_process_oai.sh /var/solr_input_data/alma_prod_sandbox/oai
+```
+
+If you do a full index using an older full data export, and you want
+to apply a set of already fetched and processed OAI updates manually,
+you can do so like this:
+
+```bash
+# run this for each dated directory
+./index_and_deletions.sh /var/solr_input_data/alma_prod_sandbox/oai/allTitles/2017_04_10_00_00 allTitles
+```
 
 # JRuby and Traject
 

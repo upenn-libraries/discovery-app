@@ -7,6 +7,22 @@ GIT
       parslet
 
 GIT
+  remote: https://github.com/magibney/bento_search
+  revision: af7c055b8ee0eed24c7fcf02e4fdab33b3e67bbe
+  branch: search_controller_engine_params
+  specs:
+    bento_search (1.8.0)
+      confstruct (~> 1.0)
+      htmlentities
+      httpclient (>= 2.2.5, < 3.0.0)
+      language_list (~> 1.0)
+      multi_json (>= 1.0.4, < 2.0)
+      nokogiri
+      openurl (>= 0.3.1, < 1.1)
+      rails (>= 3.2.3, < 6)
+      summon
+
+GIT
   remote: https://github.com/magibney/blacklight-marc.git
   revision: 47c663b9cf40c28ba6831d624c64c943ca82c6f0
   branch: fix-extract_marc-format-008
@@ -20,8 +36,23 @@ GIT
       traject (~> 2.1)
 
 GIT
+  remote: https://github.com/magibney/summon.rb
+  revision: f0543e229fe41d0068e02b67f4d0af0576586c0a
+  branch: sign-empty-param-values
+  specs:
+    summon (2.0.12)
+      json (~> 1.8)
+
+GIT
+  remote: https://github.com/upenn-libraries/blacklight-ris.git
+  revision: 88b4f1defc441c49d2408b3881ee4482b203eb7c
+  specs:
+    blacklight-ris (0.1.0)
+      rails (> 4.2)
+
+GIT
   remote: https://github.com/upenn-libraries/blacklight_alma.git
-  revision: 623c24b91d10973d6fdb69e1ccae4739e8f2cd12
+  revision: 0e994ea8fa05ce1d817985cabb86b7fbe74d99ee
   specs:
     blacklight_alma (0.0.1)
       blacklight (~> 6.0)
@@ -31,7 +62,7 @@ GIT
 
 GIT
   remote: https://github.com/upenn-libraries/blacklight_solrplugins.git
-  revision: 7a23bf56afb8947aa91de8da30e8ea27112df800
+  revision: f208efd60ac70705bc89618068d383690b287995
   specs:
     blacklight_solrplugins (0.0.1)
       blacklight (~> 6.0)
@@ -40,60 +71,49 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
-    actionmailer (4.2.7)
-      actionpack (= 4.2.7)
-      actionview (= 4.2.7)
-      activejob (= 4.2.7)
+    actionmailer (4.2.8)
+      actionpack (= 4.2.8)
+      actionview (= 4.2.8)
+      activejob (= 4.2.8)
       mail (~> 2.5, >= 2.5.4)
       rails-dom-testing (~> 1.0, >= 1.0.5)
-    actionpack (4.2.7)
-      actionview (= 4.2.7)
-      activesupport (= 4.2.7)
+    actionpack (4.2.8)
+      actionview (= 4.2.8)
+      activesupport (= 4.2.8)
       rack (~> 1.6)
       rack-test (~> 0.6.2)
       rails-dom-testing (~> 1.0, >= 1.0.5)
       rails-html-sanitizer (~> 1.0, >= 1.0.2)
-    actionview (4.2.7)
-      activesupport (= 4.2.7)
+    actionview (4.2.8)
+      activesupport (= 4.2.8)
       builder (~> 3.1)
       erubis (~> 2.7.0)
       rails-dom-testing (~> 1.0, >= 1.0.5)
-      rails-html-sanitizer (~> 1.0, >= 1.0.2)
-    activejob (4.2.7)
-      activesupport (= 4.2.7)
+      rails-html-sanitizer (~> 1.0, >= 1.0.3)
+    activejob (4.2.8)
+      activesupport (= 4.2.8)
       globalid (>= 0.3.0)
-    activemodel (4.2.7)
-      activesupport (= 4.2.7)
+    activemodel (4.2.8)
+      activesupport (= 4.2.8)
       builder (~> 3.1)
-    activerecord (4.2.7)
-      activemodel (= 4.2.7)
-      activesupport (= 4.2.7)
+    activerecord (4.2.8)
+      activemodel (= 4.2.8)
+      activesupport (= 4.2.8)
       arel (~> 6.0)
-    activesupport (4.2.7)
+    activesupport (4.2.8)
       i18n (~> 0.7)
-      json (~> 1.7, >= 1.7.7)
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
-    addressable (2.5.0)
+    addressable (2.5.1)
       public_suffix (~> 2.0, >= 2.0.2)
-    arel (6.0.3)
-    autoprefixer-rails (6.5.1)
+    arel (6.0.4)
+    autoprefixer-rails (6.7.7.1)
       execjs
     bcrypt (3.1.11)
-    bento_search (1.7.0)
-      confstruct (~> 1.0)
-      htmlentities
-      httpclient (>= 2.2.5, < 3.0.0)
-      language_list (~> 1.0)
-      multi_json (>= 1.0.4, < 2.0)
-      nokogiri
-      openurl (>= 0.3.1, < 1.1)
-      rails (>= 3.2.3, < 6)
-      summon
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
-    blacklight (6.7.2)
+    blacklight (6.8.0)
       bootstrap-sass (~> 3.2)
       deprecation
       globalid
@@ -106,7 +126,6 @@ GEM
       blacklight (>= 6.0.0.pre2, < 7)
       jquery-rails
       rails (>= 3.0, < 5.0)
-    blankslate (3.1.3)
     bootstrap-sass (3.3.7)
       autoprefixer-rails (>= 5.2.1)
       sass (>= 3.3.4)
@@ -114,9 +133,9 @@ GEM
       addressable (>= 2.4.0)
       railties (>= 4.0.0, < 5.1)
       sprockets (>= 3.6.0)
-    builder (3.2.2)
+    builder (3.2.3)
     byebug (9.0.6)
-    childprocess (0.5.9)
+    childprocess (0.6.3)
       ffi (~> 1.0, >= 1.0.11)
     coffee-rails (4.2.1)
       coffee-script (>= 2.2.0)
@@ -124,14 +143,14 @@ GEM
     coffee-script (2.4.1)
       coffee-script-source
       execjs
-    coffee-script-source (1.10.0)
-    concurrent-ruby (1.0.4)
+    coffee-script-source (1.12.2)
+    concurrent-ruby (1.0.5)
     confstruct (1.0.2)
       hashie (~> 3.3)
     debug_inspector (0.0.2)
     deprecation (1.0.0)
       activesupport
-    devise (4.2.0)
+    devise (4.2.1)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
       railties (>= 4.1.0, < 5.1)
@@ -145,17 +164,17 @@ GEM
     ezwadl (0.0.1)
       httparty (~> 0.14)
       nokogiri (~> 1.6)
-    faraday (0.9.2)
+    faraday (0.12.0.1)
       multipart-post (>= 1.2, < 3)
-    ffi (1.9.14)
+    ffi (1.9.18)
     globalid (0.3.7)
       activesupport (>= 4.1.0)
-    hashie (3.5.3)
+    hashie (3.5.5)
     htmlentities (4.3.4)
-    httparty (0.14.0)
+    httparty (0.15.5)
       multi_xml (>= 0.5.2)
     httpclient (2.8.3)
-    i18n (0.7.0)
+    i18n (0.8.1)
     jbuilder (2.6.0)
       activesupport (>= 3.0.0, < 5.1)
       multi_json (~> 1.2)
@@ -165,18 +184,27 @@ GEM
       i18n
       logger
       rubyzip (~> 1.0)
-    jquery-rails (4.2.1)
+    jquery-rails (4.3.1)
       rails-dom-testing (>= 1, < 3)
       railties (>= 4.2.0)
       thor (>= 0.14, < 2.0)
-    json (1.8.3)
+    json (1.8.6)
     jwt (1.5.6)
-    kaminari (0.17.0)
-      actionpack (>= 3.0.0)
-      activesupport (>= 3.0.0)
-    language_list (1.1.0)
+    kaminari (1.0.1)
+      activesupport (>= 4.1.0)
+      kaminari-actionview (= 1.0.1)
+      kaminari-activerecord (= 1.0.1)
+      kaminari-core (= 1.0.1)
+    kaminari-actionview (1.0.1)
+      actionview
+      kaminari-core (= 1.0.1)
+    kaminari-activerecord (1.0.1)
+      activerecord
+      kaminari-core (= 1.0.1)
+    kaminari-core (1.0.1)
+    language_list (1.2.1)
     library_stdnums (1.4.1)
-    libv8 (3.16.14.15)
+    libv8 (3.16.14.19)
     logger (1.2.8)
     loofah (2.0.3)
       nokogiri (>= 1.5.9)
@@ -191,60 +219,59 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2016.0521)
     mini_portile2 (2.1.0)
-    minitest (5.9.1)
+    minitest (5.10.1)
     multi_json (1.12.1)
     multi_xml (0.6.0)
     multipart-post (2.0.0)
-    nokogiri (1.6.8.1)
+    mysql2 (0.4.5)
+    nokogiri (1.7.1)
       mini_portile2 (~> 2.1.0)
     openurl (1.0.0)
       marc
       scrub_rb (~> 1.0)
     orm_adapter (0.5.0)
-    parslet (1.7.1)
-      blankslate (>= 2.0, <= 4.0)
-    passenger (5.0.30)
+    parslet (1.8.0)
+    passenger (5.1.2)
       rack
       rake (>= 0.8.1)
     public_suffix (2.0.5)
-    rack (1.6.4)
+    rack (1.6.5)
     rack-test (0.6.3)
       rack (>= 1.0)
-    rails (4.2.7)
-      actionmailer (= 4.2.7)
-      actionpack (= 4.2.7)
-      actionview (= 4.2.7)
-      activejob (= 4.2.7)
-      activemodel (= 4.2.7)
-      activerecord (= 4.2.7)
-      activesupport (= 4.2.7)
+    rails (4.2.8)
+      actionmailer (= 4.2.8)
+      actionpack (= 4.2.8)
+      actionview (= 4.2.8)
+      activejob (= 4.2.8)
+      activemodel (= 4.2.8)
+      activerecord (= 4.2.8)
+      activesupport (= 4.2.8)
       bundler (>= 1.3.0, < 2.0)
-      railties (= 4.2.7)
+      railties (= 4.2.8)
       sprockets-rails
     rails-deprecated_sanitizer (1.0.3)
       activesupport (>= 4.2.0.alpha)
-    rails-dom-testing (1.0.7)
+    rails-dom-testing (1.0.8)
       activesupport (>= 4.2.0.beta, < 5.0)
-      nokogiri (~> 1.6.0)
+      nokogiri (~> 1.6)
       rails-deprecated_sanitizer (>= 1.0.1)
     rails-html-sanitizer (1.0.3)
       loofah (~> 2.0)
-    railties (4.2.7)
-      actionpack (= 4.2.7)
-      activesupport (= 4.2.7)
+    railties (4.2.8)
+      actionpack (= 4.2.8)
+      activesupport (= 4.2.8)
       rake (>= 0.8.7)
       thor (>= 0.18.1, < 2.0)
-    rake (11.3.0)
-    rdoc (4.2.2)
-      json (~> 1.4)
+    rake (12.0.0)
+    rdoc (4.3.0)
     ref (2.0.0)
     responders (2.3.0)
       railties (>= 4.2.0, < 5.1)
     rsolr (1.1.2)
       builder (>= 2.1.2)
     ruby-progressbar (1.8.1)
-    rubyzip (1.2.0)
-    sass (3.4.22)
+    rubyzip (1.2.1)
+    sass (3.4.23)
     sass-rails (5.0.6)
       railties (>= 4.0.0, < 6)
       sass (~> 3.1)
@@ -260,7 +287,7 @@ GEM
       faraday
       ruby-progressbar
       rubyzip
-    sprockets (3.7.0)
+    sprockets (3.7.1)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
     sprockets-rails (3.2.0)
@@ -268,14 +295,12 @@ GEM
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
     sqlite3 (1.3.12)
-    summon (2.0.5)
-      json
     therubyracer (0.12.2)
       libv8 (~> 3.16.14.0)
       ref
-    thor (0.19.1)
-    thread_safe (0.3.5)
-    tilt (2.0.5)
+    thor (0.19.4)
+    thread_safe (0.3.6)
+    tilt (2.0.7)
     traject (2.3.3)
       concurrent-ruby (>= 0.8.0)
       dot-properties (>= 0.1.1)
@@ -289,14 +314,14 @@ GEM
       actionpack (>= 3.1)
       jquery-rails
       railties (>= 3.1)
-    tzinfo (1.2.2)
+    tzinfo (1.2.3)
       thread_safe (~> 0.1)
     uglifier (3.0.2)
       execjs (>= 0.3.0, < 3)
     unf (0.1.4)
       unf_ext
-    unf_ext (0.0.7.2)
-    warden (1.2.6)
+    unf_ext (0.0.7.3)
+    warden (1.2.7)
       rack (>= 1.0)
     web-console (2.3.0)
       activemodel (>= 4.0)
@@ -310,9 +335,10 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord-jdbcmysql-adapter (= 1.3.21)
-  bento_search (= 1.7)
-  blacklight (= 6.7.2)
+  bento_search!
+  blacklight (= 6.8.0)
   blacklight-marc (~> 6.0)!
+  blacklight-ris!
   blacklight_advanced_search!
   blacklight_alma!
   blacklight_range_limit (= 6.0.0)
@@ -320,20 +346,23 @@ DEPENDENCIES
   browserify-rails (= 4.0.0)
   byebug
   coffee-rails (= 4.2.1)
-  devise (= 4.2.0)
+  devise (= 4.2.1)
   devise-guests (= 0.5.0)
   globalid (= 0.3.7)
   jbuilder (= 2.6.0)
   jdbc-sqlite3 (= 3.8.11.2)
   jettywrapper (= 2.0.4)
-  jquery-rails (= 4.2.1)
-  passenger (= 5.0.30)
-  rails (= 4.2.7)
+  jquery-rails (= 4.3.1)
+  mysql2 (= 0.4.5)
+  nokogiri (= 1.7.1)
+  passenger (= 5.1.2)
+  rails (= 4.2.8)
   rsolr (= 1.1.2)
   sass-rails (= 5.0.6)
   sdoc (= 0.4.2)
   solr_wrapper (= 0.18.1)
   sqlite3 (= 1.3.12)
+  summon!
   therubyracer (= 0.12.2)
   traject (= 2.3.3)
   tzinfo-data (= 1.2016.7)

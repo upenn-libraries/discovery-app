@@ -28,16 +28,53 @@ span.site-name, span.site-name a {
 
 #header-navbar {
   background: $upenn-blue asset-url('orrerybg.jpg') top left repeat-x;
+  height: 99px;
 
   .navbar-brand {
     background-image: asset-url('logo.png');
     margin-top: 15px;
-    margin-bottom: 34px;
   }
 }
 
-#search_field {
-  width: 200px;
+.user-first-name {
+  color: #c60;
+}
+
+.navbar-nav > li > div {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  line-height: 20px;
+}
+
+.navbar-nav > li > div > a {
+  color: white;
+}
+
+@media (min-width: 768px) {
+
+  .navbar-nav > li > div {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    color: white;
+  }
+
+  .navbar-nav > li > div > a {
+    color: white;
+  }
+
+  #search_field {
+    width: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-brand {
+    clear: break;
+  }
+
+  #search_field {
+    width: 80px;
+  }
 }
 
 .btn-primary {
@@ -75,19 +112,57 @@ span.site-name, span.site-name a {
   background: #ececec;
 }
 
-.questions-nav {
+#documents .document .document-title-heading {
+  line-height: 1.42857143;
+}
+
+.direct-link-trigger {
+  cursor: pointer;
+}
+
+.direct-link-popup {
+  position: absolute;
+  bottom: 2em;
+  right: .5em;
+  background-color: #fff;
+  padding: .25em 0 .25em .5em;
+  border: solid 1px #bbb;
+  box-shadow: 1px 1px 3px rgba(50, 50, 50, 0.35);
+}
+
+.direct-link-close {
+  border: solid 1px #ccc;
+  cursor: pointer;
+  display: block;
+  float: right;
+  font-size: 0.92em;
+  line-height: 100%;
+  margin: -.08em 2px 0 .5em;
+  padding: 2px 4px 2px 3px;
+}
+
+.footer-bar {
   background-image: asset-url('holdnumbers.png');
   background-repeat: repeat-x;
   width: 100%;
-}
-
-.questions-nav .questions {
   padding-top: 1em;
   padding-bottom: 1em;
+  margin-top: 2em;
 }
 
-.questions-nav a, .questions-nav a:visited {
+.footer-bar a, .footer-bar a:visited, .footer-bar a:hover {
   color: #000;
+  background-color: transparent;
+}
+
+.footer-bar-links-right {
+  float: right;
+}
+
+.footer-bar-links-right .link-item {
+  display: inline;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .footer {
@@ -155,6 +230,10 @@ ul.footerlinks {
   margin: 3.27em 0 0 0 !important;
   background: transparent;
   font-style: oblique;
+  font-weight: bold;
+}
+
+#marc_view .sub_code {
   font-weight: bold;
 }
 
@@ -286,4 +365,16 @@ h3.ongray {
 
 .availability-details-iframe {
   height: 17em;
+}
+
+.online-resource-link-group {
+  margin-bottom: 1em;
+}
+
+.online-resource-extra-links {
+  display: none;
+}
+
+.volumes-available {
+  margin-top: 1em;
 }

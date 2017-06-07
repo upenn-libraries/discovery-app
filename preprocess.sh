@@ -1,29 +1,37 @@
 #!/bin/bash
 
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    SCRIPT_DIR="$(dirname "$(stat -f "$0")")"
-else
-    SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
+if [ "$#" -ne 2 ]; then
+    echo "Usage: preprocess.sh input_files_dir set_name"
+    echo
+    echo "input_files_dir is a directory that contains .tar.gz files directly exported from Alma"
+    exit
 fi
 
-# figure out the dir portion of passed-in arg
-if [ -d "$1" ]; then
-    INPUT_FILES_DIR="$1"
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    script_dir="$(dirname "$(stat -f "$0")")"
 else
-    INPUT_FILES_DIR=`dirname "$1"`
+    script_dir="$(dirname "$(readlink -f "$0")")"
 fi
+
+input_files_dir="$1"
+set_name="$2"
 
 # full path to boundwiths.sqlite file
-export BOUND_WITHS_DB_FILENAME=${BOUND_WITHS_DB_FILENAME:-$SCRIPT_DIR/bound_withs.sqlite3}
-export BOUND_WITHS_XML_DIR="$INPUT_FILES_DIR"
+export BOUND_WITHS_DB_FILENAME=${BOUND_WITHS_DB_FILENAME:-$script_dir/bound_withs.sqlite3}
+export BOUND_WITHS_XML_DIR="$input_files_dir/processed"
 
-export XSL_DIR=${XSL_DIR:-$SCRIPT_DIR/xsl}
+export XSL_DIR=${XSL_DIR:-$script_dir/xsl}
 
-# first pass: fix XML namespace and create boundwith_.*xml files
-time ./process_files.rb -p 4 -s fix_namespace,create_bound_withs "$@"
+echo "####################"
+echo "First pass: fix XML namespace and create boundwith_.*xml files"
+find $input_files_dir -name '*.tar.gz' | xargs -P $NUM_INDEXING_PROCESSES -t -I FILENAME ./preprocess_step1.sh FILENAME
 
-# index the derived boundwith_*.xml files into a sqlite database
-time bundle exec rake pennlib:marc:create_boundwiths_index
+echo "####################"
+echo "Creating boundwiths index..."
 
-# fix up the MARC and merge in the boundwith holdings
-time ./process_files.rb -p 4 -i -s fix_marc,merge_bound_withs,format,rename_to_final_filename "$@"
+echo "Indexing the derived boundwith_*.xml files into a sqlite database"
+bundle exec rake pennlib:marc:create_boundwiths_index
+
+echo "####################"
+echo "Fixing MARC and merging in boundwith holdings"
+find $input_files_dir/processed -name $set_name'*.xml.gz' | xargs -P $NUM_INDEXING_PROCESSES -t -I FILENAME ./preprocess_step2.sh FILENAME

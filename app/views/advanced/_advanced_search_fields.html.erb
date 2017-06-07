@@ -1,0 +1,106 @@
+<% content_for :head do %>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("form.advanced").submit(function() {
+                $(".advanced-search-field").each(function (idx, container) {
+                    if($(container).find("input[type=text]").length == 2) {
+                        // range search
+                        var start = $(container).find("input.start").val();
+                        var end = $(container).find("input.end").val();
+                        var input_name = ""
+                        var input_value = "";
+                        if(start || end) {
+                            if (!start) { start = "*"; }
+                            if (!end) { end = "*"; }
+                            input_name = $(container).find("select").val();
+                            input_value = "[" + start + " TO " + end + "]";
+                        }
+                        $(container).find("input[type=hidden]").attr("name", input_name);
+                        $(container).find("input[type=hidden]").attr("value", input_value);
+                    } else {
+                        // text search
+                        var input_element = $(container).find("input").first();
+                        var input_name = "";
+                        if($(input_element).val()) {
+                            input_name = $(container).find("select").val();
+                        }
+                        $(input_element).attr("name", input_name);
+                    }
+                });
+            });
+        });
+    </script>
+<% end %>
+
+<div>
+
+  <% limit = 0 %>
+  <% prepopulated_search_fields_for_advanced_search(5, is_numeric: false).each do |fieldstruct| %>
+      <%
+        if fieldstruct.value.kind_of? Array
+          fieldstruct.value.each do |val|
+      %>
+              <div class="form-group advanced-search-field">
+                <div class="col-sm-7">
+                  <input class="form-control" name="" type="text" value="<%= val %>"/>
+                </div>
+                <div class="col-sm-1 label-alignment">in</div>
+                <div class="col-sm-4">
+                  <select class="form-control col-sm-3" id="text_field_<%= limit %>">
+                    <%- fieldstruct.fields.each do |key, field_def| -%>
+                        <option value="<%= key %>" <% if fieldstruct.selected_field == key %>selected="selected"<% end %>><%= field_def.label %></option>
+                    <%- end -%>
+                  </select>
+                </div>
+              </div>
+          <%
+            limit += 1
+            break if limit >= 5
+            end
+            else
+          %>
+          <div class="form-group advanced-search-field">
+            <div class="col-sm-7">
+              <input class="form-control" name="" type="text" value="<%= fieldstruct.value %>"/>
+            </div>
+            <div class="col-sm-1 label-alignment">in</div>
+            <div class="col-sm-4">
+              <select class="form-control col-sm-3" id="text_field_<%= limit %>">
+                <%- fieldstruct.fields.each do |key, field_def| -%>
+                    <option value="<%= key %>" <% if fieldstruct.selected_field == key %>selected="selected"<% end %>><%= field_def.label %></option>
+                <%- end -%>
+              </select>
+            </div>
+          </div>
+      <%
+        limit += 1
+        break if limit >= 5
+        end
+        end
+      %>
+
+  <h3 class="query-criteria-heading">Dates:</h3>
+
+  <% prepopulated_search_fields_for_advanced_search(5, is_numeric: true, min: 1).each do |fieldstruct| %>
+      <div class="form-group advanced-search-field">
+        <input type="hidden" name="" value=""/>
+        <div class="col-sm-3">
+          <input class="form-control start" id="numeric_start_<%= fieldstruct.index %>" type="text" value="<%= fieldstruct.value %>"/>
+        </div>
+        <div class="col-sm-1 label-alignment">to</div>
+        <div class="col-sm-3">
+          <input class="form-control end" id="numeric_end_<%= fieldstruct.index %>" type="text" value="<%= fieldstruct.value2 %>"/>
+        </div>
+        <div class="col-sm-1 label-alignment">in</div>
+        <div class="col-sm-4">
+          <select class="form-control col-sm-3" id="numeric_field_<%= fieldstruct.index %>">
+            <%- fieldstruct.fields.each do |key, field_def| -%>
+                <option value="<%= key %>" <% if fieldstruct.selected_field == key %>selected="selected"<% end %>><%= field_def.label %></option>
+            <%- end -%>
+          </select>
+        </div>
+      </div>
+
+  <%- end -%>
+
+</div>

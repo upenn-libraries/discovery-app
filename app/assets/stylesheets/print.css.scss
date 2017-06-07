@@ -1,0 +1,26 @@
+
+@media print {
+  a[href]:after {
+    content: none !important;
+  }
+
+  .questions-nav {
+    display: none;
+  }
+
+  .footer {
+    display: none;
+  }
+
+  #sidebar {
+    display: none;
+  }
+
+  #content {
+    width: 100%;
+  }
+
+  .pagination {
+    display: none;
+  }
+}

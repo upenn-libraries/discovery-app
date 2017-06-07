@@ -1,0 +1,10 @@
+<div class="availability-document-container">
+
+  <dl class="dl-horizontal dl-invert">
+    <%= render_rbrowse_display_fields(facet, doc_presenter) %>
+
+    <%= render partial: 'catalog/alma_availability_button', locals: { document: doc_presenter.document } %>
+  </dl>
+
+  <%= render partial: 'catalog/alma_availability_iframe_ajax_container', locals: { document: doc_presenter.document } %>
+</div>

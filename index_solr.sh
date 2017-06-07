@@ -1,5 +1,8 @@
 #!/bin/bash
+#
+# Index all the part*.xml.gz files in the directory argument
 
-export LOG_DIR=log/indexing
+input_files_dir="$1"
 
-time ./process_files.rb -p 4 -s index_into_solr "$@" 
+find $input_files_dir -name 'part*.xml.gz' \
+    | xargs -P $NUM_INDEXING_PROCESSES -t -I FILENAME ./index_solr_file.sh FILENAME

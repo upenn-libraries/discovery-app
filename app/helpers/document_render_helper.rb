@@ -37,6 +37,9 @@ module DocumentRenderHelper
     buf.html_safe
   end
 
+  # this was used to render electronic holdings stored in Solr, prior to certain fields
+  # being available through Alma's availability API.
+  # it's now obsolete but keeping it around just in case.
   def render_electronic_holdings_links(electronic_holdings_str)
     if electronic_holdings_str.present?
       JSON.parse(electronic_holdings_str).map do |holding|
@@ -48,17 +51,57 @@ module DocumentRenderHelper
     end
   end
 
-  # TODO: need to port 'DYNAMICALLY INSERTED HATHITRUST WEB LINK' from detailed.xsl?
-  # figure out how that works, as it looks for a somewhat odd element in the MARC XML
+  def render_online_resource_display_for_index_view(options)
+    values = options[:value]
+
+    values.map do |value|
+      JSON.parse(value).map do |link_struct|
+        url = link_struct['linkurl']
+        text = link_struct['linktext']
+        %Q{<a href="#{url}">#{text}</a>}
+      end.join('<br/>')
+    end.join('<br/>').html_safe
+  end
+
   def render_online_display_for_show_view(options)
-    online_display_values = options[:value]
-    online_display_values.map do |online_display|
-      linked_text = online_display[:linktext].present? ? online_display[:linktext] : online_display[:linkurl]
-      html = content_tag('a', linked_text, { href: online_display[:linkurl] })
-      if online_display[:linktext].present?
-        html += '<br/>'.html_safe + online_display[:linkurl]
-      end
-      html
+    values = options[:value]
+
+    values.map do |value|
+      JSON.parse(value).map do |link_struct|
+        url = link_struct['linkurl']
+        text = link_struct['linktext']
+        html = %Q{<div class="online-resource-link-group"><a href="#{url}">#{text}</a>}
+        html += '<br/>'.html_safe
+
+        if !text.start_with?('http')
+          html += + url
+        end
+
+        if link_struct['volumes']
+          volumes_links = link_struct['volumes'].map do |link_struct2|
+            url2 = link_struct2['linkurl']
+            text2 = link_struct2['linktext']
+            %Q{<a href="#{url2}">#{text2}</a>}
+          end
+          first5 = volumes_links[0,5].join(', ')
+          remainder = (volumes_links[5..-1] || []).join(', ')
+          remainder_count = volumes_links.size - 5
+
+          html += '<div class="volumes-available">Volumes available: '
+          html += first5
+          if remainder.present?
+            html += %Q{, <a class="show-online-resource-extra-links" href="">[show #{remainder_count} more]</a>}
+            html += '<span class="online-resource-extra-links">'
+            html += remainder
+            html += '</span>'
+          end
+          html += '</div>'
+        end
+
+        html += '</div>'
+
+        html
+      end.join
     end.join.html_safe
   end
 
@@ -81,11 +124,11 @@ module DocumentRenderHelper
     val = record[:value_for_link] || record[:value]
     case record[:link_type]
       when 'search'
-        search_catalog_path(q: val)
+        search_catalog_path(q: val, search_field: record[:link_type])
       when /_search$/
         search_catalog_path(q: val, search_field: record[:link_type])
-      when /_xfacet/
-        xbrowse_catalog_path(record[:link_type], q: val)
+      when /_xfacet$/
+        search_catalog_path(q: val, search_field: record[:link_type])
       else
         "#UNKNOWN"
     end
@@ -109,6 +152,11 @@ module DocumentRenderHelper
       [ record[:value_prepend], text, record[:value_append] ].select(&:present?).join(' ')
     end
     render_values_with_breaks(values)
+  end
+
+  # translates the subject xfacet value to a value suitable for the linked facet field
+  def subject_xfacet_to_facet(value)
+    value.gsub('--', '').gsub(/\s{2,}/, ' ')
   end
 
 end

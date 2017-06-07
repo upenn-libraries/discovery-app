@@ -18,14 +18,16 @@ Rails.application.routes.draw do
 
   get 'nopennkey' => 'catalog#nopennkey'
 
+  get 'collection_news' => 'collection_news#index'
+
+  get 'known_issues' => 'application#known_issues'
+
   Blacklight::Marc.add_routes(self)
   concern :searchable, Blacklight::Routes::Searchable.new
-  concern :xbrowsable, BlacklightSolrplugins::Routes::XBrowsable.new
 
   resource :catalog, only: [:index], as: 'catalog', path: '/catalog', controller: 'catalog' do
     concerns :searchable
     concerns :range_searchable
-    concerns :xbrowsable
   end
 
   # override devise's sessions controller w/ our own
@@ -43,12 +45,16 @@ Rails.application.routes.draw do
     end
   end
 
-  scope module: 'blacklight_alma' do
-    get 'alma/availability' => 'alma#availability'
-  end
+  get 'alma/availability' => 'franklin_alma#availability'
 
   devise_scope :user do
     get 'alma/social_login_callback' => 'sessions#social_login_callback'
+    get 'accounts/login' => 'sessions#sso_login_callback'
+  end
+
+  if ENV['ENABLE_DEBUG_URLS'] == 'true'
+    get '/headers_debug' => 'application#headers_debug'
+    get '/session_debug' => 'application#session_debug'
   end
 
   BentoSearch::Routes.new(self).draw

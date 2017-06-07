@@ -1,10 +1,14 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.2.7'
+gem 'rails', '4.2.8'
 
-# Use sqlite3 as the database for Active Record
+# we always need sqlite to the boundwiths database
 gem 'sqlite3', '1.3.12', platforms: :ruby
+
+group :test, :production do
+  gem 'mysql2', '0.4.5'
+end
 
 gem 'jdbc-sqlite3', '3.8.11.2', platforms: :jruby
 
@@ -22,7 +26,7 @@ gem 'coffee-rails', '4.2.1'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 gem 'therubyracer', '0.12.2', platforms: :ruby
 
-gem "blacklight", '6.7.2'
+gem "blacklight", '6.8.0'
 
 gem "jettywrapper", '2.0.4'
 
@@ -33,7 +37,7 @@ gem "solr_wrapper", '0.18.1'
 gem 'browserify-rails', '4.0.0'
 
 # Use jquery as the JavaScript library
-gem 'jquery-rails', '4.2.1'
+gem 'jquery-rails', '4.3.1'
 
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 # As of Blacklight v6.3.0, enabling turbolinks corrupts render of search nav.
@@ -52,7 +56,7 @@ gem 'sdoc', '0.4.2', group: :doc
 # Use Unicorn as the app server
 # gem 'unicorn'
 
-gem 'passenger', '5.0.30', require: 'phusion_passenger/rack_handler'
+gem 'passenger', '5.1.2', require: 'phusion_passenger/rack_handler'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
@@ -75,13 +79,15 @@ gem 'rsolr', '1.1.2'
 
 gem 'globalid', '0.3.7'
 
-gem 'devise', '4.2.0'
+gem 'devise', '4.2.1'
 
 gem 'devise-guests', '0.5.0'
 
 gem 'blacklight_range_limit', '6.0.0'
 
 gem 'traject', '2.3.3'
+
+gem 'nokogiri', '1.7.1'
 
 # TODO: Using this version, corrects error for getting format from 008 field,
 # currently breaks in original project.  PR out to original project,
@@ -90,7 +96,9 @@ gem 'blacklight-marc', '~> 6.0', :git => 'https://github.com/magibney/blacklight
 
 gem 'blacklight_solrplugins', :git => 'https://github.com/upenn-libraries/blacklight_solrplugins.git'
 
-gem 'bento_search', '1.7'
+gem 'bento_search', :git => 'https://github.com/magibney/bento_search', :branch => 'search_controller_engine_params' #'1.7'
+
+gem 'summon', :git => 'https://github.com/magibney/summon.rb', :branch => 'sign-empty-param-values'
 
 gem 'blacklight_alma', :git => 'https://github.com/upenn-libraries/blacklight_alma.git'
 
@@ -98,3 +106,5 @@ gem 'blacklight_alma', :git => 'https://github.com/upenn-libraries/blacklight_al
 # so that we get PR #70
 #gem 'blacklight_advanced_search', '6.1.0'
 gem 'blacklight_advanced_search', :git => 'https://github.com/codeforkjeff/blacklight_advanced_search.git'
+
+gem 'blacklight-ris', :git => 'https://github.com/upenn-libraries/blacklight-ris.git'

@@ -19,14 +19,18 @@ module PennLib
     SUB_HOLDING_ITEM_PART = 'i'
 
     SUB_ITEM_CURRENT_LOCATION = 'g'
-    SUB_ITEM_CURRENT_LIBRARY = 'f'
     SUB_ITEM_CALL_NUMBER_TYPE = 'h'
     SUB_ITEM_CALL_NUMBER = 'i'
+    SUB_ITEM_DATE_CREATED = 'q'
 
     SUB_ELEC_PORTFOLIO_PID = 'a'
     SUB_ELEC_ACCESS_URL = 'b'
     SUB_ELEC_COLLECTION_NAME = 'c'
     SUB_ELEC_COVERAGE = 'g'
+
+    # a subfield code NOT used by the MARC 21 spec for 852 holdings records.
+    # we add this subfield during preprocessing to store boundwith record IDs.
+    SUB_BOUND_WITH_ID = 'y'
   end
 
   # Class for doing extraction and processing on MARC::Record objects.
@@ -49,52 +53,35 @@ module PennLib
 
     include BlacklightSolrplugins::Indexer
 
-    attr_accessor :path_to_lookup_files
+    attr_accessor :code_mappings
 
-    def initialize(path_to_lookup_files)
-      @path_to_lookup_files = path_to_lookup_files
+    # @param [PennLib::CodeMappings]
+    def initialize(code_mappings)
+      @code_mappings = code_mappings
     end
 
     def current_year
       @current_year ||= Date.today.year
     end
 
-    # block should return a hash to be merged into the hash that we're building
-    def load_xml_lookup_file(filename, xpath_expr, &block)
-      lookup = {}
-      doc = Nokogiri::XML(File.open(Pathname.new(path_to_lookup_files) + filename))
-      doc.xpath(xpath_expr).each do |element|
-        lookup.merge! block.call(element)
-      end
-      lookup
-    end
-
     def relator_codes
-      @relator_codes ||= load_xml_lookup_file("relatorcodes.xml", "/relatorcodes/relator") do |element|
-          { element['code'] => element.text }
-      end
+      @code_mappings.relator_codes
     end
 
     def locations
-      @locations ||= load_xml_lookup_file("locations.xml", "/locations/location") do |element|
-        struct = element.element_children.map { |c| [c.name, c.text] }.reduce(Hash.new) do |acc, rec|
-          acc[rec[0]] = rec[1]
-          acc
-        end
-        { element['location_code'] =>  struct }
-      end
+      @code_mappings.locations
     end
 
     def loc_classifications
-      @loc_classifications ||= load_xml_lookup_file("ClassOutline.xml", "/list/class") do |element|
-        { element['value'] => element.text }
-      end
+      @code_mappings.loc_classifications
     end
 
     def dewey_classifications
-      @dewey_classifications ||= load_xml_lookup_file("DeweyClass.xml", "/list/class") do |element|
-        { element['value'] => element.text }
-      end
+      @code_mappings.dewey_classifications
+    end
+
+    def languages
+      @code_mappings.languages
     end
 
     def trim_trailing_colon(s)
@@ -313,8 +300,9 @@ module PennLib
                       (f.tag == '800' && has_subfield6_value(f, /^(#{subject_600s.join('|')})/)) }
                    .select { |f| f.indicator2 == indicator2 }
                    .map do |field|
-          value_for_link = join_subfields(field, &subfield_not_in(%w{6 8 2 e w}))
-          sub_with_hyphens = field.select(&subfield_not_in(%w{6 8 2 e w})).map do |sf|
+          # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
+          value_for_link = join_subfields(field, &subfield_not_in(%w{0 6 8 2 e w}))
+          sub_with_hyphens = field.select(&subfield_not_in(%w{0 6 8 2 e w})).map do |sf|
             pre = !%w{a b c d p q t}.member?(sf.code) ? ' -- ' : ' '
             pre + sf.value + (sf.code == 'p' ? '.' : '')
           end.join(' ')
@@ -338,12 +326,14 @@ module PennLib
           suba = field.select(&subfield_in(%w{a}))
                      .select { |sf| sf.value !~ /^%?(PRO|CHR)/ }
                      .map(&:value).join(' ')
-          sub_oth = field.select(&subfield_not_in(%w{a 6 8})).map do |sf|
+          # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
+          sub_oth = field.select(&subfield_not_in(%w{0 a 6 8})).map do |sf|
             pre = !%w{b c d p q t}.member?(sf.code) ? ' -- ' : ' '
             pre + sf.value + (sf.code == 'p' ? '.' : '')
           end
           subj_display = [ suba, sub_oth ].join(' ')
-          sub_oth_no_hyphens = join_subfields(field, &subfield_not_in(%w{a 6 8}))
+          # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
+          sub_oth_no_hyphens = join_subfields(field, &subfield_not_in(%w{0 a 6 8}))
           subj_search = [ suba, sub_oth_no_hyphens ].join(' ')
           if subj_display.present?
             {
@@ -377,8 +367,8 @@ module PennLib
       acc = []
 
       format_code = get_format_from_leader(rec)
-      f008 = rec.fields('008').map { |field| field.value }.first || ''
-      f007 = rec.fields('007').map { |field| field.value }
+      f008 = rec.fields('008').map(&:value).first || ''
+      f007 = rec.fields('007').map(&:value)
       f260press = rec.fields('260').any? do |field|
         field.select { |sf| sf.code == 'b' && sf.value =~ /press/i }.any?
       end
@@ -387,17 +377,17 @@ module PennLib
         field.value[0]
       end
       f245k = rec.fields('245').flat_map do |field|
-        field.select { |sf| sf.code == 'k' }.map { |sf| sf.value }
+        field.select { |sf| sf.code == 'k' }.map(&:value)
       end
       f245h = rec.fields('245').flat_map do |field|
-        field.select { |sf| sf.code == 'h' }.map { |sf| sf.value }
+        field.select { |sf| sf.code == 'h' }.map(&:value)
       end
       f337a = rec.fields('337').flat_map do |field|
-        field.select { |sf| sf.code == 'a' }.map { |sf| sf.value }
+        field.select { |sf| sf.code == 'a' }.map(&:value)
       end
       call_nums = rec.fields(EnrichedMarc::TAG_HOLDING).map do |field|
         # h gives us the 'Classification part' which contains strings like 'Microfilm'
-        join_subfields(field, &subfield_in(%w(h i)))
+        join_subfields(field, &subfield_in([ EnrichedMarc::SUB_HOLDING_CLASSIFICATION_PART, EnrichedMarc::SUB_HOLDING_ITEM_PART ]))
       end
       locations = get_specific_location_values(rec)
 
@@ -520,7 +510,8 @@ module PennLib
     # subfields, including expansion of 'relator' code
     def get_name_1xx_field(field)
       s = field.map do |sf|
-        if(! %W{4 6 8}.member?(sf.code))
+        # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
+        if(! %W{0 4 6 8}.member?(sf.code))
           " #{sf.value}"
         elsif sf.code == '4'
           ", #{relator_codes[sf.value]}"
@@ -532,7 +523,8 @@ module PennLib
 
     def get_series_8xx_field(field)
       s = field.map do |sf|
-        if(! %W{4 5 6 8}.member?(sf.code))
+        # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
+        if(! %W{0 4 5 6 8}.member?(sf.code))
           " #{sf.value}"
         elsif sf.code == '4'
           ", #{relator_codes[sf.value]}"
@@ -544,7 +536,8 @@ module PennLib
 
     def get_series_4xx_field(field)
       s = field.map do |sf|
-        if(! %W{4 6 8}.member?(sf.code))
+        # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
+        if(! %W{0 4 6 8}.member?(sf.code))
           " #{sf.value}"
         elsif sf.code == '4'
           ", #{relator_codes[sf.value]}"
@@ -617,7 +610,7 @@ module PennLib
           .each do |field|
         acc << join_subfields(field, &subfield_in(['f']))
       end
-      acc
+      acc.select(&:present?)
     end
 
     # used to determine whether to include faceted publication values
@@ -629,21 +622,51 @@ module PennLib
           .any? { |f| f.any?(&subfield_in(%w{a b})) }
     end
 
+    def get_language_values(rec)
+      rec.fields('008').map do |field|
+        lang_code = field.value[35..37]
+        if lang_code
+          languages[lang_code]
+        end
+      end.compact
+    end
+
     # fieldname = name of field in the locations data structure to use
     def holdings_location_mappings(rec, display_fieldname)
-      acc = []
-      rec.fields(EnrichedMarc::TAG_HOLDING).each do |field|
-        field.find_all { |sf| sf.code == EnrichedMarc::SUB_HOLDING_SHELVING_LOCATION }
-            .map { |sf|
+
+      # in holdings records, the shelving location is always the permanent location.
+      # in item records, the current location takes into account
+      # temporary locations and permanent locations. if you update the item's perm location,
+      # the holding's shelving location changes.
+      #
+      # Since item records may reflect locations more accurately, we use them if they exist;
+      # if not, we use the holdings.
+
+      tag = EnrichedMarc::TAG_HOLDING
+      subfield_code = EnrichedMarc::SUB_HOLDING_SHELVING_LOCATION
+
+      if rec.fields(EnrichedMarc::TAG_ITEM).size > 0
+        tag = EnrichedMarc::TAG_ITEM
+        subfield_code = EnrichedMarc::SUB_ITEM_CURRENT_LOCATION
+      end
+
+      # we don't facet for 'web' which is the 'Penn Library Web' location used in Voyager.
+      # this location should eventually go away completely with data cleanup in Alma.
+
+      rec.fields(tag).flat_map do |field|
+        results = field.find_all { |sf| sf.code == subfield_code }
+                    .select { |sf| sf.value != 'web' }
+                    .map { |sf|
           # sometimes "happening locations" are mistakenly
           # used in holdings records. that's a data problem that should be fixed.
           # here, if we encounter a code we can't map, we ignore it, for faceting purposes.
           if locations[sf.value].present?
             locations[sf.value][display_fieldname]
           end
-        }.select { |value| value.present? }.each { |value| acc << value }
-      end
-      acc.uniq
+        }
+        # flatten multiple 'library' values
+        results.select(&:present?).flatten
+      end.uniq
     end
 
     def get_library_values(rec)
@@ -1107,7 +1130,8 @@ module PennLib
         subf4 = get_subfield_4ew(field)
         author_parts = []
         field.each do |sf|
-          if !%W{4 6 8 e w}.member?(sf.code)
+          # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
+          if !%W{0 4 6 8 e w}.member?(sf.code)
             author_parts << sf.value
           end
         end
@@ -1121,7 +1145,8 @@ module PennLib
           subf4 = get_subfield_4ew(field)
           author_parts = []
           field.each do |sf|
-            if !%W{4 6 8 e w}.member?(sf.code)
+            # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
+            if !%W{0 4 6 8 e w}.member?(sf.code)
               author_parts << sf.value.gsub(/\?$/, '')
             end
           end
@@ -1142,7 +1167,8 @@ module PennLib
 
     def get_standardized_title_values(rec)
       rec.fields(%w{130 240}).map do |field|
-        results = field.find_all(&subfield_not_in(%W{6 8})).map(&:value)
+        # added 2017/05/15: filter out 0 (authority record numbers) added by Alma
+        results = field.find_all(&subfield_not_in(%W{0 6 8})).map(&:value)
         join_and_trim_whitespace(results)
       end
     end
@@ -1150,8 +1176,9 @@ module PennLib
     def get_standardized_title_display(rec)
       acc = []
       rec.fields(%w{130 240}).each do |field|
-        title = join_subfields(field, &subfield_not_in(%W{6 8 e w}))
-        title_param_value = join_subfields(field, &subfield_not_in(%W{5 6 8 e w}))
+        # added 2017/05/15: filter out 0 (authority record numbers) added by Alma
+        title = join_subfields(field, &subfield_not_in(%W{0 6 8 e w}))
+        title_param_value = join_subfields(field, &subfield_not_in(%W{0 5 6 8 e w}))
         title_append = get_title_extra(field)
         acc << {
             value: title,
@@ -1222,7 +1249,8 @@ module PennLib
           .map do |field|
         conf = ''
         if field.none? { |sf| sf.code == 'i' }
-          conf = join_subfields(field, &subfield_not_in(%w{4 5 6 8 e j w}))
+          # added 2017/05/18: filter out 0 (authority record numbers) added by Alma
+          conf = join_subfields(field, &subfield_not_in(%w{0 4 5 6 8 e j w}))
         end
         conf_append = join_subfields(field, &subfield_in(%w{e j w}))
         { value: conf, value_append: conf_append, link_type: 'author_creator_xfacet' }
@@ -1231,7 +1259,8 @@ module PennLib
           .select { |f| has_subfield6_value(f, /^(111|711)/) }
           .select { |f| f.none? { |sf| sf.code == 'i' } }
           .map do |field|
-        conf = join_subfields(field, &subfield_not_in(%w{4 5 6 8 e j w}))
+        # added 2017/05/18: filter out 0 (authority record numbers) added by Alma
+        conf = join_subfields(field, &subfield_not_in(%w{0 4 5 6 8 e j w}))
         conf_extra = join_subfields(field, &subfield_in(%w{4 e j w}))
         { value: conf, value_append: conf_extra, link_type: 'author_creator_xfacet' }
       end
@@ -1264,7 +1293,8 @@ module PennLib
 
       if %w{800 810 811 400 410 411}.member?(tags_present.first)
         rec.fields(tags_present.first).each do |field|
-          series = join_subfields(field, &subfield_not_in(%w{5 6 8 e t w v n}))
+          # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
+          series = join_subfields(field, &subfield_not_in(%w{0 5 6 8 e t w v n}))
           pairs = field.map do |sf|
             if %w{e w v n t}.member?(sf.code)
               [ ' ', sf.value ]
@@ -1277,14 +1307,16 @@ module PennLib
         end
       elsif %w{830 440 490}.member?(tags_present.first)
         rec.fields(tags_present.first).each do |field|
-          series = join_subfields(field, &subfield_not_in(%w{5 6 8 c e w v n}))
+          # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
+          series = join_subfields(field, &subfield_not_in(%w{0 5 6 8 c e w v n}))
           series_append = join_subfields(field, &subfield_in(%w{c e w v n}))
           acc << { value: series, value_append: series_append, link_type: 'title_search' }
         end
       end
 
       rec.fields(tags_present.drop(1)).each do |field|
-        series = join_subfields(field, &subfield_not_in(%w{5 6 8}))
+        # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
+        series = join_subfields(field, &subfield_not_in(%w{0 5 6 8}))
         acc << { value: series, link: false }
       end
 
@@ -1389,6 +1421,12 @@ module PennLib
             collection: item[EnrichedMarc::SUB_ELEC_COLLECTION_NAME],
             coverage: item[EnrichedMarc::SUB_ELEC_COVERAGE],
         }
+      end
+    end
+
+    def get_bound_with_id_values(rec)
+      rec.fields(EnrichedMarc::TAG_HOLDING).flat_map do |field|
+        field.select(&subfield_in([ EnrichedMarc::SUB_BOUND_WITH_ID ])).map { |sf| sf.value }
       end
     end
 
@@ -1718,7 +1756,8 @@ module PennLib
     # in parentheses in that value, extract that.
     def remove_paren_value_from_subfield_i(field)
       val = field.select { |sf| sf.code == 'i' }.map do |sf|
-        if match = /\((.+?)\)/.match(sf.value)
+        match = /\((.+?)\)/.match(sf.value)
+        if match
           sf.value.sub('(' + match[1] + ')', '')
         else
           sf.value
@@ -1945,19 +1984,7 @@ module PennLib
       linkurl = linkurl.sub(' target=_blank', '')
       [linktext, linkurl]
     end
-
-    def get_online_display(rec)
-      rec.fields('856')
-          .select { |f| %w{0 1}.member?(f.indicator2) }
-          .map do |field|
-        linktext, linkurl = linktext_and_url(field)
-        {
-            linktext: linktext,
-            linkurl: linkurl
-        }
-      end
-    end
-
+    
     def words_to_remove_from_web_link
       @words_to_remove_from_web_link ||=
           %w(fund funds collection collections endowment
@@ -2016,22 +2043,23 @@ module PennLib
     end
 
     def get_recently_added_sort_values(rec)
-      # TODO: we're not able to find or get a "date record was added to Alma"
-      # which is what we want here. so we use 005 for now, but that date reflects updates.
-      # Note that 008 has the date that the MARC record was created,
-      # but that's not useful here.
-      acc = rec.fields('005')
-                .select { |f| f.value.present? && !f.value.start_with?('0000') }
-                .map do |field|
-        begin
-          DateTime.iso8601(field.value).to_i
-        rescue ArgumentError => e
-          nil
-        end
-      end.compact
+      acc = []
+      most_recent = rec.fields(EnrichedMarc::TAG_ITEM).flat_map do |item|
+        item.find_all(&subfield_in([EnrichedMarc::SUB_ITEM_DATE_CREATED])).map do |sf|
+          begin
+            DateTime.strptime(sf.value, '%Y-%m-%d %H:%M:%S').to_time.to_i
+          rescue Exception => e
+            puts "Error parsing date string for recently added field: #{sf.value} - #{e}"
+            nil
+          end
+        end.compact
+      end.max
+      if most_recent
+        acc << most_recent
+      end
       # records without a date should be considered very old
       if acc.size == 0
-        acc += [0]
+        acc << 0
       end
       acc
     end
@@ -2041,7 +2069,10 @@ module PennLib
           .select { |f| (f.indicator1 == '4') && %w{0 1}.member?(f.indicator2) }
           .map do |field|
         linktext, linkurl = linktext_and_url(field)
-        %Q{<a href="#{linkurl}">#{linktext.present? ? linktext : linkurl}</a>}
+        {
+          linktext: linktext.present? ? linktext : linkurl,
+          linkurl: linkurl
+        }
       end
     end
 
@@ -2088,6 +2119,24 @@ module PennLib
         html += '</div>'
       end
       [ html ]
+    end
+
+    def get_ris_cy_field(rec)
+      rec.fields('260').flat_map do |field|
+        field.find_all(&subfield_in(['a'])).map(&:value)
+      end
+    end
+
+    def get_ris_pb_field(rec)
+      rec.fields('260').flat_map do |field|
+        field.find_all(&subfield_in(['b'])).map(&:value)
+      end
+    end
+
+    def get_ris_sn_field(rec)
+      rec.fields.select { |f| f.tag == '020' || f.tag == '022' }.flat_map do |field|
+        field.find_all(&subfield_in(['a'])).map(&:value)
+      end
     end
 
   end

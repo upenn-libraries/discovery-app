@@ -1,3 +1,6 @@
+
+require 'uri'
+
 # frozen_string_literal: true
 class CatalogController < ApplicationController
   include BlacklightAdvancedSearch::Controller
@@ -6,15 +9,48 @@ class CatalogController < ApplicationController
 
   include Blacklight::Catalog
   include Blacklight::Marc::Catalog
+  include Blacklight::Ris::Catalog
 
   include BlacklightSolrplugins::XBrowse
+
+  include AssociateExpandedDocs
+
+  before_action :expire_session
+
+  def has_shib_session?
+    session[:alma_sso_user].present?
+  end
+
+  def shib_session_valid?
+    session[:alma_sso_user] == request.headers['HTTP_REMOTE_USER']
+  end
+
+  # should return true if page isn't protected behind Shib
+  def is_unprotected_url?
+    true
+  end
+
+  def expire_shib_session_return_url
+    is_unprotected_url? ? request.original_url : root_url
+  end
+
+  # manually expire the session if user has exceeded 'hard expiration' or if
+  # shib session has become inactive
+  def expire_session
+    invalid_shib = has_shib_session? && !shib_session_valid?
+    if (session[:hard_expiration] && session[:hard_expiration] < Time.now.to_i) || invalid_shib
+      reset_session
+      url = invalid_shib ? "/Shibboleth.sso/Logout?return=#{URI.encode(expire_shib_session_return_url)}" : expire_shib_session_return_url
+      redirect_to url, alert: 'Your session has expired, please log in again'
+    end
+  end
 
   configure_blacklight do |config|
     # default advanced config values
     config.advanced_search ||= Blacklight::OpenStructWithHashAccess.new
     # config.advanced_search[:qt] ||= 'advanced'
     config.advanced_search[:url_key] ||= 'advanced'
-    config.advanced_search[:query_parser] ||= 'dismax'
+    config.advanced_search[:query_parser] ||= 'edismax'
     config.advanced_search[:form_solr_parameters] ||= {}
 
 
@@ -33,10 +69,11 @@ class CatalogController < ApplicationController
       # in the search request handler in solrconfig.xml
       fl: %w{
         id
+        cluster_id
         alma_mms_id
         score
         format_a
-        full_text_link_a
+        full_text_link_text_a
         isbn_isxn
         language_a
         title
@@ -51,9 +88,17 @@ class CatalogController < ApplicationController
         contained_within_a
         physical_holdings_json
         electronic_holdings_json
+        bound_with_ids_a
         marcrecord_text
       }.join(','),
       'facet.threads': 2,
+#      fq: '{!tag=cluster}{!collapse field=cluster_id nullPolicy=expand size=5000000 min=record_source_id}',
+      # this approach needs expand.field=cluster_id
+      fq: %q~{!tag=cluster}NOT ({!join from=cluster_id to=cluster_id v='record_source_f:"Franklin"'} AND record_source_f:"Hathi")~,
+      expand: 'true',
+      'expand.field': 'cluster_id',
+      'expand.q': '*:*',
+      'expand.fq': '*:*',
       'mm': '100%',
       rows: 10
     }
@@ -66,14 +111,11 @@ class CatalogController < ApplicationController
 
     ## Default parameters to send on single-document requests to Solr. These settings are the Blackligt defaults (see SearchHelper#solr_doc_params) or
     ## parameters included in the Blacklight-jetty document requestHandler.
-    #
-    #config.default_document_solr_params = {
-    #  qt: 'document',
-    #  ## These are hard-coded in the blacklight 'document' requestHandler
-    #  # fl: '*',
-    #  # rows: 1
-    #  # q: '{!term f=id v=$id}'
-    #}
+    config.default_document_solr_params = {
+      expand: 'true',
+      'expand.field': 'cluster_id',
+      'expand.q': '*:*',
+    }
 
     # solr field configuration for search results/index views
     config.index.title_field = 'title'
@@ -111,7 +153,14 @@ class CatalogController < ApplicationController
     #  (useful when user clicks "more" on a large facet and wants to navigate alphabetically across a large set of results)
     # :index_range can be an array or range of prefixes that will be used to create the navigation (note: It is case sensitive when searching values)
 
-    config.add_facet_field 'access_f', label: 'Access', collapse: false
+    config.add_facet_field 'access_f', label: 'Access', collapse: false, query: {
+      'Online' => { :label => 'Online', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'Online\\'}'}"},
+      'At the library' => { :label => 'At the library', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"}
+    }
+    config.add_facet_field 'record_source_f', label: 'Record Source', collapse: false, query: {
+      'Hathi' => { :label => 'Hathi', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Hathi\\'}'}"},
+      'Franklin' => { :label => 'Franklin', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Franklin\\'}'}"}
+    }
     config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false
     config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z', collapse: false
     config.add_facet_field 'subject_f', label: 'Subject', limit: 5, index_range: 'A'..'Z', collapse: false
@@ -188,9 +237,9 @@ class CatalogController < ApplicationController
         { name: 'publication_a', label: 'Publication' },
         { name: 'contained_within_a', label: 'Contained in' },
         { name: 'format_a', label: 'Format/Description' },
-        # in this view, 'Online' is simply full_text_link; note that
-        # 'Online' is deliberately different in show view
-        { name: 'full_text_link_a', label: 'Online resource' },
+        # in this view, 'Online resource' is full_text_link; note that
+        # 'Online resource' is deliberately different here from what's on show view
+        { dynamic_name: 'full_text_links_for_cluster_display', label: 'Online resource', helper_method: 'render_online_resource_display_for_index_view' },
     ])
 
     # Most show field values are generated dynamically from MARC stored in Solr.
@@ -263,7 +312,8 @@ class CatalogController < ApplicationController
         { dynamic_name: 'web_link_display', label: 'Web link', helper_method: 'render_web_link_display' },
         { dynamic_name: 'access_restriction_display', label: 'Access Restriction' },
         { dynamic_name: 'bound_with_display', label: 'Bound with' },
-        { dynamic_name: 'online_display', label: 'Online', helper_method: 'render_online_display_for_show_view' },
+        # 'Online' corresponds to the right-side box labeled 'Online' in DLA Franklin
+        { dynamic_name: 'full_text_links_for_cluster_display', label: 'Online', helper_method: 'render_online_display_for_show_view' },
         { name: 'electronic_holdings_json', label: 'Online resource', helper_method: 'render_electronic_holdings' },
     ])
 
@@ -311,7 +361,6 @@ class CatalogController < ApplicationController
 
     config.add_search_field('title_xfacet') do |field|
       field.label = 'Title Browse (omit initial article: a, the, la, ...)'
-      field.action = '/catalog/rbrowse/title_xfacet'
       field.include_in_advanced_search = false
     end
 
@@ -346,7 +395,6 @@ class CatalogController < ApplicationController
 
     config.add_search_field('author_creator_xfacet') do |field|
       field.label = 'Author Browse (last name first)'
-      field.action = '/catalog/xbrowse/author_creator_xfacet'
       field.include_in_advanced_search = false
     end
 
@@ -387,7 +435,6 @@ class CatalogController < ApplicationController
 
     config.add_search_field('call_number_xfacet') do |field|
       field.label = 'Call Number Browse'
-      field.action = '/catalog/xbrowse/call_number_xfacet'
       field.include_in_advanced_search = false
     end
 
@@ -492,11 +539,23 @@ class CatalogController < ApplicationController
     end
 
     config.add_search_field('id_search') do |field|
+      field.label = 'ID'
       field.if = Proc.new { false }
       field.include_in_advanced_search = true
       field.solr_local_parameters = {
           qf: 'id',
           pf: 'id'
+      }
+    end
+
+    config.add_search_field('publication_date_ssort') do |field|
+      field.label = 'Publication Date (YYYY)'
+      field.if = Proc.new { false }
+      field.is_numeric_field = true
+      field.include_in_advanced_search = true
+      field.solr_local_parameters = {
+        qf: 'publication_date_ssort',
+        pf: 'publication_date_ssort'
       }
     end
 
@@ -521,10 +580,26 @@ class CatalogController < ApplicationController
     config.autocomplete_enabled = false
     config.autocomplete_path = 'suggest'
 
-    config.index.document_actions.delete(:bookmark)
+    add_show_tools_partial(:print, partial: 'print')
 
-    config.show.document_actions.delete(:bookmark)
     config.show.document_actions.delete(:sms)
+
+    PennLib::Util.reorder_document_actions(
+      config.show.document_actions,
+      :bookmark, :email, :citation, :print, :refworks, :endnote, :ris, :librarian_view)
+
+    config.navbar.partials.delete(:search_history)
+  end
+
+  # override from Blacklight::Marc::Catalog so that action appears on bookmarks page
+  def render_refworks_action? config, options = {}
+    doc = options[:document] || (options[:document_list] || []).first
+    doc && doc.respond_to?(:export_formats) && doc.export_formats.keys.include?(:refworks_marc_txt)
+  end
+
+  def render_saved_searches?
+    # don't ever show saved searches link to the user
+    false
   end
 
   # extend 'index' so we can override views
