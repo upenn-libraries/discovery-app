@@ -239,10 +239,11 @@ module PennLib
     def join_subject_parts(field, double_dash: false)
       parts = field.find_all(&subfield_in(['a'])).map(&:value)
                   .select { |v| v !~ /^%?(PRO|CHR)/ }
-      parts += field.find_all(&subfield_not_in(%w{a 6 5})).map do |sf|
-        (double_dash && !%w{b c d q t}.member?(sf.code) ? ' -- ' : ' ') + sf.value
+      # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
+      parts += field.find_all(&subfield_not_in(%w{a 0 6 5})).map do |sf|
+        (double_dash && !%w{b c d q t}.member?(sf.code) ? '--' : ' ') + sf.value
       end.map(&:strip)
-      parts.join(' ')
+      parts.join(double_dash ? '' : ' ')
     end
 
     def get_subject_facet_values(rec)
@@ -260,7 +261,9 @@ module PennLib
       rec.fields.find_all { |f| is_subject_field(f) }
           .map { |f| join_subject_parts(f, double_dash: true) }
           .map { |v| trim_trailing_period(v) }
-          .map { |s| references(s, refs: get_subject_references(s)) }
+          .select { |v| v.present? }
+      # don't need to wrap data in #references anymore because cross refs are now handled Solr-side
+      #   .map { |s| references(s, refs: get_subject_references(s)) }
     end
 
     def subject_search_tags

@@ -130,7 +130,7 @@ class FranklinIndexer < Blacklight::Marc::Indexer
       acc.concat(pennlibmarc.get_subject_search_values(rec))
     end
 
-    to_field 'subject_xfacet' do |rec, acc|
+    to_field 'subject_xfacet2' do |rec, acc|
       acc.concat(pennlibmarc.get_subject_xfacet_values(rec))
     end
 
