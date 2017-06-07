@@ -122,7 +122,7 @@ class HathiIndexer < FranklinIndexer
 
   def define_record_source_facet
     to_field 'record_source_f' do |rec, acc|
-      acc << 'Hathi'
+      acc << 'HathiTrust'
     end
   end
 
