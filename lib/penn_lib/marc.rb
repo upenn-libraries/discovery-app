@@ -648,8 +648,12 @@ module PennLib
         subfield_code = EnrichedMarc::SUB_ITEM_CURRENT_LOCATION
       end
 
+      # we don't facet for 'web' which is the 'Penn Library Web' location used in Voyager.
+      # this location should eventually go away completely with data cleanup in Alma.
+
       rec.fields(tag).flat_map do |field|
         results = field.find_all { |sf| sf.code == subfield_code }
+                    .select { |sf| sf.value != 'web' }
                     .map { |sf|
           # sometimes "happening locations" are mistakenly
           # used in holdings records. that's a data problem that should be fixed.

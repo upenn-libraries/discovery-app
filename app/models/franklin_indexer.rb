@@ -390,13 +390,13 @@ class FranklinIndexer < BaseIndexer
 
   def define_record_source_id
     to_field 'record_source_id' do |rec, acc|
-      acc << RecordSource::FRANKLIN
+      acc << RecordSource::PENN
     end
   end
 
   def define_record_source_facet
     to_field 'record_source_f' do |rec, acc|
-      acc << 'Franklin'
+      acc << 'Penn'
     end
   end
 
