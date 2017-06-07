@@ -94,7 +94,7 @@ class CatalogController < ApplicationController
       'facet.threads': 2,
 #      fq: '{!tag=cluster}{!collapse field=cluster_id nullPolicy=expand size=5000000 min=record_source_id}',
       # this approach needs expand.field=cluster_id
-      fq: %q~{!tag=cluster}NOT ({!join from=cluster_id to=cluster_id v='record_source_f:"Franklin"'} AND record_source_f:"Hathi")~,
+      fq: %q~{!tag=cluster}NOT ({!join from=cluster_id to=cluster_id v='record_source_f:"Penn"'} AND record_source_f:"HathiTrust")~,
       expand: 'true',
       'expand.field': 'cluster_id',
       'expand.q': '*:*',
@@ -158,8 +158,8 @@ class CatalogController < ApplicationController
       'At the library' => { :label => 'At the library', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"}
     }
     config.add_facet_field 'record_source_f', label: 'Record Source', collapse: false, query: {
-      'Hathi' => { :label => 'Hathi', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Hathi\\'}'}"},
-      'Franklin' => { :label => 'Franklin', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Franklin\\'}'}"}
+      'HathiTrust' => { :label => 'HathiTrust', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'HathiTrust\\'}'}"},
+      'Penn' => { :label => 'Penn', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Penn\\'}'}"}
     }
     config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false
     config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z', collapse: false
