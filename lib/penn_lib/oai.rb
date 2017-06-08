@@ -22,7 +22,10 @@ module PennLib
         puts "Solr URL: #{url}"
 
         solr = RSolr.connect :url => url, update_format: :xml, read_timeout: 300
-        response = solr.delete_by_id(ids)
+
+        delete_queries = ids.map { |id| "id:#{id}"}
+
+        response = solr.delete_by_query(delete_queries)
 
         if response['responseHeader']['status'] == 0
           puts "Solr returned success code for deletion(s)."
