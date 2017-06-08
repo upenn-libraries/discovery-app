@@ -21,7 +21,14 @@ module PennLib
         url = Rails.application.config_for(:blacklight)['url']
 
         solr = RSolr.connect :url => url, update_format: :xml, read_timeout: 300
-        solr.delete_by_id(ids)
+        response = solr.delete_by_id(ids)
+
+        if response['responseHeader']['status'] == 0
+          puts "Solr returned success code for deletion(s)."
+        else
+          puts "ERROR from Solr on deletion: #{response}"
+        end
+
         solr.commit
       end
     end
