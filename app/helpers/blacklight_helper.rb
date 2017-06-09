@@ -14,7 +14,7 @@ module BlacklightHelper
     super.map do |option|
       field_def = blacklight_config.search_fields[option[1]]
       separator = (field_def && field_def.separator_beneath) ?
-          [ '--------', '--------', { disabled: 'true' } ] : nil
+          [ '--------', '--------', { disabled: 'true', class: 'hidden-xs' } ] : nil
       [ option, separator].compact
     end.flatten(1)
   end
