@@ -28,7 +28,6 @@ span.site-name, span.site-name a {
 
 #header-navbar {
   background: $upenn-blue asset-url('orrerybg.jpg') top left repeat-x;
-  height: 99px;
 
   .navbar-brand {
     background-image: asset-url('logo.png');
@@ -36,14 +35,18 @@ span.site-name, span.site-name a {
   }
 }
 
-.user-first-name {
-  color: #c60;
+.navbar-header {
+  /* match height of bg image */
+  height: 99px;
 }
 
-.navbar-nav > li > div {
-  padding-top: 10px;
-  padding-bottom: 10px;
+.navbar-login-btn-group {
+  padding: 10px 0 0 15px;
   line-height: 20px;
+}
+
+.user-first-name {
+  color: #c60;
 }
 
 .navbar-nav > li > div > a {
@@ -53,8 +56,6 @@ span.site-name, span.site-name a {
 @media (min-width: 768px) {
 
   .navbar-nav > li > div {
-    padding-top: 15px;
-    padding-bottom: 15px;
     color: white;
   }
 
