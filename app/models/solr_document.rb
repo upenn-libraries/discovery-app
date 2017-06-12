@@ -15,10 +15,10 @@ class SolrDocument
   end
   
   field_semantics.merge!(    
-                         :title => "title_display",
-                         :author => "author_display",
-                         :language => "language_facet",
-                         :format => "format"
+                         :title => "title",
+                         :author => "author_creator_a",
+                         :language => "language_a",
+                         :format => "format_a"
                          )
 
   include Blacklight::Solr::Document::RisFields
