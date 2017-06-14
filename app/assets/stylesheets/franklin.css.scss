@@ -6,6 +6,10 @@ body {
   font-family: $font-family;
 }
 
+.sr-only.application-heading {
+  display: none;
+}
+
 h1, h2, h3 {
   color: $upenn-blue;
 }
