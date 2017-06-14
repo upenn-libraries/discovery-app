@@ -45,7 +45,11 @@ module ApplicationHelper
   end
 
   def display_alma_fulfillment_iframe?(document)
-    document.has_any_holdings?
+    # always display the iframe because there are request options in it we want to show
+    # for records that don't have any holdings
+    true
+    # old logic:
+    #document.has_any_holdings?
   end
 
   def my_library_card_url
