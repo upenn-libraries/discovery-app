@@ -149,4 +149,8 @@ module ApplicationHelper
     return result
   end
 
+  def resourcesharing_path
+    '/forms/resourcesharing'
+  end
+
 end
