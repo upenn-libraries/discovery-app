@@ -6,6 +6,19 @@ class SearchBuilder < Blacklight::SearchBuilder
   include BlacklightRangeLimit::RangeLimitBuilder
   include BlacklightSolrplugins::FacetFieldsQueryFilter
 
+  # override #with to massage params before this SearchBuilder
+  # stores and works with them
+  def with(blacklight_params = {})
+    params_copy = blacklight_params.dup
+    if params_copy[:q].present?
+      params_copy[:q] = params_copy[:q].gsub(/[\?]/, '')
+      if !is_advanced_search?
+        params_copy[:q] = params_copy[:q].gsub(/\*/, '')
+      end
+    end
+    super(params_copy)
+  end
+
   # no q param (with or without facets) causes the default 'score' sort
   # to return results in a different random order each time b/c there's
   # no scoring to apply. if there's no q and user hasn't explicitly chosen
