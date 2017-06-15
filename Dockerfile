@@ -10,6 +10,8 @@
 
 FROM codeforkjeff/passenger-ruby23:0.9.20-ruby-build
 
+RUN rm -f /etc/localtime && ln -s /usr/share/zoneinfo/US/Eastern /etc/localtime
+
 RUN apt-get update && apt-get install -y --no-install-recommends npm libxml2-utils unzip openjdk-8-jre
 
 # docker caches this step, but it does download the file each time.
