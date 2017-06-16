@@ -872,11 +872,17 @@ module PennLib
 
     def get_title_1_search_main_values(rec, format_filter: false)
       format = get_format_from_leader(rec)
-      rec.fields(%w{245 880}).map do |field|
+      acc = rec.fields('245').map do |field|
         if !format_filter || format.end_with?('s')
           join_and_trim_whitespace(field.find_all(&subfield_not_in(%w{c 6 8 h})).map(&:value))
         end
       end.select { |v| v.present? }
+      acc += rec.fields('880')
+               .select { |f| has_subfield6_value(f, /^245/) }
+               .map do |field|
+          join_and_trim_whitespace(field.find_all(&subfield_not_in(%w{c 6 8 h})).map(&:value))
+      end.select { |v| v.present? }
+      acc
     end
 
     def get_title_1_search_values(rec)
