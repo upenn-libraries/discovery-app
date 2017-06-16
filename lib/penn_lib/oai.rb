@@ -33,7 +33,7 @@ module PennLib
           puts "ERROR from Solr on deletion: #{response}"
         end
 
-        solr.commit
+        #solr.commit
       end
     end
   end
