@@ -1,6 +1,43 @@
 
-class RSSCache < Hash
+# caches in memory and on disk
+class RSSCache
   include Singleton
+
+  def initialize
+    @store = Hash.new
+  end
+
+  def tmp_path
+    File.join(Rails.root, 'tmp')
+  end
+
+  def path_for_key(key)
+    File.join(tmp_path, "rsscache_#{Digest::MD5.hexdigest(key)}")
+  end
+
+  # returns data for key, nil if nothing is cached
+  def get(key)
+    if !@store[key].present?
+      path = path_for_key(key)
+      if File.exists?(path)
+        begin
+          data = File.open(path, 'r') { |f| Marshal.load(f) }
+          @store[key] = data
+        rescue Exception => e
+          Rails.logger.error("Something went wrong reading RSSCache file from disk: #{path} #{e}")
+        end
+      end
+    end
+    @store[key]
+  end
+
+  def store(key, data)
+    File.open(path_for_key(key), 'wb') do |f|
+      f.write(Marshal.dump(data))
+    end
+    @store[key] = data
+  end
+
 end
 
 module RssProxy
@@ -32,7 +69,7 @@ module RssProxy
   end
 
   def rss_proxy(url, lifetime = 900)
-    struct = RSSCache.instance[url]
+    struct = RSSCache.instance.get(url)
     if !struct || (Time.now.to_i > struct[:timestamp] + lifetime)
       begin
         feed_response = make_request(url)
@@ -45,7 +82,7 @@ module RssProxy
           content_type: feed_response['Content-Type'],
           timestamp: Time.now.to_i,
         }
-        RSSCache.instance[url] = struct
+        RSSCache.instance.store(url, struct)
       end
     end
     response.headers['Content-Type'] = struct[:content_type]
