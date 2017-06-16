@@ -12,6 +12,8 @@ class SearchBuilder < Blacklight::SearchBuilder
     params_copy = blacklight_params.dup
     if params_copy[:q].present?
       params_copy[:q] = params_copy[:q].gsub(/[\?]/, '')
+      # colons surrounded by whitespace cause Solr to return 0 results
+      params_copy[:q] = params_copy[:q].gsub(/\s+:\s+/, ' ')
       if !is_advanced_search?
         params_copy[:q] = params_copy[:q].gsub(/\*/, '')
       end
