@@ -52,6 +52,8 @@ module RssProxy
     req = Net::HTTP::Get.new(uri)
 
     http = Net::HTTP.new(uri.host, uri.port)
+    # relatively short timeout to prevent taking up rails processes
+    http.read_timeout = 5
     if uri.instance_of? URI::HTTPS
       http.use_ssl = true
     end
