@@ -59,6 +59,11 @@ Rails.application.routes.draw do
 
   BentoSearch::Routes.new(self).draw
 
+  # redirects for legacy DLA Franklin links
+
+  get 'record.html' => 'legacy_franklin#record', :format => false
+
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
