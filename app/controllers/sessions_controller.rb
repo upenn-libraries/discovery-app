@@ -7,11 +7,14 @@ class SessionsController < Devise::SessionsController
   def set_session_first_name(id)
     if id
       response = BlacklightAlma::UsersApi.instance.get_name(id)
-      if response && response['user']
-        session['first_name'] = response['user']['first_name']
+      if response.code == 200
+        if response && response['user']
+          session['first_name'] = response['user']['first_name']
+        end
+      else
+        Rails.logger.error("ERROR: Got non-200 response from Alma User API, user account may not exist for id=#{id}. response=#{response}")
       end
     end
-    session['first_name'] ||= 'Unknown'
   end
 
   def social_login_populate_session(jwt)

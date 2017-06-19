@@ -16,7 +16,7 @@
         </li>
         <% if current_user %>
             <li>
-              <a href="<%= my_library_card_url %>"><span class="user-first-name"><%= session['first_name'] || 'Name unknown' %> - </span> PennKey Library Account</a>
+              <a href="<%= my_library_card_url %>"><% if session['first_name'].present? %><span class="user-first-name"><%= session['first_name'] %> - </span><% end %>PennKey Library Account</a>
             </li>
             <li>
               <%= link_to t('blacklight.header_links.logout'), destroy_user_session_path %>
