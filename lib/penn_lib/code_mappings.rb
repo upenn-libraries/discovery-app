@@ -62,6 +62,10 @@ module PennLib
       end
     end
 
+    def aeon_site_codes
+      @aeon_site_codes = File.readlines(Pathname.new(path_to_lookup_files) + 'aeonSiteCodes.txt').map(&:strip)
+    end
+
   end
 
 end

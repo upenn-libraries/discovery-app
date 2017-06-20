@@ -26,6 +26,7 @@ module PennLib
           location_display_from_api = holding['location']
           loc = code_mappings.locations[holding['location_code']] || Hash.new
           holding['location'] = loc['display'] || location_display_from_api
+          holding['link_to_aeon'] = code_mappings.aeon_site_codes.member?(holding['location_code'])
         end
         holding
       end
