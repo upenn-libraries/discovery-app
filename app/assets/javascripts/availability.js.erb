@@ -7,7 +7,7 @@ $(document).ready(function() {
 
     Franklin.prototype = Object.create(BlacklightAlma.prototype);
 
-    Franklin.prototype.formatHolding = function (holding) {
+    Franklin.prototype.formatHolding = function (mms_id, holding) {
         if (holding['inventory_type'] == 'physical') {
             var availability = "Unknown";
             if (holding['availability'] == 'check_holdings') {
@@ -44,7 +44,7 @@ $(document).ready(function() {
             }
 
         } else {
-            return BlacklightAlma.prototype.formatHolding.call(this, holding);
+            return BlacklightAlma.prototype.formatHolding.call(this, mms_id, holding);
         }
     };
 
