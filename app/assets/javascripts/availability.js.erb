@@ -5,6 +5,14 @@ $(document).ready(function() {
         BlacklightAlma.call(this);
     }
 
+    function constructAeonLink(mmsid, holding) {
+        if(holding['link_to_aeon']) {
+          return `<a href="/redir/aeon?bibid=${mmsid}&hldid=${holding['holding_id']}" target="_blank">Request to View</a>`;
+        }
+
+        return null;
+    }
+
     Franklin.prototype = Object.create(BlacklightAlma.prototype);
 
     Franklin.prototype.formatHolding = function (mms_id, holding) {
@@ -17,7 +25,7 @@ $(document).ready(function() {
             } else if (holding['availability'] == 'available') {
                 availability = "Available";
             }
-            return [availability, holding['location'], holding['call_number']]
+            return [availability, holding['location'], holding['call_number'], constructAeonLink(mms_id, holding)]
                 .filter(function (item) {
                     return item != null && item.length > 0;
                 }).join(". ");
