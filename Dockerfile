@@ -10,6 +10,8 @@
 
 FROM codeforkjeff/passenger-ruby23:0.9.20-ruby-build
 
+RUN rm -f /etc/localtime && ln -s /usr/share/zoneinfo/US/Eastern /etc/localtime
+
 RUN apt-get update && apt-get install -y --no-install-recommends npm libxml2-utils unzip openjdk-8-jre
 
 # docker caches this step, but it does download the file each time.
@@ -66,13 +68,15 @@ ADD nginx/webapp-env.conf /etc/nginx/main.d/webapp-env.conf
 
 # assets:precompile won't run unless these secrets are present, but
 # it doesn't appear to actually use them, so we just use dummy values here
-RUN RAILS_ENV=production SECRET_TOKEN=dummy DEVISE_SECRET_KEY=dummy bundle exec rake assets:precompile
+# RUN RAILS_ENV=production SECRET_TOKEN=dummy DEVISE_SECRET_KEY=dummy bundle exec rake assets:precompile
+
 RUN chown -R app:app /home/app/webapp
 
-# alternative: precompile assets at container startup
-#RUN echo "#!/bin/bash" > /etc/my_init.d/50_precompile_assets.sh
-#RUN echo "cd /home/app/webapp && bundle exec rake assets:precompile" >> /etc/my_init.d/50_precompile_assets.sh
-#RUN chmod a+rx /etc/my_init.d/50_precompile_assets.sh
+# precompile assets at container startup: we do it this way instead of as part of image build,
+# otherwise .js.erb files that use ENV will break
+RUN echo "#!/bin/bash" > /etc/my_init.d/50_precompile_assets.sh
+RUN echo "cd /home/app/webapp && bundle exec rake assets:precompile" >> /etc/my_init.d/50_precompile_assets.sh
+RUN chmod a+rx /etc/my_init.d/50_precompile_assets.sh
 
 RUN echo "#!/bin/bash" > /etc/my_init.d/60_db_migrate.sh
 RUN echo "cd /home/app/webapp && RAILS_ENV=\$PASSENGER_APP_ENV bundle exec rake db:migrate" >> /etc/my_init.d/60_db_migrate.sh

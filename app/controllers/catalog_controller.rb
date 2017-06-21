@@ -17,6 +17,8 @@ class CatalogController < ApplicationController
 
   before_action :expire_session
 
+  SECONDS_PER_DAY = 86400
+
   def has_shib_session?
     session[:alma_sso_user].present?
   end
@@ -94,7 +96,7 @@ class CatalogController < ApplicationController
       'facet.threads': 2,
 #      fq: '{!tag=cluster}{!collapse field=cluster_id nullPolicy=expand size=5000000 min=record_source_id}',
       # this approach needs expand.field=cluster_id
-      fq: %q~{!tag=cluster}NOT ({!join from=cluster_id to=cluster_id v='record_source_f:"Franklin"'} AND record_source_f:"Hathi")~,
+      fq: %q~{!tag=cluster}NOT ({!join from=cluster_id to=cluster_id v='record_source_f:"Penn"'} AND record_source_f:"HathiTrust")~,
       expand: 'true',
       'expand.field': 'cluster_id',
       'expand.q': '*:*',
@@ -158,8 +160,8 @@ class CatalogController < ApplicationController
       'At the library' => { :label => 'At the library', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"}
     }
     config.add_facet_field 'record_source_f', label: 'Record Source', collapse: false, query: {
-      'Hathi' => { :label => 'Hathi', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Hathi\\'}'}"},
-      'Franklin' => { :label => 'Franklin', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Franklin\\'}'}"}
+      'HathiTrust' => { :label => 'HathiTrust', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'HathiTrust\\'}'}"},
+      'Penn' => { :label => 'Penn', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Penn\\'}'}"}
     }
     config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false
     config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z', collapse: false
@@ -170,6 +172,12 @@ class CatalogController < ApplicationController
     config.add_facet_field 'publication_date_f', label: 'Publication date', limit: 5, collapse: false
     config.add_facet_field 'classification_f', label: 'Classification', limit: 5, collapse: false
     config.add_facet_field 'genre_f', label: 'Form/Genre', limit: 5
+    config.add_facet_field 'recently_added_f', label: 'Recently added', :query => {
+      :within_90_days => { label: 'Within 90 days', fq: "recently_added_isort:[#{Time.now.to_i - (90 * SECONDS_PER_DAY) } TO *]" },
+      :within_60_days => { label: 'Within 60 days', fq: "recently_added_isort:[#{Time.now.to_i - (60 * SECONDS_PER_DAY) } TO *]" },
+      :within_30_days => { label: 'Within 30 days', fq: "recently_added_isort:[#{Time.now.to_i - (30 * SECONDS_PER_DAY) } TO *]" },
+      :within_15_days => { label: 'Within 15 days', fq: "recently_added_isort:[#{Time.now.to_i - (15 * SECONDS_PER_DAY) } TO *]" },
+    }
 
     #config.add_facet_field 'example_pivot_field', label: 'Pivot Field', :pivot => ['format_f', 'language_f']
     # config.add_facet_field 'example_query_facet_field', label: 'Publish Date', :query => {

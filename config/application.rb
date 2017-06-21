@@ -30,6 +30,12 @@ module Blacklight
     # headers in request.headers without triggering an ActionDispatch::RemoteIp::IpSpoofAttackError exception
     config.action_dispatch.ip_spoofing_check = false
 
+    config.action_mailer.delivery_method = :smtp
+    config.action_mailer.smtp_settings = {
+      address: 'mailrelay.library.upenn.int',
+    }
+    config.action_mailer.default_options = { from: 'no-reply@upenn.edu' }
+
     config.log_level = ENV['RAILS_LOG_LEVEL'].present? ? ENV['RAILS_LOG_LEVEL'].to_sym : :debug
   end
 end

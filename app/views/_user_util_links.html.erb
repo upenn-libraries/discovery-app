@@ -16,14 +16,14 @@
         </li>
         <% if current_user %>
             <li>
-              <a href="<%= my_library_card_url %>"><span class="user-first-name"><%= session['first_name'] || 'Name unknown' %> - </span> PennKey Library Account</a>
+              <a href="<%= my_library_card_url %>"><% if session['first_name'].present? %><span class="user-first-name"><%= session['first_name'] %> - </span><% end %>PennKey Library Account</a>
             </li>
             <li>
               <%= link_to t('blacklight.header_links.logout'), destroy_user_session_path %>
             </li>
       <% else %>
             <li>
-              <div class="btn-group">
+              <div class="navbar-login-btn-group btn-group">
                 <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Login <span class="caret"></span>
                 </button>

@@ -52,7 +52,7 @@ GIT
 
 GIT
   remote: https://github.com/upenn-libraries/blacklight_alma.git
-  revision: 0e994ea8fa05ce1d817985cabb86b7fbe74d99ee
+  revision: bd352eb9dd6dd14d29fd6fb42b146389bbd28066
   specs:
     blacklight_alma (0.0.1)
       blacklight (~> 6.0)

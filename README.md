@@ -25,17 +25,19 @@ Installation:
   migrations (if you forget, Rails will raise an exception when serving
   requests because there are unloaded migrations.)
 
-- Install Solr with
-  [solrplugins](https://github.com/upenn-libraries/solrplugins). The following line should be added 
-  to the file `solr-x.x.x/server/contexts/solr-jetty-context.xml` inside the 'Configure' tag:
+- Install Solr and add the
+  [solrplugins](https://github.com/upenn-libraries/solrplugins)
+  extensions to it. The following line should be added to the file
+  `solr-x.x.x/server/contexts/solr-jetty-context.xml` inside the
+  'Configure' tag:
 
   ```
   <Set name="extraClasspath">/path/to/solrplugins-0.1-SNAPSHOT.jar</Set>
   ```
 
-- Add a solr core from the
+- Add the solr core from the
   [library-solr-schema](https://gitlab.library.upenn.edu/discovery/library-solr-schema)
-  repo.
+  repo. You can copy the core's directory into `solr-x.x.x/server/solr`
 
 - Load some test marc data into Solr:
 
@@ -68,11 +70,16 @@ Installation:
 
 # Solr Indexing
 
+This repository also contains Traject code for indexing MARC records
+into Solr. It isn't separate because we want to consolidate the MARC
+parsing logic, as some of it is used to generate display values
+on-the-fly at page render time.
+
 We handle two types of data exports from Alma: full exports and
 incremental updates via OAI.
 
 The commands in this section can be run directly, or in an application
-container. See the `run_in_container.sh` script in the ansible
+container. See the `run_in_container.sh` wrapper script in the ansible
 repository.
 
 ## Full exports
@@ -106,62 +113,15 @@ you can do so like this:
 
 # JRuby and Traject
 
-Using JRuby for indexing MARC records into Solr greatly improves
-performance. BUT there are major known issues with regular expressions
-in threads, causing intermittent (!) exceptions. For more information,
-see these links:
-
-- https://groups.google.com/forum/#!topic/traject-users/v_HDAyf2NQA
-- https://groups.google.com/forum/#!topic/traject-users/cDqaU-YYQyI
-- https://github.com/jruby/jruby/issues/4001
-
-So we have elected NOT to use JRuby, but these instructions remain
-here in case the situation changes.
-
-First, install JRuby using [rvm](https://rvm.io/).
-
-```
-# standard steps to install rvm
-gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
-\curl -sSL https://get.rvm.io | bash -s stable
-
-# you may need to update rvm to head, in order to get support for
-# jruby-9.1.2.0
-rvm get head
-
-# install jruby
-rvm install jruby-9.1.2.0
-
-# use it
-rvm use jruby
-```
-
-From this repository's directory, run:
-
-```
-gem install bundler
-bundle install
-```
-
-You can tweak the thread pool parameters for indexing in `app/models/marc_indexer.rb`
-
-To index MARC files, use the `pennlib:marc:index` rake task, which
-wraps `solr:marc:index`. The wrapper task can accept a glob for the
-MARC_FILE variable:
-
-```
-# single file
-bundle exec rake pennlib:marc:index MARC_FILE=/path/to/records.xml
-# glob
-bundle exec rake pennlib:marc:index MARC_FILE=/path/to/*.xml
-```
-
-Rails and Blacklight should run under JRuby too, though it's not clear
-how well they run. Note that `bin/spring` has been patched to work
-with JRuby.
-
+See the `jruby-traject.md` file for details on how to use JRuby with
+Traject, which is currently broken.
 
 # Docker
+
+See the
+[deploy-docker](https://gitlab.library.upenn.edu/ansible/deploy-discovery)
+repository for Ansible scripts that use Docker to deploy the
+application in test and production environments.
 
 ## Building the Image(s)
 
@@ -176,21 +136,17 @@ upon. If such a dependency is updated, remember to run `bundle update
 ```
 # checkout the branch you want to build the image for
 git checkout develop
+
 # build it
 docker build -t discovery-app --build-arg GIT_COMMIT=`git rev-parse --short HEAD` .
 
-# optional: build the image that uses jruby/traject for indexing
-docker build -f Dockerfile-jruby -t discovery-indexing-app --build-arg GIT_COMMIT=`git rev-parse --short HEAD` .
-```
+# tag the image and push it to our private registry
+docker tag discovery-app:latest indexing-dev.library.upenn.int:5000/upenn-libraries/discovery-app:latest
+docker push indexing-dev.library.upenn.int:5000/upenn-libraries/discovery-app:latest
 
-Save the image to a .tgz file, so you can deploy it to servers. We
-might consider setting up our own Docker registry for storing images,
-at some point.
-
-```
-docker save discovery-app:latest | gzip > discovery-app-latest.tgz
-# copy it to the server
-scp discovery-app-latest.tgz me@server.library.upenn.edu:docker_images
+# if a registry isn't available, you can copy images 'manually'
+#docker save discovery-app:latest | gzip > discovery-app-latest.tgz
+#scp discovery-app-latest.tgz me@server.library.upenn.edu:docker_images
 ```
 
 ## Deploying the Image
@@ -198,7 +154,7 @@ scp discovery-app-latest.tgz me@server.library.upenn.edu:docker_images
 ssh into the server, and load the image into docker:
 
 ```
-gunzip -c docker_images/discovery-app-latest.tgz | docker load
+docker pull indexing-dev.library.upenn.int:5000/upenn-libraries/discovery-app:latest
 ```
 
 Now you can start a container for the app:
@@ -210,6 +166,5 @@ docker run -p 80:80 \
        --env DEVISE_SECRET_KEY=REPLACE_WITH_REAL_KEY \
        --env SECRET_KEY_BASE=REPLACE_WITH_REAL_KEY \
        --env SOLR_URL=http://hostname:8983/solr/blacklight-core \
-       discovery-app:latest
+       indexing-dev.library.upenn.int:5000/upenn-libraries/discovery-app:latest
 ```
-

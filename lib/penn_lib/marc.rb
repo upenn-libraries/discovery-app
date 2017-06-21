@@ -839,8 +839,8 @@ module PennLib
       end
     end
 
-    def get_title_245(rec)
-      rec.fields('245').take(1).map do |field|
+    def get_title_from_245_or_880(fields)
+      fields.map do |field|
         value = {}
         offset = (field.indicator2 == ' ' ? '0' : field.indicator2).to_i
         suba = join_subfields(field, &subfield_in(%w{a}))
@@ -861,8 +861,19 @@ module PennLib
       end
     end
 
+    def get_title_245(rec)
+      get_title_from_245_or_880(rec.fields('245').take(1))
+    end
+
+    def get_title_880_for_xfacet(rec)
+      get_title_from_245_or_880(rec.fields('880').select { |f| has_subfield6_value(f, /^245/) })
+    end
+
     def get_title_xfacet_values(rec)
+      # 6/16/2017: added 880 to this field for non-roman char handling
       get_title_245(rec).map do |v|
+        references(v)
+      end + get_title_880_for_xfacet(rec).map do |v|
         references(v)
       end
     end
@@ -875,11 +886,17 @@ module PennLib
 
     def get_title_1_search_main_values(rec, format_filter: false)
       format = get_format_from_leader(rec)
-      rec.fields(%w{245 880}).map do |field|
+      acc = rec.fields('245').map do |field|
         if !format_filter || format.end_with?('s')
           join_and_trim_whitespace(field.find_all(&subfield_not_in(%w{c 6 8 h})).map(&:value))
         end
       end.select { |v| v.present? }
+      acc += rec.fields('880')
+               .select { |f| has_subfield6_value(f, /^245/) }
+               .map do |field|
+          join_and_trim_whitespace(field.find_all(&subfield_not_in(%w{c 6 8 h})).map(&:value))
+      end.select { |v| v.present? }
+      acc
     end
 
     def get_title_1_search_values(rec)

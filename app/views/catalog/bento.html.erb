@@ -1,6 +1,15 @@
+<div class="container">
+
+<div class="row visible-xs-block">
+  <div class="col-xs-12">
+    <a href="#bento-results-catalog">Jump to Catalog search results</a><br/>
+    <a href="#bento-results-summon">Jump to Articles+ search results</a>
+  </div>
+</div>
+
 <div class="row">
 
-    <div class="col-sm-6 catalog-results">
+    <div class="col-sm-6 catalog-results" id="bento-results-catalog">
       <h3>Catalog</h3>
 
       <div class="view-and-filter text-right">
@@ -8,14 +17,16 @@
       </div>
 
       <%- if @response.empty? %>
-          <%= render "zero_results" %>
+          <%= render "zero_results_bento" %>
       <%- else %>
           <%= render_document_index %>
       <%- end %>
     </div>
 
-    <div class="col-sm-6 summon-results ezproxy-login-status">
+    <div class="col-sm-6 summon-results ezproxy-login-status" id="bento-results-summon">
       <%= bento_search 'summon', :query => params[:q] || '', :per_page => 25, :load => :ajax_triggered %>
     </div>
+
+</div>
 
 </div>
