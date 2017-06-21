@@ -7,7 +7,7 @@ $(document).ready(function() {
 
     function constructAeonLink(mmsid, holding) {
         if(holding['link_to_aeon']) {
-          return `<a href="/redir/aeon?bibid=${mmsid}&hldid=${holding['holding_id']}" target="_blank">Request to View</a>`;
+          return '<a href="/redir/aeon?bibid=' + mmsid + '&hldid=' + holding['holding_id'] + '" target="_blank">Request to View</a>';
         }
 
         return null;
