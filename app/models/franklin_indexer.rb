@@ -55,11 +55,18 @@ class FranklinIndexer < BaseIndexer
   def initialize
     super
 
+    # append extra params to the Solr update URL for solr-side cross reference handling
+    solr_update_url = [ ENV['SOLR_URL'].chomp('/'), 'update', 'json' ].join('/') + '?processor=xref-copyfield'
+
     settings do
       # type may be 'binary', 'xml', or 'json'
       provide "marc_source.type", "xml"
       # set this to be non-negative if threshold should be enforced
       provide 'solr_writer.max_skipped', -1
+
+      provide 'solr.update_url', solr_update_url
+
+      store 'writer_class_name', 'PennLib::FranklinSolrJsonWriter'
 
       # uncomment these lines to write to a file
       #store "writer_class_name", "Traject::JsonWriter"
@@ -73,6 +80,7 @@ class FranklinIndexer < BaseIndexer
       end
 
       store 'solr_writer.commit_on_close', false
+      store 'solr_writer.batch_size', 2000
 
     end
 
@@ -126,22 +134,24 @@ class FranklinIndexer < BaseIndexer
       811abcen
     }.join(':')
 
-    to_field "author_creator_f", extract_marc(author_creator_spec, :trim_punctuation => true)
+    # this is now automatically copied on the Solr side
+    # to_field "author_creator_f", extract_marc(author_creator_spec, :trim_punctuation => true)
 
     # TODO: logic here is exactly the same as author_creator_facet: cache somehow?
-    to_field 'author_creator_xfacet', extract_marc(author_creator_spec, :trim_punctuation => true) do |r, acc|
-      acc.map! { |v| references(v) }
+    to_field 'author_creator_xfacet2_input', extract_marc(author_creator_spec, :trim_punctuation => true) do |r, acc|
+      acc.map! { |v| 'n' + v }
     end
 
-    to_field 'subject_f_stored' do |rec, acc|
-      acc.concat(pennlibmarc.get_subject_facet_values(rec))
-    end
+    # this is now automatically copied on the Solr side
+    # to_field 'subject_f_stored' do |rec, acc|
+    #   acc.concat(pennlibmarc.get_subject_facet_values(rec))
+    # end
 
     to_field 'subject_search' do |rec, acc|
       acc.concat(pennlibmarc.get_subject_search_values(rec))
     end
 
-    to_field 'subject_xfacet2' do |rec, acc|
+    to_field 'subject_xfacet2_input' do |rec, acc|
       acc.concat(pennlibmarc.get_subject_xfacet_values(rec))
     end
 

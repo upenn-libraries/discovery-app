@@ -218,6 +218,17 @@ module PennLib
       @subject_codes ||= %w(600 610 611 630 650 651)
     end
 
+    def subject_codes_to_xfacet_prefixes
+      @subject_codes_to_xfacet_prefixes ||= {
+        600 => 'n',
+        610 => 'n',
+        611 => 'n',
+        630 => 't',
+        650 => 's',
+        651 => 'g'
+      }
+    end
+
     def is_subject_field(field)
       subject_codes.member?(field.tag) && %w(0 2 4).member?(field.indicator2)
     end
@@ -246,9 +257,10 @@ module PennLib
 
     def get_subject_xfacet_values(rec)
       rec.fields.find_all { |f| is_subject_field(f) }
-          .map { |f| join_subject_parts(f, double_dash: true) }
-          .map { |v| trim_trailing_period(v) }
-          .select { |v| v.present? }
+          .map { |f| { field: f, prefix: subject_codes_to_xfacet_prefixes[f.tag.to_i] } }
+          .map { |f_struct| f_struct[:value] = trim_trailing_period(join_subject_parts(f_struct[:field], double_dash: true)); f_struct }
+          .select { |f_struct| f_struct[:value].present? }
+          .map { |f_struct| f_struct[:prefix] + f_struct[:value] }
       # don't need to wrap data in #references anymore because cross refs are now handled Solr-side
       #   .map { |s| references(s, refs: get_subject_references(s)) }
     end
