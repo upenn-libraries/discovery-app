@@ -189,8 +189,7 @@ class CatalogController < ApplicationController
     #                        include_in_advanced_search: false
 
     config.add_facet_field 'subject_xfacet2', label: 'Subject', limit: 20, show: false,
-                           xfacet: true, xfacet_view_type: 'xbrowse', facet_for_filtering: 'subject_f',
-                           xfacet_value_helper: 'subject_xfacet_to_facet'
+                           xfacet: true, xfacet_view_type: 'xbrowse', facet_for_filtering: 'subject_f'
     config.add_facet_field 'title_xfacet', label: 'Title', limit: 20, show: false,
                            xfacet: true, xfacet_view_type: 'rbrowse', xfacet_rbrowse_fields: %w(author_creator_a format_a publication_a availability)
     #config.add_facet_field 'author_creator_xfacet', label: 'Author', limit: 20, show: false,
