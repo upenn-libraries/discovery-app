@@ -2,6 +2,20 @@
 module BlacklightSolrpluginsHelper
   include BlacklightSolrplugins::HelperBehavior
 
+  # current possible values for ref:
+  # Subjects & Names: PREF, ALT, RELATED
+  # Subjects: BROADER, NARROWER
+  def xfacet_ref_type_display(ref)
+    case ref
+      when 'PREF'
+        'Preferred'
+      when 'ALT'
+        'Alternate'
+      else
+        ref.humanize.capitalize
+    end
+  end
+
   def render_rbrowse_result(facet_field, facet_item, doc_presenter)
     if facet_field.field == 'call_number_xfacet'
       link_to(facet_item.value, solr_document_path(doc_presenter.field_value('id')))
