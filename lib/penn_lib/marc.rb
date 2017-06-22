@@ -2051,10 +2051,23 @@ module PennLib
     end
 
     def get_call_number_search_values(rec)
-      # not sure whether it's better to use 'item' or 'holding' records here.
-      # we use 'item' only because it has a helpful call number type subfield,
-      # which the holding doesn't.
-      rec.fields(EnrichedMarc::TAG_ITEM).map do |item|
+      # some records don't have item records, only holdings. so for safety/comprehensivenss,
+      # we need to index both and take the unique values of the entire result set.
+
+      acc = []
+
+      acc += rec.fields(EnrichedMarc::TAG_HOLDING).map do |holding|
+        classification_part =
+          holding.find_all(&subfield_in([ EnrichedMarc::SUB_HOLDING_CLASSIFICATION_PART ])).map(&:value).first
+        item_part =
+          holding.find_all(&subfield_in( [EnrichedMarc::SUB_HOLDING_ITEM_PART ])).map(&:value).first
+
+        if classification_part || item_part
+          [ classification_part, item_part ].join(' ')
+        end
+      end.compact
+
+      acc += rec.fields(EnrichedMarc::TAG_ITEM).map do |item|
         cn_type = item.find_all { |sf| sf.code == EnrichedMarc::SUB_ITEM_CALL_NUMBER_TYPE }.map(&:value).first
 
         item.find_all { |sf| sf.code == EnrichedMarc::SUB_ITEM_CALL_NUMBER }
@@ -2063,6 +2076,8 @@ module PennLib
                       .map { |call_num| call_num }
                       .compact
       end.flatten(1)
+
+      acc.uniq
     end
 
     def get_call_number_xfacet_values(rec)
