@@ -125,9 +125,9 @@ module DocumentRenderHelper
     case record[:link_type]
       when 'search'
         search_catalog_path(q: val, search_field: record[:link_type])
-      when /_search$/
+      when /_search/
         search_catalog_path(q: val, search_field: record[:link_type])
-      when /_xfacet$/
+      when /_xfacet/
         search_catalog_path(q: val, search_field: record[:link_type])
       else
         "#UNKNOWN"
@@ -154,6 +154,9 @@ module DocumentRenderHelper
     render_values_with_breaks(values)
   end
 
+  # 2017/06/22: This is now obsolete and unused because both subject facet
+  # and xfacet values have -- separators and they don't need to be removed.
+  #
   # translates the subject xfacet value to a value suitable for the linked facet field
   def subject_xfacet_to_facet(value)
     value.gsub('--', ' ').gsub(/\s{2,}/, ' ')
