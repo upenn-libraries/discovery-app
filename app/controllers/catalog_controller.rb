@@ -188,12 +188,14 @@ class CatalogController < ApplicationController
     # config.add_facet_field 'pub_date_isort', label: 'Publication Year', range: true, collapse: false,
     #                        include_in_advanced_search: false
 
-    config.add_facet_field 'subject_xfacet', label: 'Subject', limit: 20, show: false,
+    config.add_facet_field 'subject_xfacet2', label: 'Subject', limit: 20, show: false,
                            xfacet: true, xfacet_view_type: 'xbrowse', facet_for_filtering: 'subject_f',
                            xfacet_value_helper: 'subject_xfacet_to_facet'
     config.add_facet_field 'title_xfacet', label: 'Title', limit: 20, show: false,
                            xfacet: true, xfacet_view_type: 'rbrowse', xfacet_rbrowse_fields: %w(author_creator_a format_a publication_a availability)
-    config.add_facet_field 'author_creator_xfacet', label: 'Author', limit: 20, show: false,
+    #config.add_facet_field 'author_creator_xfacet', label: 'Author', limit: 20, show: false,
+    #                       xfacet: true, xfacet_view_type: 'xbrowse', facet_for_filtering: 'author_creator_f'
+    config.add_facet_field 'author_creator_xfacet2', label: 'Author', limit: 20, show: false,
                            xfacet: true, xfacet_view_type: 'xbrowse', facet_for_filtering: 'author_creator_f'
     config.add_facet_field 'call_number_xfacet', label: 'Call number', limit: 20, show: false,
                            xfacet: true, xfacet_view_type: 'rbrowse', xfacet_rbrowse_fields: %w(title publication_a format_a availability)
@@ -401,8 +403,9 @@ class CatalogController < ApplicationController
       }
     end
 
-    config.add_search_field('author_creator_xfacet') do |field|
+    config.add_search_field('author_creator_xfacet2') do |field|
       field.label = 'Author Browse (last name first)'
+      field.action = '/catalog/xbrowse/author_creator_xfacet2'
       field.include_in_advanced_search = false
     end
 
@@ -416,8 +419,9 @@ class CatalogController < ApplicationController
       }
     end
 
-    config.add_search_field('subject_xfacet') do |field|
+    config.add_search_field('subject_xfacet2') do |field|
       field.label = 'Subject Heading Browse (Library of Congress)'
+      field.action = '/catalog/xbrowse/subject_xfacet2'
       field.include_in_advanced_search = false
     end
 

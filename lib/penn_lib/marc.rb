@@ -218,6 +218,17 @@ module PennLib
       @subject_codes ||= %w(600 610 611 630 650 651)
     end
 
+    def subject_codes_to_xfacet_prefixes
+      @subject_codes_to_xfacet_prefixes ||= {
+        600 => 'n',
+        610 => 'n',
+        611 => 'n',
+        630 => 't',
+        650 => 's',
+        651 => 'g'
+      }
+    end
+
     def is_subject_field(field)
       subject_codes.member?(field.tag) && %w(0 2 4).member?(field.indicator2)
     end
@@ -228,9 +239,9 @@ module PennLib
                   .select { |v| v !~ /^%?(PRO|CHR)/ }
       # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
       parts += field.find_all(&subfield_not_in(%w{a 0 6 5})).map do |sf|
-        (double_dash && !%w{b c d q t}.member?(sf.code) ? ' -- ' : ' ') + sf.value
+        (double_dash && !%w{b c d q t}.member?(sf.code) ? '--' : ' ') + sf.value
       end.map(&:strip)
-      parts.join(' ')
+      parts.join(double_dash ? '' : ' ')
     end
 
     def get_subject_facet_values(rec)
@@ -246,9 +257,12 @@ module PennLib
 
     def get_subject_xfacet_values(rec)
       rec.fields.find_all { |f| is_subject_field(f) }
-          .map { |f| join_subject_parts(f, double_dash: true) }
-          .map { |v| trim_trailing_period(v) }
-          .map { |s| references(s, refs: get_subject_references(s)) }
+          .map { |f| { field: f, prefix: subject_codes_to_xfacet_prefixes[f.tag.to_i] } }
+          .map { |f_struct| f_struct[:value] = trim_trailing_period(join_subject_parts(f_struct[:field], double_dash: true)); f_struct }
+          .select { |f_struct| f_struct[:value].present? }
+          .map { |f_struct| f_struct[:prefix] + f_struct[:value] }
+      # don't need to wrap data in #references anymore because cross refs are now handled Solr-side
+      #   .map { |s| references(s, refs: get_subject_references(s)) }
     end
 
     def subject_search_tags
@@ -312,7 +326,7 @@ module PennLib
                 value: sub_with_hyphens,
                 value_for_link: value_for_link,
                 value_append: eandw_with_hyphens,
-                link_type: 'subject_xfacet'
+                link_type: 'subject_xfacet2'
             }
           end
         end.compact
