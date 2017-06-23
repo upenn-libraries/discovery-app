@@ -102,9 +102,6 @@ gem 'summon', :git => 'https://github.com/magibney/summon.rb', :branch => 'sign-
 
 gem 'blacklight_alma', :git => 'https://github.com/upenn-libraries/blacklight_alma.git'
 
-# TODO: switch back to gem when they make a release newer than 6.2.1,
-# so that we get PR #70
-#gem 'blacklight_advanced_search', '6.1.0'
-gem 'blacklight_advanced_search', :git => 'https://github.com/codeforkjeff/blacklight_advanced_search.git'
+gem 'blacklight_advanced_search', '6.3.1'
 
 gem 'blacklight-ris', :git => 'https://github.com/upenn-libraries/blacklight-ris.git'
