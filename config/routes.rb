@@ -16,8 +16,6 @@ Rails.application.routes.draw do
   get 'advanced' => 'advanced#index'
   get 'advanced/facet' => 'advanced#facet'
 
-  get 'nopennkey' => 'catalog#nopennkey'
-
   get 'collection_news' => 'collection_news#index'
 
   get 'known_issues' => 'application#known_issues'
