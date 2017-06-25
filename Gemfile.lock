@@ -1,12 +1,4 @@
 GIT
-  remote: https://github.com/codeforkjeff/blacklight_advanced_search.git
-  revision: 63ea0d6821e3916e879f49a4af87818d7a3712d9
-  specs:
-    blacklight_advanced_search (6.2.1)
-      blacklight (~> 6.0, >= 6.0.1)
-      parslet
-
-GIT
   remote: https://github.com/magibney/bento_search
   revision: af7c055b8ee0eed24c7fcf02e4fdab33b3e67bbe
   branch: search_controller_engine_params
@@ -122,6 +114,9 @@ GEM
       rails (>= 4.2, < 6)
       rsolr (>= 1.0.6, < 3)
       twitter-typeahead-rails (= 0.11.1.pre.corejavascript)
+    blacklight_advanced_search (6.3.1)
+      blacklight (~> 6.0, >= 6.0.1)
+      parslet
     blacklight_range_limit (6.0.0)
       blacklight (>= 6.0.0.pre2, < 7)
       jquery-rails
@@ -339,7 +334,7 @@ DEPENDENCIES
   blacklight (= 6.8.0)
   blacklight-marc (~> 6.0)!
   blacklight-ris!
-  blacklight_advanced_search!
+  blacklight_advanced_search (= 6.3.1)
   blacklight_alma!
   blacklight_range_limit (= 6.0.0)
   blacklight_solrplugins!
