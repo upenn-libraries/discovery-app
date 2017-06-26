@@ -239,9 +239,9 @@ module PennLib
                   .select { |v| v !~ /^%?(PRO|CHR)/ }
       # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
       parts += field.find_all(&subfield_not_in(%w{a 0 6 5})).map do |sf|
-        (double_dash && !%w{b c d q t}.member?(sf.code) ? '--' : ' ') + sf.value
-      end.map(&:strip)
-      parts.join(double_dash ? '' : ' ')
+        (double_dash && !%w{b c d q t}.member?(sf.code) ? '--' : ' ') + sf.value.strip
+      end
+      parts.join('')
     end
 
     def get_subject_facet_values(rec)
