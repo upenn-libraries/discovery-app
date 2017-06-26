@@ -25,7 +25,8 @@ Installation:
   migrations (if you forget, Rails will raise an exception when serving
   requests because there are unloaded migrations.)
 
-- Install Solr and add the
+- If there isn't a Solr instance you can use, you'll need to install
+  Solr and add the
   [solrplugins](https://github.com/upenn-libraries/solrplugins)
   extensions to it. The following line should be added to the file
   `solr-x.x.x/server/contexts/solr-jetty-context.xml` inside the
@@ -35,11 +36,11 @@ Installation:
   <Set name="extraClasspath">/path/to/solrplugins-0.1-SNAPSHOT.jar</Set>
   ```
 
-- Add the solr core from the
+  Add the solr core from the
   [library-solr-schema](https://gitlab.library.upenn.edu/discovery/library-solr-schema)
   repo. You can copy the core's directory into `solr-x.x.x/server/solr`
 
-- Load some test marc data into Solr:
+  Load some test marc data into Solr:
 
   ```bash
   bundle exec rake solr:marc:index_test_data
@@ -120,51 +121,5 @@ Traject, which is currently broken.
 
 See the
 [deploy-docker](https://gitlab.library.upenn.edu/ansible/deploy-discovery)
-repository for Ansible scripts that use Docker to deploy the
-application in test and production environments.
-
-## Building the Image(s)
-
-It's best to run this command from a separate, clean clone of this
-repository, so that your build doesn't pick up files lying around in
-the repo where you do development.
-
-Note that Gemfile.lock stores a commit hash for git repos it depends
-upon. If such a dependency is updated, remember to run `bundle update
---source gem` in THIS repo and commit the change.
-
-```
-# checkout the branch you want to build the image for
-git checkout develop
-
-# build it
-docker build -t discovery-app --build-arg GIT_COMMIT=`git rev-parse --short HEAD` .
-
-# tag the image and push it to our private registry
-docker tag discovery-app:latest indexing-dev.library.upenn.int:5000/upenn-libraries/discovery-app:latest
-docker push indexing-dev.library.upenn.int:5000/upenn-libraries/discovery-app:latest
-
-# if a registry isn't available, you can copy images 'manually'
-#docker save discovery-app:latest | gzip > discovery-app-latest.tgz
-#scp discovery-app-latest.tgz me@server.library.upenn.edu:docker_images
-```
-
-## Deploying the Image
-
-ssh into the server, and load the image into docker:
-
-```
-docker pull indexing-dev.library.upenn.int:5000/upenn-libraries/discovery-app:latest
-```
-
-Now you can start a container for the app:
-
-```
-# note the use of PASSENGER_APP_ENV instead of RAILS_ENV
-docker run -p 80:80 \
-       --env PASSENGER_APP_ENV=production \
-       --env DEVISE_SECRET_KEY=REPLACE_WITH_REAL_KEY \
-       --env SECRET_KEY_BASE=REPLACE_WITH_REAL_KEY \
-       --env SOLR_URL=http://hostname:8983/solr/blacklight-core \
-       indexing-dev.library.upenn.int:5000/upenn-libraries/discovery-app:latest
-```
+repository for Ansible scripts that build Docker images and deploy containers
+to the test and production environments.
