@@ -4,6 +4,9 @@
     <% if ENV['SHOW_KNOWN_ISSUES'].present? %>
     <li><a style="color:red" href="<%= known_issues_url %>">Known Issues</a></li>
     <% end %>
+
+    <li><a style="color:red" href="http://faq.library.upenn.edu/ask">Feedback</a></li>
+
     <%= render_nav_actions do |config, action|%>
         <li><%= action %></li>
     <% end %>
