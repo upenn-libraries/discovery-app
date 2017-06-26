@@ -1,0 +1,6 @@
+<% if show_availability?(document) %>
+    <dt class="blacklight-availability">Status/Location:</dt>
+    <dd class="blacklight-availability">
+      <div class="availability-ajax-load" data-availability-ids="<%= document.alma_availability_mms_ids.join(',') %>">Loading...</div>
+    </dd>
+<% end %>

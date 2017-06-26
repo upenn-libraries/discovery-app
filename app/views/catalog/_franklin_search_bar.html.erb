@@ -1,0 +1,27 @@
+
+<ul class="nav nav-tabs" role="tablist">
+  <li role="presentation" class="<%= active_tab_classes('bento') %>">
+    <%= render_tab_link('bento', 'Catalog & Articles+', '#bento', bento_path(q: params[:q]), '#bento, #bento-search-navbar') %>
+  </li>
+  <li role="presentation" class="<%= active_tab_classes('catalog') %>">
+    <%= render_tab_link('catalog', 'Catalog', '#catalog', search_catalog_path(q: params[:q], search_field: 'all_fields'), '#catalog, #catalog-search-navbar') %>
+  </li>
+  <li role="presentation">
+    <%= render_tab_link('articles', 'Articles+', '#articles', summon_url(params[:q]), '#articles, #articles-search-navbar') %>
+  </li>
+  <li role="presentation"><a href="http://testdla.library.upenn.edu/dla/courseres/index.html">Course Reserves</a></li>
+</ul>
+
+<div class="tab-content">
+  <div role="tabpanel" class="tab-pane <%= active_tab_classes('bento') %>" id="bento-search-navbar">
+    <%= render partial: 'bento_search/search_form' %>
+  </div>
+
+  <div role="tabpanel" class="tab-pane <%= active_tab_classes('catalog') %>" id="catalog-search-navbar">
+    <%= render partial: 'catalog/search_form' %>
+  </div>
+
+  <div role="tabpanel" class="tab-pane" id="articles-search-navbar">
+    <%= render partial: 'bento_search/articles_search_form' %>
+  </div>
+</div>

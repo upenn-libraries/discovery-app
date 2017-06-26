@@ -1,28 +1,66 @@
 Rails.application.routes.draw do
-          mount Blacklight::Engine => '/'
-
-  Blacklight::Marc.add_routes(self)
-  root to: "catalog#index"
-  concern :searchable, Blacklight::Routes::Searchable.new
-
-resource :catalog, only: [:index], as: 'catalog', path: '/catalog', controller: 'catalog' do
-  concerns :searchable
-end
-
-  devise_for :users
+  concern :range_searchable, BlacklightRangeLimit::Routes::RangeSearchable.new
   concern :exportable, Blacklight::Routes::Exportable.new
 
-resources :solr_documents, only: [:show], path: '/catalog', controller: 'catalog' do
-  concerns :exportable
-end
+  root to: "catalog#landing"
+  get 'bento/' => 'catalog#bento'
 
-resources :bookmarks do
-  concerns :exportable
+  mount Blacklight::Engine => '/'
 
-  collection do
-    delete 'clear'
+  mount BlacklightAdvancedSearch::Engine => '/'
+
+  #####
+  # the reverse routes in blacklight_advanced_search/_facet_limit.html.erb
+  # don't work unless these routes exist
+  #####
+  get 'advanced' => 'advanced#index'
+  get 'advanced/facet' => 'advanced#facet'
+
+  get 'collection_news' => 'collection_news#index'
+
+  get 'known_issues' => 'application#known_issues'
+
+  Blacklight::Marc.add_routes(self)
+  concern :searchable, Blacklight::Routes::Searchable.new
+
+  resource :catalog, only: [:index], as: 'catalog', path: '/catalog', controller: 'catalog' do
+    concerns :searchable
+    concerns :range_searchable
   end
-end
+
+  # override devise's sessions controller w/ our own
+  devise_for :users, controllers: { sessions: 'sessions' }
+
+  resources :solr_documents, only: [:show], path: '/catalog', controller: 'catalog' do
+    concerns :exportable
+  end
+
+  resources :bookmarks do
+    concerns :exportable
+
+    collection do
+      delete 'clear'
+    end
+  end
+
+  get 'alma/availability' => 'franklin_alma#availability'
+
+  devise_scope :user do
+    get 'alma/social_login_callback' => 'sessions#social_login_callback'
+    get 'accounts/login' => 'sessions#sso_login_callback'
+  end
+
+  if ENV['ENABLE_DEBUG_URLS'] == 'true'
+    get '/headers_debug' => 'application#headers_debug'
+    get '/session_debug' => 'application#session_debug'
+  end
+
+  BentoSearch::Routes.new(self).draw
+
+  # redirects for legacy DLA Franklin links
+
+  get 'record.html' => 'legacy_franklin#record', :format => false
+
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

@@ -1,0 +1,11 @@
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane <%= active_tab_classes('bento') %>" id="bento">
+      <%= render partial: 'landing_bento' %>
+    </div>
+    <div role="tabpanel" class="tab-pane <%= active_tab_classes('catalog') %>" id="catalog">
+      <%= render partial: 'landing_catalog' %>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="articles">
+      <%= render partial: 'landing_articles' %>
+    </div>
+  </div>

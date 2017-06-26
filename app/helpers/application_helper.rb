@@ -1,2 +1,156 @@
 module ApplicationHelper
+
+  def summon_url(query)
+    return "http://soaupenn.summon.serialssolutions.com/#!/search?q=#{url_encode(query)}"
+  end
+
+  # returns the css classes needed for elements that should be considered 'active'
+  # with respect to tabs functionality
+  def active_tab_classes(tab_id)
+    # treat bento as special case; almost everything else falls through to catalog
+    on_bento_page = (controller_name == 'catalog') && ['landing', 'bento'].member?(action_name)
+    if tab_id == 'bento' && on_bento_page
+      'active'
+    elsif tab_id == 'catalog'
+      if !on_bento_page
+        'active'
+      end
+    end
+  end
+
+  # returns a link element to be used for the tab; this could be either an anchor
+  # or a link to another page, depending on the needs of the view
+  def render_tab_link(tab_id, tab_label, anchor, url, data_target)
+    if params[:q] || !(controller_name == 'catalog' && action_name == 'landing')
+      attrs = {
+          'href': url
+      }
+    else
+      attrs = {
+          'href': anchor,
+          'aria-controls': tab_id,
+          'data-target': data_target,
+          'role': 'tab',
+          'data-toggle': 'tab',
+          'class': "tab-#{tab_id}",
+      }
+    end
+    content_tag('a', tab_label, attrs)
+  end
+
+  # return true if availability info HTML should be rendered (and loaded dynamically in-page)
+  def show_availability?(document)
+    # TODO: env var check should be removed eventually
+    (ENV['SUPPRESS_AVAILABILITY'] != 'true') && document.has_any_holdings?
+  end
+
+  def display_alma_fulfillment_iframe?(document)
+    # always display the iframe because there are request options in it we want to show
+    # for records that don't have any holdings
+    true
+    # old logic:
+    #document.has_any_holdings?
+  end
+
+  def my_library_card_url
+    "https://#{ ENV['ALMA_DELIVERY_DOMAIN'] }/discovery/account?vid=#{ ENV['ALMA_INSTITUTION_CODE'] }:Services&lang=en&section=overview"
+  end
+
+  def refworks_bookmarks_path(opts = {})
+    # we can't direct refworks to the user's bookmarks page since that's private.
+    # so we construct an advanced search query instead to return the bookmarked records
+    id_search_value = @document_list.map { |doc| doc.id }.join(' OR ')
+    url = search_catalog_url(
+      id_search: id_search_value,
+      search_field: 'advanced',
+      commit: 'Search',
+      format: 'refworks_marc_txt')
+    refworks_export_url(url: url)
+  end
+
+  # this method returns a data structure used to prepopulate the
+  # advanced search form.
+  # returns a maximum of num_fields, and a minimum of min fields
+  def prepopulated_search_fields_for_advanced_search(num_fields, is_numeric: true, min: nil)
+    min ||= num_fields
+
+    # get all the search fields defined in Blacklight config, as a
+    # Hash of string field names to Field objects
+    fields = search_fields_for_advanced_search.select { |key, field_def|
+      is_numeric ? field_def.is_numeric_field : !field_def.is_numeric_field
+    }
+
+    # create an array of just the string field names
+    fieldnames = fields.keys
+
+    # figure out, from #params, the 'simple search' that user did
+    queried_fields = params.dup
+    if queried_fields["search_field"].present?
+      queried_fields[queried_fields["search_field"]] = queried_fields["q"]
+    end
+    queried_fields = queried_fields.select { |k,v| fieldnames.member? k }
+    queried_fields.sort
+
+    # now make an Array of OpenStructs for each row corresponding to a
+    # set of form inputs, for advanced search page
+    limit = 5
+    i = 0
+    result = []
+    while i < limit do
+      value = value2 = nil
+      selected_field = fields.keys.first
+      if queried_fields.length > 0
+        fieldname = queried_fields.keys.first
+        selected_field = fieldname
+        # if there are multiple searches under the same field name
+        if queried_fields[fieldname].kind_of? Array
+          range_str = queried_fields[fieldname].first
+          if !fields[fieldname].is_numeric_field
+            value = range_str
+          else
+            range_str = queried_fields[fieldname].first
+            match = /\[(\d+)\s+TO\s+(\d+)\]/.match(range_str)
+            if match
+              value, value2 = match[1], match[2]
+            end
+          end
+          i += 1
+          queried_fields[fieldname].delete(range_str)
+          if queried_fields[fieldname].length <= 0
+            queried_fields.delete(fieldname)
+          end
+          # otherwise, for non-numeric fields
+        elsif !fields[fieldname].is_numeric_field
+          value = queried_fields[fieldname]
+          queried_fields.delete(fieldname)
+          i += 1
+        else
+          range_str = queried_fields[fieldname]
+          match = /\[(\d+)\s+TO\s+(\d+)\]/.match(range_str)
+          if match
+            value, value2 = match[1], match[2]
+          end
+          queried_fields.delete(fieldname)
+          i += 1
+        end
+      else
+        i += 1
+      end
+      if value || value2 || (result.size < min)
+        result += [OpenStruct.new(
+          index: i - 1,
+          fields: fields,
+          selected_field: selected_field,
+          value: value,
+          value2: value2,
+        )]
+      end
+    end
+    return result
+  end
+
+  def resourcesharing_path
+    '/forms/resourcesharing'
+  end
+
 end

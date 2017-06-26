@@ -1,32 +1,54 @@
 source 'https://rubygems.org'
 
-
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.2.5.1'
-# Use sqlite3 as the database for Active Record
-gem 'sqlite3'
-# Use SCSS for stylesheets
-gem 'sass-rails', '~> 5.0'
-# Use Uglifier as compressor for JavaScript assets
-gem 'uglifier', '>= 1.3.0'
-# Use CoffeeScript for .coffee assets and views
-gem 'coffee-rails', '~> 4.1.0'
-# See https://github.com/rails/execjs#readme for more supported runtimes
-gem 'therubyracer', platforms: :ruby
+gem 'rails', '4.2.8'
 
-gem "blacklight", ">= 5.3.0"
-gem "jettywrapper", ">= 2.0"
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
-gem "solr_wrapper"
+# we always need sqlite to the boundwiths database
+gem 'sqlite3', '1.3.12', platforms: :ruby
+
+group :test, :production do
+  gem 'mysql2', '0.4.5'
+end
+
+gem 'jdbc-sqlite3', '3.8.11.2', platforms: :jruby
+
+gem 'activerecord-jdbcmysql-adapter', '1.3.21', platforms: :jruby
+
+# Use SCSS for stylesheets
+gem 'sass-rails', '5.0.6'
+
+# Use Uglifier as compressor for JavaScript assets
+gem 'uglifier', '3.0.2'
+
+# Use CoffeeScript for .coffee assets and views
+gem 'coffee-rails', '4.2.1'
+
+# See https://github.com/rails/execjs#readme for more supported runtimes
+gem 'therubyracer', '0.12.2', platforms: :ruby
+
+gem "blacklight", '6.8.0'
+
+gem "jettywrapper", '2.0.4'
+
+gem 'tzinfo-data', '1.2016.7', platforms: [:mingw, :mswin, :x64_mingw]
+
+gem "solr_wrapper", '0.18.1'
+
+gem 'browserify-rails', '4.0.0'
 
 # Use jquery as the JavaScript library
-gem 'jquery-rails'
+gem 'jquery-rails', '4.3.1'
+
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
-gem 'turbolinks'
+# As of Blacklight v6.3.0, enabling turbolinks corrupts render of search nav.
+# See https://github.com/projectblacklight/blacklight/issues/1562
+# gem 'turbolinks', '5.0.1'
+
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-gem 'jbuilder', '~> 2.0'
+gem 'jbuilder', '2.6.0'
+
 # bundle exec rake doc:rails generates the API under doc/api.
-gem 'sdoc', '~> 0.4.0', group: :doc
+gem 'sdoc', '0.4.2', group: :doc
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
@@ -34,25 +56,52 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # Use Unicorn as the app server
 # gem 'unicorn'
 
+gem 'passenger', '5.1.2', require: 'phusion_passenger/rack_handler'
+
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'byebug'
+  gem 'byebug', platforms: :ruby
 end
 
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
-  gem 'web-console', '~> 2.0'
+  gem 'web-console', '~> 2.0', platforms: :ruby
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-  gem 'spring'
+  # Removed because spring often causes problems with gem reloading
+  # gem 'spring'
 end
 
+gem 'rsolr', '1.1.2'
 
-gem 'rsolr', '~> 1.0.6'
-gem 'globalid'
-gem 'devise'
-gem 'devise-guests', '~> 0.3'
-gem 'blacklight-marc', '~> 6.0'
+gem 'globalid', '0.3.7'
+
+gem 'devise', '4.2.1'
+
+gem 'devise-guests', '0.5.0'
+
+gem 'blacklight_range_limit', '6.0.0'
+
+gem 'traject', '2.3.3'
+
+gem 'nokogiri', '1.7.1'
+
+# TODO: Using this version, corrects error for getting format from 008 field,
+# currently breaks in original project.  PR out to original project,
+# will switch back when applied.
+gem 'blacklight-marc', '~> 6.0', :git => 'https://github.com/magibney/blacklight-marc.git', :branch => 'fix-extract_marc-format-008'
+
+gem 'blacklight_solrplugins', :git => 'https://github.com/upenn-libraries/blacklight_solrplugins.git'
+
+gem 'bento_search', :git => 'https://github.com/magibney/bento_search', :branch => 'search_controller_engine_params' #'1.7'
+
+gem 'summon', :git => 'https://github.com/magibney/summon.rb', :branch => 'sign-empty-param-values'
+
+gem 'blacklight_alma', :git => 'https://github.com/upenn-libraries/blacklight_alma.git'
+
+gem 'blacklight_advanced_search', '6.3.1'
+
+gem 'blacklight-ris', :git => 'https://github.com/upenn-libraries/blacklight-ris.git'

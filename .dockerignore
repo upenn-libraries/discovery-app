@@ -1,0 +1,6 @@
+*.sqlite3
+*.mrc
+jetty
+log
+tmp
+.git

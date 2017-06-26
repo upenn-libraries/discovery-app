@@ -1,0 +1,110 @@
+<nav class="footer-bar">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-3"><a href="http://faq.library.upenn.edu/ask">Questions or comments</a></div>
+      <div class="col-sm-9">
+        <div class="footer-bar-links-right">
+          <%= yield :footer_bar_nav_links %>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<footer class="footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-3">
+
+        <h2>PENN LIBRARIES</h2>
+
+        <ul class="footerlinks">
+
+          <li><a href="http://www.library.upenn.edu/locations/">Choose a library</a></li>
+
+          <li><a href="http://www.library.upenn.edu/catalogs/">More catalogs</a></li>
+
+          <li><a href="<%= resourcesharing_path %>">BorrowDirect+/ILL</a></li>
+
+          <li><a href="http://gethelp.library.upenn.edu/">Ask us/Get help</a></li>
+
+          <li><a href="http://www.library.upenn.edu/common/siteguide.html">Site guide</a></li>
+
+        </ul>
+
+        <h2><a href="http://www.upenn.edu/">PENN</a></h2>
+
+      </div>
+
+      <%#
+      <div class="col-sm-3">
+
+        <h2><a href="ancillary.html?id=catalogs/franklin/searchstrategies" target="_blank">HELP WITH FRANKLIN</a></h2>
+
+        <ul class="footerlinks">
+
+          <li><a href="ancillary.html?id=catalogs/franklin/cantlogin" target="_blank">Can't log in to your Library
+            Account?</a></li>
+
+
+          <li><a href="ancillary.html?id=catalogs/franklin/franklincontent" target="_blank">About the catalog</a></li>
+
+          <li><a href="ancillary.html?id=catalogs/franklin/keyword" target="_blank">Searching the catalog</a></li>
+
+          <li><a href="ancillary.html?id=catalogs/franklin/requesting" target="_blank">Requesting materials</a></li>
+
+          <li><a href="ancillary.html?id=catalogs/franklin/creatinglinks" target="_blank">Creating links to Franklin</a>
+          </li>
+
+          <!-- <li><a href="">Privacy</a></li> -->
+
+          <li class="googlelabel">
+
+            <h3>Search help pages</h3>
+
+            <form action="//www.google.com/cse" id="cse-search-box" target="_blank">
+              <input type="hidden" name="cx" value="017655588810252898367:yledfkhdv64" />
+              <input type="hidden" name="ie" value="UTF-8" />
+              <input type="hidden" value="3" name="num" />
+              <input type="text" name="q"  class="gsinput defaultText" title="Search Help" />
+              <input  class="googlego" name="sa" value="go" type="submit"/>
+            </form>
+            <script type="text/javascript" src="//www.google.com/jsapi"></script>
+            <script type="text/javascript">google.load("elements", "1", {packages: "transliteration"});</script>
+            <script type="text/javascript" src="//www.google.com/coop/cse/t13n?form=cse-search-box&#38;t13n_langs=en"></script>
+            <script type="text/javascript" src="//www.google.com/coop/cse/brand?form=cse-search-box&#38;lang=en"></script>
+          </li>
+
+        </ul>
+
+      </div>
+      %>
+
+      <div class="col-sm-3">
+
+        <h2>CONTACT US</h2>
+
+        <ul class="footerlinks">
+
+          <li><a href="tel:2158987555">215-898-7555</a></li>
+
+          <li><a href="http://faq.library.upenn.edu/ask">Questions or comments</a></li>
+
+          <li id="footerchat">
+            <div id="libchat_424b3bc441c9bd760d26a2d0dd03c906"></div><script type="text/javascript" src="//v2.libanswers.com/load_chat.php?hash=424b3bc441c9bd760d26a2d0dd03c906"></script>
+          </li>
+
+        </ul>
+
+      </div>
+
+    </div>
+
+    <div class="row">
+      <div class="contact col-sm-12">&copy; University of Pennsylvania |
+        <a href="http://faq.library.upenn.edu/ask">Questions or comments</a>
+      </div>
+    </div>
+
+  </div>
+
+</footer>

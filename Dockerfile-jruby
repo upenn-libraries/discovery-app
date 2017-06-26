@@ -1,0 +1,33 @@
+
+# Basic Dockerfile for JRuby w/ Blacklight dependencies
+# installed. This is intended specifically for doing more performant
+# MARC indexing, but can be used to run rails app, run other rake
+# tasks, etc.
+
+# this image uses Debian 8 (jessie) as a base
+FROM jruby:9.1.2.0
+
+RUN apt-get update && apt-get install -y git nodejs make
+
+RUN gem update bundler
+
+# copying Gemfiles first takes advantage of image caching
+WORKDIR /tmp
+ADD Gemfile /tmp/Gemfile
+ADD Gemfile.lock /tmp/Gemfile.lock
+RUN bundle install 
+
+RUN mkdir -p /opt/discovery
+
+WORKDIR /opt/discovery
+
+ADD . /opt/discovery
+
+# Store commit hash in image
+ARG GIT_COMMIT
+ENV GIT_COMMIT ${GIT_COMMIT}
+RUN echo $GIT_COMMIT > /opt/discovery/public/version.txt
+
+ENV JRUBY_OPTS="-J-Xms1g -J-Xmx2g"
+
+CMD bundle exec rake pennlib:marc:index MARC_FILE=$MARC_FILE

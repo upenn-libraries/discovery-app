@@ -1,0 +1,26 @@
+
+<% doc_presenter = show_presenter(document) %>
+<%# default partial to display solr document fields in catalog show view -%>
+<dl class="dl-horizontal  dl-invert">
+  <%= render partial: 'show_expanded', locals: { document: document } %>
+  <% document_show_fields(document).each do |field_name, field| -%>
+      <% if should_render_show_field? document, field %>
+          <dt class="blacklight-<%= field_name.parameterize %>"><%= render_document_show_field_label document, field: field_name %></dt>
+          <dd class="blacklight-<%= field_name.parameterize %>"><%= doc_presenter.field_value field_name %></dd>
+      <% end -%>
+  <% end -%>
+</dl>
+
+<%= render partial: 'alma_availability_iframe', locals: { document: document } %>
+
+<% content_for :footer_bar_nav_links do %>
+  <div class="link-item">
+    <div class="direct-link-popup" data-direct-link-id="<%= document.id %>" style="display: none;">
+      <a class="direct-link-close">✕</a><a href="<%= solr_document_url(document) %>"><%= solr_document_url(document) %></a>
+    </div>
+    <a class="direct-link-trigger" data-direct-link-id="<%= document.id %>">Direct Link</a>
+  </div>
+  <% if document.alma_mms_id.present? %>
+    <div class="link-item">MMS ID <%= document.alma_mms_id %></div>
+  <% end %>
+<% end %>

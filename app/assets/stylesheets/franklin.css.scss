@@ -6,17 +6,23 @@ body {
   font-family: $font-family;
 }
 
+.sr-only.application-heading {
+  display: none;
+}
+
 h1, h2, h3 {
   color: $upenn-blue;
 }
 
-span.site-name {
+span.site-name, span.site-name a {
   font-size: 40px;
   color: $text-white;
   font-style: italic;
 }
 
-
+#search-navbar .nav-tabs {
+  margin-top: 4px;
+}
 
 /*************
 *
@@ -29,11 +35,355 @@ span.site-name {
 
   .navbar-brand {
     background-image: asset-url('logo.png');
-    margin-top: 10px;
+    margin-top: 15px;
+  }
+}
+
+.navbar-header {
+  /* match height of bg image */
+  height: 99px;
+}
+
+.navbar-login-btn-group {
+  padding: 10px 0 0 15px;
+  line-height: 20px;
+}
+
+.user-first-name {
+  color: #c60;
+}
+
+.navbar-nav > li > div > a {
+  color: white;
+}
+
+@media (min-width: 768px) {
+
+  .navbar-nav > li > div {
+    color: white;
+  }
+
+  .navbar-nav > li > div > a {
+    color: white;
+  }
+
+  #search_field {
+    width: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-brand {
+    clear: break;
+  }
+
+  #search_field {
+    width: 80px;
+  }
+
+  #search-navbar .search-query-form {
+    padding-left: 15px;
   }
 }
 
 .btn-primary {
   background-color: $upenn-red;
   border-color: $upenn-blue;
+}
+
+.inline {
+  display: inline;
+  margin: 0;
+}
+
+.landing-content h3 {
+  font-weight: bold;
+  color: #900;
+  font-size: 1.17em;
+}
+
+.landing-content {
+  padding-bottom: 2em;
+}
+
+.minishield {
+  background-image: asset-url('ptswirl-11px.gif');
+  background-position: 1px 6px;
+  background-repeat: no-repeat;
+}
+
+#documents .document {
+  margin-top: 0;
+  border-bottom: 1px solid #d2d2d2;
+}
+
+.documents-list .document:nth-child(even) {
+  background: #ececec;
+}
+
+#documents .document .document-title-heading {
+  line-height: 1.42857143;
+}
+
+.direct-link-trigger {
+  cursor: pointer;
+}
+
+.direct-link-popup {
+  position: absolute;
+  bottom: 2em;
+  right: .5em;
+  background-color: #fff;
+  padding: .25em 0 .25em .5em;
+  border: solid 1px #bbb;
+  box-shadow: 1px 1px 3px rgba(50, 50, 50, 0.35);
+}
+
+.direct-link-close {
+  border: solid 1px #ccc;
+  cursor: pointer;
+  display: block;
+  float: right;
+  font-size: 0.92em;
+  line-height: 100%;
+  margin: -.08em 2px 0 .5em;
+  padding: 2px 4px 2px 3px;
+}
+
+.footer-bar {
+  background-image: asset-url('holdnumbers.png');
+  background-repeat: repeat-x;
+  width: 100%;
+  padding-top: 1em;
+  padding-bottom: 1em;
+  margin-top: 2em;
+}
+
+.footer-bar a, .footer-bar a:visited, .footer-bar a:hover {
+  color: #000;
+  background-color: transparent;
+}
+
+.footer-bar-links-right {
+  float: right;
+}
+
+.footer-bar-links-right .link-item {
+  display: inline;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.footer {
+  font-family: "Source Sans Pro","Arial Unicode MS",Helvetica,sans-serif;
+  background-color: #dfdfdf;
+  background-image: asset-url('footerboxshadow.png');
+  background-repeat: repeat-x;
+  min-height: 5em;
+  font-size: 12px;
+  padding-bottom: 4em;
+}
+
+.footer h2 {
+  color: #333333;
+  font-size: 1em;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+  line-height: 100%;
+  text-align: left;
+  text-transform: capitalize;
+  margin-bottom: 0;
+  margin-left: 0;
+  margin-right: 0;
+  margin-top: 2.27em;
+}
+
+ul.footerlinks {
+  list-style-image: none;
+  list-style-type: none;
+  margin-bottom: 0;
+  margin-left: 0;
+  margin-right: 0;
+  margin-top: 0;
+  padding-left: 0;
+}
+
+.footerlinks li {
+  line-height: 140%;
+  margin: 0.63em 0 0 3.36em;
+  text-indent: -3.36em;
+}
+
+.footer a, .footer a:visited {
+  color: #000;
+}
+
+.footer a:hover, .footer a:visited:hover {
+  color: #c60;
+}
+
+.footer .contact {
+  font-size: .92em;
+  padding-top: 2.5em;
+  color: #666;
+  line-height: 130%;
+}
+
+.footer .contact a, .contact a:visited {
+  color: #666;
+}
+
+.footer .googlelabel h3 {
+  color: #000;
+  font-size: 1em;
+  margin: 3.27em 0 0 0 !important;
+  background: transparent;
+  font-style: oblique;
+  font-weight: bold;
+}
+
+#marc_view .sub_code {
+  font-weight: bold;
+}
+
+/*******
+ *
+ * bento_search styles
+ *
+ *******/
+
+.bento_item_title {
+  font-size: 14px;
+}
+
+/* made to resemble "#documents .document" rule in BL */
+.bento_item {
+  margin-top: 0;
+  padding-top: 6px;
+  border-top: 1px solid #d2d2d2;
+}
+
+.bento_item:nth-child(even) {
+  background: #ececec;
+}
+
+/* this copies some weird css from Blacklight in order to get bento_item's
+bg color to fill document-metadata's bottom margin */
+.bento_item::after {
+  content: " ";
+  display: table;
+}
+
+.bento_item_about {
+  display: none;
+}
+
+.view-and-filter {
+  padding: 6px;
+  background: #ececec;
+}
+
+/*******
+ *
+ * summon form styles
+ *
+ *******/
+
+.summon-form .limit-options {
+  margin-top: 2px;
+}
+
+.summon-form .limit-options label {
+  margin-right: 2em;
+}
+
+.summon-results .summon-alert {
+  background-color: #ffa;
+  padding: 0.5em;
+}
+
+.summon-results.ezproxy-is-logged-in .summon-alert {
+  display: none;
+}
+
+.summon-results.ezproxy-is-not-logged-in .summon-alert {
+  display: block;
+}
+
+/*******
+ *
+ * collection news styles
+ *
+ *******/
+
+h3.ongray {
+  font-weight: bold;
+  background-color: #eee;
+  margin-bottom: 9px;
+  font-style: normal;
+  padding-left: 36px;
+  color: #000;
+}
+
+.colnews h3 {
+  margin-top:0;
+  background-color: #e8e8e8;
+  color: #444;
+  font-style:normal;
+  font-size: 1.08em;
+  padding: .08em .33em .33em .33em;
+  letter-spacing: .02em;
+}
+.colnews h3.colnewsheader .colnewslabel {
+  display:inline-block;
+  vertical-align: top;
+  /*IE Hack*/
+  zoom: 1;
+  *display: inline;
+}
+.colnews h3.colnewsheader .colnewslabel div {
+  padding-top:1em;
+}
+.colnews h3.colnewsheader .colnewslabelicon {
+  display:inline-block;
+  vertical-align:top;
+  /*IE Hack*/
+  zoom: 1;
+  *display: inline;
+  width: 3.91667em;
+  background-image: asset-url('news.png');
+  background-repeat: no-repeat;
+  height: 2.2em;
+  width: 2.75em;
+}
+
+.collection-news {
+  line-height: 145%;
+}
+.feed-item {
+  margin: 0 0 .75em 0;
+}
+.collection-news .item-title {
+  font-weight:bold;
+}
+.feed-item span {
+  text-transform: uppercase;
+  color: #888;
+  font-size: 0.92em;
+}
+
+.availability-details-iframe {
+  height: 17em;
+}
+
+.online-resource-link-group {
+  margin-bottom: 1em;
+}
+
+.online-resource-extra-links {
+  display: none;
+}
+
+.volumes-available {
+  margin-top: 1em;
 }

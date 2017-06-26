@@ -22,5 +22,20 @@ module Blacklight
 
     # Do not swallow errors in after_commit/after_rollback callbacks.
     config.active_record.raise_in_transactional_callbacks = true
+
+    config.eager_load_paths << Rails.root.join('lib')
+
+    # TODO: fix the underlying problem, which is that CLIENT_IP doesn't match X_FORWARDED_FOR in headers
+    # sent by Apache proxy. The only reason this is here is to allow some debugging code to iterate over
+    # headers in request.headers without triggering an ActionDispatch::RemoteIp::IpSpoofAttackError exception
+    config.action_dispatch.ip_spoofing_check = false
+
+    config.action_mailer.delivery_method = :smtp
+    config.action_mailer.smtp_settings = {
+      address: 'mailrelay.library.upenn.int',
+    }
+    config.action_mailer.default_options = { from: 'no-reply@upenn.edu' }
+
+    config.log_level = ENV['RAILS_LOG_LEVEL'].present? ? ENV['RAILS_LOG_LEVEL'].to_sym : :debug
   end
 end
