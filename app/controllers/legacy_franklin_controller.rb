@@ -11,14 +11,14 @@ class LegacyFranklinController < ApplicationController
       if new_id.start_with?('FRANKLIN')
         new_id = new_id.sub(/(\d+)/, "#{ALMA_MMS_ID_PREFIX}\\1#{ALMA_MMS_ID_SUFFIX}")
       end
-      redirect_to solr_document_path(new_id)
+      redirect_to "https://franklin.library.upenn.edu/catalog/#{new_id}"
     else
-      redirect_to root_path
+      redirect_to 'https://franklin.library.upenn.edu/'
     end
   end
 
   def dla
-    redirect_to root_path
+    redirect_to 'https://franklin.library.upenn.edu/'
   end
 
 end
