@@ -1167,7 +1167,7 @@ module PennLib
         acc << {
             value: author_parts.join(' '),
             value_append: subf4,
-            link_type: 'author_creator_xfacet' }
+            link_type: 'author_creator_xfacet2' }
       end
       rec.fields('880').each do |field|
         if has_subfield6_value(field, /^(100|110)/)
@@ -1182,7 +1182,7 @@ module PennLib
           acc << {
               value: author_parts.join(' '),
               value_append: subf4,
-              link_type: 'author_creator_xfacet' }
+              link_type: 'author_creator_xfacet2' }
         end
       end
       acc
@@ -1282,7 +1282,7 @@ module PennLib
           conf = join_subfields(field, &subfield_not_in(%w{0 4 5 6 8 e j w}))
         end
         conf_append = join_subfields(field, &subfield_in(%w{e j w}))
-        { value: conf, value_append: conf_append, link_type: 'author_creator_xfacet' }
+        { value: conf, value_append: conf_append, link_type: 'author_creator_xfacet2' }
       end
       results += rec.fields('880')
           .select { |f| has_subfield6_value(f, /^(111|711)/) }
@@ -1291,7 +1291,7 @@ module PennLib
         # added 2017/05/18: filter out 0 (authority record numbers) added by Alma
         conf = join_subfields(field, &subfield_not_in(%w{0 4 5 6 8 e j w}))
         conf_extra = join_subfields(field, &subfield_in(%w{4 e j w}))
-        { value: conf, value_append: conf_extra, link_type: 'author_creator_xfacet' }
+        { value: conf, value_append: conf_extra, link_type: 'author_creator_xfacet2' }
       end
       results
     end
@@ -1769,14 +1769,14 @@ module PennLib
             " #{sf.value}"
           end
         end.join
-        { value: contributor, value_append: contributor_append, link_type: 'author_creator_xfacet' }
+        { value: contributor, value_append: contributor_append, link_type: 'author_creator_xfacet2' }
       end
       acc += rec.fields('880')
                  .select { |f| has_subfield6_value(f, /^(700|710)/) && (f.none? { |sf| sf.code == 'i' }) }
                  .map do |field|
         contributor = join_subfields(field, &subfield_in(%w{a b c d j q}))
         contributor_append = join_subfields(field, &subfield_in(%w{e u 3}))
-        { value: contributor, value_append: contributor_append, link_type: 'author_creator_xfacet' }
+        { value: contributor, value_append: contributor_append, link_type: 'author_creator_xfacet2' }
       end
       acc
     end
@@ -1875,7 +1875,7 @@ module PennLib
           value: other_editions,
           value_prepend: trim_trailing_period(subi) + ':',
           value_append: other_editions_append,
-          link_type: 'author_creator_xfacet'
+          link_type: 'author_creator_xfacet2'
       }
     end
 
