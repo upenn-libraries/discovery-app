@@ -4,7 +4,7 @@
     <%= render_tab_link('bento', 'Catalog & Articles+', '#bento', bento_path(q: params[:q]), '#bento-main, #bento-search-navbar') %>
   </li>
   <li role="presentation" class="<%= active_tab_classes('catalog') %>">
-    <%= render_tab_link('catalog', 'Catalog', '#catalog', search_catalog_path(q: params[:q], search_field: 'all_fields'), '#catalog-main, #catalog-search-navbar') %>
+    <%= render_tab_link('catalog', 'Catalog', '#catalog', search_catalog_path(q: params[:q], search_field: 'keyword'), '#catalog-main, #catalog-search-navbar') %>
   </li>
   <li role="presentation">
     <%= render_tab_link('articles', 'Articles+', '#articles', summon_url(params[:q]), '#articles-main, #articles-search-navbar') %>

@@ -11,7 +11,12 @@ class SearchBuilder < Blacklight::SearchBuilder
   def with(blacklight_params = {})
     params_copy = blacklight_params.dup
     if params_copy[:q].present?
-      search_field = params_copy[:search_field]
+      # #add_query_to_solr assumes the presence of search_field, which we don't set
+      # on bento page, so we set it here if absent. we MUST do this, otherwise
+      # the code that adds the field's solr_local_parameters, which we use to
+      # set qf/pf params, won't run.
+      search_field = params_copy[:search_field] || default_search_field.field
+      params_copy[:search_field] = search_field
       if search_field != 'keyword_expert' && !is_advanced_search?
         params_copy[:q] = params_copy[:q].gsub(/[\?]/, '')
       end
