@@ -6,8 +6,9 @@ module AssociateExpandedDocs
 
   extend ActiveSupport::Concern
 
-  def associate_expanded(response, document_list)
+  def associate_expanded(response, document_or_list)
     expanded = response['expanded']
+    document_list = document_or_list.is_a?(Array) ? document_or_list : [ document_or_list ]
     if expanded.present?
       document_list.each do |document|
         item_in_expanded = expanded[document.fetch('cluster_id')]
@@ -31,7 +32,7 @@ module AssociateExpandedDocs
   # override
   def fetch(id)
     response, document = super(id)
-    associate_expanded(response, [document])
+    associate_expanded(response, document)
     [response, document]
   end
 

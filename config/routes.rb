@@ -59,10 +59,11 @@ Rails.application.routes.draw do
 
   # redirects for legacy DLA Franklin links
 
+  get 'index.html' => 'legacy_franklin#redirect_to_root', :format => false
   get 'record.html' => 'legacy_franklin#record', :format => false
   get '/dla/franklin/record.html' => 'legacy_franklin#record', :format => false
-  get '/dla/franklin' => 'legacy_franklin#dla', :format => false
-  get '/dla/franklin/*any' => 'legacy_franklin#dla', :format => false
+  get '/dla/franklin' => 'legacy_franklin#redirect_to_root', :format => false
+  get '/dla/franklin/*any' => 'legacy_franklin#redirect_to_root', :format => false
 
 
   # The priority is based upon order of creation: first created -> highest priority.
