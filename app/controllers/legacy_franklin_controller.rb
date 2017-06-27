@@ -17,7 +17,7 @@ class LegacyFranklinController < ApplicationController
     end
   end
 
-  def dla
+  def redirect_to_root
     redirect_to 'https://franklin.library.upenn.edu/'
   end
 
