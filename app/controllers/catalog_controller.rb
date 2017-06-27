@@ -101,7 +101,6 @@ class CatalogController < ApplicationController
       'expand.field': 'cluster_id',
       'expand.q': '*:*',
       'expand.fq': '*:*',
-      'mm': '100%',
       rows: 10
     }
 
@@ -555,6 +554,16 @@ class CatalogController < ApplicationController
       field.solr_local_parameters = {
           qf: 'id',
           pf: 'id'
+      }
+    end
+
+    config.add_search_field('mms_id') do |field|
+      field.label = 'MMS ID'
+      field.if = Proc.new { false }
+      field.include_in_advanced_search = true
+      field.solr_local_parameters = {
+          qf: 'alma_mms_id',
+          pf: 'alma_mms_id'
       }
     end
 
