@@ -17,4 +17,8 @@ class LegacyFranklinController < ApplicationController
     end
   end
 
+  def dla
+    redirect_to root_path
+  end
+
 end
