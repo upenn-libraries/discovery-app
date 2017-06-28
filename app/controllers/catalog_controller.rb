@@ -47,6 +47,14 @@ class CatalogController < ApplicationController
     end
   end
 
+  PAGINATION_THRESHOLD=250
+  before_action only: :index do
+    if params[:page] && params[:page].to_i > PAGINATION_THRESHOLD
+      flash[:error] = "You have paginated too deep into the result set. Please contact us using the feedback form if you have a need to view results past page #{PAGINATION_THRESHOLD}."
+      redirect_to root_path
+    end
+  end
+
   configure_blacklight do |config|
     # default advanced config values
     config.advanced_search ||= Blacklight::OpenStructWithHashAccess.new
