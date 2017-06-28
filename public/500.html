@@ -16,6 +16,8 @@
     width: 95%;
     max-width: 33em;
     margin: 4em auto 0;
+    line-height: 1.3em;
+    text-align: left;
   }
 
   div.dialog > div {
@@ -39,7 +41,7 @@
 
   div.dialog > p {
     margin: 0 0 1em;
-    padding: 1em;
+    padding: 1em 12%;
     background-color: #F7F7F7;
     border: 1px solid #CCC;
     border-right-color: #999;
@@ -55,12 +57,23 @@
 </head>
 
 <body>
-  <!-- This file lives in public/500.html -->
   <div class="dialog">
     <div>
       <h1>We're sorry, but something went wrong.</h1>
+      <p>
+        An error occurred in the application. It has been logged for investigation.
+      </p>
+      <p>
+        Please try again later.
+      </p>
+      <p>If you are still seeing this error page when trying to
+        perform the same action, please <a href="http://faq.library.upenn.edu/ask">leave us feedback</a>
+        describing what you were trying to do and the web address you were trying to access. Thank you!
+      </p>
     </div>
-    <p>If you are the application owner check the logs for more information.</p>
+    <p>
+      For more help options, visit the <a href="http://gethelp.library.upenn.edu/">Ask Us</a> page.
+    </p>
   </div>
 </body>
 </html>

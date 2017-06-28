@@ -21,4 +21,19 @@ class LegacyFranklinController < ApplicationController
     redirect_to 'https://franklin.library.upenn.edu/'
   end
 
+  def dla_subpaths
+    # trim off querystring portion
+    path = request.fullpath.split('?')[0]
+    # return 404 for stuff like images, css, js
+    if path.end_with?('.css') ||
+      path.end_with?('.gif') ||
+      path.end_with?('.jpg') ||
+      path.end_with?('.js') ||
+      path.end_with?('.png')
+      raise ActionController::RoutingError.new('Not Found')
+    else
+      redirect_to_root
+    end
+  end
+
 end
