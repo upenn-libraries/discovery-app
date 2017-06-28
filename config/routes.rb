@@ -63,7 +63,7 @@ Rails.application.routes.draw do
   get 'record.html' => 'legacy_franklin#record', :format => false
   get '/dla/franklin/record.html' => 'legacy_franklin#record', :format => false
   get '/dla/franklin' => 'legacy_franklin#redirect_to_root', :format => false
-  get '/dla/franklin/*any' => 'legacy_franklin#redirect_to_root', :format => false
+  get '/dla/franklin/*any' => 'legacy_franklin#dla_subpaths', :format => false
 
 
   # The priority is based upon order of creation: first created -> highest priority.
