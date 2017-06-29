@@ -880,7 +880,7 @@ module PennLib
 
     def get_title_sort_values(rec)
       get_title_245(rec).map do |v|
-        v['prefix'] + v['filing']
+        v['filing'] + v['prefix']
       end
     end
 
