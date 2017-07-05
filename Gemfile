@@ -89,19 +89,18 @@ gem 'traject', '2.3.3'
 
 gem 'nokogiri', '1.7.1'
 
-# TODO: Using this version, corrects error for getting format from 008 field,
-# currently breaks in original project.  PR out to original project,
-# will switch back when applied.
-gem 'blacklight-marc', '~> 6.0', :git => 'https://github.com/magibney/blacklight-marc.git', :branch => 'fix-extract_marc-format-008'
+gem 'blacklight-marc', '6.2.0'
+
+gem 'blacklight_advanced_search', '6.3.1'
+
+# TODO: switch back to official gem when PR #36 is accepted and makes it into a release
+gem 'bento_search', :git => 'https://github.com/magibney/bento_search', :branch => 'search_controller_engine_params' #'1.7'
+
+# TODO: switch back to official gem when PR #21 is accepted and makes it into a release
+gem 'summon', :git => 'https://github.com/magibney/summon.rb', :branch => 'sign-empty-param-values'
 
 gem 'blacklight_solrplugins', :git => 'https://github.com/upenn-libraries/blacklight_solrplugins.git'
 
-gem 'bento_search', :git => 'https://github.com/magibney/bento_search', :branch => 'search_controller_engine_params' #'1.7'
-
-gem 'summon', :git => 'https://github.com/magibney/summon.rb', :branch => 'sign-empty-param-values'
-
 gem 'blacklight_alma', :git => 'https://github.com/upenn-libraries/blacklight_alma.git'
-
-gem 'blacklight_advanced_search', '6.3.1'
 
 gem 'blacklight-ris', :git => 'https://github.com/upenn-libraries/blacklight-ris.git'
