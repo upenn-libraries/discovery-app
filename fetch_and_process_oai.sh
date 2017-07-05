@@ -14,7 +14,7 @@ else
 fi
 
 set_dir="$oai_dir/$set_name"
-batch_dir=$set_dir/`date +"%Y_%m_%d_%k_%M"`
+batch_dir=$set_dir/`date +"%Y_%m_%d_%H_%M"`
 mkdir -p $batch_dir
 
 if [ -z "$2" ]
