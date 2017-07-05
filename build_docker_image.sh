@@ -4,7 +4,6 @@
 # git repository, not from your "working" clone, which may have stray
 # files and other artifacts that shouldn't be in the build.
 
-rev=`git rev-parse --short HEAD`
 current_branch=`git rev-parse --abbrev-ref HEAD`
 
 if [ "$#" -ne 1 ]; then
@@ -15,6 +14,8 @@ fi
 
 git checkout $branch
 git pull
+
+rev=`git rev-parse --short HEAD`
 
 docker build -t indexing-dev.library.upenn.int:5000/upenn-libraries/discovery-app:$branch --build-arg GIT_COMMIT=$rev .
 
