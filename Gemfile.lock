@@ -15,19 +15,6 @@ GIT
       summon
 
 GIT
-  remote: https://github.com/magibney/blacklight-marc.git
-  revision: 47c663b9cf40c28ba6831d624c64c943ca82c6f0
-  branch: fix-extract_marc-format-008
-  specs:
-    blacklight-marc (6.1.0)
-      blacklight (~> 6.1)
-      library_stdnums
-      marc (>= 0.4.3, < 1.1)
-      marc-fastxmlwriter
-      rails
-      traject (~> 2.1)
-
-GIT
   remote: https://github.com/magibney/summon.rb
   revision: f0543e229fe41d0068e02b67f4d0af0576586c0a
   branch: sign-empty-param-values
@@ -114,6 +101,13 @@ GEM
       rails (>= 4.2, < 6)
       rsolr (>= 1.0.6, < 3)
       twitter-typeahead-rails (= 0.11.1.pre.corejavascript)
+    blacklight-marc (6.2.0)
+      blacklight (> 6.1, < 8.a)
+      library_stdnums
+      marc (>= 0.4.3, < 1.1)
+      marc-fastxmlwriter
+      rails
+      traject (~> 2.1)
     blacklight_advanced_search (6.3.1)
       blacklight (~> 6.0, >= 6.0.1)
       parslet
@@ -198,7 +192,7 @@ GEM
       kaminari-core (= 1.0.1)
     kaminari-core (1.0.1)
     language_list (1.2.1)
-    library_stdnums (1.4.1)
+    library_stdnums (1.6.0)
     libv8 (3.16.14.19)
     logger (1.2.8)
     loofah (2.0.3)
@@ -332,7 +326,7 @@ DEPENDENCIES
   activerecord-jdbcmysql-adapter (= 1.3.21)
   bento_search!
   blacklight (= 6.8.0)
-  blacklight-marc (~> 6.0)!
+  blacklight-marc (= 6.2.0)
   blacklight-ris!
   blacklight_advanced_search (= 6.3.1)
   blacklight_alma!
