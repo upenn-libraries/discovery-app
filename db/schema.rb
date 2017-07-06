@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170412132456) do
+ActiveRecord::Schema.define(version: 20170706140737) do
 
   create_table "bookmarks", force: :cascade do |t|
     t.integer  "user_id",       limit: 4,   null: false
@@ -33,6 +33,7 @@ ActiveRecord::Schema.define(version: 20170412132456) do
     t.datetime "updated_at",                    null: false
   end
 
+  add_index "searches", ["created_at"], name: "index_searches_on_created_at", using: :btree
   add_index "searches", ["user_id"], name: "index_searches_on_user_id", using: :btree
 
   create_table "users", force: :cascade do |t|
@@ -52,6 +53,8 @@ ActiveRecord::Schema.define(version: 20170412132456) do
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
+  add_index "users", ["guest"], name: "index_users_on_guest", using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
+  add_index "users", ["updated_at"], name: "index_users_on_updated_at", using: :btree
 
 end
