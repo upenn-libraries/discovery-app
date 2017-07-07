@@ -59,6 +59,11 @@ span.site-name, span.site-name a {
 
 @media (min-width: 768px) {
 
+  .navbar-header {
+    /* without min-width, Safari will render site-name below the logo image. sigh. */
+    min-width: 300px;
+  }
+
   .navbar-nav > li > div {
     color: white;
   }
