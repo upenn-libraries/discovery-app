@@ -45,9 +45,10 @@ module ApplicationHelper
   end
 
   def display_alma_fulfillment_iframe?(document)
-    # always display the iframe because there are request options in it we want to show
-    # for records that don't have any holdings
-    true
+    # we need to display the iframe even when there are no holdings,
+    # because there are request options and other links we want to show.
+    # we do NOT want to show the iframe for things without an MMS ID (e.g. Hathi)
+    document.alma_mms_id.present?
     # old logic:
     #document.has_any_holdings?
   end
