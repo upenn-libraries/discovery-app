@@ -5,11 +5,12 @@ require 'pathname'
 
 if ARGV.size != 4
   puts 'Usage: fetch_oai.rb SET_NAME FROM UNTIL OUTPUT_DIRECTORY'
+  puts '  set FROM and UNTIL to -1 to avoid sending those parameters'
   exit
 end
 
 set_name = ARGV[0]
-from = ARGV[1]
+from_arg = ARGV[1]
 until_arg = ARGV[2]
 output_dir = ARGV[3]
 
@@ -19,7 +20,14 @@ count = 0
 resumption_token = nil
 keep_going = true
 
-uri_str = "https://upenn.alma.exlibrisgroup.com/view/oai/01UPENN_INST/request?verb=ListRecords&set=#{set_name}&metadataPrefix=marc21&from=#{from}&until=#{until_arg}"
+uri_str = "https://upenn.alma.exlibrisgroup.com/view/oai/01UPENN_INST/request?verb=ListRecords&set=#{set_name}&metadataPrefix=marc21"
+if from_arg != '-1'
+  uri_str += "&from=#{from_arg}"
+end
+if until_arg != '-1'
+  uri_str += "&until=#{until_arg}"
+end
+
 uri = URI(uri_str)
 is_https = uri.scheme == 'https'
 
