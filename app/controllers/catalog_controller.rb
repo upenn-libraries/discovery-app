@@ -13,6 +13,8 @@ class CatalogController < ApplicationController
 
   include BlacklightSolrplugins::XBrowse
 
+  include HandleInvalidAdvancedSearch
+
   include AssociateExpandedDocs
 
   before_action :expire_session
