@@ -21,9 +21,3 @@ $(document).ready(function() {
     });
 });
 
-BentoSearch.ajax_load.default_success_callback = function(div) {
-    // set the login link with proper redirect
-    var currentUrl = window.location.href;
-    var proxyUrl = 'https://proxy.library.upenn.edu/login?url=http://127.0.0.1:8082/?redirect=' + encodeURIComponent(currentUrl);
-    $(div).find(".ezproxy-login-link").attr("href", proxyUrl);
-};
