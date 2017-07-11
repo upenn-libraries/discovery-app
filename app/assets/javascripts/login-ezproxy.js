@@ -43,13 +43,22 @@ $(document).ready(function() {
                 var proxyUrl = 'https://proxy.library.upenn.edu/login?url=http://127.0.0.1:8082/?redirect=' + encodeURIComponent(currentUrl);
                 $(div).find(".ezproxy-login-link").attr("href", proxyUrl);
 
+                var viewAndFilterUrl;
+                $(div).find(".view-and-filter").find("a").each(function (idx, element) {
+                    viewAndFilterUrl = $(element).attr("href");
+                });
+
                 if (auth !== null && auth !== undefined) {
+                    viewAndFilterUrl = "https://proxy.library.upenn.edu/login?url=" + viewAndFilterUrl;
                     $(div).find(".view-and-filter").find("a").each(function (idx, element) {
-                        var url = $(element).attr("href");
                         // ezproxy handles url param specifically so we don't need to escape it
-                        $(element).attr("href", "https://proxy.library.upenn.edu/login?url=" + url);
+                        $(element).attr("href", viewAndFilterUrl);
                     });
                 }
+
+                $(div).find(".bento_item").find("a").each(function(idx, element) {
+                    $(element).attr("href", viewAndFilterUrl);
+                });
             }, beforeSend);
         }, window);
 
