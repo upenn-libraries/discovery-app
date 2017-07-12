@@ -2,6 +2,17 @@ Rails.application.routes.draw do
   concern :range_searchable, BlacklightRangeLimit::Routes::RangeSearchable.new
   concern :exportable, Blacklight::Routes::Exportable.new
 
+  # redirects for legacy DLA Franklin links
+
+  get 'index.html' => 'legacy_franklin#redirect_to_root', :format => false
+  get 'record.html' => 'legacy_franklin#record', :format => false
+  # blacklight_advanced_search has an /advanced route but we never use advanced.html (w/ the format)
+  # so this is safe to list here.
+  get 'advanced.html' => 'legacy_franklin#redirect_to_root', :format => false
+  get '/dla/franklin/record.html' => 'legacy_franklin#record', :format => false
+  get '/dla/franklin' => 'legacy_franklin#redirect_to_root', :format => false
+  get '/dla/franklin/*any' => 'legacy_franklin#dla_subpaths', :format => false
+
   root to: "catalog#landing"
   get 'bento/' => 'catalog#bento'
 
@@ -56,14 +67,6 @@ Rails.application.routes.draw do
   end
 
   BentoSearch::Routes.new(self).draw
-
-  # redirects for legacy DLA Franklin links
-
-  get 'index.html' => 'legacy_franklin#redirect_to_root', :format => false
-  get 'record.html' => 'legacy_franklin#record', :format => false
-  get '/dla/franklin/record.html' => 'legacy_franklin#record', :format => false
-  get '/dla/franklin' => 'legacy_franklin#redirect_to_root', :format => false
-  get '/dla/franklin/*any' => 'legacy_franklin#dla_subpaths', :format => false
 
 
   # The priority is based upon order of creation: first created -> highest priority.
