@@ -133,19 +133,4 @@ namespace :pennlib do
 
   end
 
-  namespace :db do
-    desc 'Delete old data from database'
-    task :delete_old_data => :environment do |t, args|
-
-      days_old_for_searches = 1
-      Rake::Task['blacklight:delete_old_searches'].invoke(days_old_for_searches)
-
-      # we don't use the devise_guests:delete_old_guest_users task
-      # because it deletes records one at a time (!)
-
-      days_old_for_users = 4
-      User.where("guest = ? and updated_at < ?", true, Time.now - days_old_for_users.to_i.days).destroy_all
-    end
-  end
-
 end
