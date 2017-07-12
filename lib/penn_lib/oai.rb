@@ -6,8 +6,13 @@ module PennLib
 
       def delete_ids_in_file(file)
         id_list = parse_ids_to_delete(file)
-        puts "Deleting IDs=#{id_list}"
-        delete(id_list)
+        if id_list && id_list.size > 0
+          puts 'Deleting IDs:'
+          puts id_list.join("\n")
+          delete(id_list)
+        else
+          puts 'No IDs found to delete.'
+        end
       end
 
       def parse_ids_to_delete(file)
