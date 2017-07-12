@@ -1,6 +1,8 @@
 $(document).ready(function() {
 
     var SUMMON_ROLE_AUTH_HEADER_NAME = "x-summon-role-auth";
+    var PROXY_PREPEND = "https://proxy.library.upenn.edu/login?url=";
+
 
     function clearLoggedInClasses() {
         $(".ezproxy-login-status").removeClass("ezproxy-is-logged-in ezproxy-is-not-logged-in");
@@ -13,7 +15,7 @@ $(document).ready(function() {
     if ($(".ezproxy-login-status").length > 0) {
         var LOGIN = require('ezproxy-login-status');
         var module = LOGIN.getModule('ezproxyStatus');
-        module.setURL("https://proxy.library.upenn.edu/login?url=https://127.0.0.1:8080/");
+        module.setURL(PROXY_PREPEND + "https://127.0.0.1:8080/");
         //module.setLoggedOutPingIntervalSeconds(60);
         //module.setLoggedInPingIntervalSeconds(60);
         //module.setTimeoutMillis(2000); // to determine a failed jsonp authentication request
@@ -40,25 +42,21 @@ $(document).ready(function() {
             BentoSearch.ajax_load(loginStatusDiv.children(".bento_search_ajax_wait"), function (div) {
                 // set the login link with proper redirect
                 var currentUrl = window.location.href;
-                var proxyUrl = 'https://proxy.library.upenn.edu/login?url=http://127.0.0.1:8082/?redirect=' + encodeURIComponent(currentUrl);
+                var proxyUrl = PROXY_PREPEND + 'http://127.0.0.1:8082/?redirect=' + encodeURIComponent(currentUrl);
                 $(div).find(".ezproxy-login-link").attr("href", proxyUrl);
 
-                var viewAndFilterUrl;
-                $(div).find(".view-and-filter").find("a").each(function (idx, element) {
-                    viewAndFilterUrl = $(element).attr("href");
-                });
-
                 if (auth !== null && auth !== undefined) {
-                    viewAndFilterUrl = "https://proxy.library.upenn.edu/login?url=" + viewAndFilterUrl;
                     $(div).find(".view-and-filter").find("a").each(function (idx, element) {
                         // ezproxy handles url param specifically so we don't need to escape it
-                        $(element).attr("href", viewAndFilterUrl);
+                        var viewAndFilterUrl = $(element).attr("href");
+                        $(element).attr("href", PROXY_PREPEND + viewAndFilterUrl);
+                    });
+                    $(div).find(".bento_item").find("a").each(function(idx, element) {
+                        var resourceLink = $(element).attr("href");
+                        $(element).attr("href", PROXY_PREPEND + resourceLink);
                     });
                 }
 
-                $(div).find(".bento_item").find("a").each(function(idx, element) {
-                    $(element).attr("href", viewAndFilterUrl);
-                });
             }, beforeSend);
         }, window);
 
