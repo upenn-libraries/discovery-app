@@ -3,6 +3,8 @@ require 'uri'
 
 # frozen_string_literal: true
 class CatalogController < ApplicationController
+  include ReplaceInvalidBytes
+
   include BlacklightAdvancedSearch::Controller
 
   include BlacklightRangeLimit::ControllerOverride
