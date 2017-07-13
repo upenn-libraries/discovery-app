@@ -4,7 +4,7 @@ $(document).ready(function() {
       flashContainer = document.getElementsByClassName('flash_messages')[0];
       if(flashContainer) {
         flashContainer.innerHTML += " \
-          <div class='alert alert-warning'> \
+          <div class='alert alert-danger'> \
             NOTE: 3rd party cookies are disabled. \
             <a class='close' data-dismiss='alert' href='#'>×</a> \
           </div>";
