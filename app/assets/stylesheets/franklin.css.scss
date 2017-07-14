@@ -396,3 +396,9 @@ h3.ongray {
 .volumes-available {
   margin-top: 1em;
 }
+
+@media (min-width: 768px) {
+  dt.blacklight-other_records {
+    padding-top: 6px;
+  }
+}

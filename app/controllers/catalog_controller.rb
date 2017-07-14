@@ -335,7 +335,7 @@ class CatalogController < ApplicationController
         { dynamic_name: 'bound_with_display', label: 'Bound with' },
         # 'Online' corresponds to the right-side box labeled 'Online' in DLA Franklin
         { dynamic_name: 'full_text_links_for_cluster_display', label: 'Online', helper_method: 'render_online_display_for_show_view' },
-        { name: 'electronic_holdings_json', label: 'Online resource', helper_method: 'render_electronic_holdings' },
+        #{ name: 'electronic_holdings_json', label: 'Online resource', helper_method: 'render_electronic_holdings' },
     ])
 
     # "fielded" search configuration. Used by pulldown among other places.

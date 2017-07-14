@@ -9,6 +9,7 @@
           <dd class="blacklight-<%= field_name.parameterize %>"><%= doc_presenter.field_value field_name %></dd>
       <% end -%>
   <% end -%>
+  <%= render partial: 'status_location_field', locals: { document: document } %>
 </dl>
 
 <%= render partial: 'alma_availability_iframe', locals: { document: document } %>
