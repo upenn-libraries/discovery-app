@@ -1,4 +1,4 @@
-$(document).ready(function() {
+(function() {
   var receiveMessage = function (evt) {
     if (evt.data === 'MM:3PCunsupported') {
       flashContainer = document.getElementsByClassName('flash_messages')[0];
@@ -12,4 +12,4 @@ $(document).ready(function() {
     }
   };
   window.addEventListener("message", receiveMessage, false);
-});
+})();

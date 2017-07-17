@@ -92,6 +92,8 @@ module ApplicationHelper
     queried_fields = queried_fields.select { |k,v| fieldnames.member? k }
     queried_fields.sort
 
+    preselection_candidates = fields.keys
+
     # now make an Array of OpenStructs for each row corresponding to a
     # set of form inputs, for advanced search page
     limit = 5
@@ -99,7 +101,7 @@ module ApplicationHelper
     result = []
     while i < limit do
       value = value2 = nil
-      selected_field = fields.keys.first
+      selected_field = preselection_candidates.first
       if queried_fields.length > 0
         fieldname = queried_fields.keys.first
         selected_field = fieldname
@@ -138,6 +140,7 @@ module ApplicationHelper
         i += 1
       end
       if value || value2 || (result.size < min)
+        preselection_candidates.delete(selected_field)
         result += [OpenStruct.new(
           index: i - 1,
           fields: fields,
