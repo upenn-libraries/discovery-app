@@ -1,7 +1,47 @@
 <% content_for :head do %>
     <script type="text/javascript">
         $(document).ready(function() {
-            $("form.advanced").submit(function() {
+            function validateForm(submitEvent) {
+                // build array of the search fields for which user has entered a search term
+                var populatedFields = $(".advanced-search-field").map(function (idx, element) {
+                    var isPopulated = $(element).find("input").filter(function(idx, element) {
+                            var val = $(element).val();
+                            return val && val.length > 0;
+                        }).length > 0;
+
+                    if(isPopulated) {
+                        var fieldNames = $(element).find("select option:selected").map(function (idx, element) {
+                            return $(element).text();
+                        }).get();
+                        if (fieldNames.length > 0) {
+                            return fieldNames[0]
+                        }
+                    }
+                }).get();
+
+                // count them
+                var countMap = populatedFields.reduce(function (acc, val) {
+                    acc[val] = (acc[val] || 0) + 1;
+                    return acc;
+                }, {});
+
+                var dupeFields = [];
+                for(var key in countMap) {
+                    if(countMap[key] > 1) {
+                        dupeFields.push(key);
+                    }
+                }
+
+                if(dupeFields.length > 0) {
+                    submitEvent.preventDefault();
+                    var content = "<p>Your search tries to use the following field(s) more than once: " + dupeFields.join(", ") + ". This is not allowed.</p>";
+                    content += "<p>Please fix this by combining your search terms into a single expression for the field(s) or by choosing different fields for the terms.</p>";
+                    $("#advanced-search-error-dialog .modal-body").html(content);
+                    $("#advanced-search-error-dialog").modal();
+                }
+            };
+
+            $("form.advanced").submit(function(event) {
                 $(".advanced-search-field").each(function (idx, container) {
                     if($(container).find("input[type=text]").length == 2) {
                         // range search
@@ -27,6 +67,8 @@
                         $(input_element).attr("name", input_name);
                     }
                 });
+
+                validateForm(event);
             });
         });
     </script>
