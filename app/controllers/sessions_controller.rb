@@ -49,7 +49,7 @@ class SessionsController < Devise::SessionsController
   # override from Devise
   def respond_to_on_destroy
     if @alma_auth_type == 'sso'
-      redirect_to "/Shibboleth.sso/Logout?return=#{url_encode(SHIB_IDP_LOGOUT_PAGE)}"
+      redirect_to "/Shibboleth.sso/Logout?return=#{URI.encode(SHIB_IDP_LOGOUT_PAGE)}"
     else
       super
     end
