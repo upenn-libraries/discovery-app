@@ -101,7 +101,7 @@ span.site-name, span.site-name a {
   margin: 0;
 }
 
-.landing-content h3 {
+.landing-content .heading {
   font-weight: bold;
   color: #900;
   font-size: 1.17em;
@@ -330,26 +330,28 @@ h3.ongray {
   color: #000;
 }
 
-.colnews h3 {
+.colnews .heading {
   margin-top:0;
+  margin-bottom: 10px;
   background-color: #e8e8e8;
   color: #444;
   font-style:normal;
   font-size: 1.08em;
+  font-weight: bold;
   padding: .08em .33em .33em .33em;
   letter-spacing: .02em;
 }
-.colnews h3.colnewsheader .colnewslabel {
+.colnews .colnewsheader .colnewslabel {
   display:inline-block;
   vertical-align: top;
   /*IE Hack*/
   zoom: 1;
   *display: inline;
 }
-.colnews h3.colnewsheader .colnewslabel div {
+.colnews .colnewsheader .colnewslabel div {
   padding-top:1em;
 }
-.colnews h3.colnewsheader .colnewslabelicon {
+.colnews .colnewsheader .colnewslabelicon {
   display:inline-block;
   vertical-align:top;
   /*IE Hack*/
