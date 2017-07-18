@@ -4,6 +4,8 @@ class SessionsController < Devise::SessionsController
   include BlacklightAlma::SocialLogin
   include BlacklightAlma::Sso
 
+  SHIB_IDP_LOGOUT_PAGE = 'https://idp.pennkey.upenn.edu/logout'
+
   def set_session_first_name(id)
     if id
       response = BlacklightAlma::UsersApi.instance.get_name(id)
@@ -47,7 +49,7 @@ class SessionsController < Devise::SessionsController
   # override from Devise
   def respond_to_on_destroy
     if @alma_auth_type == 'sso'
-      redirect_to "/Shibboleth.sso/Logout?return=#{root_url}"
+      redirect_to "/Shibboleth.sso/Logout?return=#{URI.encode(SHIB_IDP_LOGOUT_PAGE)}"
     else
       super
     end
