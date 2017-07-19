@@ -28,7 +28,7 @@ module ApplicationHelper
     else
       attrs = {
           'href': anchor,
-          'aria-controls': tab_id,
+          'aria-controls': (data_target || '').gsub('#', '').split(',').first,
           'data-target': data_target,
           'role': 'tab',
           'data-toggle': 'tab',
