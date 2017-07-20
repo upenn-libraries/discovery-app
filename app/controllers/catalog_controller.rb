@@ -642,6 +642,7 @@ class CatalogController < ApplicationController
   # Landing has to live under this controller, otherwise the paths for
   # certain BL view partials used on landing page won't resolve correctly.
   def landing
+    @page_title = t('franklin.landing_page_title')
     index
   end
 

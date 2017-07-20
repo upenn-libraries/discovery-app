@@ -44,6 +44,10 @@ module ApplicationHelper
     (ENV['SUPPRESS_AVAILABILITY'] != 'true') && document.has_any_holdings?
   end
 
+  def show_availability_on_index_view?
+    params[:format] != 'atom'
+  end
+
   def display_alma_fulfillment_iframe?(document)
     # we need to display the iframe even when there are no holdings,
     # because there are request options and other links we want to show.
