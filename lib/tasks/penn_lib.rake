@@ -133,4 +133,13 @@ namespace :pennlib do
 
   end
 
+  namespace :alma do
+
+    desc 'Generate CSV for comparing location names in locations.xml vs Alma'
+    task :compare_locations => :environment do |t, args|
+      PennLib::LibrariesAndLocations.compare_locations
+    end
+
+  end
+
 end
