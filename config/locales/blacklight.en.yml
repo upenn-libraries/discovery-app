@@ -12,6 +12,7 @@ en:
       librarian_view: 'Staff View'
 
   franklin:
+    landing_page_title: 'Franklin - University of Pennsylvania'
     bento_search:
       placeholder: 'Find articles, books, journals & more'
     articles_search:

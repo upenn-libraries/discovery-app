@@ -2,7 +2,7 @@
 # Configuration for bento_search gem
 
 BentoSearch.register_engine('summon') do |conf|
-  conf.engine     = 'BentoSearch::SummonEngine'
+  conf.engine     = 'PennLib::SummonEngine'
   conf.access_id  = ENV['SUMMON_ACCESS_ID']
   conf.secret_key = ENV['SUMMON_SECRET_KEY']
   #conf.lang       = 'en'
