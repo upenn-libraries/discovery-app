@@ -119,6 +119,17 @@ Traject, which is currently broken.
 
 # Docker
 
+There is a `build_docker_image.sh` script you can use to build docker
+images from specific branches that have been freshly pulled from
+origin. It's intended to be run from a repository clone whose sole
+purpose is to do builds, so that the images aren't polluted with misc
+files you may have lying around. Run it with the branch name:
+
+``` bash
+./build_docker_image.sh master
+# remember to push to the registry afterwards! see the output of the script.
+```
+
 See the
 [deploy-docker](https://gitlab.library.upenn.edu/ansible/deploy-discovery)
 repository for Ansible scripts that build Docker images and deploy containers

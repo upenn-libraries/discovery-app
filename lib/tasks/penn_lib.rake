@@ -11,7 +11,7 @@ namespace :pennlib do
     #
     # With this task, the MARC_FILE env variable can be a glob,
     # such as "/data/*.xml"
-    desc "Index multiple MARC files"
+    desc 'Index multiple MARC files using Traject'
     task :index  => :environment do |t, args|
 
       marc_file_original = ENV['MARC_FILE']
@@ -36,7 +36,7 @@ namespace :pennlib do
       end
     end
 
-    desc "Index MARC data from stdin"
+    desc 'Index MARC data from stdin using Traject'
     task :index_from_stdin  => :environment do |t, args|
       SolrMarc.indexer =
         case ENV['MARC_SOURCE']
@@ -51,8 +51,7 @@ namespace :pennlib do
       SolrMarc.indexer.process(STDIN)
     end
 
-    # for debugging
-    desc "Index MARC records and output to file (for debugging)"
+    desc 'Index MARC records using Traject, outputting Solr query to file (for debugging)'
     task :index_to_file => :environment do |t, args|
 
       class MyMarcIndexer < HathiIndexer
@@ -65,16 +64,15 @@ namespace :pennlib do
         end
       end
 
-      io = Zlib::GzipReader.new(File.open('/home/jeffchiu/hathi-oai-marc/processed/part_929.xml.gz'), :external_encoding => 'UTF-8')
+      io = Zlib::GzipReader.new(File.open(ENV['MARC_FILE']), :external_encoding => 'UTF-8')
       MyMarcIndexer.new.process(io)
     end
 
-    # for debugging: this seems braindead but is actually useful: the
-    # marc reader will raise an exception if it can't marshal the XML
-    # into Record objects
-    desc "Just read MARC records and do nothing"
+    # this seems braindead but is actually useful: the marc reader will
+    # raise an exception if it can't marshal the XML into Record objects
+    desc "Just read MARC records and do nothing (for debugging)"
     task :read_marc => :environment do |t, args|
-      reader = MARC::XMLReader.new('/home/jeffchiu/marc/alma_prod_sandbox/20170223/split/chunk_3.xml')
+      reader = MARC::XMLReader.new(ENV['MARC_FILE'])
       last_id = nil
       begin
         reader.each do |record|
@@ -86,7 +84,7 @@ namespace :pennlib do
       end
     end
 
-    desc "Dump OCLC IDs"
+    desc "Dump OCLC IDs from Hathi MARC to stdout (for debugging)"
     task :dump_oclc_ids => :environment do |t, args|
       code_mappings ||= PennLib::CodeMappings.new(Rails.root.join('config').join('translation_maps'))
       pennlibmarc ||= PennLib::Marc.new(code_mappings)
@@ -129,6 +127,15 @@ namespace :pennlib do
       input_filename = ENV['OAI_FILE']
       input = (input_filename && File.exist?(input_filename)) ? PennLib::Util.openfile(input_filename) : STDIN
       PennLib::OAI.delete_ids_in_file(input)
+    end
+
+  end
+
+  namespace :alma do
+
+    desc 'Generate CSV for comparing location names in locations.xml vs Alma'
+    task :compare_locations => :environment do |t, args|
+      PennLib::LibrariesAndLocations.compare_locations
     end
 
   end
