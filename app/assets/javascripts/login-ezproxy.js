@@ -51,10 +51,6 @@ $(document).ready(function() {
                         var viewAndFilterUrl = $(element).attr("href");
                         $(element).attr("href", PROXY_PREPEND + viewAndFilterUrl);
                     });
-                    $(div).find(".bento_item").find("a").each(function(idx, element) {
-                        var resourceLink = $(element).attr("href");
-                        $(element).attr("href", PROXY_PREPEND + resourceLink);
-                    });
                 }
 
             }, beforeSend);
