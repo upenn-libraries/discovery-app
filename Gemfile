@@ -30,7 +30,7 @@ gem "blacklight", '6.8.0'
 
 gem "jettywrapper", '2.0.4'
 
-gem 'tzinfo-data', '1.2016.7', platforms: [:mingw, :mswin, :x64_mingw]
+gem 'tzinfo-data' # , '1.2016.7', platforms: [:mingw, :mswin, :x64_mingw]
 
 gem "solr_wrapper", '0.18.1'
 
