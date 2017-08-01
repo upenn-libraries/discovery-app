@@ -305,6 +305,8 @@ GEM
       railties (>= 3.1)
     tzinfo (1.2.3)
       thread_safe (~> 0.1)
+    tzinfo-data (1.2017.2)
+      tzinfo (>= 1.0.0)
     uglifier (3.0.2)
       execjs (>= 0.3.0, < 3)
     unf (0.1.4)
@@ -354,7 +356,7 @@ DEPENDENCIES
   summon!
   therubyracer (= 0.12.2)
   traject (= 2.3.3)
-  tzinfo-data (= 1.2016.7)
+  tzinfo-data
   uglifier (= 3.0.2)
   web-console (~> 2.0)
 

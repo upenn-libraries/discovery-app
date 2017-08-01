@@ -8,7 +8,7 @@
 # expects things, how to do container start-up scripts, etc) so it's
 # worth spending some time with the docs.
 
-FROM codeforkjeff/passenger-ruby23:0.9.20-ruby-build
+FROM pennlib/passenger-ruby23:0.9.23-ruby-build
 
 RUN rm -f /etc/localtime && ln -s /usr/share/zoneinfo/US/Eastern /etc/localtime
 
