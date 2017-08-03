@@ -25,7 +25,8 @@ $(document).ready(function() {
             } else if (holding['availability'] == 'available') {
                 availability = "Available";
             }
-            return [availability, holding['location'], holding['call_number'], constructAeonLink(mms_id, holding)]
+            // TODO: pass in format to shelfLocatorLink() somehow
+            return [availability, holding['location'], holding['call_number'], $.shelfLocatorLink(mms_id, holding, "TODO"), constructAeonLink(mms_id, holding)]
                 .filter(function (item) {
                     return item != null && item.length > 0;
                 }).join(". ");
