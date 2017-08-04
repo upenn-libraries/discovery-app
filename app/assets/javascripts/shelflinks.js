@@ -311,18 +311,22 @@ jQuery.shelfLocatorLink = new function() {
     }
 
     return function(mms_id, holding, format) {
-        var location = holding['location'];
-        var target = getMapTarget(location, holding['call_number'], format);
-        var availability = holding['availability'];
-        if (target !== 'DENIAL' && shouldDisplayLink(location, target, availability, format)) {
-            if (location.indexOf("Fine Arts") >= 0) {
-                var url = "http://www.library.upenn.edu/catalogs/franklin/fisher.html#" + target;
-                return "<a href=\"" + url + "\" target='_blank'>See Shelf Location</a>";
-            } else {
-                //console.log("showing result for " + mms_id + " " + library + " " + location + " " + target + " " + availability);
-                var url = "http://www.library.upenn.edu/catalogs/franklin/user.html#" + target;
-                return "<a href=\"" + url + "\" target='_blank'>See Shelf Location</a></div>";
+        try {
+            var location = holding['location'];
+            var target = getMapTarget(location, holding['call_number'], format);
+            var availability = holding['availability'];
+            if (target !== 'DENIAL' && shouldDisplayLink(location, target, availability, format)) {
+                if (location.indexOf("Fine Arts") >= 0) {
+                    var url = "http://www.library.upenn.edu/catalogs/franklin/fisher.html#" + target;
+                    return "<a href=\"" + url + "\" target='_blank'>See Shelf Location</a>";
+                } else {
+                    //console.log("showing result for " + mms_id + " " + library + " " + location + " " + target + " " + availability);
+                    var url = "http://www.library.upenn.edu/catalogs/franklin/user.html#" + target;
+                    return "<a href=\"" + url + "\" target='_blank'>See Shelf Location</a></div>";
+                }
             }
+        } catch(e) {
+            console.log("error in shelfLocatorLink for " + mms_id + ": " + e.message);
         }
     };
 };
