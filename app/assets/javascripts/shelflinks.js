@@ -128,7 +128,7 @@ jQuery.shelfLocatorLink = new function() {
                 }
             }
         }
-        return status === "available";
+        return status === "available" || status === "unavailable";
     }
 
     function getMapTarget(location, call_number, format) {
