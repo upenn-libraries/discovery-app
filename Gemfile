@@ -30,7 +30,8 @@ gem "blacklight", '6.8.0'
 
 gem "jettywrapper", '2.0.4'
 
-gem 'tzinfo-data' # , '1.2016.7', platforms: [:mingw, :mswin, :x64_mingw]
+# newer passenger docker image needs tzinfo-data installed for some reason
+gem 'tzinfo-data', '1.2017.2'
 
 gem "solr_wrapper", '0.18.1'
 
@@ -56,7 +57,7 @@ gem 'sdoc', '0.4.2', group: :doc
 # Use Unicorn as the app server
 # gem 'unicorn'
 
-gem 'passenger', '5.1.2', require: 'phusion_passenger/rack_handler'
+gem 'passenger', '5.1.6', require: 'phusion_passenger/rack_handler'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
