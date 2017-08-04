@@ -356,7 +356,7 @@ DEPENDENCIES
   summon!
   therubyracer (= 0.12.2)
   traject (= 2.3.3)
-  tzinfo-data
+  tzinfo-data (= 1.2017.2)
   uglifier (= 3.0.2)
   web-console (~> 2.0)
 

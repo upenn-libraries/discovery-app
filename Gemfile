@@ -30,7 +30,8 @@ gem "blacklight", '6.8.0'
 
 gem "jettywrapper", '2.0.4'
 
-gem 'tzinfo-data' # , '1.2016.7', platforms: [:mingw, :mswin, :x64_mingw]
+# newer passenger docker image needs tzinfo-data installed for some reason
+gem 'tzinfo-data', '1.2017.2'
 
 gem "solr_wrapper", '0.18.1'
 
