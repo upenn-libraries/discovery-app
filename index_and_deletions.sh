@@ -5,6 +5,8 @@
 batch_dir=$1
 set_name=$2
 
+export SOLR_USE_UID_DISTRIB_PROCESSOR=true
+
 echo "Indexing into Solr"
 ./index_solr.sh "$batch_dir/processed"
 
