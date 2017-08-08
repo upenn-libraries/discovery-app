@@ -56,7 +56,7 @@ class FranklinIndexer < BaseIndexer
     super
 
     # append extra params to the Solr update URL for solr-side cross reference handling
-    solr_update_url = [ ENV['SOLR_URL'].chomp('/'), 'update', 'json' ].join('/') + '?processor=xref-copyfield'
+    solr_update_url = [ ENV['SOLR_URL'].chomp('/'), 'update', 'json' ].join('/') + '?processor=xref-copyfield,uid-distrib'
 
     settings do
       # type may be 'binary', 'xml', or 'json'
