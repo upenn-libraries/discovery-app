@@ -126,7 +126,7 @@ namespace :pennlib do
     task :delete_ids => :environment do |t, args|
       input_filename = ENV['OAI_FILE']
       input = (input_filename && File.exist?(input_filename)) ? PennLib::Util.openfile(input_filename) : STDIN
-      PennLib::OAI.delete_ids_in_file(input)
+      PennLib::OAI.delete_ids_in_file(input, input_filename)
     end
 
   end
