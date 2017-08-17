@@ -7,18 +7,17 @@ module PennLib
       def delete_ids_in_file(file)
         id_list = parse_ids_to_delete(file)
         if id_list && id_list.size > 0
-          puts 'Deleting IDs:'
-          puts id_list.join("\n")
+          puts "Deleting #{id_list.size} IDs from file #{file}"
           delete(id_list)
         else
-          puts 'No IDs found to delete.'
+          puts "No IDs found to delete in file #{file}"
         end
       end
 
       def parse_ids_to_delete(file)
         doc = Nokogiri::XML(file)
         ns_map = { 'oai' => 'http://www.openarchives.org/OAI/2.0/' }
-        results = doc.xpath("//oai:ListRecords/oai:record/oai:header[@status='deleted']/oai:identifier", ns_map)
+        results = doc.xpath("//oai:ListRecords/oai:record/oai:header/oai:identifier", ns_map)
         results.map { |elem| 'FRANKLIN_' + elem.text.split(':')[-1] }
       end
 
