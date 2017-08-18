@@ -59,7 +59,8 @@ class FranklinIndexer < BaseIndexer
     # and duplicate ID deletion
     processors = [ 'xref-copyfield' ]
     if ENV['SOLR_USE_UID_DISTRIB_PROCESSOR']
-      processors << 'uid-distrib'
+      # disable; handle deletion outside of solr, either permanently or pending bug fixes
+      #processors << 'uid-distrib'
     end
 
     solr_update_url = [ ENV['SOLR_URL'].chomp('/'), 'update', 'json' ].join('/') + "?processor=#{processors.join(',')}"

@@ -4,25 +4,24 @@ module PennLib
   module OAI
     class << self
 
-      def delete_ids_in_file(file)
+      def delete_ids_in_file(file, filename)
         id_list = parse_ids_to_delete(file)
         if id_list && id_list.size > 0
-          puts 'Deleting IDs:'
-          puts id_list.join("\n")
-          delete(id_list)
+          puts "Deleting #{id_list.size} IDs from file #{filename}"
+          delete(id_list, filename)
         else
-          puts 'No IDs found to delete.'
+          puts "No IDs found to delete in file #{filename}"
         end
       end
 
       def parse_ids_to_delete(file)
         doc = Nokogiri::XML(file)
         ns_map = { 'oai' => 'http://www.openarchives.org/OAI/2.0/' }
-        results = doc.xpath("//oai:ListRecords/oai:record/oai:header[@status='deleted']/oai:identifier", ns_map)
+        results = doc.xpath("//oai:ListRecords/oai:record/oai:header/oai:identifier", ns_map)
         results.map { |elem| 'FRANKLIN_' + elem.text.split(':')[-1] }
       end
 
-      def delete(ids)
+      def delete(ids, filename)
         url = Rails.application.config_for(:blacklight)['url']
         puts "Solr URL: #{url}"
 
@@ -33,9 +32,9 @@ module PennLib
         response = solr.delete_by_query(delete_queries)
 
         if response['responseHeader']['status'] == 0
-          puts "Solr returned success code for deletion(s)."
+          puts "Solr returned success code for deletion(s). (file=#{filename}, #{ids.size} ids)"
         else
-          puts "ERROR from Solr on deletion: #{response}"
+          puts "ERROR from Solr on deletion: #{response} (file=#{filename}, #{ids.size} ids)"
         end
 
         #solr.commit
