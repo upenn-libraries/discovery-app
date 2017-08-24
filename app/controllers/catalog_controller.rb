@@ -140,7 +140,7 @@ class CatalogController < ApplicationController
 
     # solr field configuration for document/show views
     #config.show.title_field = 'title_display'
-    #config.show.display_type_field = 'format'
+    config.show.display_type_field = 'format_a'
 
     # solr fields that will be treated as facets by the blacklight application
     #   The ordering of the field names is the order of the display

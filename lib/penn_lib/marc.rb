@@ -270,7 +270,9 @@ module PennLib
     end
 
     def is_subject_search_field(field)
-      if subject_search_tags.member?(field.tag) || field.tag.start_with?('69')
+      if ! (field.respond_to?(:indicator2) && %w{0 1 2 4}.member?(field.indicator2))
+        false
+      elsif subject_search_tags.member?(field.tag) || field.tag.start_with?('69')
         true
       elsif field.tag == '880'
         sub6 = (field.find_all { |sf| sf.code == '6' }.map(&:value).first || '')[0..2]
