@@ -4,8 +4,9 @@
 
 filename=$1
 dir=`dirname $filename`
-base_filename=`basename "${filename%%.*}"`
+base_filename=`basename "$filename"`
+base_filename="${base_filename%%.*}"
 
 mkdir -p $dir/log
 
-zcat $filename | bundle exec rake pennlib:marc:index_from_stdin >> $dir/log/$base_filename.log 2>> $dir/log/$base_filename.log
+zcat $filename | bundle exec rake pennlib:marc:index_from_stdin >> $dir/log/$base_filename.log 2>&1
