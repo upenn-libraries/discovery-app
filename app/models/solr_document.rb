@@ -37,7 +37,7 @@ class SolrDocument
     },
     :TI => 'title',
     :AU => 'author_creator_a',
-    :PY => 'publication_date_a',
+    :PY => Proc.new { pennlibmarc.get_ris_py_field(to_marc) },
     :CY => Proc.new { pennlibmarc.get_ris_cy_field(to_marc) },
     :PB => Proc.new { pennlibmarc.get_ris_pb_field(to_marc) },
     :ET => 'edition',
