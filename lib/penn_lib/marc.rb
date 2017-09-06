@@ -2179,6 +2179,12 @@ module PennLib
       end
     end
 
+    def get_ris_py_field(rec)
+      rec.fields('260').flat_map do |field|
+        field.find_all(&subfield_in(['c'])).map(&:value)
+      end
+    end
+
     def get_ris_sn_field(rec)
       rec.fields.select { |f| f.tag == '020' || f.tag == '022' }.flat_map do |field|
         field.find_all(&subfield_in(['a'])).map(&:value)
