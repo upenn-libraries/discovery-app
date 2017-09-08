@@ -8,7 +8,7 @@ class LegacyFranklinController < ApplicationController
   def record
     new_id = params[:id]
     if new_id
-      if new_id.start_with?('FRANKLIN')
+      if new_id.start_with?('FRANKLIN') && /^FRANKLIN_99\d+03681$/.match(new_id).nil?
         new_id = new_id.sub(/(\d+)/, "#{ALMA_MMS_ID_PREFIX}\\1#{ALMA_MMS_ID_SUFFIX}")
       end
       redirect_to "https://franklin.library.upenn.edu/catalog/#{new_id}"
