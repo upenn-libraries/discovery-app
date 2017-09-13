@@ -184,8 +184,7 @@ class CatalogController < ApplicationController
     config.add_facet_field 'classification_f', label: 'Classification', limit: 5, collapse: false
     config.add_facet_field 'genre_f', label: 'Form/Genre', limit: 5
     config.add_facet_field 'recently_added_f', label: 'Recently added', :query => {
-      # TODO: add these back when enough time has passed for them to be meaningful
-      # :within_90_days => { label: 'Within 90 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (90 * SECONDS_PER_DAY) } TO *]" },
+      :within_90_days => { label: 'Within 90 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (90 * SECONDS_PER_DAY) } TO *]" },
       :within_60_days => { label: 'Within 60 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (60 * SECONDS_PER_DAY) } TO *]" },
       :within_30_days => { label: 'Within 30 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (30 * SECONDS_PER_DAY) } TO *]" },
       :within_15_days => { label: 'Within 15 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (15 * SECONDS_PER_DAY) } TO *]" },
