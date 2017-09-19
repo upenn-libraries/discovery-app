@@ -5,6 +5,6 @@
 <%= link_to "View and filter #{number_with_delimiter(results.total_items)} results", summon_url(params[:q] || params[:query]) %>
 </div>
 
-<aside class="summon-alert"><a class="ezproxy-login-link" href="">Off Campus?  Log in to access full text and more content.</a></aside>
+<aside class="summon-alert ezproxy-show-not-logged-in"><a class="ezproxy-login-link" href="">Off Campus?  Log in to access full text and more content.</a></aside>
 
 <%= yield %>

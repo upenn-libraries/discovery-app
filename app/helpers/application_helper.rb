@@ -1,7 +1,12 @@
 module ApplicationHelper
 
-  def summon_url(query)
-    return "http://upenn.summon.serialssolutions.com/#!/search?q=#{url_encode(query)}"
+  def summon_url(query, proxy = false)
+    url = "http://upenn.summon.serialssolutions.com/#!/search?q=#{url_encode(query)}"
+    if proxy
+      return "https://proxy.library.upenn.edu/login?url=#{url}"
+    else
+      return url
+    end
   end
 
   # returns the css classes needed for elements that should be considered 'active'

@@ -1,13 +1,16 @@
 
-<ul class="nav nav-tabs" role="tablist">
+<ul class="nav nav-tabs ezproxy-login-status" role="tablist">
   <li role="presentation" class="<%= active_tab_classes('bento') %>">
     <%= render_tab_link('bento', 'Catalog & Articles+', '#bento', bento_path(q: params[:q]), '#bento-main, #bento-search-navbar') %>
   </li>
   <li role="presentation" class="<%= active_tab_classes('catalog') %>">
     <%= render_tab_link('catalog', 'Catalog', '#catalog', search_catalog_path(q: params[:q], search_field: 'keyword'), '#catalog-main, #catalog-search-navbar') %>
   </li>
-  <li role="presentation">
+  <li role="presentation" class="ezproxy-show-not-logged-in">
     <%= render_tab_link('articles', 'Articles+', '#articles', summon_url(params[:q]), '#articles-main, #articles-search-navbar') %>
+  </li>
+  <li role="presentation" class="ezproxy-show-logged-in">
+    <%= render_tab_link('articles', 'Articles+', '#articles', summon_url(params[:q], true), '#articles-main, #articles-search-navbar') %>
   </li>
   <li role="presentation"><a href="http://dla.library.upenn.edu/dla/courseres/index.html">Course Reserves</a></li>
 </ul>
