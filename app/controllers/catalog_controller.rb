@@ -202,13 +202,13 @@ class CatalogController < ApplicationController
     config.add_facet_field 'subject_xfacet2', label: 'Subject', limit: 20, show: false,
                            xfacet: true, xfacet_view_type: 'xbrowse', facet_for_filtering: 'subject_f'
     config.add_facet_field 'title_xfacet', label: 'Title', limit: 20, show: false,
-                           xfacet: true, xfacet_view_type: 'rbrowse', xfacet_rbrowse_fields: %w(title author_creator_a format_a publication_a availability)
+                           xfacet: true, xfacet_view_type: 'rbrowse', xfacet_rbrowse_fields: %w(title author_creator_a standardized_title_a edition conference_a series contained_within_a publication_a format_a full_text_links_for_cluster_display availability)
     #config.add_facet_field 'author_creator_xfacet', label: 'Author', limit: 20, show: false,
     #                       xfacet: true, xfacet_view_type: 'xbrowse', facet_for_filtering: 'author_creator_f'
     config.add_facet_field 'author_creator_xfacet2', label: 'Author', limit: 20, show: false,
                            xfacet: true, xfacet_view_type: 'xbrowse', facet_for_filtering: 'author_creator_f'
     config.add_facet_field 'call_number_xfacet', label: 'Call number', limit: 20, show: false,
-                           xfacet: true, xfacet_view_type: 'rbrowse', xfacet_rbrowse_fields: %w(title publication_a format_a availability)
+                           xfacet: true, xfacet_view_type: 'rbrowse', xfacet_rbrowse_fields: %w(title author_creator_a standardized_title_a edition conference_a series contained_within_a publication_a format_a full_text_links_for_cluster_display availability)
 
     # Have BL send all facet field names to Solr, which has been the default
     # previously. Simply remove these lines if you'd rather use Solr request
