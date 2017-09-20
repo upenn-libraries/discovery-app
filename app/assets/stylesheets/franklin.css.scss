@@ -307,11 +307,13 @@ bg color to fill document-metadata's bottom margin */
   padding: 0.5em;
 }
 
-.summon-results.ezproxy-is-logged-in .summon-alert {
+.ezproxy-is-logged-in .ezproxy-show-not-logged-in,
+.ezproxy-is-not-logged-in .ezproxy-show-logged-in {
   display: none;
 }
 
-.summon-results.ezproxy-is-not-logged-in .summon-alert {
+.ezproxy-is-not-logged-in .ezproxy-show-not-logged-in,
+.ezproxy-is-logged-in .ezproxy-show-logged-in {
   display: block;
 }
 
