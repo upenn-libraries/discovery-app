@@ -587,7 +587,6 @@ module PennLib
                         .flat_map do |field|
           field.find_all(&subfield_in(['c']))
               .map(&:value)
-              .select { |value| value =~ /\d\d\d\d/ }
         end
 
         sf_c264_4 = rec.fields.select { |field| field.tag == '264' && field.indicator2 == '4' }
