@@ -241,7 +241,7 @@ module PennLib
     def join_subject_parts(field, double_dash: false)
       subfields = field.find_all
       begin
-        while (sf = subfields.next).code == '6'
+        while %w{0 6 5 2}.member?((sf = subfields.next).code)
           # keep advancing
         end
         if !reject_pro_chr(sf)
