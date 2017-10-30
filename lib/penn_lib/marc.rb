@@ -259,9 +259,9 @@ module PennLib
             return nil
           when 1
             return parts.first
-                .gsub(/([[:alnum:]])(\s+--\s*|\s*--\s+)([[[:upper:]][[:digit:]]])/, '\1--\3')
-                .gsub(/([[:alpha:]])\s+-\s+([[:upper:]]|[[:digit:]]{2,})/, '\1--\2')
-                .gsub(/([[:alnum:]])\s+-\s+([[:upper:]])/, '\1--\2')
+                .gsub(/([[[:alnum:]])])(\s+--\s*|\s*--\s+)([[[:upper:]][[:digit:]]])/, '\1--\3')
+                .gsub(/([[[:alpha:]])])\s+-\s+([[:upper:]]|[[:digit:]]{2,})/, '\1--\2')
+                .gsub(/([[[:alnum:]])])\s+-\s+([[:upper:]])/, '\1--\2')
           else
             return parts.join('')
         end
