@@ -252,11 +252,11 @@ module PennLib
             end
           end
         end
-        return nil # rejected
+        return '' # rejected
       rescue StopIteration => e
         case parts.size
           when 0
-            return nil
+            return ''
           when 1
             return parts.first
                 .gsub(/([[[:alnum:]])])(\s+--\s*|\s*--\s+)([[[:upper:]][[:digit:]]])/, '\1--\3')
