@@ -233,15 +233,39 @@ module PennLib
       subject_codes.member?(field.tag) && %w(0 2 4).member?(field.indicator2)
     end
 
+    def reject_pro_chr(sf)
+      %w{a %}.member?(sf.code) && sf.value =~ /^%?(PRO|CHR)([ $]|$)/
+    end
+
     # if double_dash is true, then some subfields are joined together with --
     def join_subject_parts(field, double_dash: false)
-      parts = field.find_all(&subfield_in(['a'])).map(&:value)
-                  .select { |v| v !~ /^%?(PRO|CHR)/ }
-      # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
-      parts += field.find_all(&subfield_not_in(%w{a 0 6 5})).map do |sf|
-        (double_dash && !%w{b c d q t}.member?(sf.code) ? '--' : ' ') + sf.value.strip
+      subfields = field.find_all
+      begin
+        while %w{0 6 5 2}.member?((sf = subfields.next).code)
+          # keep advancing
+        end
+        if !reject_pro_chr(sf)
+          parts = [ sf.value.strip ]
+          while (!reject_pro_chr(sf = subfields.next))
+            if !%w{0 6 5 2}.member?(sf.code)
+              parts << (double_dash && !%w{b c d q t}.member?(sf.code) ? '--' : ' ') + sf.value.strip
+            end
+          end
+        end
+        return '' # rejected
+      rescue StopIteration => e
+        case parts.size
+          when 0
+            return ''
+          when 1
+            return parts.first
+                .gsub(/([[[:alnum:]])])(\s+--\s*|\s*--\s+)([[[:upper:]][[:digit:]]])/, '\1--\3')
+                .gsub(/([[[:alpha:]])])\s+-\s+([[:upper:]]|[[:digit:]]{2,})/, '\1--\2')
+                .gsub(/([[[:alnum:]])])\s+-\s+([[:upper:]])/, '\1--\2')
+          else
+            return parts.join('')
+        end
       end
-      parts.join('')
     end
 
     def get_subject_facet_values(rec)
