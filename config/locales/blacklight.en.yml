@@ -8,6 +8,9 @@ en:
           placeholder: 'Find books, journals, videos, & more'
       librarian_view:
         title: 'Staff View'
+      errors:
+        request_error: "Franklin is having trouble executing your search. Please try again."
+        invalid_solr_id: "The requested record was not found."
     tools:
       librarian_view: 'Staff View'
 
