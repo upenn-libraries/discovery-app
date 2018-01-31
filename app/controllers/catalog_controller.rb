@@ -19,6 +19,8 @@ class CatalogController < ApplicationController
 
   include AssociateExpandedDocs
 
+  include HandleEmptyEmail
+
   before_action :expire_session
 
   SECONDS_PER_DAY = 86400
