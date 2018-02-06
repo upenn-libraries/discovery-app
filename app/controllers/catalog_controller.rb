@@ -430,7 +430,7 @@ class CatalogController < ApplicationController
     end
 
     config.add_search_field('subject_xfacet2') do |field|
-      field.label = 'Subject Heading Browse (Library of Congress)'
+      field.label = 'Subject Heading Browse'
       field.action = '/catalog/xbrowse/subject_xfacet2'
       field.include_in_advanced_search = false
     end
