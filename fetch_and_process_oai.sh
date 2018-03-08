@@ -4,12 +4,18 @@
 # through some other job scheduler.
 
 set_name=allTitles
+skip_indexing=false
 
 if [ -z "$1" ]
 then
-    echo "Usage: fetch_and_process_oai.sh OAI_DIR [FROM_TIMESTAMP]"
+    echo "Usage: fetch_and_process_oai.sh [--skip-indexing] OAI_DIR [FROM_TIMESTAMP]"
     exit
 else
+    if [ "$1" = "--skip-indexing" ]
+    then
+      skip_indexing=true
+      shift
+    fi
     oai_dir="$1"
 fi
 
@@ -50,7 +56,12 @@ echo $now > $set_dir/LAST_RUN
 echo "Running preprocessing tasks"
 ./preprocess_oai.sh "$batch_dir" "$set_name"
 
-echo "Running index_and_deletions.sh"
-./index_and_deletions.sh "$batch_dir" "$set_name"
+if [ "$skip_indexing" = false ]
+then
+  echo "Running index_and_deletions.sh"
+  ./index_and_deletions.sh "$batch_dir" "$set_name"
+else
+  echo "Skipping indexing"
+fi
 
 echo "#### OAI fetch and process ended at `date`"
