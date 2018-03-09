@@ -523,12 +523,12 @@ module PennLib
     end
 
     def get_access_values(rec)
-      acc = rec.map do |f|
+      acc = rec.flat_map do |f|
         case f.tag
           when EnrichedMarc::TAG_HOLDING
             'At the library'
           when EnrichedMarc::TAG_ELECTRONIC_INVENTORY
-            'Online'
+            ['Online', 'Penn Library Web']
         end
       end.compact
       acc += rec.fields('856')

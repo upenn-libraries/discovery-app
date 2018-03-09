@@ -168,6 +168,7 @@ class CatalogController < ApplicationController
 
     config.add_facet_field 'access_f', label: 'Access', collapse: false, query: {
       'Online' => { :label => 'Online', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'Online\\'}'}"},
+      'Penn Library Web' => { :label => 'Penn Library Web', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'Penn Library Web\\'}'}"},
       'At the library' => { :label => 'At the library', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"}
     }
     config.add_facet_field 'record_source_f', label: 'Record Source', collapse: false, query: {
@@ -363,8 +364,8 @@ class CatalogController < ApplicationController
     config.add_search_field 'keyword' do |field|
       field.label = 'Keyword'
       field.solr_local_parameters = {
-          qf: 'marcrecord_xml^0.25 call_number_search^0.5 subject_search^1.0 title_1_search^2.5 title_2_search^1.5 author_creator_1_search^3 author_creator_2_search^2 isbn_isxn^0.25',
-          pf: 'marcrecord_xml^0.25 call_number_search^0.5 subject_search^1.0 title_1_search^2.5 title_2_search^1.5 author_creator_1_search^3 author_creator_2_search^2 isbn_isxn^0.25'
+          qf: 'title_1_tl^5 marcrecord_xml^0.25 call_number_search^0.5 subject_search^1.0 title_1_search^2.5 title_2_search^1.5 author_creator_1_search^3 author_creator_2_search^2 isbn_isxn^0.25',
+          pf: 'title_1_tl^5 marcrecord_xml^0.25 call_number_search^0.5 subject_search^1.0 title_1_search^2.5 title_2_search^1.5 author_creator_1_search^3 author_creator_2_search^2 isbn_isxn^0.25'
       }
     end
 
