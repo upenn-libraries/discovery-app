@@ -306,7 +306,7 @@ class FranklinIndexer < BaseIndexer
       acc << val if val
     end
 
-    to_field 'publication_date_nssort' do |rec, acc, ctx|
+    to_field 'publication_date_ssort' do |rec, acc, ctx|
       val = ctx.clipboard.dig(:dates, :pub_date_sort)
       acc << val if val
     end

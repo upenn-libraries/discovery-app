@@ -596,12 +596,12 @@ class CatalogController < ApplicationController
     # whether the sort is ascending or descending (it must be asc or desc
     # except in the relevancy case).
     config.add_sort_field 'score desc', label: 'Relevance'
-    config.add_sort_field 'title_ssort asc', label: 'Title (a-z)'
-    config.add_sort_field 'title_ssort desc', label: 'Title (z-a)'
-    config.add_sort_field 'author_creator_ssort asc', label: 'Author (a-z)'
-    config.add_sort_field 'author_creator_ssort desc', label: 'Author (z-a)'
-    config.add_sort_field 'publication_date_ssort desc, title_ssort asc', label: 'Pub date (new-old)'
-    config.add_sort_field 'publication_date_ssort asc, title_ssort asc', label: 'Pub date (old-new)'
+    config.add_sort_field 'title_nssort asc', label: 'Title (a-z)'
+    config.add_sort_field 'title_nssort desc', label: 'Title (z-a)'
+    config.add_sort_field 'author_creator_nssort asc', label: 'Author (a-z)'
+    config.add_sort_field 'author_creator_nssort desc', label: 'Author (z-a)'
+    config.add_sort_field 'publication_date_ssort desc, title_nssort asc', label: 'Pub date (new-old)'
+    config.add_sort_field 'publication_date_ssort asc, title_nssort asc', label: 'Pub date (old-new)'
     config.add_sort_field 'recently_added_isort desc', label: 'Date added (new-old)'
 
     # If there are more than this many search results, no spelling ("did you
