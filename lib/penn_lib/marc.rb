@@ -33,6 +33,88 @@ module PennLib
     SUB_BOUND_WITH_ID = 'y'
   end
 
+  module DateType
+    # Nothing
+    UNSPECIFIED = '|'
+    NO_DATES_OR_BC = 'b'
+    UNKNOWN = 'n'
+
+    # Single point
+    DETAILED = 'e'
+    SINGLE = 's'
+
+    # Lower bound
+    CONTINUING_CURRENTLY_PUBLISHED = 'c'
+    CONTINUING_STATUS_UNKNOWN = 'u'
+
+    # Range
+    CONTINUING_CEASED_PUBLICATION = 'd'
+    COLLECTION_INCLUSIVE = 'i'
+    COLLECTION_BULK = 'k'
+    MULTIPLE = 'm'
+    QUESTIONABLE = 'q'
+
+    # Separate date for content
+    DISTRIBUTION_AND_PRODUCTION = 'p'
+    REPRINT_AND_ORIGINAL = 'r'
+    PUBLICATION_AND_COPYRIGHT = 't'
+
+    MAP = {
+      DETAILED => :single,
+      SINGLE => :single,
+
+      CONTINUING_CURRENTLY_PUBLISHED => :lower_bound,
+      CONTINUING_STATUS_UNKNOWN => :lower_bound,
+
+      CONTINUING_CEASED_PUBLICATION => :range,
+      COLLECTION_INCLUSIVE => :range,
+      COLLECTION_BULK => :range,
+      MULTIPLE => :range,
+      QUESTIONABLE => :range,
+
+      DISTRIBUTION_AND_PRODUCTION => :separate_content,
+      REPRINT_AND_ORIGINAL => :separate_content,
+      PUBLICATION_AND_COPYRIGHT => :separate_content
+    }
+  end
+
+  module EncodingLevel
+    # Official MARC codes (https://www.loc.gov/marc/bibliographic/bdleader.html)
+    FULL = ' '
+    FULL_NOT_EXAMINED = '1'
+    UNFULL_NOT_EXAMINED = '2'
+    ABBREVIATED = '3'
+    CORE = '4'
+    PRELIMINARY = '5'
+    MINIMAL = '7'
+    PREPUBLICATION = '8'
+    UNKNOWN = 'u'
+    NOT_APPLICABLE = 'z'
+
+    # OCLC extension codes (https://www.oclc.org/bibformats/en/fixedfield/elvl.html)
+    OCLC_FULL = 'I'
+    OCLC_MINIMAL = 'K'
+    OCLC_BATCH_LEGACY = 'L'
+    OCLC_BATCH = 'M'
+    OCLC_SOURCE_DELETED = 'J'
+
+    RANK = {
+      # top 4 (per nelsonrr), do not differentiate among "good" records
+      FULL => 0,
+      FULL_NOT_EXAMINED => 0, # 1
+      OCLC_FULL => 0, # 2
+      CORE => 0, # 3
+      UNFULL_NOT_EXAMINED => 4,
+      ABBREVIATED => 5,
+      PRELIMINARY => 6,
+      MINIMAL => 7,
+      OCLC_MINIMAL => 8,
+      OCLC_BATCH => 9,
+      OCLC_BATCH_LEGACY => 10,
+      OCLC_SOURCE_DELETED => 11
+    }
+  end
+
   # Class for doing extraction and processing on MARC::Record objects.
   # This is intended to be used in both indexing code and front-end templating code
   # (since MARC is stored in Solr). As such, there should NOT be any traject-specific
@@ -522,6 +604,16 @@ module PennLib
       results.select { |value| value.present? }
     end
 
+    def get_itm_count(rec)
+      fields = rec.fields(EnrichedMarc::TAG_ITEM)
+      fields.empty? ? nil : fields.size
+    end
+
+    def get_prt_count(rec)
+      fields = rec.fields(EnrichedMarc::TAG_ELECTRONIC_INVENTORY)
+      fields.empty? ? nil : fields.size
+    end
+
     def get_access_values(rec)
       acc = rec.flat_map do |f|
         case f.tag
@@ -712,6 +804,75 @@ module PennLib
 
     def get_specific_location_values(rec)
       holdings_location_mappings(rec, 'specific_location')
+    end
+
+    def get_encoding_level_rank(rec)
+      EncodingLevel::RANK[rec.leader[17]]
+    end
+
+    def prepare_dates(rec)
+      f008 = rec.fields('008').first
+      return nil unless f008
+      field = f008.value
+      return nil unless date_type = field[6]
+      return nil unless date1 = field[7,4]
+      date2 = field[11,4]
+      case DateType::MAP[date_type]
+      when :single
+        return build_dates_hash(date1)
+      when :lower_bound
+        return build_dates_hash(date1, '9999')
+      when :range
+        return build_dates_hash(date1, date2)
+      when :separate_content
+        return build_dates_hash(date1, nil, date2)
+      else
+        return nil
+      end
+    end
+
+    def build_dates_hash(raw_pub_date_start, raw_pub_date_end = nil, content_date = nil)
+      pub_date_start = sanitize_date(raw_pub_date_start, '0')
+      return nil if pub_date_start == nil
+      if raw_pub_date_end && pub_date_end = sanitize_date(raw_pub_date_end, '9')
+        if pub_date_start > pub_date_end
+          # assume date type coded incorrectly; use date2 as content_date
+          pub_date_end = sanitize_date(raw_pub_date_start, '9')
+          content_date = raw_pub_date_end
+        end
+      else
+        pub_date_end = sanitize_date(raw_pub_date_start, '9')
+      end
+      if content_date == nil
+        content_date_start = pub_date_start
+        content_date_end = pub_date_end
+      elsif content_date =~ /^[0-9]{4}$/
+        content_date_start = content_date_end = content_date
+      else
+        content_date_start = sanitize_date(content_date, '0')
+        if content_date_start
+          content_date_end = sanitize_date(content_date, '9')
+        else
+          # invalid separate content date provided; fall back to pub_date
+          content_date_start = pub_date_start
+          content_date_end = pub_date_end
+        end
+      end
+      {
+        :pub_date_sort => pub_date_start,
+        :pub_date_decade => current_year + 15 > pub_date_start.to_i ? pub_date_start[0,3] + '0s' : nil,
+        :pub_date_range => "[#{pub_date_start} TO #{pub_date_end}]",
+        :content_date_range => "[#{content_date_start} TO #{content_date_end}]",
+        :pub_date_minsort => "#{pub_date_start}-01-01T00:00:00Z",
+        :pub_date_maxsort => "#{pub_date_end.to_i + 1}-01-01T00:00:00Z",
+        :content_date_minsort => "#{content_date_start}-01-01T00:00:00Z",
+        :content_date_maxsort => "#{content_date_end.to_i + 1}-01-01T00:00:00Z"
+      }
+    end
+
+    def sanitize_date(input, replace)
+      return nil if input !~ /^[0-9]*u*$/
+      input.gsub(/u/, replace)
     end
 
     def publication_date_digits(rec)
@@ -2111,9 +2272,8 @@ module PennLib
       end
     end
 
-    def get_recently_added_sort_values(rec)
-      acc = []
-      most_recent = rec.fields(EnrichedMarc::TAG_ITEM).flat_map do |item|
+    def prepare_timestamps(rec)
+      most_recent_add = rec.fields(EnrichedMarc::TAG_ITEM).flat_map do |item|
         item.find_all(&subfield_in([EnrichedMarc::SUB_ITEM_DATE_CREATED])).map do |sf|
           begin
             DateTime.strptime(sf.value, '%Y-%m-%d %H:%M:%S').to_time.to_i
@@ -2122,15 +2282,26 @@ module PennLib
             nil
           end
         end.compact
-      end.max
-      if most_recent
-        acc << most_recent
+      end.max || 0
+
+      last_update = rec.fields('005')
+                .select { |f| f.value.present? && !f.value.start_with?('0000') }
+                .map do |field|
+        begin
+          DateTime.iso8601(field.value).to_i
+        rescue ArgumentError => e
+          nil
+        end
+      end.compact.first
+
+      if last_update == nil || most_recent_add > last_update
+        last_update = most_recent_add
       end
-      # records without a date should be considered very old
-      if acc.size == 0
-        acc << 0
-      end
-      acc
+
+      {
+        :most_recent_add => most_recent_add,
+        :last_update => last_update
+      }
     end
 
     def get_full_text_link_values(rec)
