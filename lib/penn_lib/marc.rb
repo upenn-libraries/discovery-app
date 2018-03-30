@@ -2288,7 +2288,7 @@ module PennLib
                 .select { |f| f.value.present? && !f.value.start_with?('0000') }
                 .map do |field|
         begin
-          DateTime.iso8601(field.value).to_i
+          DateTime.iso8601(field.value).to_time.to_i
         rescue ArgumentError => e
           nil
         end
