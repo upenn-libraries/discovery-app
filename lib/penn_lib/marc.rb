@@ -604,8 +604,8 @@ module PennLib
       results.select { |value| value.present? }
     end
 
-    def get_itm_count(rec)
-      fields = rec.fields(EnrichedMarc::TAG_ITEM)
+    def get_hld_count(rec)
+      fields = rec.fields(EnrichedMarc::TAG_HOLDING)
       fields.empty? ? nil : fields.size
     end
 

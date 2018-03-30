@@ -279,8 +279,8 @@ class FranklinIndexer < BaseIndexer
       acc << val if val
     end
 
-    to_field 'itm_count_isort' do |rec, acc|
-      val = pennlibmarc.get_itm_count(rec)
+    to_field 'hld_count_isort' do |rec, acc|
+      val = pennlibmarc.get_hld_count(rec)
       acc << val if val
     end
 
