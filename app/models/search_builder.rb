@@ -34,8 +34,10 @@ class SearchBuilder < Blacklight::SearchBuilder
     bq = blacklight_params[:q]
     return if !bq.present?
     solr_parameters[:qq] = bq
-    augmented_solr_q = '{!maxscore}_query_:"{!edismax sow=false q.op=AND qf=\'title_1_tl^0\' pf=\'title_1_tl^12\' v=$qq}" OR _query_:"'\
-        + solr_parameters[:q] + '"'
+    augmented_solr_q = '{!maxscore}_query_:"{!edismax sow=false q.op=AND '\
+        'qf=\'title_search_tl^24 title_sort_tl^24\' '\
+        'pf=\'title_search_tl^24 title_sort_tl^24\' v=$qq}" '\
+        'OR _query_:"' + solr_parameters[:q] + '"'
     solr_parameters[:q] = augmented_solr_q
   end
 
