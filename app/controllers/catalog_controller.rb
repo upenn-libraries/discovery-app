@@ -170,7 +170,8 @@ class CatalogController < ApplicationController
     config.add_facet_field 'access_f', label: 'Access', collapse: false, query: {
       'Online' => { :label => 'Online', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'Online\\'}'}"},
       'Penn Library Web' => { :label => 'Penn Library Web', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'Penn Library Web\\'}'}"},
-      'At the library' => { :label => 'At the library', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"}
+      'At the library' => { :label => 'At the library', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"},
+      'Really databases' => { :label => 'Really databases', :fq => "{!edismax}format_f:Database/Website NOT prt_count_isort:[* TO *]"}
     }
     config.add_facet_field 'record_source_f', label: 'Record Source', collapse: false, query: {
       'HathiTrust' => { :label => 'HathiTrust', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'HathiTrust\\'}'}"},
