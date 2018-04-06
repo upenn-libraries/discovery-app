@@ -248,6 +248,10 @@ class FranklinIndexer < BaseIndexer
       acc.concat(pennlibmarc.get_title_sort_values(rec))
     end
 
+    to_field 'title_sort_tl' do |rec, acc|
+      acc.concat(pennlibmarc.get_title_sort_filing_parts(rec))
+    end
+
     # Author fields
 
     to_field 'author_creator_nssort' do |rec, acc|

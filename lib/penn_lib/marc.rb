@@ -1070,6 +1070,12 @@ module PennLib
       end
     end
 
+    def get_title_sort_filing_parts(rec)
+      get_title_245(rec).map do |v|
+        v['filing']
+      end
+    end
+
     def get_title_1_search_main_values(rec, format_filter: false)
       format = get_format_from_leader(rec)
       acc = rec.fields('245').map do |field|
