@@ -12,7 +12,8 @@
   <% if show_availability_on_index_view? %>
     <%= render partial: 'status_location_field', locals: { document: document } %>
 
-    <%= render partial: 'alma_availability_button', locals: { document: document } %>
+    <%# render partial: 'alma_availability_button', locals: { document: document } %>
+    <%= render partial: 'request_button', locals: { document: document } %>
   <% end %>
 
 </dl>

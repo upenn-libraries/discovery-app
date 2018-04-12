@@ -66,6 +66,25 @@ $(document).ready(function() {
       }
     };
 
+    Franklin.prototype.loadRequestOptionsAjax = function(mmsid) {
+        var url = "/alma/single_availability?mmsid=" + encodeURIComponent(mmsid);
+        console.log(url);
+        $("#requestOptions").DataTable({
+            "ajax": url
+        });
+    };
+
+    Franklin.prototype.loadRequestOptions = function() {
+        var mmsidList = $(".request-options-load").map(function (index, element) {
+            return $(element).data("mmsid");
+        }).get();
+
+        mmsidList.forEach(function(mmsid) {
+            Franklin.prototype.loadRequestOptionsAjax(mmsid);
+        });
+    };
+
     var ba = new Franklin();
     ba.loadAvailability();
+    ba.loadRequestOptions();
 });

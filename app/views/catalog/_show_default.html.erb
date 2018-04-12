@@ -12,7 +12,28 @@
   <%= render partial: 'status_location_field', locals: { document: document } %>
 </dl>
 
-<%= render partial: 'alma_availability_iframe', locals: { document: document } %>
+<hr style='border-color:black; margin-bottom: 4px;'/>
+<% 
+  request_options = ['Hold Request', 'Interlibrary Loan', 'Books by Mail', 'Place on Course Reserve', 'Request Fix / Enhance Record', 'Scan &amp; Deliver', 'Send us a Question']
+  request_options = ['Hold Request', 'Interlibrary Loan', 'Books by Mail', 'Request Fix / Enhance Record', 'Scan &amp; Deliver', 'Send us a Question']
+%>
+<%#= request_options.map {|r| "<a href='#'>#{r}</a>"} .join(" | ").html_safe %>
+<%= request_options.map {|r| "<input type='button' class='btn btn-success' style='padding: 3px; margin: 2px; margin-bottom: 16px; border-color: #aaa;' value='#{r}'/>"} .join("").html_safe %>
+<br/>
+<% if document.alma_mms_id.present? %>
+  <table id="requestOptions" class="request-options-load" data-mmsid="<%= document.alma_mms_id %>" style="width:100%">
+    <thead>
+      <tr>
+        <th>Location</th>
+        <th>Availability</th>
+        <th>Call Number</th>
+        <th></th>
+      </tr>
+    </thead>
+  </table>
+<% end %>
+
+<%#= render partial: 'alma_availability_iframe', locals: { document: document } %>
 
 <% content_for :footer_bar_nav_links do %>
   <div class="link-item">
