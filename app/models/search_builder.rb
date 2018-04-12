@@ -66,11 +66,11 @@ class SearchBuilder < Blacklight::SearchBuilder
       sort = solr_parameters[:sort]
       sort = 'score desc' if !sort.present?
       if access_f == nil || access_f.empty?
-        sort = "#{sort},min(max(def(hld_count_isort,0),def(prt_count_isort,0)),10) desc"
+        sort = "#{sort},max(min(def(hld_count_isort,0),10),if(exists(prt_count_isort),sum(if(termfreq(format_f,'Journal/Periodical'),2,1),min(prt_count_isort,10)),0)) desc,last_update_isort desc"
       elsif access_f.size == 1 && access_f.first == 'At the library'
-        sort = "#{sort},min(def(hld_count_isort,0),10) desc,min(def(prt_count_isort,0),10) desc"
+        sort = "#{sort},if(exists(hld_count_isort),sum(if(termfreq(format_f,'Journal/Periodical'),1,0),min(hld_count_isort,10)),0) desc,min(def(prt_count_isort,0),10) desc,last_update_isort desc"
       else
-        sort = "#{sort},min(def(prt_count_isort,0),10) desc,min(def(hld_count_isort,0),10) desc"
+        sort = "#{sort},if(exists(prt_count_isort),sum(if(termfreq(format_f,'Journal/Periodical'),1,0),min(prt_count_isort,10)),0) desc,min(def(hld_count_isort,0),10) desc,last_update_isort desc"
       end
     end
     solr_parameters[:sort] = sort
