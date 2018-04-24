@@ -16,8 +16,8 @@ GIT
 
 GIT
   remote: https://github.com/magibney/blacklight.git
-  revision: 1dbbc13b3750876c4ac4ca6d4d9b5006afd3486e
-  tag: v6.8.0-solr7
+  revision: 990173b11dd0cd377e116cda6c7471ec8101dbd0
+  branch: v6.8.0-solr7-qq
   specs:
     blacklight (6.8.0)
       bootstrap-sass (~> 3.2)

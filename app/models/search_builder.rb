@@ -33,7 +33,6 @@ class SearchBuilder < Blacklight::SearchBuilder
   def add_left_anchored_title(solr_parameters)
     bq = blacklight_params[:q]
     return if !bq.present?
-    solr_parameters[:qq] = bq
     augmented_solr_q = '{!maxscore}'\
         '_query_:"{!field f=\'title_search_tl\' v=$qq}"^12 OR '\
         '_query_:"{!field f=\'title_sort_tl\' v=$qq}"^14 OR '\
