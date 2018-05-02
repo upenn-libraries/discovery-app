@@ -4,8 +4,42 @@
     <% if ENV['SHOW_KNOWN_ISSUES'].present? %>
     <li><a style="color:red" href="<%= known_issues_url %>">Known Issues</a></li>
     <% end %>
-
-    <li><a style="color:red" href="http://faq.library.upenn.edu/ask">Feedback</a></li>
+    <li>
+      <div class="navbar-btn-group btn-group">
+        <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Franklin Help &nbsp;<span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+          <li><a href="https://www.library.upenn.edu/catalogs/franklin/fcat-patronlogin.html">Your Franklin account</a></li>
+          <li role="separator" class="divider"></li>
+          <li><a href="http://www.library.upenn.edu/catalogs/franklin/access.html">Accessing resources</a></li>
+          <li role="separator" class="divider"></li>
+          <li><a href="http://www.library.upenn.edu/catalogs/franklin/fcat-about.html">Using Franklin Catalog</a></li>
+          <li role="separator" class="divider"></li>
+          <li><a href="http://www.library.upenn.edu/catalogs/franklin/articles-about.html ">Using Franklin Articles+</a></li>
+          <li role="separator" class="divider" style="display:none;"></li>
+          <li style="display:none;"><a href="http://www.library.upenn.edu/catalogs/franklin/patronlogin.html">Troubleshooting guide</a></li>
+        </ul>
+      </div>
+    </li>
+    <li>
+      <div class="navbar-btn-group btn-group">
+        <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Contact us <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+          <li><a href="tel:12158987555">215-898-7555</a></li>
+          <li role="separator" class="divider"></li>
+          <li><a href="//faq.library.upenn.edu/ask">Questions or comments</a></li>
+          <li role="separator" class="divider"></li>
+          <li>
+            <!-- Springshare Chat code //-->
+            <div id="libchat_228dce29c42f82c1eccfb92ca9c3e3d1"></div><script type="text/javascript" src="https://v2.libanswers.com/load_chat.php?hash=228dce29c42f82c1eccfb92ca9c3e3d1"></script>
+             <!-- End Springshare Chat code //-->
+          </li>
+        </ul>
+      </div>
+    </li>
 
     <%= render_nav_actions do |config, action|%>
         <li><%= action %></li>
@@ -26,7 +60,7 @@
             </li>
       <% else %>
             <li>
-              <div class="navbar-login-btn-group btn-group">
+              <div class="navbar-btn-group btn-group">
                 <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Login <span class="caret"></span>
                 </button>
