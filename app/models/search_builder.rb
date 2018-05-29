@@ -34,8 +34,18 @@ class SearchBuilder < Blacklight::SearchBuilder
     bq = blacklight_params[:q]
     return if !bq.present?
     augmented_solr_q = '{!maxscore}'\
-        '_query_:"{!field f=\'title_search_tl\' v=$qq}"^12 OR '\
-        '_query_:"{!field f=\'title_sort_tl\' v=$qq}"^14 OR '\
+        '_query_:"{!field f=\'title_1_tl\' v=$qq}" OR '\
+        '_query_:"{!field f=\'title_2_tl\' v=$qq}" OR '\
+        '_query_:"{!field f=\'title_3_tl\' v=$qq}" OR '\
+        '_query_:"{!field f=\'title_4_tl\' v=$qq}" OR '\
+        '_query_:"{!field f=\'title_5_tl\' v=$qq}" OR '\
+        '_query_:"{!field f=\'title_6_tl\' v=$qq}" OR '\
+        '_query_:"{!field f=\'title_7_tl\' v=$qq}" OR '\
+        '_query_:"{!field f=\'title_8_tl\' v=$qq}" OR '\
+        '_query_:"{!field f=\'title_9_tl\' v=$qq}" OR '\
+        '_query_:"{!field f=\'title_10_tl\' v=$qq}" OR '\
+        '_query_:"{!field f=\'title_11_tl\' v=$qq}" OR '\
+        '_query_:"{!field f=\'title_12_tl\' v=$qq}" OR '\
         '_query_:"' + solr_parameters[:q] + '"'
     solr_parameters[:q] = augmented_solr_q
   end

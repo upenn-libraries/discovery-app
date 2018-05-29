@@ -1025,10 +1025,16 @@ module PennLib
       end
     end
 
-    def get_title_from_245_or_880(fields)
+    def get_title_from_245_or_880(fields, support_invalid_indicator2 = true)
       fields.map do |field|
+        if field.indicator2 =~ /^[0-9]$/
+          offset = field.indicator2.to_i
+        elsif support_invalid_indicator2
+          offset = 0 # default to 0
+        else
+          return []
+        end
         value = {}
-        offset = (field.indicator2 == ' ' ? '0' : field.indicator2).to_i
         suba = join_subfields(field, &subfield_in(%w{a}))
         if offset > 0 && offset < 10
           part1 = suba[0..offset-1]
@@ -1044,11 +1050,11 @@ module PennLib
         end
         value['filing'] = [ value['filing'], join_subfields(field, &subfield_in(%w{b n p})) ].join(' ')
         value
-      end
+      end.compact
     end
 
-    def get_title_245(rec)
-      get_title_from_245_or_880(rec.fields('245').take(1))
+    def get_title_245(rec, support_invalid_indicator2 = true)
+      get_title_from_245_or_880(rec.fields('245').take(1), support_invalid_indicator2)
     end
 
     def get_title_880_for_xfacet(rec)
@@ -1070,8 +1076,8 @@ module PennLib
       end
     end
 
-    def get_title_sort_filing_parts(rec)
-      get_title_245(rec).map do |v|
+    def get_title_sort_filing_parts(rec, support_invalid_indicator2 = true)
+      get_title_245(rec, support_invalid_indicator2).map do |v|
         v['filing']
       end
     end

@@ -57,7 +57,7 @@ class FranklinIndexer < BaseIndexer
 
     # append extra params to the Solr update URL for solr-side cross reference handling
     # and duplicate ID deletion
-    processors = [ 'xref-copyfield' ]
+    processors = [ 'xref-copyfield', 'fl-multiplex' ]
     if ENV['SOLR_USE_UID_DISTRIB_PROCESSOR']
       # disable; handle deletion outside of solr, either permanently or pending bug fixes
       #processors << 'uid-distrib'
@@ -249,7 +249,7 @@ class FranklinIndexer < BaseIndexer
     end
 
     to_field 'title_sort_tl' do |rec, acc|
-      acc.concat(pennlibmarc.get_title_sort_filing_parts(rec))
+      acc.concat(pennlibmarc.get_title_sort_filing_parts(rec, false))
     end
 
     # Author fields
