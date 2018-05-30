@@ -46,7 +46,7 @@ $(document).ready(function() {
                     url = "Electronic Resource (no URL available)";
                 }
 
-                return [url, holding['coverage_statement']]
+                return [url, holding['coverage_statement'], holding['public_note']]
                     .filter(function (item) {
                         return item != null && item.length > 0;
                     }).join(" - ");
@@ -70,7 +70,25 @@ $(document).ready(function() {
         var url = "/alma/single_availability?mmsid=" + encodeURIComponent(mmsid);
         console.log(url);
         $("#requestOptions").DataTable({
-            "ajax": url
+            "ajax": url,
+            "columnDefs": [
+                { "visible": false, "targets": 0 }
+            ],
+            "language": {
+              "search": "Filter records:"
+            },
+            "drawCallback": function(settings) {
+                var table = $('#requestOptions').DataTable();
+                var pageSize = table.settings()[0]['_iDisplayLength'];
+                var tableLen = table.data().length;
+                tableLen > pageSize ? $('#requestOptions_filter').show() : $('#requestOptions_filter').hide();
+            },
+            "initComplete": function(settings, json) {
+                dataLen = json.data.length;
+                if(dataLen == 0) {
+                    $('#requestOptions_wrapper').hide();
+                }
+            }
         });
     };
 
