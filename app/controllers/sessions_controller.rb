@@ -6,6 +6,10 @@ class SessionsController < Devise::SessionsController
 
   SHIB_IDP_LOGOUT_PAGE = 'https://idp.pennkey.upenn.edu/logout'
 
+  def set_session_userid(id)
+    session['id'] = id
+  end
+
   def set_session_first_name(id)
     if id
       response = BlacklightAlma::UsersApi.instance.get_name(id)
@@ -24,6 +28,7 @@ class SessionsController < Devise::SessionsController
     session['hard_expiration'] = jwt['exp']
 
     set_session_first_name(jwt['id'])
+    set_session_userid(jwt['id'])
   end
 
   def sso_login_populate_session
@@ -37,6 +42,7 @@ class SessionsController < Devise::SessionsController
 
     pennkey_username = remote_user_header.split('@').first
     set_session_first_name(pennkey_username)
+    set_session_userid(pennkey_username)
   end
 
   # override from Devise
