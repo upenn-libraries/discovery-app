@@ -273,6 +273,25 @@ module PennLib
       acc
     end
 
+    def append_title_variant_field(acc, non_filing, subfields)
+      base = subfields.shift;
+      return if base.nil? # there's something wrong; first is always required
+      if non_filing =~ /[1-9]/
+        prefix = base.slice!(0, non_filing.to_i)
+      end
+      loop do
+        acc << base
+        if !prefix.nil?
+          acc << prefix + base
+        end
+        return if subfields.empty?
+        while (next_part = subfields.shift).nil?
+          return if subfields.empty?
+        end
+        base = "#{base} #{next_part}"
+      end
+    end
+
     # returns true if field's subfield 6 has a value that matches
     # passed-in regex
     def has_subfield6_value(field, regex)
@@ -1079,6 +1098,34 @@ module PennLib
     def get_title_sort_filing_parts(rec, support_invalid_indicator2 = true)
       get_title_245(rec, support_invalid_indicator2).map do |v|
         v['filing']
+      end
+    end
+
+    def append_title_variants(rec, acc)
+      do_title_variant_field(rec, acc, '130', 1, 'a')
+      do_title_variant_field(rec, acc, '240', 2, 'a')
+      do_title_variant_field(rec, acc, '210', nil, 'a', 'b')
+      do_title_variant_field(rec, acc, '222', 2, 'a', 'b')
+      do_title_variant_field(rec, acc, '246', nil, 'a', 'b')
+    end
+
+    def do_title_variant_field(rec, acc, field_id, non_filing_indicator, *subfields_spec)
+      rec.fields(field_id).each do |field|
+        parts = subfields_spec.map do |subfield_spec|
+          matching_subfield = field.find { |subfield| subfield.code == subfield_spec }
+          matching_subfield.value unless matching_subfield.nil?
+        end
+        next if parts.first.nil?
+        parts.compact!
+        case non_filing_indicator
+          when 1
+            non_filing = field.indicator1
+          when 2
+            non_filing = field.indicator2
+          else
+            non_filing = nil
+        end
+        append_title_variant_field(acc, non_filing, parts)
       end
     end
 

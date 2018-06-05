@@ -250,6 +250,7 @@ class FranklinIndexer < BaseIndexer
 
     to_field 'title_sort_tl' do |rec, acc|
       acc.concat(pennlibmarc.get_title_sort_filing_parts(rec, false))
+      pennlibmarc.append_title_variants(rec, acc)
     end
 
     # Author fields
