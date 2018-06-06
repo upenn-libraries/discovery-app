@@ -33,19 +33,20 @@ class SearchBuilder < Blacklight::SearchBuilder
   def add_left_anchored_title(solr_parameters)
     bq = blacklight_params[:q]
     return if !bq.present?
+    weight = '14'
     augmented_solr_q = '{!maxscore}'\
-        '_query_:"{!field f=\'title_1_tl\' v=$qq}" OR '\
-        '_query_:"{!field f=\'title_2_tl\' v=$qq}" OR '\
-        '_query_:"{!field f=\'title_3_tl\' v=$qq}" OR '\
-        '_query_:"{!field f=\'title_4_tl\' v=$qq}" OR '\
-        '_query_:"{!field f=\'title_5_tl\' v=$qq}" OR '\
-        '_query_:"{!field f=\'title_6_tl\' v=$qq}" OR '\
-        '_query_:"{!field f=\'title_7_tl\' v=$qq}" OR '\
-        '_query_:"{!field f=\'title_8_tl\' v=$qq}" OR '\
-        '_query_:"{!field f=\'title_9_tl\' v=$qq}" OR '\
-        '_query_:"{!field f=\'title_10_tl\' v=$qq}" OR '\
-        '_query_:"{!field f=\'title_11_tl\' v=$qq}" OR '\
-        '_query_:"{!field f=\'title_12_tl\' v=$qq}" OR '\
+        "_query_:\"{!field f='title_1_tl' v=$qq}\"^#{weight} OR "\
+        "_query_:\"{!field f='title_2_tl' v=$qq}\"^#{weight} OR "\
+        "_query_:\"{!field f='title_3_tl' v=$qq}\"^#{weight} OR "\
+        "_query_:\"{!field f='title_4_tl' v=$qq}\"^#{weight} OR "\
+        "_query_:\"{!field f='title_5_tl' v=$qq}\"^#{weight} OR "\
+        "_query_:\"{!field f='title_6_tl' v=$qq}\"^#{weight} OR "\
+        "_query_:\"{!field f='title_7_tl' v=$qq}\"^#{weight} OR "\
+        "_query_:\"{!field f='title_8_tl' v=$qq}\"^#{weight} OR "\
+        "_query_:\"{!field f='title_9_tl' v=$qq}\"^#{weight} OR "\
+        "_query_:\"{!field f='title_10_tl' v=$qq}\"^#{weight} OR "\
+        "_query_:\"{!field f='title_11_tl' v=$qq}\"^#{weight} OR "\
+        "_query_:\"{!field f='title_12_tl' v=$qq}\"^#{weight} OR "\
         '_query_:"' + solr_parameters[:q] + '"'
     solr_parameters[:q] = augmented_solr_q
   end
@@ -75,15 +76,74 @@ class SearchBuilder < Blacklight::SearchBuilder
       sort = solr_parameters[:sort]
       sort = 'score desc' if !sort.present?
       if access_f == nil || access_f.empty?
-        sort = "#{sort},max(min(def(hld_count_isort,0),10),if(exists(prt_count_isort),sum(if(termfreq(format_f,'Journal/Periodical'),2,1),min(prt_count_isort,10)),0)) desc,last_update_isort desc"
+        sort << @@DEFAULT_INDUCED_SORT
       elsif access_f.size == 1 && access_f.first == 'At the library'
-        sort = "#{sort},if(exists(hld_count_isort),sum(if(termfreq(format_f,'Journal/Periodical'),1,0),min(hld_count_isort,10)),0) desc,min(def(prt_count_isort,0),10) desc,last_update_isort desc"
+        sort << @@AT_THE_LIBRARY_INDUCED_SORT
       else
-        sort = "#{sort},if(exists(prt_count_isort),sum(if(termfreq(format_f,'Journal/Periodical'),1,0),min(prt_count_isort,10)),0) desc,min(def(hld_count_isort,0),10) desc,last_update_isort desc"
+        sort << @@ONLINE_INDUCED_SORT
       end
     end
     solr_parameters[:sort] = sort
   end
+
+  @@ONLINE_INDUCED_SORT = ',' + [
+    "pub_max_dtsort desc,",
+    "if(exists(prt_count_isort),",
+      "sum(",
+        "if(termfreq(format_f,'Journal/Periodical'),",
+          "1,", # add 1 to boost journals
+          "0",
+        "),",
+        "min(prt_count_isort,10)", # cap to 10, higher is noise
+      "),",
+      "0",
+    ") desc,",
+    "min(def(hld_count_isort,0),10) desc,", # physical hldgs, if any, capped to 10
+    "last_update_isort desc"
+  ].join
+
+  @@AT_THE_LIBRARY_INDUCED_SORT = ',' + [
+    "pub_max_dtsort desc,",
+    "if(exists(hld_count_isort),",
+       "sum(",
+         "if(termfreq(format_f,'Journal/Periodical'),",
+           "1,", # add 1 to boost journals
+           "0",
+         "),",
+         "min(hld_count_isort,10)", # cap to 10; higher is noise
+       "),",
+       "0",
+     ") desc,",
+     "min(def(prt_count_isort,0),10) desc,", # online hldgs, if any, capped to 10
+     "last_update_isort desc"
+  ].join
+
+  @@DEFAULT_INDUCED_SORT = ',' + [
+    "pub_max_dtsort desc,",
+    "max(",
+      "if(exists(hld_count_isort),",
+        "sum(",
+          "if(termfreq(format_f,'Journal/Periodical'),",
+            "2,", # add 2 to boost physical journals
+            "0", # default boost of 0
+          "),",
+          "min(hld_count_isort,10)", #cap to 10; higher is noise
+        "),",
+        "0",
+      "),",
+      "if(exists(prt_count_isort),",
+        "sum(",
+          "if(termfreq(format_f,'Journal/Periodical'),",
+            "3,", # add 2 to boost online journals
+            "1", # add 1 to boost online
+          "),",
+          "min(prt_count_isort,10)", #cap to 10; higher is noise
+        "),",
+        "0",
+      ")",
+    ") desc,",
+    "last_update_isort desc"
+  ].join
 
   def lowercase_expert_boolean_operators(solr_parameters)
     search_field = blacklight_params[:search_field]
