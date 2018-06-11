@@ -55,9 +55,15 @@ class FranklinAlmaController < BlacklightAlma::AlmaController
 
   def single_availability
     mmsid = params[:mmsid]
-    userid = session['id'] || session[:alma_sso_user] || 'GUEST'
+    userid = session[:alma_sso_user] || (session['id'] != 'none' ? session['id'] : nil) || 'GUEST'
     api = alma_api_class.new()
     response_data = api.get_availability([mmsid])
+    response_data['availability'][mmsid]['holdings'].each do |holding|
+      if holding.key?('holding_info')
+        holding['location'] = %Q[<a href="javascript:loadItems('#{mmsid}', '#{holding['holding_id']}')">#{holding['location']}</a>]
+      end
+    end
+
     request_options = ['Hold Request', 'Interlibrary Loan', 'Books by Mail', 'Place on Course Reserve', 'Request Fix / Enhance Record', 'Scan &amp; Deliver', 'Send us a Question']
     table_data = response_data['availability'][mmsid]['holdings'].select { |h| h['inventory_type'] == 'physical' }
                  .sort { |a,b| cmpHoldingLocations(a,b) }
@@ -65,6 +71,32 @@ class FranklinAlmaController < BlacklightAlma::AlmaController
                  .map { |h,i| [i, h['location'], h['availability'], h['call_number'], '<a href="#">View Shelf Location</a>'] }
 
     #render :json => {"data": [["Location of #{mmsid}", 'Availability', 'Call #', 'Details button']]}
+    render :json => {"data": table_data}
+  end
+
+  def holding_items
+    userid = session[:alma_sso_user] || (session['id'] != 'none' ? session['id'] : nil)
+    policy = 'Please log in for loan and request information' if userid.nil?
+    api_instance = BlacklightAlma::BibsApi.instance
+    api = api_instance.ezwadl_api[0]
+    options = {:expand => 'due_date_policy', :offset => 0, :limit => 100, :user_id => userid}
+    response_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items, :get, params.merge(options))
+
+    table_data = response_data['item'].each_with_index.map { |item, i|
+      data = item['item_data']
+      [i, data['barcode'], data['physical_material_type']['desc'], policy || data['due_date_policy'], data['description'], data['base_status']['desc'], '']
+    }
+
+    while options[:offset] + options[:limit] < response_data['total_record_count']
+      options[:offset] += options[:limit]
+      response_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items, :get, params.merge(options))
+      
+      table_data += response_data['item'].each_with_index.map { |item, i|
+        data = item['item_data']
+        [i, data['barcode'], data['physical_material_type']['desc'], policy || data['due_date_policy'], data['description'], data['base_status']['desc'], '']
+      }
+    end
+
     render :json => {"data": table_data}
   end
 

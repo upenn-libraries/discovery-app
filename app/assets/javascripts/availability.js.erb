@@ -68,14 +68,17 @@ $(document).ready(function() {
 
     Franklin.prototype.loadRequestOptionsAjax = function(mmsid) {
         var url = "/alma/single_availability?mmsid=" + encodeURIComponent(mmsid);
-        console.log(url);
+
         $("#requestOptions").DataTable({
             "ajax": url,
+            "processing": true,
             "columnDefs": [
                 { "visible": false, "targets": 0 }
             ],
             "language": {
-              "search": "Filter records:"
+              "search": "Filter records:",
+              "loadingRecords": "&nbsp;",
+              "processing": "Please wait - loading..."
             },
             "drawCallback": function(settings) {
                 var table = $('#requestOptions').DataTable();
@@ -87,6 +90,15 @@ $(document).ready(function() {
                 dataLen = json.data.length;
                 if(dataLen == 0) {
                     $('#requestOptions_wrapper').hide();
+                }
+                // Reference: https://stackoverflow.com/a/15458987
+                // Check if the location of the first holding is an HTML element,
+                // indicating this is for a serial
+                else if(/<[a-z][\s\S]*>/i.test(json.data[0][1])) {
+                    $('#requestOptionsAvailability').text('Holdings');
+                }
+                else {
+                    $('#requestOptionsAvailability').text('Availability');
                 }
             }
         });
@@ -102,7 +114,47 @@ $(document).ready(function() {
         });
     };
 
+    Franklin.prototype.initializeItemsDataTable = function() {
+        $('#holdingItems').DataTable({
+            "dom": 'lftipr<"backbutton">',
+            "processing": true,
+            "columnDefs": [
+                { "visible": false, "targets": 0 }
+            ],
+            "language": {
+                "search": "Filter records:",
+                "loadingRecords": "&nbsp;",
+                  "processing": "Please wait - loading..."
+            },
+            "drawCallback": function(settings) {
+                var table = $('#holdingItems').DataTable();
+                var pageSize = table.settings()[0]['_iDisplayLength'];
+                var tableLen = table.data().length;
+                tableLen > pageSize ? $('#holdingItems_filter').show() : $('#holdingItems_filter').hide();
+            },
+            "initComplete": function(settings, json) {
+                $('#holdingItems').show();
+                $('#holdingItems_wrapper').hide();
+            }
+        });
+
+        $('.backbutton').html("<br><br><input type='button' value='< Back' onclick='swapDataTables()'></input>");
+    };
+
     var ba = new Franklin();
     ba.loadAvailability();
     ba.loadRequestOptions();
+    ba.initializeItemsDataTable();
 });
+
+function loadItems(mms_id, holding_id) {
+    var holdingItemsTable = $('#holdingItems').DataTable();
+    holdingItemsTable.clear().draw();
+    holdingItemsTable.ajax.url('/alma/holding_items.json?mms_id=' + mms_id + "&holding_id=" + holding_id).load();
+    swapDataTables();
+}
+
+function swapDataTables() {
+    $('#requestOptions_wrapper').toggle();
+    $('#holdingItems_wrapper').toggle();
+}

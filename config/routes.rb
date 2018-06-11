@@ -56,6 +56,7 @@ Rails.application.routes.draw do
 
   get 'alma/availability' => 'franklin_alma#availability'
   get 'alma/single_availability' => 'franklin_alma#single_availability'
+  get 'alma/holding_items' => 'franklin_alma#holding_items'
 
   devise_scope :user do
     get 'alma/social_login_callback' => 'sessions#social_login_callback'
