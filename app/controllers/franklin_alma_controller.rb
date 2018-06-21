@@ -84,7 +84,8 @@ class FranklinAlmaController < BlacklightAlma::AlmaController
 
     table_data = response_data['item'].each_with_index.map { |item, i|
       data = item['item_data']
-      [i, data['barcode'], data['physical_material_type']['desc'], policy || data['due_date_policy'], data['description'], data['base_status']['desc'], '']
+      #[i, data['barcode'], data['physical_material_type']['desc'], policy || data['due_date_policy'], data['description'], data['base_status']['desc'], '']
+      [data['pid'], data['barcode'], data['physical_material_type']['desc'], policy || data['due_date_policy'], data['description'], data['base_status']['desc'], '']
     }
 
     while options[:offset] + options[:limit] < response_data['total_record_count']
@@ -93,11 +94,57 @@ class FranklinAlmaController < BlacklightAlma::AlmaController
       
       table_data += response_data['item'].each_with_index.map { |item, i|
         data = item['item_data']
-        [i, data['barcode'], data['physical_material_type']['desc'], policy || data['due_date_policy'], data['description'], data['base_status']['desc'], '']
+        #[i, data['barcode'], data['physical_material_type']['desc'], policy || data['due_date_policy'], data['description'], data['base_status']['desc'], '']
+        [data['pid'], data['barcode'], data['physical_material_type']['desc'], policy || data['due_date_policy'], data['description'], data['base_status']['desc'], '']
       }
     end
 
     render :json => {"data": table_data}
+  end
+
+  def request_options
+    userid = session[:alma_sso_user] || (session['id'] != 'none' ? session['id'] : nil)
+    api_instance = BlacklightAlma::BibsApi.instance
+    api = api_instance.ezwadl_api[0]
+    options = {:user_id => userid}
+    response_data = api_instance.request(api.almaws_v1_bibs.mms_id_request_options, :get, params.merge(options))
+    results = response_data['request_option'].map { |option|
+      request_url = option['request_url']
+      type = option['type']
+      details = option['general_electronic_service_details'] || option['rs_broker_details'] || {}
+
+      if request_url.nil?
+        nil
+      else
+        case option['type']['value']
+        when 'HOLD'
+          {
+            :option_name => 'Hold Request',
+            :option_url => option['request_url'],
+            :avail_for_physical => true,
+            :avail_for_electronic => true
+          }
+        when 'GES'
+          {
+            :option_name => details['public_name'],
+            :option_url => option['request_url'],
+            :avail_for_physical => details['avail_for_physical'],
+            :avail_for_electronic => details['avail_for_electronic']
+          }
+        when 'RS_BROKER'
+          {
+            :option_name => details['name'],
+            :option_url => option['request_url'],
+            :avail_for_physical => true,
+            :avail_for_electronic => true
+          }
+        else
+          nil
+        end
+      end
+    } .compact
+
+    render :json => results #{"data": results}
   end
 
   # TODO: move into blacklight_alma gem (availability.rb concern)

@@ -67,7 +67,7 @@ $(document).ready(function() {
     };
 
     Franklin.prototype.loadRequestOptionsAjax = function(mmsid) {
-        var url = "/alma/single_availability?mmsid=" + encodeURIComponent(mmsid);
+        var url = "/alma/single_availability.json?mmsid=" + encodeURIComponent(mmsid);
 
         $("#requestOptions").DataTable({
             "ajax": url,
@@ -104,6 +104,25 @@ $(document).ready(function() {
         });
     };
 
+    Franklin.prototype.loadRequestOptionListAjax = function(mmsid) {
+        $.ajax({
+            url: "/alma/request_options.json?mms_id="+mmsid,
+            success: function(data, textStatus, jqXHR) {
+                var optionList = $('#requestOptionList');
+                data.forEach(function(element) {
+                    $('<button>').attr({
+                        class: 'btn btn-basic',
+                        style: 'padding: 3px; margin: 2px; margin-bottom: 16px; border-color: #aaa',
+                        text: element['option_name'],
+                        onclick: "window.open('" + element["option_url"] + "', '_blank')"
+                    }).text(element['option_name']).appendTo(optionList);
+  // request_options.map {|r| "<input type='button' class='btn btn-basic' style='padding: 3px; margin: 2px; margin-bottom: 16px; border-color: #aaa;' value='#{r}'/>"} .join("").html_safe 
+                });
+                console.log(data);
+            }
+        });   
+    };
+
     Franklin.prototype.loadRequestOptions = function() {
         var mmsidList = $(".request-options-load").map(function (index, element) {
             return $(element).data("mmsid");
@@ -111,6 +130,7 @@ $(document).ready(function() {
 
         mmsidList.forEach(function(mmsid) {
             Franklin.prototype.loadRequestOptionsAjax(mmsid);
+            Franklin.prototype.loadRequestOptionListAjax(mmsid);
         });
     };
 
