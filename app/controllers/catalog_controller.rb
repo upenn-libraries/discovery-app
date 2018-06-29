@@ -79,7 +79,8 @@ class CatalogController < ApplicationController
 
     ## Default parameters to send to solr for all search-like requests. See also SearchBuilder#processed_parameters
     config.default_solr_params = {
-      defType: 'edismax',
+      #cache: 'false',
+      defType: 'perEndPosition_dense_shingle',
       # this list is annoying to maintain, but this avoids hard-coding a field list
       # in the search request handler in solrconfig.xml
       fl: %w{
@@ -169,9 +170,7 @@ class CatalogController < ApplicationController
 
     config.add_facet_field 'access_f', label: 'Access', collapse: false, query: {
       'Online' => { :label => 'Online', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'Online\\'}'}"},
-      'Penn Library Web' => { :label => 'Penn Library Web', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'Penn Library Web\\'}'}"},
-      'At the library' => { :label => 'At the library', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"},
-      'Really databases' => { :label => 'Really databases', :fq => "{!edismax}format_f:Database/Website NOT prt_count_isort:[* TO *]"}
+      'At the library' => { :label => 'At the library', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"}
     }
     config.add_facet_field 'record_source_f', label: 'Record Source', collapse: false, query: {
       'HathiTrust' => { :label => 'HathiTrust', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'HathiTrust\\'}'}"},
@@ -366,6 +365,7 @@ class CatalogController < ApplicationController
     config.add_search_field 'keyword' do |field|
       field.label = 'Keyword'
       field.solr_local_parameters = {
+          ps: '3',
           qf: 'marcrecord_xml^0.25 call_number_search^0.5 subject_search^1.0 title_1_search^2.5 title_2_search^1.5 author_creator_1_search^3 author_creator_2_search^2 isbn_isxn^0.25',
           pf: 'marcrecord_xml^0.25 call_number_search^0.5 subject_search^1.0 title_1_search^2.5 title_2_search^1.5 author_creator_1_search^3 author_creator_2_search^2 isbn_isxn^0.25'
       }
