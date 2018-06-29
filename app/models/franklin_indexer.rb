@@ -57,7 +57,7 @@ class FranklinIndexer < BaseIndexer
 
     # append extra params to the Solr update URL for solr-side cross reference handling
     # and duplicate ID deletion
-    processors = [ 'xref-copyfield' ]
+    processors = [ 'xref-copyfield', 'fl-multiplex', 'shingles' ]
     if ENV['SOLR_USE_UID_DISTRIB_PROCESSOR']
       # disable; handle deletion outside of solr, either permanently or pending bug fixes
       #processors << 'uid-distrib'
@@ -182,10 +182,6 @@ class FranklinIndexer < BaseIndexer
       acc.concat(pennlibmarc.get_specific_location_values(rec))
     end
 
-    to_field "publication_date_f_stored" do |rec, acc|
-      acc.concat(pennlibmarc.get_publication_date_values(rec))
-    end
-
     to_field "classification_f_stored" do |rec, acc|
       acc.concat(pennlibmarc.get_classification_values(rec))
     end
@@ -248,13 +244,18 @@ class FranklinIndexer < BaseIndexer
       acc.concat(pennlibmarc.get_title_xfacet_values(rec))
     end
 
-    to_field 'title_ssort' do |rec, acc|
+    to_field 'title_nssort' do |rec, acc|
       acc.concat(pennlibmarc.get_title_sort_values(rec))
+    end
+
+    to_field 'title_sort_tl' do |rec, acc|
+      acc.concat(pennlibmarc.get_title_sort_filing_parts(rec, false))
+      pennlibmarc.append_title_variants(rec, acc)
     end
 
     # Author fields
 
-    to_field 'author_creator_ssort' do |rec, acc|
+    to_field 'author_creator_nssort' do |rec, acc|
       acc.concat(pennlibmarc.get_author_creator_sort_values(rec))
     end
 
@@ -278,12 +279,76 @@ class FranklinIndexer < BaseIndexer
       acc.concat(pennlibmarc.get_contained_within_values(rec))
     end
 
-    to_field 'publication_date_ssort' do |rec, acc|
-      acc.concat(pennlibmarc.get_publication_date_sort_values(rec))
+    to_field 'elvl_rank_isort' do |rec, acc|
+      val = pennlibmarc.get_encoding_level_rank(rec)
+      acc << val if val
     end
 
-    to_field 'recently_added_isort' do |rec, acc|
-      acc.concat(pennlibmarc.get_recently_added_sort_values(rec))
+    to_field 'hld_count_isort' do |rec, acc|
+      val = pennlibmarc.get_hld_count(rec)
+      acc << val if val
+    end
+
+    to_field 'prt_count_isort' do |rec, acc|
+      val = pennlibmarc.get_prt_count(rec)
+      acc << val if val
+    end
+
+    each_record do |rec, ctx|
+      ctx.clipboard.tap do |c|
+        c[:timestamps] = pennlibmarc.prepare_timestamps(rec)
+        c[:dates] = pennlibmarc.prepare_dates(rec)
+      end
+    end
+
+    to_field 'recently_added_isort' do |rec, acc, ctx|
+      val = ctx.clipboard.dig(:timestamps, :recently_added)
+      acc << val if val
+    end
+
+    to_field 'last_update_isort' do |rec, acc, ctx|
+      val = ctx.clipboard.dig(:timestamps, :last_update)
+      acc << val if val
+    end
+
+    to_field 'publication_date_ssort' do |rec, acc, ctx|
+      val = ctx.clipboard.dig(:dates, :pub_date_sort)
+      acc << val if val
+    end
+
+    to_field 'pub_min_dtsort' do |rec, acc, ctx|
+      val = ctx.clipboard.dig(:dates, :pub_date_minsort)
+      acc << val if val
+    end
+
+    to_field 'pub_max_dtsort' do |rec, acc, ctx|
+      val = ctx.clipboard.dig(:dates, :pub_date_maxsort)
+      acc << val if val
+    end
+
+    to_field 'content_min_dtsort' do |rec, acc, ctx|
+      val = ctx.clipboard.dig(:dates, :content_date_minsort)
+      acc << val if val
+    end
+
+    to_field 'content_max_dtsort' do |rec, acc, ctx|
+      val = ctx.clipboard.dig(:dates, :content_date_maxsort)
+      acc << val if val
+    end
+
+    to_field 'publication_date_f_stored' do |rec, acc, ctx|
+      val = ctx.clipboard.dig(:dates, :pub_date_decade)
+      acc << val if val
+    end
+
+    to_field 'publication_dr' do |rec, acc, ctx|
+      val = ctx.clipboard.dig(:dates, :pub_date_range)
+      acc << val if val
+    end
+
+    to_field 'content_dr' do |rec, acc, ctx|
+      val = ctx.clipboard.dig(:dates, :content_date_range)
+      acc << val if val
     end
 
     to_field "isbn_isxn_stored",  extract_marc(%W{020az 022alz}, :separator=>nil) do |rec, acc|

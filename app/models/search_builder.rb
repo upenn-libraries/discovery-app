@@ -2,7 +2,8 @@
 class SearchBuilder < Blacklight::SearchBuilder
   include Blacklight::Solr::SearchBuilderBehavior
   include BlacklightAdvancedSearch::AdvancedSearchBuilder
-  self.default_processor_chain += [:add_advanced_search_to_solr, :override_sort_when_q_is_empty, :lowercase_expert_boolean_operators]
+  self.default_processor_chain += [:add_advanced_search_to_solr, :override_sort_when_q_is_empty, :lowercase_expert_boolean_operators,
+      :add_left_anchored_title]
   include BlacklightRangeLimit::RangeLimitBuilder
   include BlacklightSolrplugins::FacetFieldsQueryFilter
 
@@ -29,15 +30,120 @@ class SearchBuilder < Blacklight::SearchBuilder
     super(params_copy)
   end
 
+  def add_left_anchored_title(solr_parameters)
+    bq = blacklight_params[:q]
+    return if !bq.present?
+    weight = '25'
+    augmented_solr_q = '{!maxscore}'\
+        "_query_:\"{!field f='title_1_tl' v=$qq}\"^#{weight} OR "\
+        "_query_:\"{!field f='title_2_tl' v=$qq}\"^#{weight} OR "\
+        "_query_:\"{!field f='title_3_tl' v=$qq}\"^#{weight} OR "\
+        "_query_:\"{!field f='title_4_tl' v=$qq}\"^#{weight} OR "\
+        "_query_:\"{!field f='title_5_tl' v=$qq}\"^#{weight} OR "\
+        "_query_:\"{!field f='title_6_tl' v=$qq}\"^#{weight} OR "\
+        "_query_:\"{!field f='title_7_tl' v=$qq}\"^#{weight} OR "\
+        "_query_:\"{!field f='title_8_tl' v=$qq}\"^#{weight} OR "\
+        "_query_:\"{!field f='title_9_tl' v=$qq}\"^#{weight} OR "\
+        "_query_:\"{!field f='title_10_tl' v=$qq}\"^#{weight} OR "\
+        "_query_:\"{!field f='title_11_tl' v=$qq}\"^#{weight} OR "\
+        "_query_:\"{!field f='title_12_tl' v=$qq}\"^#{weight} OR "\
+        '_query_:"' + solr_parameters[:q] + '"'
+    solr_parameters[:q] = augmented_solr_q
+  end
+
   # no q param (with or without facets) causes the default 'score' sort
   # to return results in a different random order each time b/c there's
   # no scoring to apply. if there's no q and user hasn't explicitly chosen
   # a sort, we sort by id to provide stable deterministic ordering.
   def override_sort_when_q_is_empty(solr_parameters)
-    if !blacklight_params[:q].present? && !blacklight_params[:sort].present?
-      solr_parameters[:sort] = 'id asc'
+    blacklight_sort = blacklight_params[:sort]
+    return if blacklight_sort.present? && blacklight_sort != 'score desc'
+    access_f = blacklight_params.dig(:f, :access_f)
+    if !blacklight_params[:q].present?
+      sort = 'elvl_rank_isort asc,last_update_isort desc'
+      if access_f.nil? || access_f.empty?
+	# nothing
+      elsif access_f.include? 'At the library'
+        if access_f.size == 1
+          # privilege physical holdings
+          sort = "min(def(hld_count_isort,0),1) desc,#{sort}"
+        end
+      else
+	# privilege online holdings
+        sort = "min(def(prt_count_isort,0),1) desc,#{sort}"
+      end
+    else
+      sort = solr_parameters[:sort]
+      sort = 'score desc' if !sort.present?
+      if access_f == nil || access_f.empty?
+        sort << @@DEFAULT_INDUCED_SORT
+      elsif access_f.size == 1 && access_f.first == 'At the library'
+        sort << @@AT_THE_LIBRARY_INDUCED_SORT
+      else
+        sort << @@ONLINE_INDUCED_SORT
+      end
     end
+    solr_parameters[:sort] = sort
   end
+
+  @@ONLINE_INDUCED_SORT = ',' + [
+    "pub_max_dtsort desc,",
+    "if(exists(prt_count_isort),",
+      "sum(",
+        "if(termfreq(format_f,'Journal/Periodical'),",
+          "1,", # add 1 to boost journals
+          "0",
+        "),",
+        "min(prt_count_isort,10)", # cap to 10, higher is noise
+      "),",
+      "0",
+    ") desc,",
+    "min(def(hld_count_isort,0),10) desc,", # physical hldgs, if any, capped to 10
+    "last_update_isort desc"
+  ].join
+
+  @@AT_THE_LIBRARY_INDUCED_SORT = ',' + [
+    "pub_max_dtsort desc,",
+    "if(exists(hld_count_isort),",
+       "sum(",
+         "if(termfreq(format_f,'Journal/Periodical'),",
+           "1,", # add 1 to boost journals
+           "0",
+         "),",
+         "min(hld_count_isort,10)", # cap to 10; higher is noise
+       "),",
+       "0",
+     ") desc,",
+     "min(def(prt_count_isort,0),10) desc,", # online hldgs, if any, capped to 10
+     "last_update_isort desc"
+  ].join
+
+  @@DEFAULT_INDUCED_SORT = ',' + [
+    "pub_max_dtsort desc,",
+    "max(",
+      "if(exists(hld_count_isort),",
+        "sum(",
+          "if(termfreq(format_f,'Journal/Periodical'),",
+            "2,", # add 2 to boost physical journals
+            "0", # default boost of 0
+          "),",
+          "min(hld_count_isort,10)", #cap to 10; higher is noise
+        "),",
+        "0",
+      "),",
+      "if(exists(prt_count_isort),",
+        "sum(",
+          "if(termfreq(format_f,'Journal/Periodical'),",
+            "3,", # add 2 to boost online journals
+            "1", # add 1 to boost online
+          "),",
+          "min(prt_count_isort,10)", #cap to 10; higher is noise
+        "),",
+        "0",
+      ")",
+    ") desc,",
+    "last_update_isort desc"
+  ].join
 
   def lowercase_expert_boolean_operators(solr_parameters)
     search_field = blacklight_params[:search_field]

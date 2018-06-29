@@ -81,7 +81,8 @@ class CatalogController < ApplicationController
 
     ## Default parameters to send to solr for all search-like requests. See also SearchBuilder#processed_parameters
     config.default_solr_params = {
-      defType: 'edismax',
+      #cache: 'false',
+      defType: 'perEndPosition_dense_shingle',
       # this list is annoying to maintain, but this avoids hard-coding a field list
       # in the search request handler in solrconfig.xml
       fl: %w{
@@ -366,6 +367,7 @@ class CatalogController < ApplicationController
     config.add_search_field 'keyword' do |field|
       field.label = 'Keyword'
       field.solr_local_parameters = {
+          ps: '3',
           qf: 'marcrecord_xml^0.25 call_number_search^0.5 subject_search^1.0 title_1_search^2.5 title_2_search^1.5 author_creator_1_search^3 author_creator_2_search^2 isbn_isxn^0.25',
           pf: 'marcrecord_xml^0.25 call_number_search^0.5 subject_search^1.0 title_1_search^2.5 title_2_search^1.5 author_creator_1_search^3 author_creator_2_search^2 isbn_isxn^0.25'
       }
@@ -598,12 +600,12 @@ class CatalogController < ApplicationController
     # whether the sort is ascending or descending (it must be asc or desc
     # except in the relevancy case).
     config.add_sort_field 'score desc', label: 'Relevance'
-    config.add_sort_field 'title_ssort asc', label: 'Title (a-z)'
-    config.add_sort_field 'title_ssort desc', label: 'Title (z-a)'
-    config.add_sort_field 'author_creator_ssort asc', label: 'Author (a-z)'
-    config.add_sort_field 'author_creator_ssort desc', label: 'Author (z-a)'
-    config.add_sort_field 'publication_date_ssort desc, title_ssort asc', label: 'Pub date (new-old)'
-    config.add_sort_field 'publication_date_ssort asc, title_ssort asc', label: 'Pub date (old-new)'
+    config.add_sort_field 'title_nssort asc', label: 'Title (a-z)'
+    config.add_sort_field 'title_nssort desc', label: 'Title (z-a)'
+    config.add_sort_field 'author_creator_nssort asc', label: 'Author (a-z)'
+    config.add_sort_field 'author_creator_nssort desc', label: 'Author (z-a)'
+    config.add_sort_field 'publication_date_ssort desc, title_nssort asc', label: 'Pub date (new-old)'
+    config.add_sort_field 'publication_date_ssort asc, title_nssort asc', label: 'Pub date (old-new)'
     config.add_sort_field 'recently_added_isort desc', label: 'Date added (new-old)'
 
     # If there are more than this many search results, no spelling ("did you
