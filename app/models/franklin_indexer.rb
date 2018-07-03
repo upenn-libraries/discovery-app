@@ -302,7 +302,7 @@ class FranklinIndexer < BaseIndexer
     end
 
     to_field 'recently_added_isort' do |rec, acc, ctx|
-      val = ctx.clipboard.dig(:timestamps, :recently_added)
+      val = ctx.clipboard.dig(:timestamps, :most_recent_add)
       acc << val if val
     end
 
