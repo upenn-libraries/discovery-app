@@ -31,6 +31,8 @@ class SearchBuilder < Blacklight::SearchBuilder
   end
 
   def add_left_anchored_title(solr_parameters)
+    qq = solr_parameters[:qq]
+    return if qq.nil? || !qq.present?
     bq = blacklight_params[:q]
     return if !bq.present?
     weight = '26'
