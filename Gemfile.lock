@@ -16,8 +16,8 @@ GIT
 
 GIT
   remote: https://github.com/magibney/blacklight.git
-  revision: 990173b11dd0cd377e116cda6c7471ec8101dbd0
-  branch: v6.8.0-solr7-qq
+  revision: b8a2e5f823e7b8cca623e185fb53dc29c91aa825
+  branch: v6.8.0-solr7-qq-feedFormat
   specs:
     blacklight (6.8.0)
       bootstrap-sass (~> 3.2)
@@ -102,7 +102,7 @@ GEM
     addressable (2.5.1)
       public_suffix (~> 2.0, >= 2.0.2)
     arel (6.0.4)
-    autoprefixer-rails (8.2.0)
+    autoprefixer-rails (8.6.4)
       execjs
     bcrypt (3.1.11)
     binding_of_caller (0.7.2)

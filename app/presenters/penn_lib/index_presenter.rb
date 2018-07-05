@@ -2,7 +2,7 @@
 module PennLib
   class IndexPresenter < Blacklight::IndexPresenter
 
-    def label(field_or_string_or_proc, opts = {})
+    def label(field_or_string_or_proc, opts = { :support_html => true })
       # unlike ShowPresenter, IndexPresenters don't have a #heading method;
       # BL simply calls #label with the 'title_field' value from config.
       # So we intercept that here. This is ugly, but I can't figure out
@@ -13,7 +13,7 @@ module PennLib
       if field_or_string_or_proc == title_field
         ([ document.fetch('title', '') ] + document.fetch('title_880_a', []))
             .select { |value| value.present? }
-            .join('<br/>')
+            .join(opts[:support_html] ? '<br/>' : ' / ')
             .html_safe
       else
         # I'm not sure that #label is EVER used for anything besides the heading,

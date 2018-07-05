@@ -26,7 +26,7 @@ gem 'coffee-rails', '4.2.1'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 gem 'therubyracer', '0.12.2', platforms: :ruby
 
-gem "blacklight", '6.8.0', :git => 'https://github.com/magibney/blacklight.git', :branch => 'v6.8.0-solr7-qq'
+gem "blacklight", '6.8.0', :git => 'https://github.com/magibney/blacklight.git', :branch => 'v6.8.0-solr7-qq-feedFormat'
 
 gem "jettywrapper", '2.0.4'
 

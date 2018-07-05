@@ -106,6 +106,7 @@ class CatalogController < ApplicationController
         electronic_holdings_json
         bound_with_ids_a
         marcrecord_text
+        recently_added_isort
       }.join(','),
       'facet.threads': 2,
 #      fq: '{!tag=cluster}{!collapse field=cluster_id nullPolicy=expand size=5000000 min=record_source_id}',

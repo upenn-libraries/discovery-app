@@ -15,6 +15,7 @@ class SolrDocument
   end
   
   field_semantics.merge!(    
+                         :last_updated => "recently_added_isort",
                          :title => "title",
                          :author => "author_creator_a",
                          :language => "language_a",
