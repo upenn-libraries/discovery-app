@@ -175,7 +175,7 @@ class SolrDocument
   end
 
   def alma_availability_mms_ids
-    fetch('bound_with_ids_a', [alma_mms_id])
+    fetch('bound_with_ids_a', []) + [alma_mms_id]
   end
 
   def has_any_holdings?
