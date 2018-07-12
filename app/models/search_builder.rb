@@ -3,7 +3,7 @@ class SearchBuilder < Blacklight::SearchBuilder
   include Blacklight::Solr::SearchBuilderBehavior
   include BlacklightAdvancedSearch::AdvancedSearchBuilder
   self.default_processor_chain += [:add_advanced_search_to_solr, :override_sort_when_q_is_empty, :lowercase_expert_boolean_operators,
-      :add_left_anchored_title]
+      :add_left_anchored_title, :add_routing_hash]
   include BlacklightRangeLimit::RangeLimitBuilder
   include BlacklightSolrplugins::FacetFieldsQueryFilter
 
@@ -152,6 +152,12 @@ class SearchBuilder < Blacklight::SearchBuilder
     if search_field == 'keyword_expert'
       solr_parameters[:lowercaseOperators] = true
     end
+  end
+
+  def add_routing_hash(solr_parameters)
+    routing_hash = blacklight_params[:routingHash]
+    return if routing_hash.nil?
+    solr_parameters[:routingHash] = routing_hash
   end
 
 end

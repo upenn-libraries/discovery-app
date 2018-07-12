@@ -42,6 +42,18 @@ class CatalogController < ApplicationController
     is_unprotected_url? ? request.original_url : root_url
   end
 
+  def search_results(user_params)
+    sid = session.id
+    if sid.length >= 8
+      routingHash = [sid[-8..-1]].pack("H*").unpack("l>")[0]
+      # mod 12 to support even distribution for replication
+      # factors 1,2,3,4; that should be sufficient for all
+      # practical cases.
+      user_params[:routingHash] = routingHash % 12
+    end
+    super
+  end
+
   # manually expire the session if user has exceeded 'hard expiration' or if
   # shib session has become inactive
   def expire_session
