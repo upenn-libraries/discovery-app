@@ -30,7 +30,7 @@ module PennLib
       def parse_bibs_data(api_response)
         super.each do |mmsid, values|
           values['holdings'].select! do |hld|
-            hld['mmsid'] == mmsid
+            hld['inventory_type'] != 'physical' || hld['mmsid'] == mmsid
           end
         end
       end
