@@ -43,8 +43,8 @@ class CatalogController < ApplicationController
   end
 
   def search_results(user_params)
-    sid = session.id
-    if sid.length >= 8
+    sid = session&.id
+    if !sid.nil? && sid.length >= 8
       routingHash = [sid[-8..-1]].pack("H*").unpack("l>")[0]
       # mod 12 to support even distribution for replication
       # factors 1,2,3,4; that should be sufficient for all
