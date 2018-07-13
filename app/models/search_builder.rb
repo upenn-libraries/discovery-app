@@ -11,6 +11,7 @@ class SearchBuilder < Blacklight::SearchBuilder
   # stores and works with them
   def with(blacklight_params = {})
     params_copy = blacklight_params.dup
+    blacklight_params.delete(:routingHash)
     if params_copy[:q].present?
       # #add_query_to_solr assumes the presence of search_field, which we don't set
       # on bento page, so we set it here if absent. we MUST do this, otherwise
