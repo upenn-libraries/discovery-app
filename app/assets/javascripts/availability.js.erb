@@ -89,7 +89,7 @@ $(document).ready(function() {
             "initComplete": function(settings, json) {
                 dataLen = json.data.length;
                 if(dataLen == 0) {
-                    $('#requestOptions_wrapper').hide();
+                    $('#table-wrapper').hide();
                 }
                 // Reference: https://stackoverflow.com/a/15458987
                 // Check if the location of the first holding is an HTML element,
@@ -136,7 +136,7 @@ $(document).ready(function() {
 
     Franklin.prototype.initializeItemsDataTable = function() {
         $('#holdingItems').DataTable({
-            "dom": 'lftipr<"backbutton">',
+            "dom": '<"backbutton-top">lftipr<"backbutton">',
             "processing": true,
             "columnDefs": [
                 { "visible": false, "targets": 0 }
@@ -158,6 +158,7 @@ $(document).ready(function() {
             }
         });
 
+        $('.backbutton-top').html("<br><br><input type='button' value='< Back' onclick='swapDataTables()'></input>");
         $('.backbutton').html("<br><br><input type='button' value='< Back' onclick='swapDataTables()'></input>");
     };
 

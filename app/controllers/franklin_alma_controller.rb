@@ -60,7 +60,7 @@ class FranklinAlmaController < BlacklightAlma::AlmaController
     response_data = api.get_availability([mmsid])
     response_data['availability'][mmsid]['holdings'].each do |holding|
       if holding.key?('holding_info')
-        holding['location'] = %Q[<a href="javascript:loadItems('#{mmsid}', '#{holding['holding_id']}')">#{holding['location']}</a>]
+        holding['location'] = %Q[<a href="javascript:loadItems('#{mmsid}', '#{holding['holding_id']}')">#{holding['location']} &gt;</a>]
       end
     end
 
@@ -85,7 +85,7 @@ class FranklinAlmaController < BlacklightAlma::AlmaController
     table_data = response_data['item'].each_with_index.map { |item, i|
       data = item['item_data']
       #[i, data['barcode'], data['physical_material_type']['desc'], policy || data['due_date_policy'], data['description'], data['base_status']['desc'], '']
-      [data['pid'], data['barcode'], data['physical_material_type']['desc'], policy || data['due_date_policy'], data['description'], data['base_status']['desc'], '']
+      [data['pid'], data['description'], policy || data['due_date_policy'], data['base_status']['desc'], data['barcode'], '']
     }
 
     while options[:offset] + options[:limit] < response_data['total_record_count']
@@ -119,7 +119,7 @@ class FranklinAlmaController < BlacklightAlma::AlmaController
         case option['type']['value']
         when 'HOLD'
           {
-            :option_name => 'Hold Request',
+            :option_name => 'Request',
             :option_url => option['request_url'],
             :avail_for_physical => true,
             :avail_for_electronic => true
@@ -144,7 +144,7 @@ class FranklinAlmaController < BlacklightAlma::AlmaController
       end
     } .compact
 
-    render :json => results #{"data": results}
+    render :json => results
   end
 
   # TODO: move into blacklight_alma gem (availability.rb concern)
