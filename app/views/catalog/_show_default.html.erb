@@ -13,7 +13,7 @@
 </dl>
 <hr style='border-color:black; margin-bottom: 4px;'/>
 <% if current_user %>
-  <span id="requestOptionList"></span>
+  <span id="requestOptionList"><%= image_tag("ajax-loader.gif", id: 'request-options-spinner') %></span>
   <% 
     #request_options = ['Hold Request', 'Interlibrary Loan', 'Books by Mail', 'Place on Course Reserve', 'Request Fix / Enhance Record', 'Scan &amp; Deliver', 'Send us a Question']
     #request_options = ['Hold Request', 'Interlibrary Loan', 'Books by Mail', 'Request Fix / Enhance Record', 'Scan &amp; Deliver', 'Send us a Question']

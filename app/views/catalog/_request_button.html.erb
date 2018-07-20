@@ -11,7 +11,7 @@
     </button>
     <ul class="dropdown-menu">
       <%# Is there a better way to construct the URL to the record? %>
-      <li class="small"><a href="<%= accounts_login_url(next: "/catalog/#{document.id}") %>">Login with PennKey</a></li>
+      <li class="small"><a href="<%= accounts_login_url(next: request.original_url) %>">Login with PennKey</a></li>
       <li role="separator" class="divider"></li>
       <li class="small"><a href="http://www.library.upenn.edu/catalogs/franklin/nopennkey.html">No PennKey? Click here.</a></li>
     </ul>
