@@ -161,6 +161,9 @@ $(document).ready(function() {
         $('#holdingItems').DataTable({
             "dom": '<"backbutton-top">lftipr<"backbutton">',
             "processing": true,
+            "columnDefs": [
+                { "visible": false, "targets": 0 }
+            ],
             "language": {
                 "search": "Filter records:",
                 "loadingRecords": "&nbsp;",
