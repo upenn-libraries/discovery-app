@@ -97,7 +97,7 @@ class FranklinAlmaController < ApplicationController
                            'check_holdings' => 'Requestable'}
 
     mmsid = params[:mmsid]
-    userid = session[:alma_sso_user] || (session['id'] != 'none' ? session['id'] : nil) || 'GUEST'
+    userid = session['id'].presence || 'GUEST'
     api = alma_api_class.new()
     response_data = api.get_availability([mmsid])
     response_data['availability'][mmsid]['holdings'].each do |holding|
@@ -123,7 +123,7 @@ class FranklinAlmaController < ApplicationController
   end
 
   def holding_items
-    userid = session[:alma_sso_user] || (session['id'] != 'none' ? session['id'] : nil)
+    userid = session['id'].presence || nil
     policy = 'Please log in for loan and request information' if userid.nil?
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
@@ -158,7 +158,7 @@ class FranklinAlmaController < ApplicationController
   end
 
   def request_options
-    userid = session[:alma_sso_user] || (session['id'] != 'none' ? session['id'] : nil)
+    userid = session['id'].presence || nil
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
     options = {:user_id => userid}
@@ -207,7 +207,7 @@ class FranklinAlmaController < ApplicationController
   def request_title?
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
-    userid = session[:alma_sso_user] || (session['id'] != 'none' ? session['id'] : 'GUEST')
+    userid = session['id'].presence || 'GUEST'
     options = {:user_id => userid, :format => 'json'}
 
     response_data = api_instance.request(api.almaws_v1_bibs.mms_id_request_options, :get, params.merge(options))
@@ -220,7 +220,7 @@ class FranklinAlmaController < ApplicationController
   def request_item?
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
-    userid = session[:alma_sso_user] || (session['id'] != 'none' ? session['id'] : 'GUEST')
+    userid = session['id'].presence || 'GUEST'
     options = {:user_id => userid, :format => 'json', :expand => 'due_date_policy'}
 
     response_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items_item_pid, :get, params.merge(options))
@@ -264,7 +264,7 @@ class FranklinAlmaController < ApplicationController
 
     return if performed?
 
-    userid = session[:alma_sso_user] || (session['id'] != 'none' ? session['id'] : 'GUEST')
+    userid = session['id'].presence || 'GUEST'
 
     # The block below pulls libraries dynamically but the list of valid pickup locations shouldn't
     # change, so I've created a hard-coded list to use below to save an API call and reduce load time.
@@ -324,7 +324,7 @@ class FranklinAlmaController < ApplicationController
 
     return if performed?
 
-    userid = session[:alma_sso_user] || (session['id'] != 'none' ? session['id'] : 'GUEST')
+    userid = session['id'].presence || 'GUEST'
 
     # For making requests via API, we are required to supply user_id and user_id_type as
     # URL parameters. I spent too much time trying to figure out how to do this following
