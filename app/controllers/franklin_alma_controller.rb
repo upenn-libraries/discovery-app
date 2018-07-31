@@ -98,16 +98,37 @@ class FranklinAlmaController < ApplicationController
 
     mmsid = params[:mmsid]
     userid = session['id'].presence || 'GUEST'
-    api = alma_api_class.new()
-    response_data = api.get_availability([mmsid])
+    bibapi = alma_api_class.new()
+    response_data = bibapi.get_availability([mmsid])
+    holding_data = nil
+
+    unless response_data['availability'][mmsid]['holdings']&.dig(0, 'holding_info').present?
+      api_instance = BlacklightAlma::BibsApi.instance
+      api = api_instance.ezwadl_api[0]
+      holding_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items, :get, :mms_id => mmsid, :holding_id => 'ALL')
+      holding_map = {}
+      
+      [holding_data['items']['item']].flatten.each do |item|
+        holding_id = item['holding_data']['holding_id']
+        item_pid = item['item_data']['pid']
+        holding_map[holding_id] = item_pid
+        #holding_map[holding_id] ||= []
+        #holding_map[holding_id] << item_pid
+      end
+    end
+
     response_data['availability'][mmsid]['holdings'].each do |holding|
       links = []
       links << "<a href='/redir/aeon?bibid=#{holding['mmsid']}&hldid=#{holding['holding_id']}'' target='_blank'>Request to View</a>" if holding['link_to_aeon']
+      links << "<span class='check-requestable' data-mmsid='#{params[:mmsid]}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/></span>"
       holding['availability'] = availability_status[holding['availability']]
 
       if holding.key?('holding_info')
         holding['location'] = %Q[<a href="javascript:loadItems('#{mmsid}', '#{holding['holding_id']}')">#{holding['location']} &gt;</a>]
         holding['availability'] = "<span class='load-holding-details' data-mmsid='#{params[:mmsid]}' data-holdingid='#{holding['holding_id']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/></span>"
+      else
+        holding['holding_id'] = holding['holding_id']
+        holding['item_pid'] = holding_map[holding['holding_id']]
       end
 
       holding['links'] = links
@@ -116,10 +137,29 @@ class FranklinAlmaController < ApplicationController
     table_data = response_data['availability'][mmsid]['holdings'].select { |h| h['inventory_type'] == 'physical' }
                  .sort { |a,b| cmpHoldingLocations(a,b) }
                  .each_with_index
-                 .map { |h,i| [i, h['location'], h['availability'], h['call_number'], h['links']] }
+                 .map { |h,i| [i, h['location'], h['availability'], h['call_number'], h['links'], h['holding_id'], h['item_pid']] }
 
     #render :json => {"data": [["Location of #{mmsid}", 'Availability', 'Call #', 'Details button']]}
     render :json => {"data": table_data}
+  end
+
+  def check_requestable
+    api_instance = BlacklightAlma::BibsApi.instance
+    api = api_instance.ezwadl_api[0]
+    response_data = api_instance.request(api.almaws_v1_bibs.mms_id_requests, :get, params)
+    result = {}
+
+    if response_data.dig('total_record_count') != '0'
+      [response_data.dig('user_requests', 'user_request')].flatten.reject(&:nil?).each do |req|
+        item_pid = req.dig('item_id').presence
+        request_type = req.dig('request_sub_type', '__content__').presence
+        result[item_pid] ||= []
+        result[item_pid] << request_type 
+      end
+    end
+
+    render :json => result
+
   end
 
   def holding_items
@@ -139,7 +179,7 @@ class FranklinAlmaController < ApplicationController
       data = item['item_data']
       data['links'] = ["<a href='/alma/request?mms_id=#{params['mms_id']}&holding_id=#{params['holding_id']}&item_pid=#{data['pid']}' target='_blank'>Request</a>"]
       #[i, data['barcode'], data['physical_material_type']['desc'], policy || data['due_date_policy'], data['description'], data['base_status']['desc'], '']
-      [data['pid'], data['description'], policy || data['due_date_policy'], data['base_status']['desc'], data['barcode'], data['links']]
+      [data['pid'], data['description'], policy || data['due_date_policy'], data['base_status']['desc'], data['barcode'], data['links'], params['mms_id'], params['holding_id']]
     }
 
     while options[:offset] + options[:limit] < response_data['total_record_count']
@@ -150,7 +190,7 @@ class FranklinAlmaController < ApplicationController
         data = item['item_data']
         data['links'] = ["<a href='/alma/request?mms_id=#{params['mms_id']}&holding_id=#{params['holding_id']}&item_pid=#{data['pid']}' target='_blank'>Request</a>"]
         #[i, data['barcode'], data['physical_material_type']['desc'], policy || data['due_date_policy'], data['description'], data['base_status']['desc'], '']
-        [data['pid'], data['barcode'], data['physical_material_type']['desc'], policy || data['due_date_policy'], data['description'], data['base_status']['desc'], data['links']]
+        [data['pid'], data['barcode'], data['physical_material_type']['desc'], policy || data['due_date_policy'], data['description'], data['base_status']['desc'], data['links'], params['mms_id'], params['holding_id']]
       }
     end
 

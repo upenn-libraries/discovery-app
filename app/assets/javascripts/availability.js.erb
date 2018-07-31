@@ -1,3 +1,6 @@
+var globaldata = null;
+var renderdata = [];
+
 $(document).ready(function() {
 
     // subclass BlacklightAlma
@@ -73,7 +76,7 @@ $(document).ready(function() {
             "ajax": url,
             "processing": true,
             "columnDefs": [
-                { "visible": false, "targets": 0 }
+                { "visible": false, "targets": [0,5,6] }
             ],
             "language": {
               "search": "Filter records:",
@@ -84,6 +87,18 @@ $(document).ready(function() {
                 var table = $('#requestOptions').DataTable();
                 var pageSize = table.settings()[0]['_iDisplayLength'];
                 var tableLen = table.data().length;
+
+                if(tableLen > 0 && globaldata != null) {
+                    data = table.data();
+                    for(var i = 0; i < tableLen; i++) {
+                        if(data[i][6] in globaldata && renderdata.indexOf(data[i][6]) == -1) {
+                            renderdata.push(data[i][6]);
+                            data[i][4][0] = "<a target='_blank' href='/alma/request?mms_id=" + mmsid + "&holding_id=" + data[i][5] + "&item_pid=" + data[i][6] + "'>Request</a>";
+                            table.row(i).invalidate().draw();
+                        } 
+                    }
+                }
+
                 if(tableLen > pageSize) {
                   $('#requestOptions_filter').show()
                   $('#requestOptions_paginate').show()
@@ -108,6 +123,20 @@ $(document).ready(function() {
                     $('#requestOptionsAvailability').text('Availability');
                 }
 
+                $('.check-requestable').each(function(idx, element) {
+                    var mmsid = $(element).data("mmsid");
+                    var url = "/alma/check_requestable?mms_id="+mmsid;
+                    $.ajax({
+                        url: url,
+                        success: function(data, textStatus, jqXHR) {
+                            $(element).removeClass('check-requestable');
+                            $(element).html('');
+                            $(element).append(data);
+                            globaldata = data;
+                            $('#requestOptions').DataTable().draw();
+                        }
+                    });
+                });
 
                 $('.load-holding-details').each(function(idx, element) {
                     var mmsid = $(element).data("mmsid");
@@ -115,7 +144,7 @@ $(document).ready(function() {
                     var url = "/alma/holding_details?mms_id="+mmsid+"&holding_id="+holdingid
                     $.ajax({
                         url: url,
-                        success: function(data, textStatus,jqXHR) {
+                        success: function(data, textStatus, jqXHR) {
                             $(element).removeClass('load-holding-details');
                             $(element).html('');
                             $(element).append(data);
@@ -138,7 +167,6 @@ $(document).ready(function() {
                         text: element['option_name'],
                         onclick: "window.open('" + element["option_url"] + "', '_blank')"
                     }).text(element['option_name']).appendTo(optionList);
-  // request_options.map {|r| "<input type='button' class='btn btn-basic' style='padding: 3px; margin: 2px; margin-bottom: 16px; border-color: #aaa;' value='#{r}'/>"} .join("").html_safe 
                 });
                 $('#request-options-spinner').remove();
                 console.log(data);
@@ -162,7 +190,7 @@ $(document).ready(function() {
             "dom": '<"backbutton-top">lftipr<"backbutton">',
             "processing": true,
             "columnDefs": [
-                { "visible": false, "targets": 0 }
+                { "visible": false, "targets": [0,6,7] }
             ],
             "language": {
                 "search": "Filter records:",
@@ -173,6 +201,17 @@ $(document).ready(function() {
                 var table = $('#holdingItems').DataTable();
                 var pageSize = table.settings()[0]['_iDisplayLength'];
                 var tableLen = table.data().length;
+
+                if(tableLen > 0) {
+                    data = table.data();
+                    for(var i = 0; i < tableLen; i++) {
+                        if(data[i][0] in globaldata && renderdata.indexOf(data[i][0]) == -1 && data[i][5].length == 0) {
+                            renderdata.push(data[i][0]);
+                            data[i][5].push("<a target='_blank' href='/alma/request?mms_id=" + data[i][6] + "&holding_id=" + data[i][7] + "&item_pid=" + data[i][0] + "'>Request</a>");
+                            table.row(i).invalidate().draw();
+                        } 
+                    }
+                }
                 tableLen > pageSize ? $('#holdingItems_filter').show() : $('#holdingItems_filter').hide();
             },
             "initComplete": function(settings, json) {
@@ -192,6 +231,7 @@ $(document).ready(function() {
 });
 
 function loadItems(mms_id, holding_id) {
+    renderdata = [];
     var holdingItemsTable = $('#holdingItems').DataTable();
     holdingItemsTable.clear().draw();
     holdingItemsTable.ajax.url('/alma/holding_items.json?mms_id=' + mms_id + "&holding_id=" + holding_id).load();
