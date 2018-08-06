@@ -1,5 +1,9 @@
 var globaldata = null;
 var renderdata = [];
+var validRequestTypes = ["CentralCAT","MAINT-EC","CHI CAT","CatMet","HEB CAT",
+                         "Jap-KorCAT","MUSIC CAT","MidEastCat","SASIA CAT",
+                         "SCPC CAT","SLAV CAT","BindRepair","MAINT-enh",
+                         "MAINT-otf","MAINT-tr"];
 
 $(document).ready(function() {
 
@@ -76,7 +80,8 @@ $(document).ready(function() {
             "ajax": url,
             "processing": true,
             "columnDefs": [
-                { "visible": false, "targets": [0,5,6] }
+                { "visible": false, "targets": [0,6,7] },
+                { "orderable": false, "targets": 5 }
             ],
             "language": {
               "search": "Filter records:",
@@ -91,10 +96,13 @@ $(document).ready(function() {
                 if(tableLen > 0 && globaldata != null) {
                     data = table.data();
                     for(var i = 0; i < tableLen; i++) {
-                        if(data[i][6] in globaldata && renderdata.indexOf(data[i][6]) == -1) {
-                            renderdata.push(data[i][6]);
-                            data[i][4][0] = "<a target='_blank' href='/alma/request?mms_id=" + mmsid + "&holding_id=" + data[i][5] + "&item_pid=" + data[i][6] + "'>Request</a>";
-                            table.row(i).invalidate().draw();
+                        if(data[i][7] in globaldata && renderdata.indexOf(data[i][7]) == -1) {
+                            var requests = globaldata[data[i][7]];
+                            if(validRequestTypes.indexOf(requests[0]) != -1) {
+                                renderdata.push(data[i][7]);
+                                data[i][5][0] = "<a target='_blank' href='/alma/request?mms_id=" + mmsid + "&holding_id=" + data[i][6] + "&item_pid=" + data[i][7] + "'>Request</a>";
+                                table.row(i).invalidate().draw();
+                            }
                         } 
                     }
                 }
@@ -122,21 +130,6 @@ $(document).ready(function() {
                 else {
                     $('#requestOptionsAvailability').text('Availability');
                 }
-
-                $('.check-requestable').each(function(idx, element) {
-                    var mmsid = $(element).data("mmsid");
-                    var url = "/alma/check_requestable?mms_id="+mmsid;
-                    $.ajax({
-                        url: url,
-                        success: function(data, textStatus, jqXHR) {
-                            $(element).removeClass('check-requestable');
-                            $(element).html('');
-                            $(element).append(data);
-                            globaldata = data;
-                            $('#requestOptions').DataTable().draw();
-                        }
-                    });
-                });
 
                 $('.load-holding-details').each(function(idx, element) {
                     var mmsid = $(element).data("mmsid");
@@ -190,7 +183,8 @@ $(document).ready(function() {
             "dom": '<"backbutton-top">lftipr<"backbutton">',
             "processing": true,
             "columnDefs": [
-                { "visible": false, "targets": [0,6,7] }
+                { "visible": false, "targets": [0,6,7] },
+                { "orderable": false, "targets": 5 }
             ],
             "language": {
                 "search": "Filter records:",
@@ -206,9 +200,12 @@ $(document).ready(function() {
                     data = table.data();
                     for(var i = 0; i < tableLen; i++) {
                         if(data[i][0] in globaldata && renderdata.indexOf(data[i][0]) == -1 && data[i][5].length == 0) {
-                            renderdata.push(data[i][0]);
-                            data[i][5].push("<a target='_blank' href='/alma/request?mms_id=" + data[i][6] + "&holding_id=" + data[i][7] + "&item_pid=" + data[i][0] + "'>Request</a>");
-                            table.row(i).invalidate().draw();
+                            var requests = globaldata[data[i][0]];
+                            if(validRequestTypes.indexOf(requests[0]) != -1) {
+                                renderdata.push(data[i][0]);
+                                data[i][5].push("<a target='_blank' href='/alma/request?mms_id=" + data[i][6] + "&holding_id=" + data[i][7] + "&item_pid=" + data[i][0] + "'>Request</a>");
+                                table.row(i).invalidate().draw();
+                            }
                         } 
                     }
                 }
@@ -224,10 +221,23 @@ $(document).ready(function() {
         $('.backbutton').html("<br><br><input type='button' value='< Back' onclick='swapDataTables()'></input>");
     };
 
+    Franklin.prototype.checkRequestable = function() {
+        var mmsid = $('#requestOptions').data("mmsid");
+        var url = "/alma/check_requestable?mms_id="+mmsid;
+        $.ajax({
+            url: url,
+            success: function(data, textStatus, jqXHR) {
+                globaldata = data;
+                $('#requestOptions').DataTable().draw();
+            }
+        });
+    }
+
     var ba = new Franklin();
     ba.loadAvailability();
     ba.loadRequestOptions();
     ba.initializeItemsDataTable();
+    ba.checkRequestable();
 });
 
 function loadItems(mms_id, holding_id) {
