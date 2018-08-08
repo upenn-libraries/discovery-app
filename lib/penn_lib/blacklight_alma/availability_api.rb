@@ -32,6 +32,7 @@ module PennLib
           values['holdings'].select! do |hld|
             hld['inventory_type'] != 'physical' || hld['mmsid'] == mmsid || !hld.key?('mmsid')
           end
+        end
       end
 
       # TODO: Move into blacklight_alma gem?
