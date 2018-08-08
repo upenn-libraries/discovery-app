@@ -263,7 +263,7 @@ $(document).ready(function() {
 });
 
 function loadItems(mms_id, holding_id) {
-    renderdata[mmsid] = [];
+    renderdata[mms_id] = [];
     var holdingItemsTable = $('#holdingItems-' + mms_id).DataTable();
     holdingItemsTable.clear().draw();
     holdingItemsTable.ajax.url('/alma/holding_items.json?mms_id=' + mms_id + "&holding_id=" + holding_id).load();
