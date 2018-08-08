@@ -33,7 +33,16 @@ span.site-name, span.site-name a {
   margin-top: 4px;
 }
 
-#table-wrapper {
+button.toggle {
+  margin-bottom: 20px;
+}
+
+button.toggle span.avail-label::after {
+  content: "  \e114";
+  font-family: 'Glyphicons Halflings';
+}
+
+div[id^="table-wrapper"] {
   border: 1px solid #77F;
   padding: 6px;
 }
