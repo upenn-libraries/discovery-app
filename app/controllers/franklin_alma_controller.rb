@@ -112,14 +112,17 @@ class FranklinAlmaController < ApplicationController
     bibapi = alma_api_class.new()
     response_data = bibapi.get_availability([mmsid])
     holding_data = nil
+    holding_map = {}
+
+    # check if any holdings have a holding_info set
+    has_holding_info = response_data['availability'][mmsid]['holdings'].map(&:keys).reduce(&:+).member?('holding_info')
 
     # Load holding information for monographs. Monographs do not have
     # a 'holding_info' value.
-    unless response_data['availability'][mmsid]['holdings']&.dig(0, 'holding_info').present?
+    unless has_holding_info
       api_instance = BlacklightAlma::BibsApi.instance
       api = api_instance.ezwadl_api[0]
       holding_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items, :get, :mms_id => mmsid, :holding_id => 'ALL', :expand => 'due_date_policy', :user_id => userid)
-      holding_map = {}
       
       [holding_data['items']['item']].flatten.reject(&:nil?).each do |item|
         holding_id = item['holding_data']['holding_id']
@@ -134,10 +137,9 @@ class FranklinAlmaController < ApplicationController
     response_data['availability'][mmsid]['holdings'].each do |holding|
       links = []
       links << "<a href='/redir/aeon?bibid=#{holding['mmsid']}&hldid=#{holding['holding_id']}'' target='_blank'>Request to view in reading room</a>" if holding['link_to_aeon']
-      #links << "<span class='check-requestable' data-mmsid='#{params[:mmsid]}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/></span>"
       holding['availability'] = availability_status[holding['availability']] || 'Requestable'
 
-      if holding.key?('holding_info')
+      if has_holding_info
         holding['location'] = %Q[<a href="javascript:loadItems('#{mmsid}', '#{holding['holding_id']}')">#{holding['location']} &gt;</a>]
         holding['availability'] = "<span class='load-holding-details' data-mmsid='#{params[:mmsid]}' data-holdingid='#{holding['holding_id']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/></span>"
       else
@@ -208,7 +210,6 @@ class FranklinAlmaController < ApplicationController
         policies[data['policy']['value']] = nil
         pids_to_check << [data['pid'], data['policy']['value']]
       end
-#      data['links'] = ["<a href='/alma/request?mms_id=#{params['mms_id']}&holding_id=#{params['holding_id']}&item_pid=#{data['pid']}' target='_blank'>Request</a>"] unless userid.nil?
       [data['policy']['value'], data['pid'], data['description'], due_date_policy || data['due_date_policy'], data['base_status']['desc'], data['barcode'], [], params['mms_id'], params['holding_id']]
     }
 
@@ -222,7 +223,6 @@ class FranklinAlmaController < ApplicationController
           policies[data['policy']['value']] = nil
           pids_to_check << [data['pid'], data['policy']['value']]
         end
-#        data['links'] = ["<a href='/alma/request?mms_id=#{params['mms_id']}&holding_id=#{params['holding_id']}&item_pid=#{data['pid']}' target='_blank'>Request</a>"] unless userid.nil?
         [data['policy']['value'], data['pid'], data['physical_material_type']['desc'], due_date_policy || data['due_date_policy'], data['description'], data['base_status']['desc'], data['barcode'], [], params['mms_id'], params['holding_id']]
       }
     end
@@ -316,7 +316,7 @@ class FranklinAlmaController < ApplicationController
 
     response_data = api_instance.request(api.almaws_v1_bibs.mms_id_request_options, :get, params.merge(options))
 
-    return response_data['request_option'].map { |option| 
+    return (response_data['request_option'] || []).map { |option| 
       option['type']['value']
     }.member?('HOLD')
   end
@@ -325,30 +325,13 @@ class FranklinAlmaController < ApplicationController
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
     userid = session['id'].presence || 'GUEST'
-    options = {:user_id => userid, :format => 'json', :expand => 'due_date_policy'}
+    options = {:user_id => userid, :format => 'json'}
 
-    response_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items_item_pid, :get, params.merge(options))
-    item_policy = response_data.dig('item_data', 'policy', 'value').presence
-    item_loc = response_data.dig('item_data', 'location', 'value').presence
+    response_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items_item_pid_request_options, :get, params.merge(options))
 
-    # Locations copied from Alma general fulfillment unit loan rules
-    loan_locs = ['annb', 'annbnewbk', 'annbstor', 'biom', 'chem', 'chemnewbk',
-                   'chemrdrm', 'cjsstk', 'dncirc', 'dent', 'dentnewbks', 'edcomm',
-                   'EMPTY', 'engianne', 'engicirc', 'engi', 'enginewbk', 'engiperi',
-                   'engirefe', 'engirese', 'engiteac', 'engithes', 'fanewbook', 'fineslid',
-                   'fine', 'cjs', 'stor', 'storfine', 'lipp', 'math',
-                   'moornewbk', 'moorrefe', 'moorrese', 'moor', 'mathcirc', 'mathnewbk',
-                   'muse', 'mscirc', 'museegyp', 'musekolb', 'museover', 'musinwbk',
-                   'newbcirc', 'newb', 'pah', 'pahiph', 'presby', 'townanne',
-                   'twcirc', 'townnewbk', 'townrefe', 'townrese', 'town', 'townteac',
-                   'townthes', 'easiacom', 'easiaover', 'eastasia', 'vanp', 'vpnewbook',
-                   'women', 'woody', 'yarn', 'vete', 'vetedisp', 'vetelibr', 'veteover']
-
-    # Item policies copied from Alma general fulfillment unit loan rules
-    noloan_item_policies = ['bound jrnl','lawbad','microform','non-circ','reference','slide','special']
-    # TODO: what about user groups?
-
-    return !userid.nil? && !item_policy.nil? && !item_loc.nil? && !noloan_item_policies.member?(item_policy) && loan_locs.member?(item_loc)
+    return (response_data['request_option'] || []).map { |option| 
+      option['type']['value']
+    }.member?('HOLD')
   end
 
   def load_request
