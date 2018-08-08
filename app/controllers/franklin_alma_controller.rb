@@ -154,7 +154,16 @@ class FranklinAlmaController < ApplicationController
                  .each_with_index
                  .map { |h,i| [i, h['location'], policy || h['due_date_policy'], h['availability'], h['call_number'], h['links'], h['holding_id'], h['item_pid']] }
 
-    #render :json => {"data": [["Location of #{mmsid}", 'Availability', 'Call #', 'Details button']]}
+    if table_data.empty?
+      table_data = response_data['availability'][mmsid]['holdings'].select { |h| h['inventory_type'] == 'electronic' }
+                  .sort { |a,b| cmpOnlineServices(a,b) }
+                  .each_with_index
+                  .map { |p,i| 
+                    link = "<a target='_blank' href='https://upenn.alma.exlibrisgroup.com/view/uresolver/01UPENN_INST/openurl?Force_direct=true&portfolio_pid=#{p['portfolio_pid']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com&u.ignore_date_coverage=true'>#{p['collection']}</a>"
+                    [i, link, '', p['coverage_statement'] || p['public_note'], '', '', '', '']
+                  }
+    end
+
     render :json => {"data": table_data}
   end
 
