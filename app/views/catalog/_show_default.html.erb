@@ -9,62 +9,14 @@
           <dd class="blacklight-<%= field_name.parameterize %>"><%= doc_presenter.field_value field_name %></dd>
       <% end -%>
   <% end -%>
-  <%= render partial: 'status_location_field', locals: { document: document } %>
+  <%# render partial: 'status_location_field', locals: { document: document } %>
 </dl>
-<hr style='border-color:black; margin-bottom: 4px;'/>
-<% if current_user %>
-  <span id="requestOptionList"><%= image_tag("ajax-loader.gif", id: 'request-options-spinner') %></span>
-  <% 
-    #request_options = ['Hold Request', 'Interlibrary Loan', 'Books by Mail', 'Place on Course Reserve', 'Request Fix / Enhance Record', 'Scan &amp; Deliver', 'Send us a Question']
-    #request_options = ['Hold Request', 'Interlibrary Loan', 'Books by Mail', 'Request Fix / Enhance Record', 'Scan &amp; Deliver', 'Send us a Question']
-  %>
-  <% #request_options.map {|r| "<input type='button' class='btn btn-basic' style='padding: 3px; margin: 2px; margin-bottom: 16px; border-color: #aaa;' value='#{r}'/>"} .join("").html_safe %>
-<% else %>
-    <dt class="hidden-print"></dt>
-    <dd class="btn-group">
-    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      Login to view request options <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu">
-      <li class="small"><a href="<%= accounts_login_url(next: request.original_url) %>">Login with PennKey</a></li>
-      <li role="separator" class="divider"></li>
-      <li class="small"><a href="http://www.library.upenn.edu/catalogs/franklin/nopennkey.html">No PennKey? Click here.</a></li>
-    </ul>
-    </dd>
-    <br/>
+<% if document.alma_mms_id.present? %>
+  <hr style='border-color:black; margin-bottom: 4px;'/>
+  <%= render partial: 'alma_request_options', locals: { document: document } %>
+  <br/>
+  <%= render partial: 'alma_availability', locals: { document: document, collapsed: false } %>
 <% end %>
-<br/>
-<span class="check-requestable"/>
-<div id="table-wrapper">
-  <table id="requestOptions" class="request-options-load" data-mmsid="<%= document.alma_mms_id %>" style="width:100%">
-    <thead>
-      <tr>
-        <th></th>
-        <th>Location</th>
-        <th>Policy</th>
-        <th id="requestOptionsAvailability"></th>
-        <th>Call Number</th>
-        <th></th>
-        <th></th>
-        <th></th>
-      </tr>
-    </thead>
-  </table>
-  <table id="holdingItems" class="holding-items-load" style="width:100%">
-    <thead>
-      <tr>
-        <th></th>
-        <th>Description</th>
-        <th>Policy</th>
-        <th>Status</th>
-        <th>Barcode</th>
-        <th></th>
-        <th></th>
-      </tr>
-      </tr>
-    </thead>
-  </table>
-</div>
 
 <%#= render partial: 'alma_availability_iframe', locals: { document: document } %>
 
