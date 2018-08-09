@@ -12,9 +12,6 @@
   <%# render partial: 'status_location_field', locals: { document: document } %>
 </dl>
 <% if document.alma_mms_id.present? %>
-  <hr style='border-color:black; margin-bottom: 4px;'/>
-  <%= render partial: 'alma_request_options', locals: { document: document } %>
-  <br/>
   <%= render partial: 'alma_availability', locals: { document: document, collapsed: false } %>
 <% end %>
 

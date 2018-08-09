@@ -1,9 +1,11 @@
 <% table_style='style=display:none;' if collapsed %>
 <% if collapsed %>
-  <button class='toggle btn btn-success' data-mmsid='<%= document.alma_mms_id %>'><span class="avail-label">Request Options</span></button>
+  <button class='toggle btn btn-request-options' data-mmsid='<%= document.alma_mms_id %>'><span class="avail-label">Request Options</span></button>
 <% end %>
 <span class="check-requestable-<%= document.alma_mms_id %>"/>
 <div id="table-wrapper-<%= document.alma_mms_id %>" <%= table_style %> >
+  <%= render partial: 'alma_request_options', locals: { document: document } %>
+  <br/>
   <table id="requestOptions-<%= document.alma_mms_id %>" class="request-options-load" data-mmsid="<%= document.alma_mms_id %>" style="width:100%">
     <thead>
       <tr>

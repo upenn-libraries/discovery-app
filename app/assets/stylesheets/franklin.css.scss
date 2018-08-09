@@ -33,6 +33,19 @@ span.site-name, span.site-name a {
   margin-top: 4px;
 }
 
+button.btn-request-options,
+button.btn-request-options:focus,
+button.btn-request-options:active {
+  background-color: #092054;
+  border-color: #204d74;
+  color: white;
+}
+
+button.btn-request-options:hover {
+  background-color: #286090;
+  color: white;
+}
+
 button.toggle {
   margin-bottom: 20px;
 }
