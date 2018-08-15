@@ -289,7 +289,7 @@ class FranklinAlmaController < ApplicationController
         when 'RS_BROKER'
           # Remove special URL handling when SF case #00584311 is resolved
           option_url = option['request_url']
-          if option.index('?')
+          if option_url.index('?')
             option_url += '&'
           else
             option_url += '?'
