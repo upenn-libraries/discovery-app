@@ -282,7 +282,7 @@ class FranklinAlmaController < ApplicationController
           {
             :option_name => details['public_name'],
             # Remove appended mmsid when SF case #00584311 is resolved
-            :option_url => option_url + "bibid=#{params['mms_id']}",
+            :option_url => option_url + "bibid=#{params['mms_id']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com",
             :avail_for_physical => details['avail_for_physical'],
             :avail_for_electronic => details['avail_for_electronic']
           }
@@ -298,7 +298,7 @@ class FranklinAlmaController < ApplicationController
           {
             :option_name => details['name'],
             # Remove appended mmsid when SF case #00584311 is resolved
-            :option_url => option_url + "bibid=#{params['mms_id']}",
+            :option_url => option_url + "bibid=#{params['mms_id']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com",
             :avail_for_physical => true,
             :avail_for_electronic => true
           }
