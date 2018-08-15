@@ -272,16 +272,33 @@ class FranklinAlmaController < ApplicationController
             :avail_for_electronic => true
           }
         when 'GES'
+          option_url = option['request_url']
+          if option_url.index('?')
+            option_url += '&'
+          else
+            option_url += '?'
+          end
+
           {
             :option_name => details['public_name'],
-            :option_url => option['request_url'],
+            # Remove appended mmsid when SF case #00584311 is resolved
+            :option_url => option_url + "bibid=#{params['mms_id']}",
             :avail_for_physical => details['avail_for_physical'],
             :avail_for_electronic => details['avail_for_electronic']
           }
         when 'RS_BROKER'
+          # Remove special URL handling when SF case #00584311 is resolved
+          option_url = option['request_url']
+          if option.index('?')
+            option_url += '&'
+          else
+            option_url += '?'
+          end
+
           {
             :option_name => details['name'],
-            :option_url => option['request_url'],
+            # Remove appended mmsid when SF case #00584311 is resolved
+            :option_url => option_url + "bibid=#{params['mms_id']}",
             :avail_for_physical => true,
             :avail_for_electronic => true
           }
