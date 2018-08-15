@@ -160,8 +160,7 @@ $(document).ready(function() {
                 var optionList = $('#requestOptionList-' + mmsid);
                 data.forEach(function(element) {
                     $('<button>').attr({
-                        class: 'btn btn-basic',
-                        style: 'padding: 3px; margin: 2px; margin-bottom: 16px; border-color: #aaa',
+                        class: 'btn btn-basic btn-request-option',
                         text: element['option_name'],
                         onclick: "window.open('" + element["option_url"] + "', '_blank')"
                     }).text(element['option_name']).appendTo(optionList);
@@ -242,7 +241,7 @@ $(document).ready(function() {
             }
         });
 
-        $('.backbutton-top').html("<br><br><input type='button' value='< Back' onclick='swapDataTables(\"" + mmsid + "\")'></input>");
+        $('.backbutton-top').html("<input type='button' value='< Back' onclick='swapDataTables(\"" + mmsid + "\")'></input>");
         $('.backbutton').html("<br><br><input type='button' value='< Back' onclick='swapDataTables(\"" + mmsid + "\")'></input>");
     };
 

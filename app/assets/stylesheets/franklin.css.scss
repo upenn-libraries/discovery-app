@@ -33,6 +33,12 @@ span.site-name, span.site-name a {
   margin-top: 4px;
 }
 
+button.btn-request-option {
+  padding: 3px;
+  margin: 2px 2px 16px 2px;
+  border-color: #aaa;
+}
+
 button.btn-request-options,
 button.btn-request-options:focus,
 button.btn-request-options:active {
@@ -61,7 +67,7 @@ div[id^="table-wrapper"] {
 }
 
 div.backbutton-top {
-  margin: -40px 0 10px 0;
+  margin-bottom: 10px;
 }
 
 /*************

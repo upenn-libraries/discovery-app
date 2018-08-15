@@ -1,5 +1,5 @@
 <% if current_user %>
-  <span id="requestOptionList-<%= document.alma_mms_id %>"><%= image_tag("ajax-loader.gif", id: 'request-options-spinner-' + document.alma_mms_id) %></span>
+  <div id="requestOptionList-<%= document.alma_mms_id %>"><%= image_tag("ajax-loader.gif", id: 'request-options-spinner-' + document.alma_mms_id) %></div>
 <% else %>
     <dt class="hidden-print"></dt>
     <dd class="btn-group">
