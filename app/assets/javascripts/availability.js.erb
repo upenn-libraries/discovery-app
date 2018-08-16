@@ -204,7 +204,7 @@ $(document).ready(function() {
             $(this).DataTable().draw();
         })
         .DataTable({
-            "dom": '<"backbutton-top">lftipr<"backbutton">',
+            "dom": '<"backbutton-top-'+ mmsid +'">lftipr<"backbutton-' + mmsid + '">',
             "processing": true,
             "columnDefs": [
                 { "visible": false, "targets": [0,6,7] },
@@ -241,8 +241,8 @@ $(document).ready(function() {
             }
         });
 
-        $('.backbutton-top').html("<input type='button' value='< Back' onclick='swapDataTables(\"" + mmsid + "\")'></input>");
-        $('.backbutton').html("<br><br><input type='button' value='< Back' onclick='swapDataTables(\"" + mmsid + "\")'></input>");
+        $('.backbutton-top-' + mmsid).html("<input type='button' value='< Back' onclick='swapDataTables(\"" + mmsid + "\")'></input>");
+        $('.backbutton-' + mmsid).html("<br><br><input type='button' value='< Back' onclick='swapDataTables(\"" + mmsid + "\")'></input>");
     };
 
     Franklin.prototype.checkRequestable = function(mmsid) {
