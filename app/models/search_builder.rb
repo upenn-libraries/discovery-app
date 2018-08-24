@@ -36,6 +36,8 @@ class SearchBuilder < Blacklight::SearchBuilder
     return if qq.nil? || !qq.present?
     bq = blacklight_params[:q]
     return if !bq.present?
+    search_field = blacklight_params[:search_field]
+    return if search_field.present? && search_field != 'keyword'
     weight = '26'
     augmented_solr_q = '{!maxscore}'\
         "_query_:\"{!field f='title_1_tl' v=$qq}\"^#{weight} OR "\
