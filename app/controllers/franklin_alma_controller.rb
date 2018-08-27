@@ -114,8 +114,9 @@ class FranklinAlmaController < ApplicationController
     holding_data = nil
     holding_map = {}
 
-    # check if any holdings have a holding_info set
-    has_holding_info = response_data['availability'][mmsid]['holdings'].map(&:keys).reduce([], &:+).member?('holding_info')
+    # check if any holdings have more than one item
+    has_holding_info = response_data['availability'][mmsid]['holdings'].map(&:keys).reduce([], &:+).member?('holding_info') ||
+                       response_data['availability'][mmsid]['holdings'].any? { |hld| hld['total_items'].to_i > 1 || hld['availability'] == 'check_holdings' }
 
     # Load holding information for monographs. Monographs do not have
     # a 'holding_info' value.
