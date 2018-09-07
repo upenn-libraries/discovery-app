@@ -75,14 +75,20 @@ $(document).ready(function() {
     };
 
     Franklin.prototype.loadRequestOptionsAjax = function(mmsid) {
-        var url = "/alma/single_availability.json?mmsid=" + encodeURIComponent(mmsid);
+        var url = "/alma/single_availability.json?mms_id=" + encodeURIComponent(mmsid);
 
         $('#requestOptions-' + mmsid).on('error.dt', function(e, settings, techNote, message) {
             $(this).dataTable().fnSettings().oLanguage.sEmptyTable = 'An error has occurred. Please contact ??? for assistance.';
             $(this).DataTable().draw();
         })
         .DataTable({
-            "ajax": url,
+            "ajax": function(data, callback, settings) {
+                $.get(url, function(data) {
+                    globaldata = $.extend({}, globaldata, data["metadata"]);
+                    callback({"data": data["data"]});
+                    Franklin.prototype.loadRequestOptionListAjax(mmsid);
+                });
+            },
             "processing": true,
             "columnDefs": [
                 { "visible": false, "targets": [0,6,7] },
@@ -158,6 +164,19 @@ $(document).ready(function() {
             url: "/alma/request_options.json?mms_id="+mmsid,
             success: function(data, textStatus, jqXHR) {
                 var optionList = $('#requestOptionList-' + mmsid);
+                if(!globaldata[mmsid]["requestable"]) {
+                    data = data.filter(element => element['option_name'] != 'Request');
+                }
+
+                if(globaldata[mmsid]["facultyexpress"]) {
+                    for(i = 0; i < data.length; i++) {
+                        if(data[i]['option_name'] == 'Interlibrary Loan') {
+                            data[i]['option_name'] = 'FacultyEXPRESS';
+                            break;
+                        }
+                    }
+                }
+
                 data.forEach(function(element) {
                     $('<button>').attr({
                         class: 'btn btn-basic btn-request-option',
@@ -176,17 +195,13 @@ $(document).ready(function() {
             var mmsid = $(element).data("mmsid");
             if($(element).is(":visible")) {
                 Franklin.prototype.loadRequestOptionsAjax(mmsid);
-                Franklin.prototype.loadRequestOptionListAjax(mmsid);
                 Franklin.prototype.initializeItemsDataTable(mmsid);
-                Franklin.prototype.checkRequestable(mmsid);
             }
             else {
                 $('.toggle[data-mmsid=' + mmsid + ']').each(function() {
                     $(this).one("click", function() {
                         Franklin.prototype.loadRequestOptionsAjax(mmsid);
-                        Franklin.prototype.loadRequestOptionListAjax(mmsid);
                         Franklin.prototype.initializeItemsDataTable(mmsid);
-                        Franklin.prototype.checkRequestable(mmsid);
                         $('#table-wrapper-' + mmsid).toggle();
 
                         $(this).click(function() {

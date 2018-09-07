@@ -103,26 +103,33 @@ class FranklinAlmaController < ApplicationController
 
   end
 
+  def has_holding_info?(api_mms_data, mmsid)
+    # check if any holdings have more than one item
+    has_holding_info = api_mms_data['availability'][mmsid]['holdings'].map(&:keys).reduce([], &:+).member?('holding_info') ||
+                       api_mms_data['availability'][mmsid]['holdings'].any? { |hld| hld['total_items'].to_i > 1 || hld['availability'] == 'check_holdings' }
+  end
+
   def single_availability
     availability_status = {'available' => 'Available',
                            'check_holdings' => 'Requestable'}
 
-    mmsid = params[:mmsid]
+    api_instance = BlacklightAlma::BibsApi.instance
+    api = api_instance.ezwadl_api[0]
+
+    mmsid = params[:mms_id]
     userid = session['id'].presence || 'GUEST'
     bibapi = alma_api_class.new()
-    response_data = bibapi.get_availability([mmsid])
+    bib_data = bibapi.get_availability([mmsid])
     holding_data = nil
     holding_map = {}
 
     # check if any holdings have more than one item
-    has_holding_info = response_data['availability'][mmsid]['holdings'].map(&:keys).reduce([], &:+).member?('holding_info') ||
-                       response_data['availability'][mmsid]['holdings'].any? { |hld| hld['total_items'].to_i > 1 || hld['availability'] == 'check_holdings' }
+    has_holding_info = has_holding_info?(bib_data, mmsid)
+    metadata = check_requestable(has_holding_info)
 
     # Load holding information for monographs. Monographs do not have
     # a 'holding_info' value.
     unless has_holding_info
-      api_instance = BlacklightAlma::BibsApi.instance
-      api = api_instance.ezwadl_api[0]
       holding_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items, :get, :mms_id => mmsid, :holding_id => 'ALL', :expand => 'due_date_policy', :user_id => userid)
       
       [holding_data['items']['item']].flatten.reject(&:nil?).each do |item|
@@ -135,7 +142,7 @@ class FranklinAlmaController < ApplicationController
       end
     end
 
-    response_data['availability'][mmsid]['holdings'].each do |holding|
+    bib_data['availability'][mmsid]['holdings'].each do |holding|
       links = []
       links << "<a href='/redir/aeon?bibid=#{holding['mmsid']}&hldid=#{holding['holding_id']}'' target='_blank'>Request to view in reading room</a>" if holding['link_to_aeon']
       holding['availability'] = availability_status[holding['availability']] || 'Requestable'
@@ -152,13 +159,13 @@ class FranklinAlmaController < ApplicationController
     end
 
     policy = 'Please log in for loan and request information' if userid == 'GUEST'
-    table_data = response_data['availability'][mmsid]['holdings'].select { |h| h['inventory_type'] == 'physical' }
+    table_data = bib_data['availability'][mmsid]['holdings'].select { |h| h['inventory_type'] == 'physical' }
                  .sort { |a,b| cmpHoldingLocations(a,b) }
                  .each_with_index
                  .map { |h,i| [i, h['location'], policy || h['due_date_policy'], h['availability'], h['call_number'], h['links'], h['holding_id'], h['item_pid']] }
 
     if table_data.empty?
-      table_data = response_data['availability'][mmsid]['holdings'].select { |h| h['inventory_type'] == 'electronic' }
+      table_data = bib_data['availability'][mmsid]['holdings'].select { |h| h['inventory_type'] == 'electronic' }
                   .sort { |a,b| cmpOnlineServices(a,b) }
                   .each_with_index
                   .map { |p,i| 
@@ -167,25 +174,51 @@ class FranklinAlmaController < ApplicationController
                   }
     end
 
-    render :json => {"data": table_data}
+    render :json => {"metadata": metadata, "data": table_data}
   end
 
-  def check_requestable
+  def check_requestable(has_holding_info = false)
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
-    response_data = api_instance.request(api.almaws_v1_bibs.mms_id_requests, :get, params)
+    request_data = api_instance.request(api.almaws_v1_bibs.mms_id_requests, :get, params)
     result = {}
+    requestable = false
 
-    if response_data.dig('total_record_count') != '0'
-      [response_data.dig('user_requests', 'user_request')].flatten.reject(&:nil?).each do |req|
+    if request_data.dig('total_record_count') != '0'
+      [request_data.dig('user_requests', 'user_request')].flatten.reject(&:nil?).each do |req|
         item_pid = req.dig('item_id').presence
         request_type = req.dig('request_sub_type', '__content__').presence
         result[item_pid] ||= []
-        result[item_pid] << request_type 
+        result[item_pid] << request_type
       end
     end
 
-    render :json => result
+    userid = session['id'].presence
+    usergroup = session['user_group'].presence
+    mmsid = params[:mms_id]
+    item_data = {}
+
+    if !userid.nil? && !has_holding_info
+      options = { :holding_id => 'ALL', :userid => userid, :limit => 100, :format => "application/xml" }
+      item_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items, :get, params.merge(options))
+
+      requestable = [item_data['items']['item']].flatten.reject do |item|
+        item.dig('item_data', 'process_type', '__content__') == 'LOAN'
+      end
+      .map do |item|
+        url = api.almaws_v1_bibs.mms_id_holdings_holding_id_items_item_pid_request_options.uri_template(params.merge({:holding_id => item['holding_data']['holding_id'], :item_pid => item['item_data']['pid']}))
+        url += "?user_id=#{userid}&apikey=#{ENV['ALMA_API_KEY']}"
+        HTTParty.get(url, :headers => {'Accept' => 'application/json'})
+      end
+      .map do |item|
+        item['request_option']&.map { |option| option['type']['value']} 
+      end
+      .flatten.any? {|x| x == 'HOLD'}
+    end
+
+    result[mmsid] = {:requestable => requestable, :facultyexpress => usergroup == 'Faculty Express', :group => usergroup}
+
+    return result
 
   end
 
