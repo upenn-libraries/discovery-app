@@ -111,3 +111,11 @@ gem 'blacklight_alma', :git => 'https://github.com/upenn-libraries/blacklight_al
 gem 'blacklight-ris', :git => 'https://github.com/upenn-libraries/blacklight-ris.git'
 
 gem 'rails-assets-datatables', source: 'https://rails-assets.org'
+
+gem 'blacklight-ris', :git => 'https://github.com/upenn-libraries/blacklight-ris.git'
+
+gem 'rails-assets-datatables', source: 'https://rails-assets.org'
+
+gem 'parallel'
+
+gem 'httparty'

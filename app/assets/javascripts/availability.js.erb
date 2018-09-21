@@ -33,6 +33,10 @@ $(document).ready(function() {
             } else if (holding['availability'] == 'available') {
                 availability = "Available";
             }
+
+            // Store this to populate the DataTable if expanded
+            globaldata[holding['holding_id']] = { 'availability': availability }
+
             // TODO: pass in format to shelfLocatorLink() somehow
             return [availability, holding['location'], holding['call_number'], $.shelfLocatorLink(mms_id, holding, "TODO"), constructAeonLink(mms_id, holding)]
                 .filter(function (item) {
@@ -115,6 +119,10 @@ $(document).ready(function() {
                                 table.row(i).invalidate().draw();
                             }
                         } 
+
+                        if(data[i][6] in globaldata && $('#requestOptionsAvailability-' + mmsid).text() == 'Availability') {
+                            data[i][3] = globaldata[data[i][6]]['availability']
+                        }
                     }
                 }
 
