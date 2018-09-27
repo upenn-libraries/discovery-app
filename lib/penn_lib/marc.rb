@@ -1139,7 +1139,9 @@ module PennLib
       acc += rec.fields('880')
                .select { |f| has_subfield6_value(f, /^245/) }
                .map do |field|
+        if !format_filter || format.end_with?('s')
           join_and_trim_whitespace(field.find_all(&subfield_not_in(%w{c 6 8 h})).map(&:value))
+        end
       end.select { |v| v.present? }
       acc
     end
