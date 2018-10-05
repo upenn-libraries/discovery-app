@@ -1,0 +1,22 @@
+<% # main container for facets/limits menu -%>
+<% if has_facet_values?  %>
+<div id="facets<%= (facet_type = local_assigns[:facet_type]) && "_#{facet_type}" %>" class="facets sidenav">
+
+  <div class="top-panel-heading panel-heading">
+    <button type="button" class="facets-toggle" data-toggle="collapse" data-target="#facet-panel-collapse">
+      <span class="sr-only">Toggle facets</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+
+    <h2 class='facets-heading'>
+      <%= t('blacklight.search.facets.title') %>
+    </h2>
+  </div>
+
+  <div id="facet-panel-collapse" class="collapse panel-group">
+    <%= facet_type ? render_facet_partials(facet_field_names, :facet_type => facet_type) : render_facet_partials %>
+  </div>
+</div>
+<% end %>

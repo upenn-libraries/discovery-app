@@ -183,6 +183,28 @@ class CatalogController < ApplicationController
     #  (useful when user clicks "more" on a large facet and wants to navigate alphabetically across a large set of results)
     # :index_range can be an array or range of prefixes that will be used to create the navigation (note: It is case sensitive when searching values)
 
+    database_selected = lambda { |a, b, c|
+      a.params.dig(:f, :format_f)&.include?('Database & Article Index')
+    }
+
+    @@DATABASE_CATEGORY_TAXONOMY = [
+        '{',
+          'subject_taxonomy:{',
+            'type: terms,',
+            'field: subject_f,',
+            'facet:{',
+              'subject_f: {',
+                'type : terms,',
+                'prefix : $parent--,',
+                'field: subject_f,',
+                'limit: 5',
+              '}',
+            '}',
+          '}',
+        '}'].join
+
+    config.add_facet_field 'db_type_f', label: 'Database Type', limit: 5, collapse: false, partial: 'custom_facet_partial', options: {:layout => 'mod_facet_layout'}, :if => database_selected, :facet_type => :contextual
+    config.add_facet_field 'subject_taxonomy', label: 'Database Categories', limit: 5, collapse: false, partial: 'facet_pivot', options: {:layout => 'mod_facet_layout'}, :json_facet => @@DATABASE_CATEGORY_TAXONOMY, :top_level_field => 'subject_f', :facet_type => :contextual, :helper_method => :render_subcategories
     config.add_facet_field 'access_f', label: 'Access', collapse: false, query: {
       'Online' => { :label => 'Online', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'Online\\'}'}"},
       'At the library' => { :label => 'At the library', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"}

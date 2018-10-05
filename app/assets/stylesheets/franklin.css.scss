@@ -1,6 +1,15 @@
 @import 'base/globals.css.scss';
 @import 'base/colors.css.scss';
 
+.list-inline {
+  display: flex;
+}
+
+.list-inline li {
+  flex: 1;
+  text-align: center;
+}
+
 body {
   color: $text-black;
   font-family: $font-family;

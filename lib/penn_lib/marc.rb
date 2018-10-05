@@ -369,6 +369,54 @@ module PennLib
       end
     end
 
+    def is_curated_database(rec)
+      rec.fields('944').any? do |field|
+        field.any? do |sf|
+          sf.code == 'a' && sf.value == 'Database & Article Index'
+        end
+      end
+    end
+
+    def get_curated_format(rec)
+      rec.fields('944').map do |field|
+        sf = field.find { |sf| sf.code == 'a' }
+        sf.nil? ? nil : sf.value
+      end.compact
+    end
+
+    def get_db_types(rec)
+      return unless is_curated_database(rec)
+      rec.fields('944').map do |field|
+        if field.any? { |sf| sf.code == 'a' && sf.value == 'Database & Article Index' }
+          sf = field.find { |sf| sf.code == 'b' }
+          sf.nil? ? nil : sf.value
+        end
+      end.compact
+    end
+
+    def get_db_categories(rec)
+      return unless is_curated_database(rec)
+      rec.fields('690').map do |field|
+        if field.any? { |sf| sf.code == '2' && sf.value == 'penncoi' }
+          sf = field.find { |sf| sf.code == 'a' }
+          sf.nil? ? nil : sf.value
+        end
+      end.compact
+    end
+
+    def get_db_subcategories(rec)
+      return unless is_curated_database(rec)
+      rec.fields('690').map do |field|
+        if field.any? { |sf| sf.code == '2' && sf.value == 'penncoi' }
+          category = field.find { |sf| sf.code == 'a' }
+          unless category.nil?
+            sub_category = field.find { |sf| sf.code == 'b' }
+            sub_category.nil? ? category : "#{category.value}--#{sub_category.value}"
+          end
+        end
+      end.compact
+    end
+
     def get_subject_facet_values(rec)
       rec.fields.find_all { |f| is_subject_field(f) }.map do |field|
         just_a = nil
@@ -589,7 +637,7 @@ module PennLib
           acc << 'Other'
         end
       end
-      acc
+      acc.concat(get_curated_format(rec))
     end
 
     # returns two-char format code from MARC leader, representing two fields:

@@ -7,6 +7,43 @@ class SearchBuilder < Blacklight::SearchBuilder
   include BlacklightRangeLimit::RangeLimitBuilder
   include BlacklightSolrplugins::FacetFieldsQueryFilter
 
+  ##
+  # Add appropriate Solr facetting directives in, including
+  # taking account of our facet paging/'more'.  This is not
+  # about solr 'fq', this is about solr facet.* params.
+  def add_facetting_to_solr(solr_parameters)
+    facet_fields_to_include_in_request.each do |field_name, facet|
+      solr_parameters[:facet] ||= true
+
+      if facet.json_facet
+        json_facet = (solr_parameters[:'json.facet'] ||= [])
+        json_facet << facet.json_facet
+        next
+      end
+
+      if facet.pivot
+        solr_parameters.append_facet_pivot with_ex_local_param(facet.ex, facet.pivot.join(","))
+      elsif facet.query
+        solr_parameters.append_facet_query facet.query.map { |k, x| with_ex_local_param(facet.ex, x[:fq]) }
+      else
+        solr_parameters.append_facet_fields with_ex_local_param(facet.ex, facet.field)
+      end
+
+      if facet.sort
+        solr_parameters[:"f.#{facet.field}.facet.sort"] = facet.sort
+      end
+
+      if facet.solr_params
+        facet.solr_params.each do |k, v|
+          solr_parameters[:"f.#{facet.field}.#{k}"] = v
+        end
+      end
+
+      limit = facet_limit_with_pagination(field_name)
+      solr_parameters[:"f.#{facet.field}.facet.limit"] = limit if limit
+    end
+  end
+
   # override #with to massage params before this SearchBuilder
   # stores and works with them
   def with(blacklight_params = {})
