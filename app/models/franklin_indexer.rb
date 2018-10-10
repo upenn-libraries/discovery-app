@@ -174,6 +174,10 @@ class FranklinIndexer < BaseIndexer
       acc.concat(pennlibmarc.get_subject_xfacet_values(rec))
     end
 
+    to_field 'toplevel_subject_f' do |rec, acc|
+      acc.concat(pennlibmarc.get_subject_facet_values(rec, true))
+    end
+
     to_field 'call_number_xfacet' do |rec, acc|
       acc.concat(pennlibmarc.get_call_number_xfacet_values(rec))
     end

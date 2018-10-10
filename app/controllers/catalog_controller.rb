@@ -189,9 +189,25 @@ class CatalogController < ApplicationController
 
     @@DATABASE_CATEGORY_TAXONOMY = [
         '{',
+          'database_taxonomy:{',
+            'type: terms,',
+            'field: db_category_f,',
+            'facet:{',
+              'subject_f: {',
+                'type : terms,',
+                'prefix : $parent--,',
+                'field: db_subcategory_f,',
+                'limit: 5',
+              '}',
+            '}',
+          '}',
+        '}'].join
+
+    @@SUBJECT_TAXONOMY = [
+        '{',
           'subject_taxonomy:{',
             'type: terms,',
-            'field: subject_f,',
+            'field: toplevel_subject_f,',
             'facet:{',
               'subject_f: {',
                 'type : terms,',
@@ -204,7 +220,7 @@ class CatalogController < ApplicationController
         '}'].join
 
     config.add_facet_field 'db_type_f', label: 'Database Type', limit: 5, collapse: false, partial: 'custom_facet_partial', options: {:layout => 'mod_facet_layout'}, :if => database_selected, :facet_type => :contextual
-    config.add_facet_field 'subject_taxonomy', label: 'Database Categories', limit: 5, collapse: false, partial: 'facet_pivot', options: {:layout => 'mod_facet_layout'}, :json_facet => @@DATABASE_CATEGORY_TAXONOMY, :top_level_field => 'subject_f', :facet_type => :contextual, :helper_method => :render_subcategories
+    config.add_facet_field 'database_taxonomy', label: 'Database Categories', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy', :json_facet => @@DATABASE_CATEGORY_TAXONOMY, :top_level_field => 'db_category_f', :facet_type => :contextual, :helper_method => :render_subcategories, :if => database_selected
     config.add_facet_field 'access_f', label: 'Access', collapse: false, query: {
       'Online' => { :label => 'Online', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'Online\\'}'}"},
       'At the library' => { :label => 'At the library', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"}
@@ -215,6 +231,7 @@ class CatalogController < ApplicationController
     }
     config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false
     config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z', collapse: false
+    config.add_facet_field 'subject_taxonomy', label: 'Subject Taxonomy', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy', :json_facet => @@SUBJECT_TAXONOMY, :top_level_field => 'toplevel_subject_f', :helper_method => :render_subcategories
     config.add_facet_field 'subject_f', label: 'Subject', limit: 5, index_range: 'A'..'Z', collapse: false
     config.add_facet_field 'language_f', label: 'Language', limit: 5, collapse: false
     config.add_facet_field 'library_f', label: 'Library', limit: 5, collapse: false
