@@ -27,7 +27,7 @@ module PennLib
       # holdings for the main MMSID and all related boundwith MMSIDs and filter
       # out holdings where the holding MMSID does not match the bib MMSID,
       # preventing a holding from displaying more than once.
-      def parse_bibs_dataX(api_response)
+      def parse_bibs_data(api_response)
         super.each do |mmsid, values|
           values['holdings'].select! do |hld|
             hld['inventory_type'] != 'physical' || hld['mmsid'] == mmsid || !hld.key?('mmsid')
@@ -36,53 +36,13 @@ module PennLib
       end
 
       # TODO: Move into blacklight_alma gem?
-      def get_availability(id_list, get_cached: false)
+      def get_availability(id_list)
         api_params = {
-          'mms_id' => id_list.map(&:to_s).map(&:strip).join(','),
-          'expand' => 'p_avail,e_avail,d_avail,requests'
+            'mms_id' => id_list.map(&:to_s).map(&:strip).join(','),
+            'expand' => 'p_avail,e_avail,d_avail,requests'
         }
 
-        # See what's already cached
-        marmite_response = HTTParty.get("#{ENV['MARMITE_BASE_URL']}/records/#{id_list.map(&:to_s).map(&:strip).join(',')}/show?format=alma_marcxml")
-
-        if(marmite_response.code == 404 && !get_cached)
-          # Retrieve MMSIDs not in Marmite from the response
-          uncached_mmsids_string = /[0-9,]+/.match(marmite_response).to_s
-          uncached_mmsids = uncached_mmsids_string.split(',')
-          cached_mmsids = id_list.reject { |id| uncached_mmsids.member?(id) }
-          cached_mmsids_string = cached_mmsids.map(&:to_s).map(&:strip).join(',')
-
-          responses = Parallel.map(['marmite', 'api'], :num_threads => 2) do |type|
-            if type == 'marmite'
-              response = HTTParty.get("#{ENV['MARMITE_BASE_URL']}/records/#{uncached_mmsids_string}/create?format=alma_marcxml").to_hash
-            elsif type == 'api' && !cached_mmsids.empty?
-              response = ::BlacklightAlma::BibsApi.instance.get_availability(api_params.merge({"mmsid" => cached_mmsids_string})).to_hash
-            else
-              response = nil
-            end
-            response
-          end
-          api_response = responses.first # Marmite response
-          api_response['bibs']['bib'] = [api_response['bibs']['bib']].flatten + [response[1]['bibs']['bib']].flatten unless cached_mmsids.empty?
-          #api_response.root.children << response[1].root.children unless cached_mmsids.empty?
-
-          # Possible spot to use parallel gem?
-          #api_response = HTTParty.get("#{ENV['MARMITE_BASE_URL']}/records/#{uncached_mmsids_string}/create?format=alma_marcxml")
-          #unless cached_mmsids.empty?
-            #alma_response = ::BlacklightAlma::BibsApi.instance.get_availability(api_params.merge({"mmsid" => cached_mmsids_strings}))
-            #api_response.root.children << alma_response.root.children
-          #end
-        elsif get_cached # From DataTables
-          api_response = marmite_response
-        else
-          api_response = ::BlacklightAlma::BibsApi.instance.get_availability(api_params)
-        end
-
-        # Cache bibs in Marmite for quick retrieval of holding details later on
-        #api_response = HTTParty.get("#{ENV['MARMITE_BASE_URL']}/records/#{id_list.map(&:to_s).map(&:strip).join(',')}/create?format=alma_marcxml")
-
-        # Still need to do this to get live availability status
-        #api_response = ::BlacklightAlma::BibsApi.instance.get_availability(api_params) unless cached
+        api_response = ::BlacklightAlma::BibsApi.instance.get_availability(api_params)
 
         if api_response
           web_service_result = api_response['web_service_result']

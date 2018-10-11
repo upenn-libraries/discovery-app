@@ -119,8 +119,7 @@ class FranklinAlmaController < ApplicationController
     mmsid = params[:mms_id]
     userid = session['id'].presence || 'GUEST'
     bibapi = alma_api_class.new()
-    bib_data = bibapi.get_availability([mmsid], get_cached: true)
-
+    bib_data = bibapi.get_availability([mmsid])
     holding_data = nil
     holding_map = {}
 
@@ -203,14 +202,13 @@ class FranklinAlmaController < ApplicationController
       options = { :holding_id => 'ALL', :userid => userid, :limit => 100, :format => "application/xml" }
       item_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items, :get, params.merge(options))
 
-      items = [item_data['items']['item']].flatten.reject do |item|
+      requestable = [item_data['items']['item']].flatten.reject do |item|
         item.dig('item_data', 'process_type', '__content__') == 'LOAN'
       end
-
-      requestable = Parallel.map(items, :num_threads => 4) do |item|
+      .map do |item|
         url = api.almaws_v1_bibs.mms_id_holdings_holding_id_items_item_pid_request_options.uri_template(params.merge({:holding_id => item['holding_data']['holding_id'], :item_pid => item['item_data']['pid']}))
         url += "?user_id=#{userid}&apikey=#{ENV['ALMA_API_KEY']}"
-        HTTParty.get(url, :headers => {'Accept' => 'application/json'}).response
+        HTTParty.get(url, :headers => {'Accept' => 'application/json'})
       end
       .map do |item|
         item['request_option']&.map { |option| option['type']['value']} 
