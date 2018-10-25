@@ -5,7 +5,7 @@
       if(flashContainer) {
         flashContainer.innerHTML += " \
           <div class='alert alert-danger'> \
-            It looks like you have third-party cookies disabled, which will prevent you from placing requests in this catalog. Click <a href='http://www.library.upenn.edu/catalogs/franklin/cookies.html' target='_blank'>here</a> for information on configuring your browser. \
+            It looks like you have third-party cookies disabled, which will prevent you from placing requests in this catalog. Click <a href='https://guides.library.upenn.edu/franklincatalog/third-party-cookies' target='_blank'>here</a> for information on configuring your browser. \
             <a class='close' data-dismiss='alert' href='#'>×</a> \
           </div>";
       }
