@@ -13,6 +13,14 @@ $(document).ready(function() {
         return null;
     }
 
+    function constructLibraLink(mmsid, holding) {
+        if(holding['location'] == 'LIBRA' && (!holding['total_items'] || holding['total_items'] == '0')) {
+            return '<a href="https://www.library.upenn.edu/forms/storage-book.html" target="_blank">Request</a>'
+        }
+
+        return null;
+    }
+
     Franklin.prototype = Object.create(BlacklightAlma.prototype);
 
     Franklin.prototype.formatHolding = function (mms_id, holding) {
@@ -26,7 +34,7 @@ $(document).ready(function() {
                 availability = "Available";
             }
             // TODO: pass in format to shelfLocatorLink() somehow
-            return [availability, holding['location'], holding['call_number'], $.shelfLocatorLink(mms_id, holding, "TODO"), constructAeonLink(mms_id, holding)]
+            return [availability, holding['location'], holding['call_number'], $.shelfLocatorLink(mms_id, holding, "TODO"), constructAeonLink(mms_id, holding), constructLibraLink(mms_id, holding)]
                 .filter(function (item) {
                     return item != null && item.length > 0;
                 }).join(". ");
