@@ -14,47 +14,47 @@
 ActiveRecord::Schema.define(version: 20170706140737) do
 
   create_table "bookmarks", force: :cascade do |t|
-    t.integer  "user_id",       limit: 4,   null: false
-    t.string   "user_type",     limit: 255
-    t.string   "document_id",   limit: 255
-    t.string   "title",         limit: 255
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
-    t.string   "document_type", limit: 255
+    t.integer  "user_id",       null: false
+    t.string   "user_type"
+    t.string   "document_id"
+    t.string   "title"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.string   "document_type"
   end
 
-  add_index "bookmarks", ["user_id"], name: "index_bookmarks_on_user_id", using: :btree
+  add_index "bookmarks", ["user_id"], name: "index_bookmarks_on_user_id"
 
   create_table "searches", force: :cascade do |t|
-    t.text     "query_params", limit: 16777215
-    t.integer  "user_id",      limit: 4
-    t.string   "user_type",    limit: 255
-    t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
+    t.text     "query_params"
+    t.integer  "user_id"
+    t.string   "user_type"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
   end
 
-  add_index "searches", ["created_at"], name: "index_searches_on_created_at", using: :btree
-  add_index "searches", ["user_id"], name: "index_searches_on_user_id", using: :btree
+  add_index "searches", ["created_at"], name: "index_searches_on_created_at"
+  add_index "searches", ["user_id"], name: "index_searches_on_user_id"
 
   create_table "users", force: :cascade do |t|
-    t.string   "email",                  limit: 255, default: "",    null: false
-    t.string   "encrypted_password",     limit: 255, default: "",    null: false
-    t.string   "reset_password_token",   limit: 255
+    t.string   "email",                  default: "",    null: false
+    t.string   "encrypted_password",     default: "",    null: false
+    t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          limit: 4,   default: 0,     null: false
+    t.integer  "sign_in_count",          default: 0,     null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
-    t.string   "current_sign_in_ip",     limit: 255
-    t.string   "last_sign_in_ip",        limit: 255
-    t.datetime "created_at",                                         null: false
-    t.datetime "updated_at",                                         null: false
-    t.boolean  "guest",                              default: false
+    t.string   "current_sign_in_ip"
+    t.string   "last_sign_in_ip"
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
+    t.boolean  "guest",                  default: false
   end
 
-  add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
-  add_index "users", ["guest"], name: "index_users_on_guest", using: :btree
-  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
-  add_index "users", ["updated_at"], name: "index_users_on_updated_at", using: :btree
+  add_index "users", ["email"], name: "index_users_on_email", unique: true
+  add_index "users", ["guest"], name: "index_users_on_guest"
+  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  add_index "users", ["updated_at"], name: "index_users_on_updated_at"
 
 end
