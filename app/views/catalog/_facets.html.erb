@@ -1,7 +1,6 @@
 <% # main container for facets/limits menu -%>
-<% if has_facet_values?(facet_field_names(facet_type = local_assigns[:facet_type])) %>
-<!-- TODO: context-aware determination of whether to display; also, what other facet divs will display -->
-<div id="facets<%= facet_type && "_#{facet_type}" %>" class="facets sidenav">
+<% if has_facet_values? %>
+<div id="facets" class="facets sidenav">
 
   <div class="top-panel-heading panel-heading">
     <button type="button" class="facets-toggle" data-toggle="collapse" data-target="#facet-panel-collapse">
@@ -14,10 +13,21 @@
     <h2 class='facets-heading'>
       <%= t('blacklight.search.facets.title') %>
     </h2>
+    <% display_facet_types = get_display_facet_types %>
+    <% if display_facet_types.size > 1 %>
+      <select id="facet-group-selector">
+        <% select = true; display_facet_types.each do |k, v| %>
+          <option value="<%= k %>"<%= select ? 'selected=true' : ''%>><%= v[:facet_type_config][:display] %></option>
+        <% select = false; end %>
+      </select>
+    <% end %>
   </div>
-  <!-- TODO: links to toggle facet divs -->
   <div id="facet-panel-collapse" class="collapse panel-group">
-    <%= facet_type ? render_facet_partials(facet_field_names(facet_type), :facet_type => facet_type) : render_facet_partials(facet_field_names(nil)) %>
+    <% hide = false; display_facet_types.each do |facet_type, field_configs| %>
+      <div id="facets_<%= facet_type %>" class="<%= hide ? 'hide facet-group' : 'facet-group' %>">
+        <%= facet_type != :default ? render_facet_partials(facet_field_names(facet_type), :facet_type => facet_type) : render_facet_partials(facet_field_names(nil)) %>
+      </div>
+    <% hide = true; end %>
   </div>
 </div>
 <% end %>

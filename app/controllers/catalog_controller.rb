@@ -187,6 +187,17 @@ class CatalogController < ApplicationController
       a.params.dig(:f, :format_f)&.include?('Database & Article Index')
     }
 
+    config.facet_types = {
+      :default => {
+        :priority => 1,
+        :display => 'General filters'
+      },
+      :contextual => {
+        :priority => 0,
+        :display => 'Database filters'
+      }
+    }
+
     @@DATABASE_CATEGORY_TAXONOMY = [
         '{',
           'database_taxonomy:{',

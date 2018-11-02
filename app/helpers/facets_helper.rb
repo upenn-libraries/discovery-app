@@ -2,6 +2,27 @@
 module FacetsHelper
   include Blacklight::FacetsHelperBehavior
 
+  def get_display_facet_types
+    agg = @response.aggregations
+    hash = {}
+    blacklight_config.facet_fields.values.each_with_object(hash) do |facet_config, hash|
+      display_facet = agg[facet_config.field]
+      next if display_facet.nil? || display_facet.items.empty? || !should_render_field?(facet_config, display_facet)
+      facet_type = facet_config[:facet_type] || :default
+      if fields_for_facet_type = hash[facet_type]
+        facet_configs = fields_for_facet_type[:facet_configs]
+      else
+        facet_configs = []
+        fields_for_facet_type = hash[facet_type] = {
+          :facet_type_config => blacklight_config.facet_types[facet_type],
+          :facet_configs => facet_configs
+        }
+      end
+      facet_configs << facet_config
+    end
+    hash.sort_by { |k, v| v[:facet_type_config][:priority] }
+  end
+
   ##
   # Check if any of the given fields have values
   #
