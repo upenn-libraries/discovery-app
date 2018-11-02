@@ -315,7 +315,6 @@ class CatalogController < ApplicationController
         { dynamic_name: 'children_subject_display', label: 'Childrens subjects', helper_method: 'render_linked_values' },
         { dynamic_name: 'medical_subject_display', label: 'Medical subjects', helper_method: 'render_linked_values' },
         { dynamic_name: 'local_subject_display', label: 'Local subjects', helper_method: 'render_linked_values' },
-        { dynamic_name: 'other_source_subject_display', label: 'OtherSrc subjects', helper_method: 'render_linked_values' },
         { dynamic_name: 'genre_display', label: 'Form/Genre', helper_method: 'render_linked_values' },
         { dynamic_name: 'place_of_publication_display', label: 'Place of Publication', helper_method: 'render_linked_values' },
         { dynamic_name: 'language_display', label: 'Language' },

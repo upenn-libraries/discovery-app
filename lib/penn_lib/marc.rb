@@ -432,15 +432,16 @@ module PennLib
       @subject_600s ||= %w{600 610 611 630 650 651}
     end
 
-    # 10/2018 kms: new local subj fields
+    # 10/2018 kms: add local subj fields- always Local no matter the 2nd Ind
     def subject_69X
       @subject_69X ||= %w{690 691 697}
     end
     
-    def get_subjects_from_600s_and_800(rec, indicator2, subject_fields, ontology)
+    def get_subjects_from_600s_and_800(rec, indicator2, ontology)
       acc = []
-      if indicator2 == '4' || subject_fields == 'subject_69X'
+      if indicator2 == '4' 
         # Local subjects
+        # either a tag in subject_600s list with ind2==4, or a tag in subject_69X list with any ind2. 
         acc += rec.fields
                    .select { |f| subject_600s.member?(f.tag) && f.indicator2 == '4' || subject_69X.member?(f.tag) }
                    .map do |field|
@@ -464,15 +465,16 @@ module PennLib
             }
           end
         end.compact
-      elsif %w{0 1 2 7}.member?(indicator2)
+      elsif %w{0 1 2}.member?(indicator2)
         #Subjects, Childrens subjects, and Medical Subjects all share this code
+        # also 650 _7, local subs w/ source specified in $2 that should appear as Subjects with the ind2==0 ones
+        # include f.any?{ |sf| sf.value == ontology to show just lcsh, remove to show all sources
+     #.select { |f| f.indicator2 == indicator2 || f.indicator2 == '7' && f.any?{ |sf| sf.value == ontology } && indicator2 == '0' } 
         acc += rec.fields
-                   .select { |f| subject_600s.member?(f.tag) ||
-                      (f.tag == '800' && has_subfield6_value(f, /^(#{subject_600s.join('|')})/)) }
-                   .select { |f| f.indicator2 == indicator2 }
-                   .select { |f| f.indicator2 =~ /0|1|2/ || 
-                      ( f.any?(&subfield_in(%w{2})) && f.any?{ |sf| sf.value == 'rbgenr'} ) }                    
-                   .map do |field|
+             .select { |f| subject_600s.member?(f.tag) ||
+                      (f.tag == '880' && has_subfield6_value(f, /^(#{subject_600s.join('|')})/)) }
+             .select { |f| f.indicator2 == indicator2 || (f.indicator2 == '7' && indicator2 == '0') } 
+             .map do |field|
           #added 2017/04/10: filter out 0 (authority record numbers) added by Alma
           value_for_link = join_subfields(field, &subfield_not_in(%w{0 6 8 2 e w}))
           sub_with_hyphens = field.select(&subfield_not_in(%w{0 6 8 2 e w})).map do |sf|
@@ -495,26 +497,24 @@ module PennLib
       acc
     end
 
-    # kms need to get ind 7 in here
+    # 650 _7 is also handled here 
     def get_subject_display(rec)
-      get_subjects_from_600s_and_800(rec, '0', subject_fields=nil, ontology=nil)
+      get_subjects_from_600s_and_800(rec, '0', 'lcsh')
     end
 
     def get_children_subject_display(rec)
-      get_subjects_from_600s_and_800(rec, '1', subject_fields=nil, ontology=nil)
+      get_subjects_from_600s_and_800(rec, '1', ontology=nil)
     end
 
     def get_medical_subject_display(rec)
-      get_subjects_from_600s_and_800(rec, '2', subject_fields=nil, ontology=nil)
+      get_subjects_from_600s_and_800(rec, '2', ontology=nil)
     end
 
     def get_local_subject_display(rec)
-      get_subjects_from_600s_and_800(rec, '4', 'subject_69X', ontology=nil)
+      get_subjects_from_600s_and_800(rec, '4', ontology=nil)
     end
 
-    def get_other_source_subject_display(rec)
-      get_subjects_from_600s_and_800(rec, '7', subject_fields=nil, 'rbgenr')
-    end
+
 
 
     def get_format(rec)
