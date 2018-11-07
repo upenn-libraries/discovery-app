@@ -188,11 +188,16 @@ class CatalogController < ApplicationController
     }
 
     config.facet_types = {
+      :header => {
+        :priority => 2,
+        :sidebar => false,
+        :display => 'Header filters'
+      },
       :default => {
         :priority => 1,
         :display => 'General filters'
       },
-      :contextual => {
+      :database => {
         :priority => 0,
         :display => 'Database filters'
       }
@@ -230,8 +235,39 @@ class CatalogController < ApplicationController
           '}',
         '}'].join
 
-    config.add_facet_field 'db_type_f', label: 'Database Type', limit: 5, collapse: false, partial: 'custom_facet_partial', options: {:layout => 'mod_facet_layout'}, :if => database_selected, :facet_type => :contextual
-    config.add_facet_field 'database_taxonomy', label: 'Database Categories', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy', :json_facet => @@DATABASE_CATEGORY_TAXONOMY, :top_level_field => 'db_category_f', :facet_type => :contextual, :helper_method => :render_subcategories, :if => database_selected
+    config.add_facet_field 'db_type_f', label: 'Database Type', limit: 5, collapse: false, :if => database_selected, :facet_type => :database
+    config.add_facet_field 'database_taxonomy', label: 'Database Categories', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy',
+        :json_facet => @@DATABASE_CATEGORY_TAXONOMY, :top_level_field => 'db_category_f', :facet_type => :database,
+        :helper_method => :render_subcategories, :if => database_selected
+    config.add_facet_field 'azlist', label: 'A-Z List', collapse: false, induce_sort: 'title_nssort asc', single: :manual, :facet_type => :header,
+        options: {:layout => 'horizontal_facet_list'}, solr_params: { 'facet.mincount' => 0 }, :if => database_selected, query: {
+      'A' => { :label => 'A', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='a'}"},
+      'B' => { :label => 'B', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='b'}"},
+      'C' => { :label => 'C', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='c'}"},
+      'D' => { :label => 'D', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='d'}"},
+      'E' => { :label => 'E', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='e'}"},
+      'F' => { :label => 'F', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='f'}"},
+      'G' => { :label => 'G', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='g'}"},
+      'H' => { :label => 'H', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='h'}"},
+      'I' => { :label => 'I', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='i'}"},
+      'J' => { :label => 'J', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='j'}"},
+      'K' => { :label => 'K', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='k'}"},
+      'L' => { :label => 'L', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='l'}"},
+      'M' => { :label => 'M', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='m'}"},
+      'N' => { :label => 'N', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='n'}"},
+      'O' => { :label => 'O', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='o'}"},
+      'P' => { :label => 'P', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='p'}"},
+      'Q' => { :label => 'Q', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='q'}"},
+      'R' => { :label => 'R', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='r'}"},
+      'S' => { :label => 'S', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='s'}"},
+      'T' => { :label => 'T', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='t'}"},
+      'U' => { :label => 'U', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='u'}"},
+      'V' => { :label => 'V', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='v'}"},
+      'W' => { :label => 'W', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='w'}"},
+      'X' => { :label => 'X', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='x'}"},
+      'Y' => { :label => 'Y', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='y'}"},
+      'Z' => { :label => 'Z', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='z'}"}
+    }
     config.add_facet_field 'access_f', label: 'Access', collapse: false, query: {
       'Online' => { :label => 'Online', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'Online\\'}'}"},
       'At the library' => { :label => 'At the library', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"}

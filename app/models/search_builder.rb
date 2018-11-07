@@ -93,6 +93,14 @@ class SearchBuilder < Blacklight::SearchBuilder
     solr_parameters[:q] = augmented_solr_q
   end
 
+  def get_facet_induced_sort
+    ret = nil
+    blacklight_params[:f]&.keys&.find do |k|
+      ret = blacklight_config.dig(:facet_fields, k, :induce_sort)
+    end
+    ret
+  end
+
   # no q param (with or without facets) causes the default 'score' sort
   # to return results in a different random order each time b/c there's
   # no scoring to apply. if there's no q and user hasn't explicitly chosen
@@ -102,6 +110,10 @@ class SearchBuilder < Blacklight::SearchBuilder
     return if blacklight_sort.present? && blacklight_sort != 'score desc'
     access_f = blacklight_params.dig(:f, :access_f)
     if !blacklight_params[:q].present?
+      if facet_induced_sort = get_facet_induced_sort
+        solr_parameters[:sort] = facet_induced_sort
+        return
+      end
       sort = 'elvl_rank_isort asc,last_update_isort desc'
       if access_f.nil? || access_f.empty?
 	# nothing
