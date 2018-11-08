@@ -1899,9 +1899,10 @@ module PennLib
       get_datafield_and_880(rec, '508')
     end
 
+    # 10/2018 kms: add 586
     def get_notes_display(rec)
       acc = []
-      acc += rec.fields(%w{500 502 504 515 518 525 533 550 580 588}).map do |field|
+      acc += rec.fields(%w{500 502 504 515 518 525 533 550 580 586 588}).map do |field|
         if field.tag == '588'
           join_subfields(field, &subfield_in(%w{a}))
         else
@@ -1909,7 +1910,7 @@ module PennLib
         end
       end
       acc += rec.fields('880')
-                 .select { |f| has_subfield6_value(f, /^(500|502|504|515|518|525|533|550|580|588)/) }
+                 .select { |f| has_subfield6_value(f, /^(500|502|504|515|518|525|533|550|580|586|588)/) }
                  .map do |field|
         sub6 = field.select(&subfield_in(%w{6})).map(&:value).first
         if sub6 == '588'
@@ -1921,12 +1922,13 @@ module PennLib
       acc
     end
 
+    # 10/2018 kms: add 562 563 585
     def get_local_notes_display(rec)
       acc = []
-      acc += rec.fields('590').map do |field|
+      acc += rec.fields(%w{562 563 585 590}).map do |field|
         join_subfields(field, &subfield_not_in(%w{5 6 8}))
       end
-      acc += get_880(rec, '590') do |sf|
+      acc += get_880(rec, %w{562 563 585 590}) do |sf|
         ! %w{5 6 8}.member?(sf.code)
       end
       acc
