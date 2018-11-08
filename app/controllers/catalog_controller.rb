@@ -221,13 +221,18 @@ class CatalogController < ApplicationController
 
     @@SUBJECT_TAXONOMY = [
         '{',
-          'subject_taxonomy:{',
+          'subject_taxonomy: {',
             'type: terms,',
             'field: toplevel_subject_f,',
-            'facet:{',
+            'top_level_term: "term()",',
+            'facet: {',
+              'identity: {',
+                'type: query,',
+                'q: "{!term f=subject_f v=$top_level_term}"',
+              '},',
               'subject_f: {',
-                'type : terms,',
-                'prefix : $parent--,',
+                'type: terms,',
+                'prefix: $top_level_term--,',
                 'field: subject_f,',
                 'limit: 5',
               '}',
@@ -278,7 +283,7 @@ class CatalogController < ApplicationController
     }
     config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false
     config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z', collapse: false
-    config.add_facet_field 'subject_taxonomy', label: 'Subject Taxonomy', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy', :json_facet => @@SUBJECT_TAXONOMY, :top_level_field => 'toplevel_subject_f', :helper_method => :render_subcategories
+    #config.add_facet_field 'subject_taxonomy', label: 'Subject Taxonomy', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy', :json_facet => @@SUBJECT_TAXONOMY, :top_level_field => 'toplevel_subject_f', :helper_method => :render_subcategories
     config.add_facet_field 'subject_f', label: 'Subject', limit: 5, index_range: 'A'..'Z', collapse: false
     config.add_facet_field 'language_f', label: 'Language', limit: 5, collapse: false
     config.add_facet_field 'library_f', label: 'Library', limit: 5, collapse: false
