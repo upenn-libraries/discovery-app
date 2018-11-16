@@ -123,6 +123,7 @@ class CatalogController < ApplicationController
         recently_added_isort
       }.join(','),
       'facet.threads': 2,
+      'facet.mincount': 0,
 #      fq: '{!tag=cluster}{!collapse field=cluster_id nullPolicy=expand size=5000000 min=record_source_id}',
       # this approach needs expand.field=cluster_id
       fq: %q~{!tag=cluster}NOT ({!join from=cluster_id to=cluster_id v='record_source_f:"Penn"'} AND record_source_f:"HathiTrust")~,
@@ -208,12 +209,15 @@ class CatalogController < ApplicationController
           'database_taxonomy:{',
             'type: terms,',
             'field: db_category_f,',
+            'mincount: 1,',
+            'limit: -1,',
             'facet:{',
-              'subject_f: {',
+              'db_subcategory_f: {',
                 'type : terms,',
                 'prefix : $parent--,',
                 'field: db_subcategory_f,',
-                'limit: 5',
+                'mincount: 1,',
+                'limit: -1',
               '}',
             '}',
           '}',
@@ -240,8 +244,12 @@ class CatalogController < ApplicationController
           '}',
         '}'].join
 
-    config.add_facet_field 'db_type_f', label: 'Database Type', limit: 5, collapse: false, :if => database_selected, :facet_type => :database
-    config.add_facet_field 'database_taxonomy', label: 'Database Categories', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy',
+    @@MINCOUNT = { 'facet.mincount' => 1 }
+
+    config.add_facet_field 'db_subcategory_f', label: 'Database Category', if: lambda { |a,b,c| false }
+    config.add_facet_field 'db_type_f', label: 'Database Type', limit: -1, collapse: false, :if => database_selected,
+        :facet_type => :database, solr_params: @@MINCOUNT
+    config.add_facet_field 'database_taxonomy', label: 'Database Category', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy',
         :json_facet => @@DATABASE_CATEGORY_TAXONOMY, :top_level_field => 'db_category_f', :facet_type => :database,
         :helper_method => :render_subcategories, :if => database_selected
     config.add_facet_field 'azlist', label: 'A-Z List', collapse: false, induce_sort: 'title_nssort asc', single: :manual, :facet_type => :header,
@@ -281,16 +289,16 @@ class CatalogController < ApplicationController
       'HathiTrust' => { :label => 'HathiTrust', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'HathiTrust\\'}'}"},
       'Penn' => { :label => 'Penn', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Penn\\'}'}"}
     }
-    config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false
-    config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z', collapse: false
+    config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false, solr_params: @@MINCOUNT
+    config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z', collapse: false, solr_params: @@MINCOUNT
     #config.add_facet_field 'subject_taxonomy', label: 'Subject Taxonomy', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy', :json_facet => @@SUBJECT_TAXONOMY, :top_level_field => 'toplevel_subject_f', :helper_method => :render_subcategories
-    config.add_facet_field 'subject_f', label: 'Subject', limit: 5, index_range: 'A'..'Z', collapse: false
-    config.add_facet_field 'language_f', label: 'Language', limit: 5, collapse: false
-    config.add_facet_field 'library_f', label: 'Library', limit: 5, collapse: false
-    config.add_facet_field 'specific_location_f', label: 'Specific location', limit: 5
-    config.add_facet_field 'publication_date_f', label: 'Publication date', limit: 5, collapse: false
-    config.add_facet_field 'classification_f', label: 'Classification', limit: 5, collapse: false
-    config.add_facet_field 'genre_f', label: 'Form/Genre', limit: 5
+    config.add_facet_field 'subject_f', label: 'Subject', limit: 5, index_range: 'A'..'Z', collapse: false, solr_params: @@MINCOUNT
+    config.add_facet_field 'language_f', label: 'Language', limit: 5, collapse: false, solr_params: @@MINCOUNT
+    config.add_facet_field 'library_f', label: 'Library', limit: 5, collapse: false, solr_params: @@MINCOUNT
+    config.add_facet_field 'specific_location_f', label: 'Specific location', limit: 5, solr_params: @@MINCOUNT
+    config.add_facet_field 'publication_date_f', label: 'Publication date', limit: 5, collapse: false, solr_params: @@MINCOUNT
+    config.add_facet_field 'classification_f', label: 'Classification', limit: 5, collapse: false, solr_params: @@MINCOUNT
+    config.add_facet_field 'genre_f', label: 'Form/Genre', limit: 5, solr_params: @@MINCOUNT
     config.add_facet_field 'recently_added_f', label: 'Recently added', :query => {
       :within_90_days => { label: 'Within 90 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (90 * SECONDS_PER_DAY) } TO *]" },
       :within_60_days => { label: 'Within 60 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (60 * SECONDS_PER_DAY) } TO *]" },
