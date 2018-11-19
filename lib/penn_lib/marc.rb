@@ -437,43 +437,15 @@ module PennLib
       @subject_69X ||= %w{690 691 697}
     end
     
-    def get_subjects_from_600s_and_800(rec, indicator2, ontology)
+    def get_subjects_from_600s_and_800(rec, indicator2)
       acc = []
-      if indicator2 == '4' 
-        # Local subjects
-        # either a tag in subject_600s list with ind2==4, or a tag in subject_69X list with any ind2. 
-        acc += rec.fields
-                   .select { |f| subject_600s.member?(f.tag) && f.indicator2 == '4' || subject_69X.member?(f.tag) }
-                   .map do |field|
-          suba = field.select(&subfield_in(%w{a}))
-                     .select { |sf| sf.value !~ /^%?(PRO|CHR)/ }
-                     .map(&:value).join(' ')
-          #added 2017/04/10: filter out 0 (authority record numbers) added by Alma
-          sub_oth = field.select(&subfield_not_in(%w{0 a 6 8})).map do |sf|
-            pre = !%w{b c d p q t}.member?(sf.code) ? ' -- ' : ' '
-            pre + sf.value + (sf.code == 'p' ? '.' : '')
-          end
-          subj_display = [ suba, sub_oth ].join(' ')
-          #added 2017/04/10: filter out 0 (authority record numbers) added by Alma
-          sub_oth_no_hyphens = join_subfields(field, &subfield_not_in(%w{0 a 6 8}))
-          subj_search = [ suba, sub_oth_no_hyphens ].join(' ')
-          if subj_display.present?
-            {
-                value: subj_display,
-                value_for_link: subj_search,
-                link_type: 'subject_search'
-            }
-          end
-        end.compact
-      elsif %w{0 1 2}.member?(indicator2)
+      if %w{0 1 2}.member?(indicator2)
         #Subjects, Childrens subjects, and Medical Subjects all share this code
         # also 650 _7, local subs w/ source specified in $2 that should appear as Subjects with the ind2==0 ones
-        # include f.any?{ |sf| sf.value == ontology to show just lcsh, remove to show all sources
-     #.select { |f| f.indicator2 == indicator2 || f.indicator2 == '7' && f.any?{ |sf| sf.value == ontology } && indicator2 == '0' } 
         acc += rec.fields
              .select { |f| subject_600s.member?(f.tag) ||
                       (f.tag == '880' && has_subfield6_value(f, /^(#{subject_600s.join('|')})/)) }
-             .select { |f| f.indicator2 == indicator2 || (f.indicator2 == '7' && indicator2 == '0') } 
+             .select { |f| f.indicator2 == indicator2 || (f.indicator2 == '7' && indicator2 == '0') }
              .map do |field|
           #added 2017/04/10: filter out 0 (authority record numbers) added by Alma
           value_for_link = join_subfields(field, &subfield_not_in(%w{0 6 8 2 e w}))
@@ -493,25 +465,53 @@ module PennLib
             }
           end
         end.compact
+      elsif indicator2 == '4'
+        # Local subjects
+        # either a tag in subject_600s list with ind2==4, or a tag in subject_69X list with any ind2.
+        # but NOT a penn community of interest 690 (which have $2 penncoi )
+        acc += rec.fields
+             .select { |f| subject_600s.member?(f.tag) && f.indicator2 == '4' ||
+                 ( subject_69X.member?(f.tag) && f.any?{ |sf| sf.value !~ /penncoi/} ) } 
+             .map do |field|
+          suba = field.select(&subfield_in(%w{a}))
+                     .select { |sf| sf.value !~ /^%?(PRO|CHR)/ }
+                     .map(&:value).join(' ')
+          #added 2017/04/10: filter out 0 (authority record numbers) added by Alma
+          sub_oth = field.select(&subfield_not_in(%w{0 a 6 8 5})).map do |sf|
+            pre = !%w{b c d p q t}.member?(sf.code) ? ' -- ' : ' '
+            pre + sf.value + (sf.code == 'p' ? '.' : '')
+          end
+          subj_display = [ suba, sub_oth ].join(' ')
+          #added 2017/04/10: filter out 0 (authority record numbers) added by Alma
+          sub_oth_no_hyphens = join_subfields(field, &subfield_not_in(%w{0 a 6 8 5}))
+          subj_search = [ suba, sub_oth_no_hyphens ].join(' ')
+          if subj_display.present?
+            {
+                value: subj_display,
+                value_for_link: subj_search,
+                link_type: 'subject_search'
+            }
+          end
+        end.compact
       end
       acc
     end
 
     # 650 _7 is also handled here 
     def get_subject_display(rec)
-      get_subjects_from_600s_and_800(rec, '0', 'lcsh')
+      get_subjects_from_600s_and_800(rec, '0')
     end
 
     def get_children_subject_display(rec)
-      get_subjects_from_600s_and_800(rec, '1', ontology=nil)
+      get_subjects_from_600s_and_800(rec, '1')
     end
 
     def get_medical_subject_display(rec)
-      get_subjects_from_600s_and_800(rec, '2', ontology=nil)
+      get_subjects_from_600s_and_800(rec, '2')
     end
 
     def get_local_subject_display(rec)
-      get_subjects_from_600s_and_800(rec, '4', ontology=nil)
+      get_subjects_from_600s_and_800(rec, '4')
     end
 
 
@@ -1954,6 +1954,7 @@ module PennLib
     end
 
     # get 650/880 for provenance and chronology: prefix should be 'PRO' or 'CHR'
+    # 11/2018: do not display $5 in PRO or CHR subjs
     def get_650_and_880(rec, prefix)
       acc = []
       acc += rec.fields('650')
@@ -1963,7 +1964,7 @@ module PennLib
         suba = field.select(&subfield_in(%w{a})).map {|sf|
           sf.value.gsub(/^%?#{prefix}/, '')
         }.join(' ')
-        sub_others = join_subfields(field, &subfield_not_in(%w{a 6 8 e w}))
+        sub_others = join_subfields(field, &subfield_not_in(%w{a 6 8 e w 5}))
         value = [ suba, sub_others ].join(' ')
         { value: value, link_type: 'subject_search' } if value.present?
       end.compact
@@ -1973,7 +1974,7 @@ module PennLib
                  .select { |f| f.any? { |sf| sf.code == 'a' && sf.value =~ /^(#{prefix}|%#{prefix})/ } }
                  .map do |field|
         suba = field.select(&subfield_in(%w{a})).map {|sf| sf.value.gsub(/^%?#{prefix}/, '') }.join(' ')
-        sub_others = join_subfields(field, &subfield_not_in(%w{a 6 8 e w}))
+        sub_others = join_subfields(field, &subfield_not_in(%w{a 6 8 e w 5}))
         value = [ suba, sub_others ].join(' ')
         { value: value, link_type: 'subject_search' } if value.present?
       end.compact
