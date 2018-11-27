@@ -1759,6 +1759,12 @@
   <library>Van Pelt Reference</library>
   <display>Van Pelt Reference - Oversize</display>
 </location>
+<location location_code="vpresdesk">
+  <specific_location>Van Pelt Library - Reserve</specific_location>
+  <library>Van Pelt-Dietrich Library Center</library>
+  <library>Reserve</library>
+  <display>Van Pelt Reserves Desk - First Floor</display>
+</location>
 <location location_code="vpwicref">
   <specific_location>Van Pelt - Weigle Information Commons Reference</specific_location>
   <library>Van Pelt-Dietrich Library Center</library>
