@@ -238,6 +238,15 @@ module PennLib
       lambda { |subfield| !array.member?(subfield.code) }
     end
 
+
+    # 11/2018 kms: eventually should depracate has_subfield6_value and use this for all
+    # returns true if field has a value that matches
+    # passed-in regex and passed in subfield
+    def has_subfield_value(field,subf,regex)
+       field.any? { |sf| sf.code == subf && sf.value =~ regex }
+    end
+
+
     # common case of wanting to extract subfields as selected by passed-in block,
     # from 880 datafield that has a particular subfield 6 value
     # @param subf6_value [String|Array] either a single str value to look for in sub6 or an array of them
@@ -396,7 +405,7 @@ module PennLib
     end
 
     def is_subject_search_field(field)
-      # 10/2018 kms: add 2nd Ind 7 
+      # 11/2018 kms: add 2nd Ind 7 
       if ! (field.respond_to?(:indicator2) && %w{0 1 2 4 7}.member?(field.indicator2))
         false
       elsif subject_search_tags.member?(field.tag) || field.tag.start_with?('69')
@@ -432,16 +441,17 @@ module PennLib
       @subject_600s ||= %w{600 610 611 630 650 651}
     end
 
-    # 10/2018 kms: add local subj fields- always Local no matter the 2nd Ind
+    # 11/2018 kms: add local subj fields- always Local no matter the 2nd Ind
     def subject_69X
       @subject_69X ||= %w{690 691 697}
     end
     
+    # 11/2018: add 69x as local subj, add 650 _7 as subj
     def get_subjects_from_600s_and_800(rec, indicator2)
       acc = []
       if %w{0 1 2}.member?(indicator2)
         #Subjects, Childrens subjects, and Medical Subjects all share this code
-        # also 650 _7, local subs w/ source specified in $2 that should appear as Subjects with the ind2==0 ones
+        # also 650 _7, subjs w/ source specified in $2. These dispaly as Subjects along w/ the ind2==0 650s
         acc += rec.fields
              .select { |f| subject_600s.member?(f.tag) ||
                       (f.tag == '880' && has_subfield6_value(f, /^(#{subject_600s.join('|')})/)) }
@@ -471,19 +481,21 @@ module PennLib
         # but NOT a penn community of interest 690 (which have $2 penncoi )
         acc += rec.fields
              .select { |f| subject_600s.member?(f.tag) && f.indicator2 == '4' ||
-                 ( subject_69X.member?(f.tag) && f.any?{ |sf| sf.value !~ /penncoi/} ) } 
+                 ( subject_69X.member?(f.tag)  && !(has_subfield_value(f,'2',/penncoi/))  ) } 
              .map do |field|
           suba = field.select(&subfield_in(%w{a}))
                      .select { |sf| sf.value !~ /^%?(PRO|CHR)/ }
                      .map(&:value).join(' ')
           #added 2017/04/10: filter out 0 (authority record numbers) added by Alma
-          sub_oth = field.select(&subfield_not_in(%w{0 a 6 8 5})).map do |sf|
+          # 11/2018 kms: also do not display subf 5 or 2
+          sub_oth = field.select(&subfield_not_in(%w{0 a 6 8 5 2})).map do |sf|
             pre = !%w{b c d p q t}.member?(sf.code) ? ' -- ' : ' '
             pre + sf.value + (sf.code == 'p' ? '.' : '')
           end
           subj_display = [ suba, sub_oth ].join(' ')
           #added 2017/04/10: filter out 0 (authority record numbers) added by Alma
-          sub_oth_no_hyphens = join_subfields(field, &subfield_not_in(%w{0 a 6 8 5}))
+          # 11/2018 kms: also do not display subf 5 or 2
+          sub_oth_no_hyphens = join_subfields(field, &subfield_not_in(%w{0 a 6 8 5 2}))
           subj_search = [ suba, sub_oth_no_hyphens ].join(' ')
           if subj_display.present?
             {
@@ -497,7 +509,7 @@ module PennLib
       acc
     end
 
-    # 650 _7 is also handled here 
+    # 11/2018: 650 _7 is also handled here 
     def get_subject_display(rec)
       get_subjects_from_600s_and_800(rec, '0')
     end
@@ -1937,9 +1949,15 @@ module PennLib
       acc
     end
 
-    # 10/2018 kms: add 562 563 585
+    # 10/2018 kms: add 562 563 585. Add 561 if subf a starts with Athenaeum copy: 
+    # non-Athenaeum 561 still displays as Penn Provenance
     def get_local_notes_display(rec)
       acc = []
+      acc += rec.fields('561')
+        .select { |f| f.any?{ |sf| sf.code == 'a' && sf.value =~ /^Athenaeum copy: / } }
+        .map do |field|
+        join_subfields(field, &subfield_in(%w{a}))
+      end
       acc += rec.fields(%w{562 563 585 590}).map do |field|
         join_subfields(field, &subfield_not_in(%w{5 6 8}))
       end
@@ -1981,10 +1999,11 @@ module PennLib
       acc
     end
 
+   # 11/2018 kms: a 561 starting Athenaeum copy: should not appear as Penn Provenance, display that as Local Notes
     def get_provenance_display(rec)
       acc = []
       acc += rec.fields('561')
-                 .select { |f| ['1', '', ' '].member?(f.indicator1) && [' ', ''].member?(f.indicator2) }
+                 .select { |f| ['1', '', ' '].member?(f.indicator1) && [' ', ''].member?(f.indicator2) && f.any?{ |sf| sf.code == 'a' && sf.value !~ /^Athenaeum copy: / }  }
                  .map do |field|
         value = join_subfields(field, &subfield_in(%w{a}))
         { value: value, link: false } if value
