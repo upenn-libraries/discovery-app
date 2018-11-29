@@ -55,6 +55,136 @@
   <library>Fisher Fine Arts Library</library>
   <display>Architectural Archives, 215 898-8323</display>
 </location>
+<location location_code="amimp">
+  <specific_location>Athenaeum of Philadelphia - American Imprints</specific_location>
+  <library>Athenaeum of Philadelphia</library>
+  <display>Athenaeum of Philadelphia - American Imprints</display>
+</location>
+<location location_code="archivcoll">
+  <specific_location>Athenaeum of Philadelphia - Archival Collections</specific_location>
+  <library>Athenaeum of Philadelphia</library>
+  <display>Athenaeum of Philadelphia - Archival Collections</display>
+</location>
+<location location_code="atlas">
+  <specific_location>Athenaeum of Philadelphia - Atlases</specific_location>
+  <library>Athenaeum of Philadelphia</library>
+  <display>Athenaeum of Philadelphia - Atlases</display>
+</location>
+<location location_code="britimp">
+  <specific_location>Athenaeum of Philadelphia - British Imprints</specific_location>
+  <library>Athenaeum of Philadelphia</library>
+  <display>Athenaeum of Philadelphia - British Imprints</display>
+</location>
+<location location_code="carpco">
+  <specific_location>Athenaeum of Philadelphia - Carpenters' Company</specific_location>
+  <library>Athenaeum of Philadelphia</library>
+  <display>Athenaeum of Philadelphia - Carpenters' Company</display>
+</location>
+<location location_code="catoffice">
+  <specific_location>Athenaeum of Philadelphia - Cataloging Office</specific_location>
+  <library>Athenaeum of Philadelphia</library>
+  <display>Athenaeum of Philadelphia - Cataloging Office</display>
+</location>
+<location location_code="circcoll">
+  <specific_location>Athenaeum of Philadelphia - Circulating Collection</specific_location>
+  <library>Athenaeum of Philadelphia</library>
+  <display>Athenaeum of Philadelphia - Circulating Collection</display>
+</location>
+<location location_code="circdesk">
+  <specific_location>Athenaeum of Philadelphia - Circulation Desk</specific_location>
+  <library>Athenaeum of Philadelphia</library>
+  <display>Athenaeum of Philadelphia - Circulation Desk</display>
+</location>
+<location location_code="cidirbusrm">
+  <specific_location>Athenaeum of Philadelphia - City Directories Busch Room</specific_location>
+  <library>Athenaeum of Philadelphia</library>
+  <display>Athenaeum of Philadelphia - City Directories Busch Room</display>
+</location>
+<location location_code="collcare">
+  <specific_location>Athenaeum of Philadelphia - Collections Care Manager</specific_location>
+  <library>Athenaeum of Philadelphia</library>
+  <display>Athenaeum of Philadelphia - Collections Care Manager</display>
+</location>
+<location location_code="fic">
+  <specific_location>Athenaeum of Philadelphia - Fiction</specific_location>
+  <library>Athenaeum of Philadelphia</library>
+  <display>Athenaeum of Philadelphia - Fiction</display>
+</location>
+<location location_code="forimp">
+  <specific_location>Athenaeum of Philadelphia - Foreign Imprints</specific_location>
+  <library>Athenaeum of Philadelphia</library>
+  <display>Athenaeum of Philadelphia - Foreign Imprints</display>
+</location>
+<location location_code="litaward">
+  <specific_location>Athenaeum of Philadelphia - Literary Award</specific_location>
+  <library>Athenaeum of Philadelphia</library>
+  <display>Athenaeum of Philadelphia - Literary Award</display>
+</location>
+<location location_code="microfilm">
+  <specific_location>Athenaeum of Philadelphia - Microfilm</specific_location>
+  <library>Athenaeum of Philadelphia</library>
+  <display>Athenaeum of Philadelphia - Microfilm</display>
+</location>
+<location location_code="newacqu">
+  <specific_location>Athenaeum of Philadelphia - New Acquisitions</specific_location>
+  <library>Athenaeum of Philadelphia</library>
+  <display>Athenaeum of Philadelphia - New Acquisitions</display>
+</location>
+<location location_code="nonfic">
+  <specific_location>Athenaeum of Philadelphia - Non-Fiction</specific_location>
+  <library>Athenaeum of Philadelphia</library>
+  <display>Athenaeum of Philadelphia - Non-Fiction</display>
+</location>
+<location location_code="offsitede">
+  <specific_location>Athenaeum of Philadelphia - Off-site (Delaware)</specific_location>
+  <library>Athenaeum of Philadelphia</library>
+  <display>Athenaeum of Philadelphia - Off-site (Delaware)</display>
+</location>
+<location location_code="rarecoll">
+  <specific_location>Athenaeum of Philadelphia - Rare Books Collection</specific_location>
+  <library>Athenaeum of Philadelphia</library>
+  <display>Athenaeum of Philadelphia - Rare Books Collection</display>
+</location>
+<location location_code="reevecoll">
+  <specific_location>Athenaeum of Philadelphia - Reeve Collection</specific_location>
+  <library>Athenaeum of Philadelphia</library>
+  <display>Athenaeum of Philadelphia - Reeve Collection</display>
+</location>
+<location location_code="ref">
+  <specific_location>Athenaeum of Philadelphia - Reference</specific_location>
+  <library>Athenaeum of Philadelphia</library>
+  <display>Athenaeum of Philadelphia - Reference</display>
+</location>
+<location location_code="ruppcoll">
+  <specific_location>Athenaeum of Philadelphia - Rupp Collection</specific_location>
+  <library>Athenaeum of Philadelphia</library>
+  <display>Athenaeum of Philadelphia - Rupp Collection</display>
+</location>
+<location location_code="serials">
+  <specific_location>Athenaeum of Philadelphia - Serials</specific_location>
+  <library>Athenaeum of Philadelphia</library>
+  <display>Athenaeum of Philadelphia - Serials</display>
+</location>
+<location location_code="tradecat">
+  <specific_location>Athenaeum of Philadelphia - Trade Catalogues</specific_location>
+  <library>Athenaeum of Philadelphia</library>
+  <display>Athenaeum of Philadelphia - Trade Catalogues</display>
+</location>
+<location location_code="videodvd">
+  <specific_location>Athenaeum of Philadelphia - Videos</specific_location>
+  <library>Athenaeum of Philadelphia</library>
+  <display>Athenaeum of Philadelphia - Videos</display>
+</location>
+<location location_code="vismatl">
+  <specific_location>Athenaeum of Philadelphia - Visual Materials</specific_location>
+  <library>Athenaeum of Philadelphia</library>
+  <display>Athenaeum of Philadelphia - Visual Materials</display>
+</location>
+<location location_code="athstor">
+  <specific_location>LIBRA - Athenaeum of Philadelphia</specific_location>
+  <library>LIBRA</library>
+  <display>LIBRA - Athenaeum of Philadelphia</display>
+</location>
 <location location_code="biom">
   <specific_location>Biomedical Library</specific_location>
   <library>Health Sciences Libraries</library>
@@ -1628,6 +1758,12 @@
   <library>Van Pelt-Dietrich Library Center</library>
   <library>Van Pelt Reference</library>
   <display>Van Pelt Reference - Oversize</display>
+</location>
+<location location_code="vpresdesk">
+  <specific_location>Van Pelt Library - Reserve</specific_location>
+  <library>Van Pelt-Dietrich Library Center</library>
+  <library>Reserve</library>
+  <display>Van Pelt Reserves Desk - First Floor</display>
 </location>
 <location location_code="vpwicref">
   <specific_location>Van Pelt - Weigle Information Commons Reference</specific_location>
