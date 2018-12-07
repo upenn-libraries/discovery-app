@@ -95,6 +95,10 @@ class CatalogController < ApplicationController
     config.default_solr_params = {
       #cache: 'false',
       defType: 'perEndPosition_dense_shingle',
+      combo: '{!filters param=$q param=$fq excludeTags=cluster}',
+      #combo: '{!bool must=$q filter=\'{!filters param=$fq v=*:*}\'}',
+      #combo: '{!query v=$q}',
+      back: '*:*',
       # this list is annoying to maintain, but this avoids hard-coding a field list
       # in the search request handler in solrconfig.xml
       fl: %w{
@@ -126,7 +130,7 @@ class CatalogController < ApplicationController
       'facet.mincount': 0,
 #      fq: '{!tag=cluster}{!collapse field=cluster_id nullPolicy=expand size=5000000 min=record_source_id}',
       # this approach needs expand.field=cluster_id
-      fq: %q~{!tag=cluster}NOT ({!join from=cluster_id to=cluster_id v='record_source_f:"Penn"'} AND record_source_f:"HathiTrust")~,
+      fq: %q~{!edismax tag=cluster v='NOT ({!join from=cluster_id to=cluster_id v=\'record_source_f:"Penn"\'} AND record_source_f:"HathiTrust")'}~,
       expand: 'true',
       'expand.field': 'cluster_id',
       'expand.q': '*:*',
@@ -188,6 +192,15 @@ class CatalogController < ApplicationController
       a.params.dig(:f, :format_f)&.include?('Database & Article Index')
     }
 
+    get_hits = lambda { |v|
+      r1 = v[:r1]
+      r1.nil? ? 0 : (r1[:relatedness].to_f * 100000).to_i
+    }
+
+    post_sort = lambda { |items|
+      items.sort { |a,b| b.hits <=> a.hits }
+    }
+
     config.facet_types = {
       :header => {
         :priority => 2,
@@ -203,6 +216,10 @@ class CatalogController < ApplicationController
         :display => 'Database filters'
       }
     }
+
+    @@SUBJECT_SPECIALISTS = File.open("config/translation_maps/subject_specialists.solr-json", "rb").map do |line|
+      line.strip
+    end.compact.join
 
     @@DATABASE_CATEGORY_TAXONOMY = [
         '{',
@@ -249,6 +266,8 @@ class CatalogController < ApplicationController
     config.add_facet_field 'db_subcategory_f', label: 'Database Category', if: lambda { |a,b,c| false }
     config.add_facet_field 'db_type_f', label: 'Database Type', limit: -1, collapse: false, :if => database_selected,
         :facet_type => :database, solr_params: @@MINCOUNT
+    config.add_facet_field 'subject_specialists', label: 'Subject Area Correlation', collapse: true, :partial => 'blacklight/hierarchy/facet_hierarchy',
+        :json_facet => @@SUBJECT_SPECIALISTS, :top_level_field => 'subject_specialists', :get_hits => get_hits, :post_sort => post_sort
     config.add_facet_field 'database_taxonomy', label: 'Database Category', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy',
         :json_facet => @@DATABASE_CATEGORY_TAXONOMY, :top_level_field => 'db_category_f', :facet_type => :database,
         :helper_method => :render_subcategories, :if => database_selected
