@@ -20,3 +20,5 @@
 /node_modules
 
 /public/version.txt
+
+local_dev_env
