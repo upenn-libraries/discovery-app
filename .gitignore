@@ -22,3 +22,6 @@
 /public/version.txt
 
 local_dev_env
+
+.env
+.idea
