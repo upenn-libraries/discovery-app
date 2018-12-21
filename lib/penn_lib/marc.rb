@@ -365,7 +365,7 @@ module PennLib
         end
         return '' # rejected
       rescue StopIteration => e
-        case parts.size
+        case parts.nil? ? 0 : parts.size
           when 0
             return ''
           when 1
