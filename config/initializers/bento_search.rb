@@ -42,6 +42,35 @@ BentoSearch.register_engine('summon') do |conf|
   end
 end
 
+BentoSearch.register_engine('google_site_search') do |conf|
+  conf.engine = 'BentoSearch::GoogleSiteSearchEngine'
+  conf.api_key = 'AIzaSyC5Yh6Rac6SiPqkhQYc_iBdyed6XSj68EI'
+  conf.cx = '016593327973590517075:sl4ylbqkama'
+  conf.allow_routable_results = true
+  # allow ajax load.
+  conf.allow_routable_results = true
+  conf.for_display do |display|
+    display[:ajax] = { 'wrapper_template' => 'layouts/google_site_search_ajax_results_wrapper' }
+  end
+end
+
+BentoSearch.register_engine('catalog') do |conf|
+  conf.engine     = 'BentoSearch::CatalogEngine'
+  conf.allow_routable_results = true
+  conf.for_display do |display|
+    display[:ajax] = { 'wrapper_template' => 'layouts/catalog_ajax_results_wrapper' }
+  end
+end
+
+BentoSearch.register_engine('databases') do |conf|
+  conf.engine     = 'BentoSearch::DatabasesEngine'
+  conf.allow_routable_results = true
+  conf.for_display do |display|
+    display[:ajax] = { 'wrapper_template' => 'layouts/databases_ajax_results_wrapper' }
+  end
+end
+
+
 BentoSearch::SearchController.before_action do |controller|
   check_auth = controller.engine.configuration.check_auth
   if check_auth != nil

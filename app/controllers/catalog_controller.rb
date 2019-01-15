@@ -266,14 +266,14 @@ class CatalogController < ApplicationController
     # solr fields to be displayed in the index (search results) view
     #   The ordering of the field names is the order of the display
     add_fields.call(config, 'index', [
-        { name: 'author_creator_a', label: 'Author/Creator', helper_method: 'render_author_with_880' },
+        { name: 'author_creator_a', label: 'Creator', helper_method: 'render_author_with_880' },
         { name: 'standardized_title_a', label: 'Standardized Title' },
         { name: 'edition', label: 'Edition' },
         { name: 'conference_a', label: 'Conference name' },
         { name: 'series', label: 'Series' },
         { name: 'publication_a', label: 'Publication' },
         { name: 'contained_within_a', label: 'Contained in' },
-        { name: 'format_a', label: 'Format/Description' },
+        { name: 'format_a', label: 'Type' },
         # in this view, 'Online resource' is full_text_link; note that
         # 'Online resource' is deliberately different here from what's on show view
         { dynamic_name: 'full_text_links_for_cluster_display', label: 'Online resource', helper_method: 'render_online_resource_display_for_index_view' },
@@ -295,7 +295,7 @@ class CatalogController < ApplicationController
     #       so that only fields containing non-blank values are displayed.
 
     add_fields.call(config, 'show', [
-        { dynamic_name: 'author_display', label: 'Author/Creator', helper_method: 'render_linked_values' },
+        { dynamic_name: 'author_display', label: 'Creator', helper_method: 'render_linked_values' },
         { dynamic_name: 'standardized_title_display', label: 'Standardized Title', helper_method: 'render_linked_values' },
         { dynamic_name: 'other_title_display', label: 'Other Title' },
         { dynamic_name: 'edition_display', label: 'Edition' },
@@ -304,7 +304,7 @@ class CatalogController < ApplicationController
         { dynamic_name: 'manufacture_display', label: 'Manufacture' },
         { dynamic_name: 'conference_display', label: 'Conference Name', helper_method: 'render_linked_values' },
         { dynamic_name: 'series_display', label: 'Series', helper_method: 'render_linked_values' },
-        { dynamic_name: 'format_display', label: 'Format/Description' },
+        { dynamic_name: 'format_display', label: 'Type' },
         { dynamic_name: 'cartographic_display', label: 'Cartographic Data' },
         { dynamic_name: 'fingerprint_display', label: 'Fingerprint' },
         { dynamic_name: 'arrangement_display', label: 'Arrangement' },

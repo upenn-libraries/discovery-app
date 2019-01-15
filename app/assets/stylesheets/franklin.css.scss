@@ -1,9 +1,11 @@
 @import 'base/globals.css.scss';
 @import 'base/colors.css.scss';
+@import 'base/mixins.css.scss';
 
 body {
   color: $text-black;
   font-family: $font-family;
+  background-color: #F4F8FF;
 }
 
 .sr-only.application-heading {
@@ -14,15 +16,18 @@ h1, h2, h3 {
   color: $upenn-blue;
 }
 
+span.site-name {
+  position: relative;
+  top: 20px;
+}
+
 span.site-name, span.site-name a {
   font-size: 40px;
   color: $text-white;
-  font-style: italic;
+  font-family: 'Gentium Book Basic';
+  text-shadow: 2px 2px 2px #000000;
 }
 
-#search-navbar .nav-tabs {
-  margin-top: 4px;
-}
 
 /*************
 *
@@ -35,7 +40,7 @@ span.site-name, span.site-name a {
 
   .navbar-brand {
     background-image: asset-url('logo.png');
-    margin-top: 15px;
+    margin-top: 20px;
   }
 }
 
@@ -258,14 +263,16 @@ ul.footerlinks {
  *******/
 
 .bento_item_title {
-  font-size: 14px;
+  font-size: 16px;
 }
 
 /* made to resemble "#documents .document" rule in BL */
 .bento_item {
   margin-top: 0;
+  margin-left: 10px;
+  margin-right: 10px;
   padding-top: 6px;
-  border-top: 1px solid #d2d2d2;
+  border-bottom: 1px dashed #d2d2d2;
 }
 
 .bento_item:nth-child(even) {
@@ -314,7 +321,7 @@ bg color to fill document-metadata's bottom margin */
 
 .ezproxy-is-not-logged-in .ezproxy-show-not-logged-in,
 .ezproxy-is-logged-in .ezproxy-show-logged-in {
-  display: block;
+  display: relative;
 }
 
 /*******
@@ -406,3 +413,181 @@ h3.ongray {
     padding-top: 6px;
   }
 }
+
+
+/*******
+ *
+ * experimental new bento look and feel
+ *
+ *******/
+
+.franklin-search {
+  margin: 0 auto;
+  max-width: 1500px;
+  text-align: center;
+}
+
+.nav-tabs {
+  border: none;
+  display: inline-block;
+}
+
+.nav-tabs li.active a {
+  color: #FFFFFF;
+  background: none;
+  border: none;
+  cursor: default;
+}
+
+.nav-tabs li.active  a:hover, .nav-tabs li.active a:focus {
+  background: none;
+  border: none;
+  text-decoration: underline;
+  color: #FFFFFF;
+}
+
+.nav-tabs li  a:hover, .nav-tabs li a:focus {
+  border: none;
+  background: none;
+  color: #337ab7;
+  text-decoration: underline;
+  border-radius: 0px;
+}
+
+.nav-tabs li a {
+  padding: 0px;
+  border-radius: 0px;
+  margin: auto;
+}
+
+.nav-tabs li {
+  @include rounded-corners;
+  background-color: #FFFFFF;
+  border: #cdc9c9 1px solid;
+  height: 40px;
+  min-width: 140px;
+  margin: 5px;
+  display: flex;
+}
+
+.nav-tabs li .franklin-tab {
+  margin: auto; /* Important */
+}
+
+.nav-tabs li.active {
+  background-color: #337ab7;
+  color: #FFFFFF;
+  font-weight: bold;
+}
+
+/***********
+*
+* homepage styles
+*
+***********/
+
+.about-blurb {
+  padding: 10px;
+}
+
+.other-links {
+  @include rounded-corners;
+  border: 1px solid #d2d2d2;
+  ul {
+    padding: 10px;
+    line-height: 30px;
+  }
+  li {
+    list-style: none;
+
+  }
+}
+
+/***********
+*
+* bento search box styles
+*
+***********/
+
+.bento-box {
+  @include rounded-corners;
+  background-color: #FFFFFF;
+  border: #cdc9c9 1px solid;
+  margin: 15px;
+  padding: 0px;
+}
+
+.bento-box h3 {
+  font-family: "Helvetica Neue", "Arial", sans-serif;
+  padding: 0px 10px;
+  margin-top: 15px;
+}
+
+.bento-box .document {
+  padding: 5px;
+}
+
+.bento-box .bento_item{
+  background-color: #FFFFFF;
+  padding: 10px;
+}
+
+.bento-box .dl-horizontal dd {
+  margin-left: 0px;
+  margin-bottom: 0px;
+  font-size: 12px;
+}
+
+.view-all {
+  background-color: #ececec;
+  font-size: 16px;
+  padding: 15px 10px;
+  text-align: right;
+}
+
+/* hack */
+#bento-results-google .source-info {
+  display: none;
+}
+/* end of hack */
+
+.expert-results {
+  padding: 10px;
+  hr {
+    border-bottom: 1px dashed #d2d2d2;
+  }
+  .expert-profile {
+    font-size: 12px;
+    .upper-content {
+    }
+    .lower-content {
+      clear: both;
+      padding-top: 10px;
+    }
+    img {
+      @include rounded-corners;
+      width: 100px;
+      height: 100px;
+      float: left;
+      margin-right: 20px;
+    }
+    a.link-to-profile {
+      font-size: 16px;
+    }
+    .title {
+      font-style: italic;
+    }
+    .expert-areas-list {
+      h4 {
+        color: #727272;
+        font-size: 14px;
+      }
+      li {
+        list-style: none;
+        margin-left: -30px;
+      }
+    }
+  }
+}
+
+

@@ -19,4 +19,13 @@ module BlacklightHelper
     end.flatten(1)
   end
 
+  def render_other_links(links_hash)
+    other_links = ''
+    links_hash.each do |url, text|
+      other_links << link_to(text, url)
+    end
+
+    other_links.html_safe
+  end
+
 end
