@@ -3,3 +3,6 @@
 <div class="view-all">
   <%= link_to(("View all results #{image_tag('view_all_arrow.png', :alt => '')}").html_safe, search_catalog_path(q: params[:q] || params[:query], search_field: 'keyword')) %>
 </div>
+
+<div class="corner left-bottom hide"></div>
+<div class="corner right-bottom hide"></div>

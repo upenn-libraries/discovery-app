@@ -511,10 +511,14 @@ h3.ongray {
 
 .bento-box {
   @include rounded-corners;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   border: #cdc9c9 1px solid;
   margin: 15px;
   padding: 0px;
+}
+
+.bento-box-highlight {
+  background-color: #f3f6ba;
 }
 
 .bento-box h3 {
@@ -528,7 +532,7 @@ h3.ongray {
 }
 
 .bento-box .bento_item{
-  background-color: #FFFFFF;
+  background-color: transparent;
   padding: 10px;
 }
 
@@ -543,6 +547,55 @@ h3.ongray {
   font-size: 16px;
   padding: 15px 10px;
   text-align: right;
+}
+
+.bento-outer {
+  padding: 2px;
+}
+
+.corner {
+  width: 100px;
+  height: 80px;
+}
+
+.left-top {
+  border-left: #337ab7 solid 5px;
+  border-top: #337ab7 solid 5px;
+  float: left;
+  position: absolute;
+  z-index: 5;
+  top: -10px;
+  left: -10px;
+}
+
+.right-top {
+  border-right: #337ab7 solid 5px;
+  border-top: #337ab7 solid 5px;
+  float: right;
+  position: absolute;
+  z-index: 4;
+  top: -10px;
+  right: -10px;
+}
+
+.left-bottom {
+  border-left: #337ab7 solid 5px;
+  border-bottom: #337ab7 solid 5px;
+  float: left;
+  position: absolute;
+  z-index: 3;
+  bottom: -10px;
+  left: -10px;
+}
+
+.right-bottom {
+  border-right: #337ab7 solid 5px;
+  border-bottom: #337ab7 solid 5px;
+  float: right;
+  position: absolute;
+  z-index: 2;
+  bottom: -10px;
+  right: -10px;
 }
 
 /* hack */

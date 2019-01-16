@@ -87,7 +87,7 @@ class BentoSearch::DatabasesEngine
   def databases_url(args)
     f_term = 'format_f'
     f_value = 'Database/Website'
-    return "https://franklin.library.upenn.edu/catalog.atom?per_page=3&q=#{CGI.escape(args[:query_term])}&search_field=#{CGI.escape(args[:field_term])}&f#{CGI.escape("[#{f_term}][]")+"="+CGI.escape(f_value)}"
+    return "https://franklin.library.upenn.edu/catalog.atom?per_page=5&q=#{CGI.escape(args[:query_term])}&search_field=#{CGI.escape(args[:field_term])}&f#{CGI.escape("[#{f_term}][]")+"="+CGI.escape(f_value)}"
   end
 
 

@@ -88,7 +88,7 @@ class BentoSearch::CatalogEngine
 
   def catalog_url(args)
     facet_args = ''
-    return "https://franklin.library.upenn.edu/catalog.atom?per_page=3&q=#{CGI.escape(args[:query_term])}&search_field=#{CGI.escape(args[:field_term])}&f#{CGI.escape("[#{args[:f_term]}][]")+"="+CGI.escape(args[:f_value])}"
+    return "https://franklin.library.upenn.edu/catalog.atom?per_page=5&q=#{CGI.escape(args[:query_term])}&search_field=#{CGI.escape(args[:field_term])}&f#{CGI.escape("[#{args[:f_term]}][]")+"="+CGI.escape(args[:f_value])}"
   end
 
   def public_settable_search_args

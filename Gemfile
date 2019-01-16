@@ -40,6 +40,8 @@ gem 'browserify-rails', '4.0.0'
 # Use jquery as the JavaScript library
 gem 'jquery-rails', '4.3.1'
 
+gem 'jquery-color'
+
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 # As of Blacklight v6.3.0, enabling turbolinks corrupts render of search nav.
 # See https://github.com/projectblacklight/blacklight/issues/1562
@@ -106,3 +108,4 @@ gem 'blacklight_alma', :git => 'https://github.com/upenn-libraries/blacklight_al
 gem 'blacklight-ris', :git => 'https://github.com/upenn-libraries/blacklight-ris.git'
 
 gem 'oga'
+

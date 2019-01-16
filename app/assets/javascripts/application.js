@@ -12,6 +12,8 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require jquery.color.js
+
 //= require bootstrap/tab
 // Required by Blacklight
 //= require blacklight/blacklight
@@ -25,5 +27,7 @@
 //= require 'blacklight_advanced_search'
 
 //= require 'bento_search/ajax_load'
+
+//= require 'bento_highlight'
 
 //= require_tree .
