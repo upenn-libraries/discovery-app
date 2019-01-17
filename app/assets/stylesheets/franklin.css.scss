@@ -515,6 +515,7 @@ h3.ongray {
   border: #cdc9c9 1px solid;
   margin: 15px;
   padding: 0px;
+  z-index: 10;
 }
 
 .bento-box-highlight {
@@ -563,7 +564,7 @@ h3.ongray {
   border-top: #337ab7 solid 5px;
   float: left;
   position: absolute;
-  z-index: 5;
+  z-index: -5;
   top: -10px;
   left: -10px;
 }
@@ -573,7 +574,7 @@ h3.ongray {
   border-top: #337ab7 solid 5px;
   float: right;
   position: absolute;
-  z-index: 4;
+  z-index: -4;
   top: -10px;
   right: -10px;
 }
@@ -583,7 +584,7 @@ h3.ongray {
   border-bottom: #337ab7 solid 5px;
   float: left;
   position: absolute;
-  z-index: 3;
+  z-index: -3;
   bottom: -10px;
   left: -10px;
 }
@@ -593,7 +594,7 @@ h3.ongray {
   border-bottom: #337ab7 solid 5px;
   float: right;
   position: absolute;
-  z-index: 2;
+  z-index: -2;
   bottom: -10px;
   right: -10px;
 }

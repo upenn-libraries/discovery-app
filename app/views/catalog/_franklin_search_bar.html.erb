@@ -1,9 +1,14 @@
 <div class="tab-content">
+
   <div role="tabpanel" class="tab-pane <%= active_tab_classes('bento') %>" id="bento-search-navbar">
     <%= render partial: 'bento_search/search_form' %>
   </div>
 
   <div role="tabpanel" class="tab-pane <%= active_tab_classes('catalog') %>" id="catalog-search-navbar">
+    <%= render partial: 'catalog/search_form' %>
+  </div>
+
+  <div role="tabpanel" class="tab-pane <%= active_tab_classes('databases') %>" id="databases-search-navbar">
     <%= render partial: 'catalog/search_form' %>
   </div>
 
