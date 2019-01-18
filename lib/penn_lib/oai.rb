@@ -27,9 +27,9 @@ module PennLib
 
         solr = RSolr.connect :url => url, update_format: :xml, read_timeout: 300
 
-        delete_queries = ids.map { |id| "id:#{id}"}
+        delete_query = "{!terms f=id v='#{ids.join(',')}'}"
 
-        response = solr.delete_by_query(delete_queries)
+        response = solr.delete_by_query(delete_query)
 
         if response['responseHeader']['status'] == 0
           puts "Solr returned success code for deletion(s). (file=#{filename}, #{ids.size} ids)"

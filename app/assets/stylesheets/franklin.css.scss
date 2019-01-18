@@ -2,6 +2,15 @@
 @import 'base/colors.css.scss';
 @import 'base/mixins.css.scss';
 
+.list-inline {
+  display: flex;
+}
+
+.list-inline li {
+  flex: 1;
+  text-align: center;
+}
+
 body {
   color: $text-black;
   font-family: $font-family;
