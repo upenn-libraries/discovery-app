@@ -27,7 +27,7 @@
     </li>
     <li role="presentation" class="<%= active_tab_classes('catalog') %>">
       <div class="franklin-tab">
-        <%= render_tab_link('catalog', "Catalog (#{number_with_delimiter(@response.total)})", '#catalog', search_catalog_path(q: params[:q], search_field: 'keyword'), '#catalog-main, #catalog-search-navbar') %>
+        <%= render_tab_link('catalog', "Catalog", '#catalog', search_catalog_path(q: params[:q], search_field: 'keyword'), '#catalog-main, #catalog-search-navbar') %>
       </div>
     </li>
     <li role="presentation" class="ezproxy-show-not-logged-in">
@@ -40,6 +40,7 @@
         <%= render_tab_link('articles', 'Articles+', '#articles', summon_url(params[:q], true), '#articles-main, #articles-search-navbar') %>
       </div>
     </li>
+
     <li role="presentation" class="<%= active_tab_classes('databases') %>">
       <div class="franklin-tab">
         <%= render_tab_link('databases', "Databases", '#databases', databases_results_url(q: params[:q]), '#databases-main, #databases-search-navbar') %>

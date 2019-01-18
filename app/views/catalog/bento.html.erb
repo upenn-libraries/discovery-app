@@ -2,7 +2,7 @@
 
 <div class="row">
 
-    <div class="col-sm-3 bento-box catalog-results" id="bento-results-catalog">
+    <div class="col-sm-2 bento-box catalog-results" id="bento-results-catalog">
       <a name="catalog"></a>
       <div class="corner left-top hide"></div>
       <div class="corner right-top hide"></div>
@@ -13,7 +13,7 @@
       <%= bento_search 'catalog', :query => params[:q] || '', :per_page => 5, :load => :ajax_auto %>
     </div>
 
-    <div class="col-sm-3 bento-box summon-results ezproxy-login-status" id="bento-results-summon">
+    <div class="col-sm-2 bento-box summon-results ezproxy-login-status" id="bento-results-summon">
       <a name="articles"></a>
       <div class="corner left-top hide"></div>
       <div class="corner right-top hide"></div>
@@ -21,7 +21,7 @@
       <%= bento_search 'summon', :query => params[:q] || '', :per_page => 5, :load => :ajax_triggered %>
     </div>
 
-    <div class="col-sm-3 bento-box databases-results" id="bento-results-databases">
+    <div class="col-sm-2 bento-box databases-results" id="bento-results-databases">
       <a name="databases"></a>
       <div class="corner left-top hide"></div>
       <div class="corner right-top hide"></div>
@@ -29,7 +29,7 @@
       <%= bento_search 'databases', :query => params[:q] || '', :per_page => 5, :load => :ajax_auto, :f_term => 'format_f', :f_value => 'Database/Website' %>
     </div>
 
-    <div class="col-sm-3 bento-box expert-results" id="bento-results-expert">
+    <div class="col-sm-2 bento-box expert-results" id="bento-results-expert">
       <h3>Expert help</h3>
       <hr />
       <div class="expert-profile">
@@ -55,8 +55,10 @@
         </div>
       </div>
     </div>
+  </div>
 
-    <div class="col-sm-3 bento-box google-results" id="bento-results-google">
+  <div class="row">
+    <div class="col-sm-2 bento-box google-results" id="bento-results-google">
       <a name="website"></a>
       <div class="corner left-top hide"></div>
       <div class="corner right-top hide"></div>
