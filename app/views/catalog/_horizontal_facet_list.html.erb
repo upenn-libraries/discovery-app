@@ -1,0 +1,7 @@
+<div id="<%= display_facet.name %>">
+  <h2 class="sr-only"><%= facet_field.label %></h2>
+  <ul class="list-inline">
+    <% paginator = facet_paginator(facet_field, display_facet) %>
+    <%= render_facet_limit_list paginator, facet_field.key, :li, {:suppress_count => true} %>
+  </ul>
+</div>

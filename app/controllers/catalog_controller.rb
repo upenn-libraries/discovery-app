@@ -95,6 +95,10 @@ class CatalogController < ApplicationController
     config.default_solr_params = {
       #cache: 'false',
       defType: 'perEndPosition_dense_shingle',
+      combo: '{!filters param=$q param=$fq excludeTags=cluster}',
+      #combo: '{!bool must=$q filter=\'{!filters param=$fq v=*:*}\'}',
+      #combo: '{!query v=$q}',
+      back: '*:*',
       # this list is annoying to maintain, but this avoids hard-coding a field list
       # in the search request handler in solrconfig.xml
       fl: %w{
@@ -123,9 +127,10 @@ class CatalogController < ApplicationController
         recently_added_isort
       }.join(','),
       'facet.threads': 2,
+      'facet.mincount': 0,
 #      fq: '{!tag=cluster}{!collapse field=cluster_id nullPolicy=expand size=5000000 min=record_source_id}',
       # this approach needs expand.field=cluster_id
-      fq: %q~{!tag=cluster}NOT ({!join from=cluster_id to=cluster_id v='record_source_f:"Penn"'} AND record_source_f:"HathiTrust")~,
+      fq: %q~{!edismax tag=cluster v='NOT ({!join from=cluster_id to=cluster_id v=\'record_source_f:"Penn"\'} AND record_source_f:"HathiTrust")'}~,
       expand: 'true',
       'expand.field': 'cluster_id',
       'expand.q': '*:*',
@@ -183,6 +188,119 @@ class CatalogController < ApplicationController
     #  (useful when user clicks "more" on a large facet and wants to navigate alphabetically across a large set of results)
     # :index_range can be an array or range of prefixes that will be used to create the navigation (note: It is case sensitive when searching values)
 
+    database_selected = lambda { |a, b, c|
+      a.params.dig(:f, :format_f)&.include?('Database & Article Index')
+    }
+
+    get_hits = lambda { |v|
+      r1 = v[:r1]
+      r1.nil? ? 0 : (r1[:relatedness].to_f * 100000).to_i
+    }
+
+    post_sort = lambda { |items|
+      items.sort { |a,b| b.hits <=> a.hits }
+    }
+
+    config.facet_types = {
+      :header => {
+        :priority => 2,
+        :sidebar => false,
+        :display => 'Header filters'
+      },
+      :default => {
+        :priority => 1,
+        :display => 'General filters'
+      },
+      :database => {
+        :priority => 0,
+        :display => 'Database filters'
+      }
+    }
+
+    @@SUBJECT_SPECIALISTS = File.open("config/translation_maps/subject_specialists.solr-json", "rb").map do |line|
+      line.strip
+    end.compact.join
+
+    @@DATABASE_CATEGORY_TAXONOMY = [
+        '{',
+          'database_taxonomy:{',
+            'type: terms,',
+            'field: db_category_f,',
+            'mincount: 1,',
+            'limit: -1,',
+            'facet:{',
+              'db_subcategory_f: {',
+                'type : terms,',
+                'prefix : $parent--,',
+                'field: db_subcategory_f,',
+                'mincount: 1,',
+                'limit: -1',
+              '}',
+            '}',
+          '}',
+        '}'].join
+
+    @@SUBJECT_TAXONOMY = [
+        '{',
+          'subject_taxonomy: {',
+            'type: terms,',
+            'field: toplevel_subject_f,',
+            'top_level_term: "term()",',
+            'facet: {',
+              'identity: {',
+                'type: query,',
+                'q: "{!term f=subject_f v=$top_level_term}"',
+              '},',
+              'subject_f: {',
+                'type: terms,',
+                'prefix: $top_level_term--,',
+                'field: subject_f,',
+                'limit: 5',
+              '}',
+            '}',
+          '}',
+        '}'].join
+
+    @@MINCOUNT = { 'facet.mincount' => 1 }
+
+    config.add_facet_field 'db_subcategory_f', label: 'Database Category', if: lambda { |a,b,c| false }
+    config.add_facet_field 'db_type_f', label: 'Database Type', limit: -1, collapse: false, :if => database_selected,
+        :facet_type => :database, solr_params: @@MINCOUNT
+    config.add_facet_field 'subject_specialists', label: 'Subject Area Correlation', collapse: true, :partial => 'blacklight/hierarchy/facet_hierarchy',
+        :json_facet => @@SUBJECT_SPECIALISTS, :top_level_field => 'subject_specialists', :get_hits => get_hits, :post_sort => post_sort
+    config.add_facet_field 'database_taxonomy', label: 'Database Category', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy',
+        :json_facet => @@DATABASE_CATEGORY_TAXONOMY, :top_level_field => 'db_category_f', :facet_type => :database,
+        :helper_method => :render_subcategories, :if => database_selected
+    config.add_facet_field 'azlist', label: 'A-Z List', collapse: false, induce_sort: 'title_nssort asc', single: :manual, :facet_type => :header,
+        options: {:layout => 'horizontal_facet_list'}, solr_params: { 'facet.mincount' => 0 }, :if => database_selected, query: {
+      'A' => { :label => 'A', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='a'}"},
+      'B' => { :label => 'B', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='b'}"},
+      'C' => { :label => 'C', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='c'}"},
+      'D' => { :label => 'D', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='d'}"},
+      'E' => { :label => 'E', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='e'}"},
+      'F' => { :label => 'F', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='f'}"},
+      'G' => { :label => 'G', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='g'}"},
+      'H' => { :label => 'H', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='h'}"},
+      'I' => { :label => 'I', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='i'}"},
+      'J' => { :label => 'J', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='j'}"},
+      'K' => { :label => 'K', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='k'}"},
+      'L' => { :label => 'L', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='l'}"},
+      'M' => { :label => 'M', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='m'}"},
+      'N' => { :label => 'N', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='n'}"},
+      'O' => { :label => 'O', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='o'}"},
+      'P' => { :label => 'P', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='p'}"},
+      'Q' => { :label => 'Q', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='q'}"},
+      'R' => { :label => 'R', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='r'}"},
+      'S' => { :label => 'S', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='s'}"},
+      'T' => { :label => 'T', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='t'}"},
+      'U' => { :label => 'U', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='u'}"},
+      'V' => { :label => 'V', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='v'}"},
+      'W' => { :label => 'W', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='w'}"},
+      'X' => { :label => 'X', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='x'}"},
+      'Y' => { :label => 'Y', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='y'}"},
+      'Z' => { :label => 'Z', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='z'}"},
+      'Other' => { :label => 'Other', :fq => "{!tag=azlist ex=azlist}title_xfacet:/[ -`{-~].*/"}
+    }
     config.add_facet_field 'access_f', label: 'Access', collapse: false, query: {
       'Online' => { :label => 'Online', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'Online\\'}'}"},
       'At the library' => { :label => 'At the library', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"}
@@ -191,15 +309,16 @@ class CatalogController < ApplicationController
       'HathiTrust' => { :label => 'HathiTrust', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'HathiTrust\\'}'}"},
       'Penn' => { :label => 'Penn', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Penn\\'}'}"}
     }
-    config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false
-    config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z', collapse: false
-    config.add_facet_field 'subject_f', label: 'Subject', limit: 5, index_range: 'A'..'Z', collapse: false
-    config.add_facet_field 'language_f', label: 'Language', limit: 5, collapse: false
-    config.add_facet_field 'library_f', label: 'Library', limit: 5, collapse: false
-    config.add_facet_field 'specific_location_f', label: 'Specific location', limit: 5
-    config.add_facet_field 'publication_date_f', label: 'Publication date', limit: 5, collapse: false
-    config.add_facet_field 'classification_f', label: 'Classification', limit: 5, collapse: false
-    config.add_facet_field 'genre_f', label: 'Form/Genre', limit: 5
+    config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false, solr_params: @@MINCOUNT
+    config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z', collapse: false, solr_params: @@MINCOUNT
+    #config.add_facet_field 'subject_taxonomy', label: 'Subject Taxonomy', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy', :json_facet => @@SUBJECT_TAXONOMY, :top_level_field => 'toplevel_subject_f', :helper_method => :render_subcategories
+    config.add_facet_field 'subject_f', label: 'Subject', limit: 5, index_range: 'A'..'Z', collapse: false, solr_params: @@MINCOUNT
+    config.add_facet_field 'language_f', label: 'Language', limit: 5, collapse: false, solr_params: @@MINCOUNT
+    config.add_facet_field 'library_f', label: 'Library', limit: 5, collapse: false, solr_params: @@MINCOUNT
+    config.add_facet_field 'specific_location_f', label: 'Specific location', limit: 5, solr_params: @@MINCOUNT
+    config.add_facet_field 'publication_date_f', label: 'Publication date', limit: 5, collapse: false, solr_params: @@MINCOUNT
+    config.add_facet_field 'classification_f', label: 'Classification', limit: 5, collapse: false, solr_params: @@MINCOUNT
+    config.add_facet_field 'genre_f', label: 'Form/Genre', limit: 5, solr_params: @@MINCOUNT
     config.add_facet_field 'recently_added_f', label: 'Recently added', :query => {
       :within_90_days => { label: 'Within 90 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (90 * SECONDS_PER_DAY) } TO *]" },
       :within_60_days => { label: 'Within 60 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (60 * SECONDS_PER_DAY) } TO *]" },

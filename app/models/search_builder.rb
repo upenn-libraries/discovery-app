@@ -7,6 +7,43 @@ class SearchBuilder < Blacklight::SearchBuilder
   include BlacklightRangeLimit::RangeLimitBuilder
   include BlacklightSolrplugins::FacetFieldsQueryFilter
 
+  ##
+  # Add appropriate Solr facetting directives in, including
+  # taking account of our facet paging/'more'.  This is not
+  # about solr 'fq', this is about solr facet.* params.
+  def add_facetting_to_solr(solr_parameters)
+    facet_fields_to_include_in_request.each do |field_name, facet|
+      solr_parameters[:facet] ||= true
+
+      if facet.json_facet
+        json_facet = (solr_parameters[:'json.facet'] ||= [])
+        json_facet << facet.json_facet
+        next
+      end
+
+      if facet.pivot
+        solr_parameters.append_facet_pivot with_ex_local_param(facet.ex, facet.pivot.join(","))
+      elsif facet.query
+        solr_parameters.append_facet_query facet.query.map { |k, x| with_ex_local_param(facet.ex, x[:fq]) }
+      else
+        solr_parameters.append_facet_fields with_ex_local_param(facet.ex, facet.field)
+      end
+
+      if facet.sort
+        solr_parameters[:"f.#{facet.field}.facet.sort"] = facet.sort
+      end
+
+      if facet.solr_params
+        facet.solr_params.each do |k, v|
+          solr_parameters[:"f.#{facet.field}.#{k}"] = v
+        end
+      end
+
+      limit = facet_limit_with_pagination(field_name)
+      solr_parameters[:"f.#{facet.field}.facet.limit"] = limit if limit
+    end
+  end
+
   # override #with to massage params before this SearchBuilder
   # stores and works with them
   def with(blacklight_params = {})
@@ -56,6 +93,14 @@ class SearchBuilder < Blacklight::SearchBuilder
     solr_parameters[:q] = augmented_solr_q
   end
 
+  def get_facet_induced_sort
+    ret = nil
+    blacklight_params[:f]&.keys&.find do |k|
+      ret = blacklight_config.dig(:facet_fields, k, :induce_sort)
+    end
+    ret
+  end
+
   # no q param (with or without facets) causes the default 'score' sort
   # to return results in a different random order each time b/c there's
   # no scoring to apply. if there's no q and user hasn't explicitly chosen
@@ -65,6 +110,10 @@ class SearchBuilder < Blacklight::SearchBuilder
     return if blacklight_sort.present? && blacklight_sort != 'score desc'
     access_f = blacklight_params.dig(:f, :access_f)
     if !blacklight_params[:q].present?
+      if facet_induced_sort = get_facet_induced_sort
+        solr_parameters[:sort] = facet_induced_sort
+        return
+      end
       sort = 'elvl_rank_isort asc,last_update_isort desc'
       if access_f.nil? || access_f.empty?
 	# nothing
