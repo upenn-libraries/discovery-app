@@ -61,8 +61,8 @@ class BentoSearch::CatalogEngine
 
       summary = Hash.from_xml(Oga.parse_html(entry['summary']).to_xml.gsub('<br>', '<br />'))
 
-      list_terms = summary['dl']['dt']
-      list_definitions = summary['dl']['dd']
+      list_terms = summary['dl']['dt'].respond_to?(:each) ? summary['dl']['dt'] : [summary['dl']['dt']]
+      list_definitions = summary['dl']['dd'].respond_to?(:each) ? summary['dl']['dd'] : [summary['dl']['dd']]
 
       list_terms.each_with_index do |term, index|
         case term.downcase[0..term.length-2]

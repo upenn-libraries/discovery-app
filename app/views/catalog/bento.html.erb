@@ -8,7 +8,7 @@
       <div class="corner right-top hide"></div>
       <h3>Catalog</h3>
       <div class="view-and-filter text-right">
-        <%= link_to "View and filter #{number_with_delimiter(@response.total)} #{@response.total != 1 ? 'results' : 'result'}", search_catalog_path(q: params[:q] || params[:query], search_field: 'keyword') %>
+        <%= link_to "View and filter #{number_with_delimiter(@response.total)} #{@response.total  != 1 ? 'results' : 'result'}", search_catalog_path(q: params[:q] || params[:query], search_field: 'keyword') %>
       </div>
       <%= bento_search 'catalog', :query => params[:q] || '', :per_page => 5, :load => :ajax_auto %>
     </div>
@@ -29,32 +29,8 @@
       <%= bento_search 'databases', :query => params[:q] || '', :per_page => 5, :load => :ajax_auto, :f_term => 'format_f', :f_value => 'Database/Website' %>
     </div>
 
-    <div class="col-sm-2 bento-box expert-results" id="bento-results-expert">
-      <h3>Expert help</h3>
-      <hr />
-      <div class="expert-profile">
-        <%= image_tag 'cedrone.jpg', :alt => 'Melanie Cedrone' %>
-        <div class="upper-content">
-          <%= link_to 'Melanie Cedrone', profile_url('Melanie Cedrone'), :class => 'link-to-profile' %>
-          <p class="title">Collections Librarian &amp; Biology Liaison</p>
-          <%= link_to 'mcedrone@upenn.edu', 'mcedrone@upenn.edu' %>
-        </div>
-        <div class="lower-content">
-          <p>Biomedical Library</p>
-          <p><%= link_to '215-898-1862', '215-898-1862' %></p>
-          <div class="expert-areas-list">
-            <h4>Contact me for assistance with:</h4>
-            <ul>
-              <li>Earth &amp; Environmental Science</li>
-              <li>General science</li>
-              <li>Biology</li>
-              <li>Biomedical research</li>
-              <li>Medicine</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
+    <%= render_expert_help(@response.aggregations["subject_specialists"]) %>
+
   </div>
 
   <div class="row">

@@ -27,6 +27,7 @@ BentoSearch.register_engine('summon') do |conf|
   # with total number of hits, link to full results, etc.
   conf.for_display do |display|
     display[:ajax] = { 'wrapper_template' => 'layouts/summon_ajax_results_wrapper' }
+    display[:no_results_partial] = 'layouts/summon_zero_results'
     #display.decorator = "RefworksAndOpenUrlLinkDecorator"
   end
 
@@ -51,6 +52,7 @@ BentoSearch.register_engine('google_site_search') do |conf|
   conf.allow_routable_results = true
   conf.for_display do |display|
     display[:ajax] = { 'wrapper_template' => 'layouts/google_site_search_ajax_results_wrapper' }
+    display[:no_results_partial] = 'layouts/google_zero_results'
   end
 end
 
@@ -59,6 +61,7 @@ BentoSearch.register_engine('catalog') do |conf|
   conf.allow_routable_results = true
   conf.for_display do |display|
     display[:ajax] = { 'wrapper_template' => 'layouts/catalog_ajax_results_wrapper' }
+    display[:no_results_partial] = 'catalog/zero_results_bento'
   end
 end
 
@@ -67,6 +70,7 @@ BentoSearch.register_engine('databases') do |conf|
   conf.allow_routable_results = true
   conf.for_display do |display|
     display[:ajax] = { 'wrapper_template' => 'layouts/databases_ajax_results_wrapper' }
+    display[:no_results_partial] = 'layouts/databases_zero_results'
   end
 end
 
