@@ -331,8 +331,8 @@ module Blacklight::Solr::Response::SubjectSpecialists
                                       :phone => '215-898-7266',
                                       :office => '608 Van Pelt-Dietrich Library Center',
                                       :portrait => 'nicholas_herman.jpg',
-                                      :subjects => [['Manuscript studies',
-                                                     'Medieval studies']] }
+                                      :subjects => ['Manuscript studies',
+                                                     'Medieval studies'] }
 
     SPECIALISTS[:dot_porter] = { :display_name => 'Dot Porter',
                                  :job_title => 'Curator of Digital Research Services',
