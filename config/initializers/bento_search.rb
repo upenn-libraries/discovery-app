@@ -46,8 +46,7 @@ end
 BentoSearch.register_engine('google_site_search') do |conf|
   conf.engine = 'BentoSearch::GoogleSiteSearchEngine'
   conf.api_key = 'AIzaSyC5Yh6Rac6SiPqkhQYc_iBdyed6XSj68EI'
-  conf.cx = '016593327973590517075:sl4ylbqkama'
-  conf.allow_routable_results = true
+  conf.cx = '016593327973590517075:h0dzeuosj0o'
   # allow ajax load.
   conf.allow_routable_results = true
   conf.for_display do |display|

@@ -46,7 +46,6 @@ span.site-name, span.site-name a {
 
 #header-navbar {
   background: $upenn-blue asset-url('orrerybg.jpg') top left repeat-x;
-
   .navbar-brand {
     background-image: asset-url('logo.png');
     margin-top: 20px;
@@ -136,9 +135,13 @@ span.site-name, span.site-name a {
   background-repeat: no-repeat;
 }
 
+#sortAndPerPage {
+  border-bottom: 1px dashed #d2d2d2;
+}
+
 #documents .document {
   margin-top: 0;
-  border-bottom: 1px solid #d2d2d2;
+  border-bottom: 1px dashed #d2d2d2;
 }
 
 .documents-list .document:nth-child(even) {
@@ -426,6 +429,10 @@ h3.ongray {
   dt.blacklight-other_records {
     padding-top: 6px;
   }
+
+  .navbar {
+    margin-bottom: 0px;
+  }
 }
 
 
@@ -627,6 +634,11 @@ h3.ongray {
 #bento-results-google .source-info {
   display: none;
 }
+
+.blacklight-subject_specialists {
+  display: none;
+}
+
 /* end of hack */
 
 .expert-results {
@@ -668,4 +680,53 @@ h3.ongray {
   }
 }
 
+#feedback {
+  display: block;
+  background-image: asset-url('feedback.png');
+  background-repeat: no-repeat;
+  width: 77px;
+  height: 91px;
+  background-size: auto 89px;
+  position: absolute;
+  top: 14.0rem;
+  z-index: 15;
+  right: 2.5rem;
+}
 
+
+#feedbacklink {
+  cursor: pointer;
+  display: block;
+  height: 7.7rem;
+  width: 8.9rem;
+  position: absolute;
+  top: 0;
+}
+
+.visually-hidden {
+  @include accessible-hide;
+}
+
+#beta-announcement {
+  clear: both;
+  padding: 5px 10px;
+  background-color: $light-grey;
+  border-bottom: 1px solid $medium-grey;
+}
+
+#beta-label {
+  text-align: right;
+  font-size: 14px;
+}
+
+#beta-label .label {
+  background-color: $upenn-lighter-red;
+  width: 100px;
+  margin-right: 10px;
+  font-size: 14px;
+}
+
+#beta-label .text {
+  text-transform: uppercase;
+  color: #ffffff;
+}

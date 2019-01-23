@@ -51,8 +51,12 @@
     <%= content_tag :h1, application_name, class: 'sr-only application-heading' %>
 
     <%= render :partial=>'/flash_msg', layout: 'shared/flash_messages' %>
+    <aside id="feedback">
+      <a id="feedbacklink" title="feedback" href="http://upenn.libsurveys.com/new-homepage-feedback"><span class="visually-hidden">Feedback</span></a>
+    </aside>
 
-    <div class="row">
+    <div class="row" style="padding-top:10px;">
+      <div class="alert alert-warning"><p>Welcome to the beta version of our new library search! We welcome your feedback on our new design and experimental features.</p></div>
       <%= yield %>
     </div>
   </div>

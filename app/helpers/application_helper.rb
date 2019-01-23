@@ -19,7 +19,7 @@ module ApplicationHelper
   end
 
   def catalog_results_url(query)
-    return "http://localhost:3000/catalog?q=#{query}&search_field=keyword"
+    return search_catalog_path(q: query, search_field: 'keyword')
   end
   # returns the css classes needed for elements that should be considered 'active'
   # with respect to tabs functionality

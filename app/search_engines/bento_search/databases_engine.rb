@@ -57,7 +57,7 @@ class BentoSearch::DatabasesEngine
             online_resource[Oga.parse_html(entry['summary']).at_xpath('//a/@href').text] = Oga.parse_html(entry['summary']).at_xpath('//a/text()').text.strip
           end
 
-      summary = Hash.from_xml(Oga.parse_html(entry['summary']).to_xml.gsub('<br>', '<br />'))
+      summary = Hash.from_xml(Nokogiri::XML(entry['summary']).to_xml)
 
       list_terms = summary['dl']['dt'].respond_to?(:each) ? summary['dl']['dt'] : [summary['dl']['dt']]
       list_definitions = summary['dl']['dd'].respond_to?(:each) ? summary['dl']['dd'] : [summary['dl']['dd']]
