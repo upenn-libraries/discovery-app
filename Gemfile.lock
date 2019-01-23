@@ -246,12 +246,12 @@ GEM
       scrub_rb (~> 1.0)
     orm_adapter (0.5.0)
     parslet (1.8.2)
+    passenger (5.1.6)
+      rack
+      rake (>= 0.8.1)
     pry (0.12.2)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
-    pry-byebug (3.6.0)
-      byebug (~> 10.0)
-      pry (~> 0.10)
     public_suffix (3.0.3)
     rack (1.6.11)
     rack-test (0.6.3)
@@ -394,8 +394,8 @@ DEPENDENCIES
   mysql2 (~> 0.4.10)
   nokogiri (= 1.7.1)
   oga
+  passenger (= 5.1.6)
   pry
-  pry-byebug
   rails (= 4.2.8)
   rsolr (= 1.1.2)
   sass-rails (= 5.0.6)
