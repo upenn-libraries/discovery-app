@@ -32,5 +32,6 @@ regex = '''(?i)(sk|pk)_(test|live)_[0-9a-zA-Z]{10,32}'''
 
 [whitelist]
 files = [
-  "(.*?)(jpg|gif|doc|pdf|bin)$"
+  "(.*?)(jpg|gif|doc|pdf|bin)$",
+  "\.gitleaks\.toml"
 ]
