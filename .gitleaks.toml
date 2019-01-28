@@ -35,6 +35,6 @@ regex = '''(?i)secret_key_base *[:=] *[0-9a-zA-Z]{2,}'''
 
 [whitelist]
 files = [
-  '(.*?)(jpg|gif|doc|pdf|bin|md)$',
   '\.gitleaks\.toml',
+  '(.*?)(jpg|gif|doc|pdf|bin|md)$',
 ]
