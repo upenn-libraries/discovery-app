@@ -30,14 +30,14 @@ regex = '''xox[baprs]-.*'''
 description = "Strip API Key"
 regex = '''(?i)(sk|pk)_(test|live)_[0-9a-zA-Z]{10,32}'''
 [[regexes]]
-description = "Rails secret key"
-regex = '''(?i)(devise_secret_key|secret_key_base)[:= ]+[0-9a-zA-Z]{8,}'''
-[[regexes]]
 description = "Password set with string literal"
 regex = '''(?i)[\w]*password[\w]* *[:=] *['"][\S]{8,}['"]'''
 [[regexes]]
 description = "Password in Rails config"
 regex = '''[\w]*password[\w]* *: *[\S]{8,}'''
+[[regexes]]
+description = "Rails secret key"
+regex = '''(?i)(devise_secret_key|secret_key_base)[:= ]+[0-9a-zA-Z]{8,}'''
 [[regexes]]
 description = "Database connection string"
 regex = '''(?i)database_url.*mysql2://'''
