@@ -30,8 +30,20 @@ regex = '''xox[baprs]-.*'''
 description = "Strip API Key"
 regex = '''(?i)(sk|pk)_(test|live)_[0-9a-zA-Z]{10,32}'''
 [[regexes]]
-description = "Rails secret key"
-regex = '''(?i)secret_key_base *[:=] *[0-9a-zA-Z]{2,}'''
+description = "Rails secret key in config"
+regex = '''secret_key_base *: *[0-9a-zA-Z]{8,}'''
+[[regexes]]
+description = "Password in Rails config"
+regex = '''password *: *[\S]{8,}'''
+[[regexes]]
+description = "Database connection string"
+regex = '''(?i)database_url.*mysql2://'''
+[[regexes]]
+description = "Alma API key"
+regex = '''(?i)alma_api_key.*[0-9a-zA-Z]{36}'''
+[[regexes]]
+description = "Alma auth secret"
+regex = '''(?i)alma_auth_secret.*[0-9a-zA-Z]{8,}'''
 
 [whitelist]
 files = [
