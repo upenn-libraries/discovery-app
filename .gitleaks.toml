@@ -52,6 +52,10 @@ description = "Summon secret key"
 regex = '''(?i)summon_secret_key.*[0-9a-zA-Z]{32}'''
 
 [whitelist]
+commits = [
+    # Initial commit
+    '10b90fd18d590e9db6fef8675aa86a003835b441',
+]
 files = [
   '\.gitleaks\.toml',
   '(.*?)(jpg|gif|doc|pdf|bin|md)$',
