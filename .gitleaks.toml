@@ -31,7 +31,7 @@ description = "Strip API Key"
 regex = '''(?i)(sk|pk)_(test|live)_[0-9a-zA-Z]{10,32}'''
 [[regexes]]
 description = "Rails secret key in config"
-regex = '''secret_key_base *: *[0-9a-zA-Z]{8,}'''
+regex = '''(devise_secret_key|secret_key_base) *: *[0-9a-zA-Z]{8,}'''
 [[regexes]]
 description = "Password in Rails config"
 regex = '''password *: *[\S]{8,}'''
