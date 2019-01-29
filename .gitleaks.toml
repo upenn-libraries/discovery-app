@@ -44,6 +44,9 @@ regex = '''(?i)alma_api_key.*[0-9a-zA-Z]{36}'''
 [[regexes]]
 description = "Alma auth secret"
 regex = '''(?i)alma_auth_secret.*[0-9a-zA-Z]{8,}'''
+[[regexes]]
+description = "Summon secret key"
+regex = '''(?i)summon_secret_key.*[0-9a-zA-Z]{32}'''
 
 [whitelist]
 files = [
