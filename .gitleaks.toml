@@ -5,7 +5,7 @@ description = "Password set with string literal"
 regex = '''(?i)[\w]*password[\w]* *[:=] *['"][\S]{8,}['"]'''
 [[regexes]]
 description = "Password in Rails config"
-regex = '''[\w]*password[\w]* *: *[\S]{8,}'''
+regex = '''(?i)[\w]*password[\w]* *: *[\S]{8,}'''
 [[regexes]]
 description = "Rails secret key"
 regex = '''(?i)(devise_secret_key|secret_key_base)[:= ]+[0-9a-zA-Z]{8,}'''
