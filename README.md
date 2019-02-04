@@ -51,7 +51,7 @@ Installation:
 
   If the test data is successfully indexed, you should see output
   something like:
-  
+
   ```
   2016-03-03T12:29:40-05:00  INFO    Traject::SolrJsonWriter writing to 'http://127.0.0.1:8983/solr/blacklight-core/update/json' in batches of 100 with 1 bg threads
   2016-03-03T12:29:40-05:00  INFO    Indexer with 1 processing threads, reader: Traject::MarcReader and writer: Traject::SolrJsonWriter
@@ -134,3 +134,13 @@ See the
 [deploy-docker](https://gitlab.library.upenn.edu/ansible/deploy-discovery)
 repository for Ansible scripts that build Docker images and deploy containers
 to the test and production environments.
+
+# Auditing Secrets
+
+You can use [Gitleaks](https://github.com/upenn-libraries/gitleaks) to check the repository for unencrypted secrets that have been committed.
+
+```
+docker run --rm --name=gitleaks -v $PWD:/code quay.io/upennlibraries/gitleaks:v1.23.0 -v --repo-path=/code --repo-config
+```
+
+Any leaks will be logged to `stdout`. You can add the `--redact` flag if you do not want to log the offending secrets.

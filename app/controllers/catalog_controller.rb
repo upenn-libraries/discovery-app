@@ -300,6 +300,7 @@ class CatalogController < ApplicationController
         { dynamic_name: 'other_title_display', label: 'Other Title' },
         { dynamic_name: 'edition_display', label: 'Edition' },
         { dynamic_name: 'publication_display', label: 'Publication' },
+        { dynamic_name: 'production_display', label: 'Production' },
         { dynamic_name: 'distribution_display', label: 'Distribution' },
         { dynamic_name: 'manufacture_display', label: 'Manufacture' },
         { dynamic_name: 'conference_display', label: 'Conference Name', helper_method: 'render_linked_values' },

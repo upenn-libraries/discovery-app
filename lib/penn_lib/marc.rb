@@ -1778,6 +1778,10 @@ module PennLib
       acc
     end
 
+    def get_production_display(rec)
+      get_264_or_880_fields(rec, '0')
+    end
+
     def get_distribution_display(rec)
       get_264_or_880_fields(rec, '2')
     end
