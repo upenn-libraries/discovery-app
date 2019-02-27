@@ -28,6 +28,4 @@
 
 //= require 'bento_search/ajax_load'
 
-//= require 'bento_highlight'
-
 //= require_tree .

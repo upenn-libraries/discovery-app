@@ -49,12 +49,16 @@ module ApplicationHelper
 
     if params[:q] && controller_name == 'catalog' && action_name == 'bento'
       attrs = {
-          'href': anchor,
+          'href': url,
           'class': "#{tab_id}-anchor"
       }
     elsif params[:q] || !(controller_name == 'catalog' && action_name == 'landing')
       attrs = {
           'href': url
+      }
+    elsif tab_id == 'website' && action_name == 'landing'
+      attrs = {
+          'href': "http://www.library.upenn.edu/search/web-pages"
       }
     else
       attrs = {

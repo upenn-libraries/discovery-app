@@ -14,7 +14,7 @@ module BlacklightHelper
   end
 
   # override so that we can insert separators
-  def search_fields
+    def search_fields
     super.map do |option|
       field_def = blacklight_config.search_fields[option[1]]
       separator = (field_def && field_def.separator_beneath) ?
