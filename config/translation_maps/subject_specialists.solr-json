@@ -516,7 +516,7 @@
   },
   psychology : {
     type: query,
-    q: "{!term f=subject_search v=phsychology}",
+    q: "{!term f=subject_search v=psychology}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
