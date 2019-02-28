@@ -1,9 +1,9 @@
-<div class="col-sm-2 bento-box expert-results" id="bento-results-expert">
+<div class="col-md-2 bento-box expert-results" id="bento-results-expert">
   <h3>Expert help</h3>
 <% Blacklight::Solr::Response::SubjectSpecialists::Constants::SUBJECTS[subject.to_sym][0..2].each do |specialist| %>
   <hr />
-
   <div class="expert-profile">
+    <p><a href="https://www.library.upenn.edu/people/subject-specialists">See a list of all subject specialists.</a></p>
     <%= image_tag specialist[:portrait], :alt => specialist[:display_name] %>
     <div class="upper-content">
       <%= link_to specialist[:display_name], profile_url(specialist[:display_name]), :class => 'link-to-profile' %>

@@ -10,7 +10,7 @@ module ApplicationHelper
   end
 
   def databases_results_url(query)
-    url = "#{search_catalog_path(q: query, search_field: 'keyword')}&f%5Bformat_f%5D%5B%5D=Database%2FWebsite"
+    url = "#{search_catalog_path(q: query, search_field: 'keyword')}&f%5Bformat_f%5D%5B%5D=Database+%26+Article+Index"
     return url
   end
 
@@ -29,7 +29,7 @@ module ApplicationHelper
     on_bento_page = (controller_name == 'catalog') && ['landing', 'bento'].member?(action_name)
 
     # databases search, falls through to catalog but different tab should be highlighted
-    on_databases_page = params['f'].present? ? (controller_name == 'catalog') && ['index', 'bento'].member?(action_name) && params['f']['format_f'] == ["Database/Website"] : false
+    on_databases_page = params['f'].present? ? (controller_name == 'catalog') && ['index', 'bento'].member?(action_name) && params['f']['format_f'] == ["Database & Article Index"] : false
 
     if tab_id == 'bento' && on_bento_page
       'active'

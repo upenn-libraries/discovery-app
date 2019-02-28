@@ -59,7 +59,7 @@ gem 'sdoc', '0.4.2', group: :doc
 # Use Unicorn as the app server
 gem 'unicorn'
 
-#gem 'passenger', '5.1.6', require: 'phusion_passenger/rack_handler'
+gem 'passenger', '5.1.6', require: 'phusion_passenger/rack_handler'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
@@ -72,8 +72,6 @@ end
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem 'web-console', '~> 2.0', platforms: :ruby
-  gem 'dotenv-rails'
-  gem 'pry'
 end
 
 gem 'rsolr', '1.1.2'
