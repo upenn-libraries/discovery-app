@@ -103,10 +103,55 @@ class FranklinAlmaController < ApplicationController
 
   end
 
+  def portfolio_details
+    portfolio_pid = params['portfolio_pid']
+    collection_id = params['collection_id']
+    api_key_param = "apikey=#{ENV['ALMA_API_KEY']}"
+    url_params = {:collection_id => collection_id}
+    coverage = params['coverage']
+
+    # we also get this from availability API. Opportunity for improvement?
+    public_note = nil
+    authentication_note = nil
+
+    collection_url = "https://api-na.hosted.exlibrisgroup.com/almaws/v1/electronic/e-collections/%{collection_id}?#{api_key_param}"
+    services_url = "https://api-na.hosted.exlibrisgroup.com/almaws/v1/electronic/e-collections/%{collection_id}/e-services?#{api_key_param}"
+    portfolio_url = "https://api-na.hosted.exlibrisgroup.com/almaws/v1/electronic/e-collections/%{collection_id}/e-services/%{service_id}/portfolios/%{portfolio_id}?#{api_key_param}"
+
+    api_response = HTTParty.get(services_url % url_params, :headers => {'Accept' => 'application/json'})
+    api_response['electronic_service'].each do |e|
+      portfolio_response = HTTParty.get(portfolio_url % url_params.merge(:portfolio_id => portfolio_pid, :service_id => e['id']), :headers => {'Accept' => 'application/json'})
+      public_note ||= portfolio_response['public_note'].presence
+      authentication_note ||= portfolio_response['authentication_note'].presence
+
+      if(public_note.nil? || authentication_note.nil?)
+        service_response = HTTParty.get(e['link'] + "?#{api_key_param}", :headers => {'Accept' => 'application/json'})
+        public_note ||= service_response['public_note'].presence
+        authentication_note ||= service_response['authentication_note'].presence
+      end
+    end
+
+    if(public_note.nil? || authentication_note.nil?)
+      api_response = HTTParty.get(collection_url % url_params, :headers => {'Accept' => 'application/json'})
+      public_note ||= api_response['public_note'].presence
+      authentication_note ||= api_response['authentication_note'].presence
+    end
+
+    coverage_content = [coverage]
+    public_note_content = ["Public Notes: ", public_note]
+    authentication_note_content = ["Authentication Notes: ", authentication_note]
+
+    render :html => ('<span>' + (coverage_content + public_note_content + authentication_note_content).join("<br/>") + '</span>').html_safe
+  end
+
   def has_holding_info?(api_mms_data, mmsid)
     # check if any holdings have more than one item
     has_holding_info = api_mms_data['availability'][mmsid]['holdings'].map(&:keys).reduce([], &:+).member?('holding_info') ||
                        api_mms_data['availability'][mmsid]['holdings'].any? { |hld| hld['total_items'].to_i > 1 || hld['availability'] == 'check_holdings' }
+  end
+
+  def has_portfolio_info?(api_mms_data, mmsid)
+    has_portfolio_info = api_mms_data['availability'][mmsid]['holdings'].map(&:keys).reduce([], &:+).member?('portfolio_pid')
   end
 
   def single_availability
@@ -126,6 +171,9 @@ class FranklinAlmaController < ApplicationController
     # check if any holdings have more than one item
     has_holding_info = has_holding_info?(bib_data, mmsid)
     metadata = check_requestable(has_holding_info)
+
+    # check if portfolio information is present
+    has_portfolio_info = has_portfolio_info?(bib_data, mmsid)
 
     # Load holding information for monographs. Monographs do not have
     # a 'holding_info' value.
@@ -150,6 +198,8 @@ class FranklinAlmaController < ApplicationController
       if has_holding_info
         holding['location'] = %Q[<a href="javascript:loadItems('#{mmsid}', '#{holding['holding_id']}')">#{holding['location']} &gt;</a>]
         holding['availability'] = "<span class='load-holding-details' data-mmsid='#{params[:mmsid]}' data-holdingid='#{holding['holding_id']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/></span>"
+      elsif has_portfolio_info
+        holding['availability'] = "<span class='load-portfolio-details' data-mmsid='#{params[:mmsid]}' data-portfoliopid='#{holding['portfolio_pid']}' data-collectionid='#{holding['collection_id']}' data-coverage='#{holding['coverage_statement']}' data-publicnote='#{holding['public_note']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/></span>"
       else
         holding['item_pid'] = holding_map.dig(holding['holding_id'], :item_pid)
         holding['due_date_policy'] = holding_map.dig(holding['holding_id'], :due_date_policy)
@@ -170,7 +220,8 @@ class FranklinAlmaController < ApplicationController
                   .each_with_index
                   .map { |p,i| 
                     link = "<a target='_blank' href='https://upenn.alma.exlibrisgroup.com/view/uresolver/01UPENN_INST/openurl?Force_direct=true&portfolio_pid=#{p['portfolio_pid']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com&u.ignore_date_coverage=true'>#{p['collection']}</a>"
-                    [i, link, '', p['coverage_statement'] || p['public_note'], '', '', '', '']
+                    [i, link, '', p['availability'], '', '', '', '']
+                    #[i, link, '', p['coverage_statement'] || p['public_note'], '', '', '', '']
                   }
     end
 

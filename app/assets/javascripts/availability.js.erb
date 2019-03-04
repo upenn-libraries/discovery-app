@@ -155,6 +155,24 @@ $(document).ready(function() {
                         }
                     });
                 });
+
+                $('.load-portfolio-details').each(function(idx, element) {
+                    var mmsid = $(element).data("mmsid");
+                    var portfoliopid = $(element).data("portfoliopid");
+                    var collectionid = $(element).data("collectionid");
+                    var coverage = $(element).data("coverage");
+                    var publicnote = $(element).data("publicnote");
+
+                    var url = "/alma/portfolio_details?mms_id="+mmsid+"&portfolio_pid="+portfoliopid+"&collection_id="+collectionid+"&coverage="+coverage+"&public_note="+publicnote
+                    $.ajax({
+                        url: url,
+                        success: function(data, textStatus, jqXHR) {
+                            $(element).removeClass('load-portfolio-details');
+                            $(element).html('');
+                            $(element).append(data);
+                        }
+                    });
+                });
             }
         });
     };
