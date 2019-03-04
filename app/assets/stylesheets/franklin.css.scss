@@ -61,6 +61,10 @@ button.toggle span.avail-label::after {
   font-family: 'Glyphicons Halflings';
 }
 
+dd.btn-group.unauthenticated {
+  margin-left: 0px;
+}
+
 div[id^="table-wrapper"] {
   border: 1px solid #77F;
   padding: 6px;
