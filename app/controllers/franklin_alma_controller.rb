@@ -198,9 +198,9 @@ class FranklinAlmaController < ApplicationController
 
       if has_holding_info
         holding['location'] = %Q[<a href="javascript:loadItems('#{mmsid}', '#{holding['holding_id']}')">#{holding['location']} &gt;</a>]
-        holding['availability'] = "<span class='load-holding-details' data-mmsid='#{params[:mmsid]}' data-holdingid='#{holding['holding_id']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/></span>"
+        holding['availability'] = "<span class='load-holding-details' data-mmsid='#{mmsid}' data-holdingid='#{holding['holding_id']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/></span>"
       elsif has_portfolio_info
-        holding['availability'] = "<span class='load-portfolio-details' data-mmsid='#{params[:mmsid]}' data-portfoliopid='#{holding['portfolio_pid']}' data-collectionid='#{holding['collection_id']}' data-coverage='#{holding['coverage_statement']}' data-publicnote='#{holding['public_note']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/></span>"
+        holding['availability'] = "<span class='load-portfolio-details' data-mmsid='#{mmsid}' data-portfoliopid='#{holding['portfolio_pid']}' data-collectionid='#{holding['collection_id']}' data-coverage='#{holding['coverage_statement']}' data-publicnote='#{holding['public_note']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/></span>"
       else
         holding['item_pid'] = holding_map.dig(holding['holding_id'], :item_pid)
         holding['due_date_policy'] = holding_map.dig(holding['holding_id'], :due_date_policy)
