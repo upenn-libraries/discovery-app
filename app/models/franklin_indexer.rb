@@ -154,12 +154,28 @@ class FranklinIndexer < BaseIndexer
     #   acc.concat(pennlibmarc.get_subject_facet_values(rec))
     # end
 
+    to_field "db_type_f_stored" do |rec, acc|
+      acc.concat(pennlibmarc.get_db_types(rec))
+    end
+
+    to_field "db_category_f_stored" do |rec, acc|
+      acc.concat(pennlibmarc.get_db_categories(rec))
+    end
+
+    to_field "db_subcategory_f_stored" do |rec, acc|
+      acc.concat(pennlibmarc.get_db_subcategories(rec))
+    end
+
     to_field 'subject_search' do |rec, acc|
       acc.concat(pennlibmarc.get_subject_search_values(rec))
     end
 
     to_field 'subject_xfacet2_input' do |rec, acc|
       acc.concat(pennlibmarc.get_subject_xfacet_values(rec))
+    end
+
+    to_field 'toplevel_subject_f' do |rec, acc|
+      acc.concat(pennlibmarc.get_subject_facet_values(rec, true))
     end
 
     to_field 'call_number_xfacet' do |rec, acc|

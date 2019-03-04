@@ -1,0 +1,19 @@
+<% if current_user %>
+    <dt class="hidden-print"></dt>
+    <dd class="hidden-print">
+      <%= link_to 'Request Options', url_for_document(document), document_link_params(document, "class" => "btn btn-default") %>
+    </dd>
+<% else %>
+    <dt class="hidden-print"></dt>
+    <dd class="btn-group">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      Login to view request options <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+      <%# Is there a better way to construct the URL to the record? %>
+      <li class="small"><a href="<%= accounts_login_url(next: request.original_url) %>">Login with PennKey</a></li>
+      <li role="separator" class="divider"></li>
+      <li class="small"><a href="http://www.library.upenn.edu/catalogs/franklin/nopennkey.html">No PennKey? Click here.</a></li>
+    </ul>
+    </dd>
+<% end %>

@@ -96,6 +96,8 @@ gem 'blacklight-marc', '6.2.0'
 
 gem 'blacklight_advanced_search', '6.3.1'
 
+gem 'font-awesome-rails'
+
 # TODO: switch back to official gem when PR #36 is accepted and makes it into a release
 gem 'bento_search', :git => 'https://github.com/magibney/bento_search', :branch => 'search_controller_engine_params' #'1.7'
 
@@ -107,3 +109,5 @@ gem 'blacklight_solrplugins', :git => 'https://github.com/upenn-libraries/blackl
 gem 'blacklight_alma', :git => 'https://github.com/upenn-libraries/blacklight_alma.git'
 
 gem 'blacklight-ris', :git => 'https://github.com/upenn-libraries/blacklight-ris.git'
+
+gem 'rails-assets-datatables', source: 'https://rails-assets.org'
