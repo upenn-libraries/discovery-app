@@ -78,7 +78,7 @@ $(document).ready(function() {
         var url = "/alma/single_availability.json?mms_id=" + encodeURIComponent(mmsid);
 
         $('#requestOptions-' + mmsid).on('error.dt', function(e, settings, techNote, message) {
-            $(this).dataTable().fnSettings().oLanguage.sEmptyTable = 'An error has occurred. Please contact ??? for assistance.';
+            $(this).dataTable().fnSettings().oLanguage.sEmptyTable = 'An error has occurred.';
             $(this).DataTable().draw();
         })
         .DataTable({
@@ -233,7 +233,7 @@ $(document).ready(function() {
 
     Franklin.prototype.initializeItemsDataTable = function(mmsid) {
         $('#holdingItems-' + mmsid).on('error.dt', function(e, settings, techNote, message) {
-            $(this).dataTable().fnSettings().oLanguage.sEmptyTable = 'An error has occurred. Please contact ??? for assistance.';
+            $(this).dataTable().fnSettings().oLanguage.sEmptyTable = 'An error has occurred.';
             $(this).DataTable().draw();
         })
         .DataTable({
