@@ -191,38 +191,51 @@ class FranklinAlmaController < ApplicationController
       end
     end
 
-    bib_data['availability'][mmsid]['holdings'].each do |holding|
-      links = []
-      links << "<a href='/redir/aeon?bibid=#{holding['mmsid']}&hldid=#{holding['holding_id']}'' target='_blank'>Request to view in reading room</a>" if holding['link_to_aeon']
-      holding['availability'] = availability_status[holding['availability']] || 'Requestable'
+    # Check if URL for bib is on collection record
+    if bib_data['availability'][mmsid]['holdings'].empty?
+      bib_collection_response = api_instance.request(api.almaws_v1_bibs.mms_id_e_collections, :get, :mms_id => mmsid)
+      url = bib_collection_response.dig("electronic_collections","electronic_collection","link")
+      unless url.nil?
+        collection_response = HTTParty.get(url +"?apikey=#{ENV['ALMA_API_KEY']}", :headers => {'Accept' => 'application/json'})
+        link = "<a target='_blank' href='#{collection_response['url']}'>#{collection_response['public_name']}</a>"
+        table_data = [[0, link, '', '', '', '', '', '']]
+      else # Return an empty table
+        table_data = []
+      end
+    else
+      bib_data['availability'][mmsid]['holdings'].each do |holding|
+        links = []
+        links << "<a href='/redir/aeon?bibid=#{holding['mmsid']}&hldid=#{holding['holding_id']}'' target='_blank'>Request to view in reading room</a>" if holding['link_to_aeon']
+        holding['availability'] = availability_status[holding['availability']] || 'Requestable'
 
-      if has_holding_info
-        holding['location'] = %Q[<a href="javascript:loadItems('#{mmsid}', '#{holding['holding_id']}')">#{holding['location']} &gt;</a>]
-        holding['availability'] = "<span class='load-holding-details' data-mmsid='#{mmsid}' data-holdingid='#{holding['holding_id']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/></span>"
-      elsif has_portfolio_info
-        holding['availability'] = "<span class='load-portfolio-details' data-mmsid='#{mmsid}' data-portfoliopid='#{holding['portfolio_pid']}' data-collectionid='#{holding['collection_id']}' data-coverage='#{holding['coverage_statement']}' data-publicnote='#{holding['public_note']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/></span>"
-      else
-        holding['item_pid'] = holding_map.dig(holding['holding_id'], :item_pid)
-        holding['due_date_policy'] = holding_map.dig(holding['holding_id'], :due_date_policy)
+        if has_holding_info
+          holding['location'] = %Q[<a href="javascript:loadItems('#{mmsid}', '#{holding['holding_id']}')">#{holding['location']} &gt;</a>]
+          holding['availability'] = "<span class='load-holding-details' data-mmsid='#{mmsid}' data-holdingid='#{holding['holding_id']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/></span>"
+        elsif has_portfolio_info
+          holding['availability'] = "<span class='load-portfolio-details' data-mmsid='#{mmsid}' data-portfoliopid='#{holding['portfolio_pid']}' data-collectionid='#{holding['collection_id']}' data-coverage='#{holding['coverage_statement']}' data-publicnote='#{holding['public_note']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/></span>"
+        else
+          holding['item_pid'] = holding_map.dig(holding['holding_id'], :item_pid)
+          holding['due_date_policy'] = holding_map.dig(holding['holding_id'], :due_date_policy)
+        end
+
+        holding['links'] = links
       end
 
-      holding['links'] = links
-    end
+      policy = 'Please log in for loan and request information' if userid == 'GUEST'
+      table_data = bib_data['availability'][mmsid]['holdings'].select { |h| h['inventory_type'] == 'physical' }
+                   .sort { |a,b| cmpHoldingLocations(a,b) }
+                   .each_with_index
+                   .map { |h,i| [i, h['location'], policy || h['due_date_policy'], h['availability'], h['call_number'], h['links'], h['holding_id'], h['item_pid']] }
 
-    policy = 'Please log in for loan and request information' if userid == 'GUEST'
-    table_data = bib_data['availability'][mmsid]['holdings'].select { |h| h['inventory_type'] == 'physical' }
-                 .sort { |a,b| cmpHoldingLocations(a,b) }
-                 .each_with_index
-                 .map { |h,i| [i, h['location'], policy || h['due_date_policy'], h['availability'], h['call_number'], h['links'], h['holding_id'], h['item_pid']] }
-
-    if table_data.empty?
-      table_data = bib_data['availability'][mmsid]['holdings'].select { |h| h['inventory_type'] == 'electronic' }
-                  .sort { |a,b| cmpOnlineServices(a,b) }
-                  .each_with_index
-                  .map { |p,i| 
-                    link = "<a target='_blank' href='https://upenn.alma.exlibrisgroup.com/view/uresolver/01UPENN_INST/openurl?Force_direct=true&portfolio_pid=#{p['portfolio_pid']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com&u.ignore_date_coverage=true'>#{p['collection']}</a>"
-                    [i, link, '', p['availability'], '', '', '', '']
-                  }
+      if table_data.empty?
+        table_data = bib_data['availability'][mmsid]['holdings'].select { |h| h['inventory_type'] == 'electronic' }
+                    .sort { |a,b| cmpOnlineServices(a,b) }
+                    .each_with_index
+                    .map { |p,i|
+                      link = "<a target='_blank' href='https://upenn.alma.exlibrisgroup.com/view/uresolver/01UPENN_INST/openurl?Force_direct=true&portfolio_pid=#{p['portfolio_pid']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com&u.ignore_date_coverage=true'>#{p['collection']}</a>"
+                      [i, link, '', p['availability'], '', '', '', '']
+                    }
+      end
     end
 
     render :json => {"metadata": metadata, "data": table_data}
