@@ -451,13 +451,13 @@ class FranklinAlmaController < ApplicationController
                         #)
 
     libraries = { "Annenberg Library" => "AnnenLib",
+                  "Athenaeum Library" => "AthLib",
                   "Biomedical Library" => "BiomLib",
                   "Chemistry Library" => "ChemLib",
                   "Dental Medicine Library" => "DentalLib",
                   "Fisher Fine Arts Library" => "FisherFAL",
                   "Library at the Katz Center" => "KatzLib",
                   "Math/Physics/Astronomy Library" => "MPALib",
-                  "Morris Arboretum" => "ArborLib",
                   "Museum Library" => "MuseumLib",
                   "Ormandy Music and Media Center" => "MusicLib",
                   "Pennsylvania Hospital Library" => "PAHospLib",
