@@ -337,7 +337,7 @@ class FranklinAlmaController < ApplicationController
     userid = session['id'].presence || nil
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
-    options = {:user_id => userid}
+    options = {:user_id => userid, :consider_dlr => true}
     response_data = api_instance.request(api.almaws_v1_bibs.mms_id_request_options, :get, params.merge(options))
     results = response_data['request_option'].map { |option|
       request_url = option['request_url']
@@ -414,7 +414,7 @@ class FranklinAlmaController < ApplicationController
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
     userid = session['id'].presence || 'GUEST'
-    options = {:user_id => userid, :format => 'json'}
+    options = {:user_id => userid, :format => 'json', :consider_dlr => true}
 
     response_data = api_instance.request(api.almaws_v1_bibs.mms_id_request_options, :get, params.merge(options))
 
