@@ -58,6 +58,7 @@ Rails.application.routes.draw do
   get 'alma/single_availability' => 'franklin_alma#single_availability'
   get 'alma/holding_items' => 'franklin_alma#holding_items'
   get 'alma/holding_details' => 'franklin_alma#holding_details'
+  get 'alma/portfolio_details' => 'franklin_alma#portfolio_details'
   get 'alma/request_options' => 'franklin_alma#request_options'
   get 'alma/check_requestable' => 'franklin_alma#check_requestable'
 
