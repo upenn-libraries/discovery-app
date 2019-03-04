@@ -109,3 +109,5 @@ gem 'blacklight_solrplugins', :git => 'https://github.com/upenn-libraries/blackl
 gem 'blacklight_alma', :git => 'https://github.com/upenn-libraries/blacklight_alma.git'
 
 gem 'blacklight-ris', :git => 'https://github.com/upenn-libraries/blacklight-ris.git'
+
+gem 'rails-assets-datatables', source: 'https://rails-assets.org'

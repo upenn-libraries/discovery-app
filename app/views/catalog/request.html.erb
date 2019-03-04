@@ -1,0 +1,46 @@
+<% @page_title = "Request Item" %>
+
+<%= form_tag('/alma/request', method: 'post') do %>
+  <%= hidden_field_tag(:mms_id, params['mms_id']) %>
+  <%= hidden_field_tag(:holding_id, params['holding_id']) %>
+  <%= hidden_field_tag(:item_pid, params['item_pid']) %>
+
+  <div class="section">
+    <div class="section-heading">
+      <h1>Request Item</h1>
+    </div>
+    <div class="section-body">
+      <div class="form-group clearfix"> 
+        <%= label_tag(:title, 'Title', :class => 'control-label col-sm-6 col-md-2') %>
+        <div class="col-sm-6 col-md-10">
+          <p class="form-control-static"><%= bib_data['title'] + " " + (item_data['description'] || '') %></p>
+        </div>
+      </div>
+
+      <div class="form-group clearfix">
+        <%= label_tag(:author, 'Author', :class => 'control-label col-sm-6 col-md-2') %>
+        <div class="col-sm-6 col-md-10">
+          <p class="form-control-static"><%= bib_data['author'] %></p>
+        </div>
+      </div>
+
+      <div class="form-group clearfix">
+        <%= label_tag(:pickup_location, 'Pickup Location', :class => 'control-label col-sm-6 col-md-2') %>
+        <div class="col-sm-6 col-md-10">
+          <%= select_tag(:pickup_location, options_for_select(libraries, 'VanPeltLib'), class: 'form-control') %>
+        </div>
+      </div>
+
+      <div class="form-group clearfix">
+        <%= label_tag(:comments, 'Comments', :class => 'control-label col-sm-6 col-md-2') %>
+        <div class="col-sm-6 col-md-10">
+          <%= text_area_tag(:comments, '', :class => 'form-control') %>
+        </div>
+      </div>
+
+      <%= submit_tag('Submit Request', :class => 'btn btn-default') %>
+    </div>
+  </div>
+
+<% end %>
+

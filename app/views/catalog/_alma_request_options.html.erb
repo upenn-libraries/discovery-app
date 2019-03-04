@@ -1,0 +1,16 @@
+<% if current_user %>
+  <div id="requestOptionList-<%= document.alma_mms_id %>"><%= image_tag("ajax-loader.gif", id: 'request-options-spinner-' + document.alma_mms_id) %></div>
+<% else %>
+    <dt class="hidden-print"></dt>
+    <dd class="btn-group">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      Login to view request options <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+      <li class="small"><a href="<%= accounts_login_url(next: request.original_url) %>">Login with PennKey</a></li>
+      <li role="separator" class="divider"></li>
+      <li class="small"><a href="http://www.library.upenn.edu/catalogs/franklin/nopennkey.html">No PennKey? Click here.</a></li>
+    </ul>
+    </dd>
+    <br/>
+<% end %>

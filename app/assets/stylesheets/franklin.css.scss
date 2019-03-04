@@ -33,6 +33,43 @@ span.site-name, span.site-name a {
   margin-top: 4px;
 }
 
+button.btn-request-option {
+  padding: 3px;
+  margin: 2px 2px 16px 2px;
+  border-color: #aaa;
+}
+
+button.btn-request-options,
+button.btn-request-options:focus,
+button.btn-request-options:active {
+  background-color: #092054;
+  border-color: #204d74;
+  color: white;
+}
+
+button.btn-request-options:hover {
+  background-color: #286090;
+  color: white;
+}
+
+button.toggle {
+  margin-bottom: 20px;
+}
+
+button.toggle span.avail-label::after {
+  content: "  \e114";
+  font-family: 'Glyphicons Halflings';
+}
+
+div[id^="table-wrapper"] {
+  border: 1px solid #77F;
+  padding: 6px;
+}
+
+div.backbutton-top {
+  margin-bottom: 10px;
+}
+
 /*************
 *
 * Overriding Blacklight styles
