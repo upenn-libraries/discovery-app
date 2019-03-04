@@ -128,7 +128,9 @@ $(document).ready(function() {
                 }
             },
             "initComplete": function(settings, json) {
-                dataLen = json.data.length;
+                var table = $('#requestOptions-' + mmsid).DataTable();
+
+                var dataLen = json.data.length;
                 if(dataLen == 0) {
                     //$('#table-wrapper-' + mmsid).hide();
                 }
@@ -170,6 +172,9 @@ $(document).ready(function() {
                             $(element).removeClass('load-portfolio-details');
                             $(element).html('');
                             $(element).append(data);
+                            table.column(2).visible(false);
+                            table.column(4).visible(false);
+                            $(table.column(3).header()).text("");
                         }
                     });
                 });
