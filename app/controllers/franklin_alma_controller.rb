@@ -138,8 +138,8 @@ class FranklinAlmaController < ApplicationController
     end
 
     coverage_content = [coverage]
-    public_note_content = ["Public Notes: ", public_note]
-    authentication_note_content = ["Authentication Notes: ", authentication_note]
+    public_note_content = public_note.nil? || public_note.empty? ? [] : ["Public Notes: ", public_note]
+    authentication_note_content = authentication_note.nil? || eauthentication_note.empty? ? [] : ["Authentication Notes: ", authentication_note]
 
     render :html => ('<span>' + (coverage_content + public_note_content + authentication_note_content).join("<br/>") + '</span>').html_safe
   end
