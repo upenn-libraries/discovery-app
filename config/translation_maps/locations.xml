@@ -603,6 +603,11 @@
   <library>Van Pelt-Dietrich Library Center</library>
   <display>Van Pelt - East Asia Compact Shelving</display>
 </location>
+<location location_code="easiacmx">
+    <specific_location>Van Pelt - East Asia Comics</specific_location>
+    <library>Van Pelt-Dietrich Library Center</library>
+    <display>Van Pelt - East Asia Comics</display>
+</location>
 <location location_code="easiaover">
   <specific_location>Van Pelt - East Asia Oversize</specific_location>
   <library>Van Pelt-Dietrich Library Center</library>
@@ -661,6 +666,11 @@
   <specific_location>Fisher Fine Arts Library - New Book Display</specific_location>
   <library>Fisher Fine Arts Library</library>
   <display>Fine Arts Library - New Book Display</display>
+</location>
+<location location_code="FEATURED">
+    <specific_location>Van Pelt - Featured Books--First Floor</specific_location>
+  <library>Van Pelt-Dietrich Library Center</library>
+    <display>Van Pelt - Featured Books--First Floor</display>
 </location>
 <location location_code="fine">
   <specific_location>Fisher Fine Arts Library</specific_location>
@@ -921,6 +931,11 @@
   <library>Special Collections</library>
   <library>University Museum Library</library>
   <display>University Museum Library - Locked Cases (ask staff)</display>
+</location>
+<location location_code="musemedia">
+    <specific_location>University Museum Library - Media</specific_location>
+    <library>University Museum Library</library>
+    <display>University Museum Library - Media</display>
 </location>
 <location location_code="muserefe">
   <specific_location>University Museum Library - Reference</specific_location>
@@ -1262,6 +1277,13 @@
   <library>Van Pelt-Dietrich Library Center</library>
   <display>Rare Book &amp; Manuscript Library - Artists' Books</display>
 </location>
+    <location location_code="scbanks">
+        <specific_location>Rare Book &amp; Manuscript Library - Joanna Banks Collection</specific_location>
+        <library>Special Collections</library>
+        <library>Rare Book &amp; Manuscript Library</library>
+        <library>Van Pelt-Dietrich Library Center</library>
+        <display>Rare Book &amp; Manuscript Library - Joanna Banks Collection</display>
+    </location>
 <location location_code="scblank">
   <specific_location>Rare Book &amp; Manuscript Library - Blank Collection</specific_location>
   <library>Special Collections</library>
@@ -1527,6 +1549,13 @@
   <library>Van Pelt-Dietrich Library Center</library>
   <display>Rare Book &amp; Manuscript Library - Tehon Collection</display>
 </location>
+    <location location_code="sctress">
+        <specific_location>Rare Book &amp; Manuscript Library - Arthur Tress Collection</specific_location>
+        <library>Special Collections</library>
+        <library>Rare Book &amp; Manuscript Library</library>
+        <library>Van Pelt-Dietrich Library Center</library>
+        <display>Rare Book &amp; Manuscript Library - Arthur Tress Collection</display>
+    </location>
 <location location_code="scvilain">
   <specific_location>Rare Book &amp; Manuscript Library - Vilain-Wieck Collection</specific_location>
   <library>Special Collections</library>
@@ -1555,9 +1584,14 @@
   <display>LIBRA</display>
 </location>
 <location location_code="storcirc">
-  <specific_location>LIBRA</specific_location>
+  <specific_location>LIBRA - Circulation</specific_location>
   <library>LIBRA</library>
   <display>LIBRA - Circulation</display>
+</location>
+<location location_code="storfine">
+  <specific_location>LIBRA Fisher Fine Arts</specific_location>
+  <library>LIBRA</library>
+  <display>LIBRA Fisher Fine Arts</display>
 </location>
 <location location_code="storm">
   <specific_location>LIBRA</specific_location>
