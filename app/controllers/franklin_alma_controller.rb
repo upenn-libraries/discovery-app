@@ -170,10 +170,11 @@ class FranklinAlmaController < ApplicationController
 
     # check if any holdings have more than one item
     has_holding_info = has_holding_info?(bib_data, mmsid)
-    metadata = check_requestable(has_holding_info)
 
     # check if portfolio information is present
     has_portfolio_info = has_portfolio_info?(bib_data, mmsid)
+
+    metadata = check_requestable(has_holding_info)
 
     # Load holding information for monographs. Monographs do not have
     # a 'holding_info' value.
@@ -247,27 +248,8 @@ class FranklinAlmaController < ApplicationController
     userid = session['id'].presence
     usergroup = session['user_group'].presence
     mmsid = params[:mms_id]
-    item_data = {}
 
-    if !userid.nil? && !has_holding_info
-      options = { :holding_id => 'ALL', :userid => userid, :limit => 100, :format => "application/xml" }
-      item_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items, :get, params.merge(options))
-
-      requestable = [item_data['items']['item']].flatten.reject do |item|
-        item.dig('item_data', 'process_type', '__content__') == 'LOAN'
-      end
-      .map do |item|
-        url = api.almaws_v1_bibs.mms_id_holdings_holding_id_items_item_pid_request_options.uri_template(params.merge({:holding_id => item['holding_data']['holding_id'], :item_pid => item['item_data']['pid']}))
-        url += "?user_id=#{userid}&apikey=#{ENV['ALMA_API_KEY']}"
-        HTTParty.get(url, :headers => {'Accept' => 'application/json'})
-      end
-      .map do |item|
-        item['request_option']&.map { |option| option['type']['value']} 
-      end
-      .flatten.any? {|x| x == 'HOLD'}
-    end
-
-    result[mmsid] = {:requestable => requestable, :facultyexpress => usergroup == 'Faculty Express', :group => usergroup}
+    result[mmsid] = {:facultyexpress => usergroup == 'Faculty Express', :group => usergroup}
 
     return result
 

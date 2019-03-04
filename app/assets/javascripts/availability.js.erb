@@ -187,9 +187,6 @@ $(document).ready(function() {
             url: "/alma/request_options.json?mms_id="+mmsid,
             success: function(data, textStatus, jqXHR) {
                 var optionList = $('#requestOptionList-' + mmsid);
-                if(!globaldata[mmsid]["requestable"]) {
-                    data = data.filter(element => element['option_name'] != 'Request');
-                }
 
                 if(globaldata[mmsid]["facultyexpress"]) {
                     for(i = 0; i < data.length; i++) {
