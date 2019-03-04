@@ -222,7 +222,6 @@ class FranklinAlmaController < ApplicationController
                   .map { |p,i| 
                     link = "<a target='_blank' href='https://upenn.alma.exlibrisgroup.com/view/uresolver/01UPENN_INST/openurl?Force_direct=true&portfolio_pid=#{p['portfolio_pid']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com&u.ignore_date_coverage=true'>#{p['collection']}</a>"
                     [i, link, '', p['availability'], '', '', '', '']
-                    #[i, link, '', p['coverage_statement'] || p['public_note'], '', '', '', '']
                   }
     end
 
