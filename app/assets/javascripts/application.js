@@ -13,7 +13,7 @@
 //= require jquery
 //= require jquery_ujs
 //= require bootstrap/tab
-//= require datatables
+//= require_directory ./DataTables
 // Required by Blacklight
 //= require blacklight/blacklight
 //= require blacklight_solrplugins/blacklight_solrplugins
