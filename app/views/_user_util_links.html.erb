@@ -1,7 +1,7 @@
 <div class="navbar-right">
 
   <ul class="nav navbar-nav">
-    <% if ENV['SHOW_KNOWN_ISSUES'].present? %>
+    <% if ENV['SHOW_KNOWN_ISSUES'] == 'true' %>
     <li><a style="color:red" href="<%= known_issues_url %>">Known Issues</a></li>
     <% end %>
     <li>
