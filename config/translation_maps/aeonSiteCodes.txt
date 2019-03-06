@@ -29,7 +29,9 @@ cjsrarbx4
 cjsarcbox1
 cjsarcths
 cjshur
+scbanks
 scsmith
+sctress
 scfurn
 sclea
 scrare
