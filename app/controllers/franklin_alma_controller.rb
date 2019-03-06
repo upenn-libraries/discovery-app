@@ -194,14 +194,18 @@ class FranklinAlmaController < ApplicationController
     # Check if URL for bib is on collection record
     if bib_data['availability'][mmsid]['holdings'].empty?
       bib_collection_response = api_instance.request(api.almaws_v1_bibs.mms_id_e_collections, :get, :mms_id => mmsid)
-      url = bib_collection_response.dig("electronic_collections","electronic_collection","link")
-      unless url.nil?
-        collection_response = HTTParty.get(url +"?apikey=#{ENV['ALMA_API_KEY']}", :headers => {'Accept' => 'application/json'})
-        link = "<a target='_blank' href='#{collection_response['url']}'>#{collection_response['public_name']}</a>"
-        table_data = [[0, link, '', '', '', '', '', '']]
-      else # Return an empty table
-        table_data = []
-      end
+      table_data = [bib_collection_response.dig("electronic_collections", "electronic_collection")].flatten
+                   .reject(&:nil?)
+                   .each_with_index.map do |c,i|
+                     url = c.dig("link")
+
+                     next if url.nil?
+
+                     collection_response = HTTParty.get(url +"?apikey=#{ENV['ALMA_API_KEY']}", :headers => {'Accept' => 'application/json'})
+                     link = "<a target='_blank' href='#{collection_response['url']}'>#{collection_response['public_name']}</a>"
+                     [i, link, '', '', '', '', '', '']
+                   end
+                   .reject(&:nil?)
     else
       bib_data['availability'][mmsid]['holdings'].each do |holding|
         links = []
