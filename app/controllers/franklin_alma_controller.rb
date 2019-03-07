@@ -202,7 +202,7 @@ class FranklinAlmaController < ApplicationController
                      next if url.nil?
 
                      collection_response = HTTParty.get(url +"?apikey=#{ENV['ALMA_API_KEY']}", :headers => {'Accept' => 'application/json'})
-                     link = "<a target='_blank' href='#{collection_response['url']}'>#{collection_response['public_name']}</a>"
+                     link = "<a target='_blank' href='#{collection_response['url_override'].presence || collection_response['url']}'>#{collection_response['public_name']}</a>"
                      public_note = collection_response['public_note'].presence
                      authentication_note = collection_response['authentication_note'].presence
                      public_note_content = public_note.nil? || public_note.empty? ? [] : ["Public Notes: ", public_note]
