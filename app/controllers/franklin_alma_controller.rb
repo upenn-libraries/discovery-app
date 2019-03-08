@@ -553,18 +553,20 @@ class FranklinAlmaController < ApplicationController
       id_list = params[:id_list].split(',');
       response_data = api.get_availability(id_list)
 
-      if response_data.dig('availability', id_list.first, 'holdings', 0, 'inventory_type') == 'electronic'
-        response_data['availability'].keys.each { |mmsid|
-          response_data['availability'][mmsid]['holdings'].sort! do |a,b|
-            cmpOnlineServices(a,b)
-          end
-        }
-      else
-        response_data['availability'].keys.each { |mmsid|
-          response_data['availability'][mmsid]['holdings'].sort! do |a,b|
-            cmpHoldingLocations(a,b)
-          end
-        }
+      if response_data.include?('availability')
+        if response_data.dig('availability', id_list.first, 'holdings', 0, 'inventory_type') == 'electronic'
+          response_data['availability'].keys.each { |mmsid|
+            response_data['availability'][mmsid]['holdings'].sort! do |a,b|
+              cmpOnlineServices(a,b)
+            end
+          }
+        else
+          response_data['availability'].keys.each { |mmsid|
+            response_data['availability'][mmsid]['holdings'].sort! do |a,b|
+              cmpHoldingLocations(a,b)
+            end
+          }
+        end
       end
     else
       response_data = {
