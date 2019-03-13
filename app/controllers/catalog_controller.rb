@@ -78,7 +78,7 @@ class CatalogController < ApplicationController
     config.advanced_search ||= Blacklight::OpenStructWithHashAccess.new
     # config.advanced_search[:qt] ||= 'advanced'
     config.advanced_search[:url_key] ||= 'advanced'
-    config.advanced_search[:query_parser] ||= 'edismax'
+    config.advanced_search[:query_parser] ||= 'perEndPosition_dense_shingle_graphSpans'
     config.advanced_search[:form_solr_parameters] ||= {}
 
 
@@ -94,7 +94,7 @@ class CatalogController < ApplicationController
     ## Default parameters to send to solr for all search-like requests. See also SearchBuilder#processed_parameters
     config.default_solr_params = {
       #cache: 'false',
-      defType: 'perEndPosition_dense_shingle',
+      defType: 'perEndPosition_dense_shingle_graphSpans',
       # this list is annoying to maintain, but this avoids hard-coding a field list
       # in the search request handler in solrconfig.xml
       fl: %w{
