@@ -168,6 +168,8 @@ class FranklinAlmaController < ApplicationController
     holding_data = nil
     holding_map = {}
 
+    inventory_type = ''
+
     # check if any holdings have more than one item
     has_holding_info = has_holding_info?(bib_data, mmsid)
 
@@ -193,6 +195,7 @@ class FranklinAlmaController < ApplicationController
 
     # Check if URL for bib is on collection record
     if bib_data['availability'][mmsid]['holdings'].empty?
+      inventory_type = 'electronic'
       bib_collection_response = api_instance.request(api.almaws_v1_bibs.mms_id_e_collections, :get, :mms_id => mmsid)
       table_data = [bib_collection_response.dig("electronic_collections", "electronic_collection")].flatten
                    .reject(&:nil?)
@@ -219,11 +222,14 @@ class FranklinAlmaController < ApplicationController
         holding['availability'] = availability_status[holding['availability']] || 'Requestable'
 
         if has_holding_info
+          inventory_type = 'physical'
           holding['location'] = %Q[<a href="javascript:loadItems('#{mmsid}', '#{holding['holding_id']}')">#{holding['location']} &gt;</a>]
           holding['availability'] = "<span class='load-holding-details' data-mmsid='#{mmsid}' data-holdingid='#{holding['holding_id']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/></span>"
         elsif has_portfolio_info
+          inventory_type = 'electronic'
           holding['availability'] = "<span class='load-portfolio-details' data-mmsid='#{mmsid}' data-portfoliopid='#{holding['portfolio_pid']}' data-collectionid='#{holding['collection_id']}' data-coverage='#{holding['coverage_statement']}' data-publicnote='#{holding['public_note']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/></span>"
         else
+          inventory_type = 'physical'
           holding['item_pid'] = holding_map.dig(holding['holding_id'], :item_pid)
           holding['due_date_policy'] = holding_map.dig(holding['holding_id'], :due_date_policy)
         end
@@ -248,6 +254,7 @@ class FranklinAlmaController < ApplicationController
       end
     end
 
+    metadata[mmsid][:inventory_type] = inventory_type
     render :json => {"metadata": metadata, "data": table_data}
   end
 
