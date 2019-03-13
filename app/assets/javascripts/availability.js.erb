@@ -200,6 +200,16 @@ $(document).ready(function() {
                     }
                 }
 
+                // Remove once request option API is fixed
+                if(globaldata[mmsid]["inventory_type"] == "electronic") {
+                    for(i = 0; i < data.length; i++) {
+                        if(data[i]['option_name'] == 'Books By Mail') {
+                            data.splice(i,1);
+                            break;
+                        }
+                    }
+                }
+
                 data.forEach(function(element) {
                     $('<button>').attr({
                         class: 'btn btn-basic btn-request-option',
