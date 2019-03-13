@@ -130,6 +130,12 @@ $(document).ready(function() {
             "initComplete": function(settings, json) {
                 var table = $('#requestOptions-' + mmsid).DataTable();
 
+                if(globaldata[mmsid]['inventory_type'] == 'electronic') {
+                    table.column(2).visible(false);
+                    table.column(4).visible(false);
+                    $(table.column(3).header()).text("");
+                }
+
                 var dataLen = json.data.length;
                 if(dataLen == 0) {
                     //$('#table-wrapper-' + mmsid).hide();
@@ -144,47 +150,37 @@ $(document).ready(function() {
                     $('#requestOptionsAvailability-' + mmsid).text('Availability');
                 }
 
-                if($('.load-holding-details, .load-portfolio-details').length == 0) {
-                    table.column(2).visible(false);
-                    table.column(4).visible(false);
-                    $(table.column(3).header()).text("");
-                }
-                else {
-                    $('.load-holding-details').each(function(idx, element) {
-                        var mmsid = $(element).data("mmsid");
-                        var holdingid = $(element).data("holdingid");
-                        var url = "/alma/holding_details?mms_id="+mmsid+"&holding_id="+holdingid
-                        $.ajax({
-                            url: url,
-                            success: function(data, textStatus, jqXHR) {
-                                $(element).removeClass('load-holding-details');
-                                $(element).html('');
-                                $(element).append(data);
-                            }
-                        });
+                $('.load-holding-details').each(function(idx, element) {
+                    var mmsid = $(element).data("mmsid");
+                    var holdingid = $(element).data("holdingid");
+                    var url = "/alma/holding_details?mms_id="+mmsid+"&holding_id="+holdingid
+                    $.ajax({
+                        url: url,
+                        success: function(data, textStatus, jqXHR) {
+                            $(element).removeClass('load-holding-details');
+                            $(element).html('');
+                            $(element).append(data);
+                        }
                     });
+                });
 
-                    $('.load-portfolio-details').each(function(idx, element) {
-                        var mmsid = $(element).data("mmsid");
-                        var portfoliopid = $(element).data("portfoliopid");
-                        var collectionid = $(element).data("collectionid");
-                        var coverage = $(element).data("coverage");
-                        var publicnote = $(element).data("publicnote");
+                $('.load-portfolio-details').each(function(idx, element) {
+                    var mmsid = $(element).data("mmsid");
+                    var portfoliopid = $(element).data("portfoliopid");
+                    var collectionid = $(element).data("collectionid");
+                    var coverage = $(element).data("coverage");
+                    var publicnote = $(element).data("publicnote");
 
-                        var url = "/alma/portfolio_details?mms_id="+mmsid+"&portfolio_pid="+portfoliopid+"&collection_id="+collectionid+"&coverage="+coverage+"&public_note="+publicnote
-                        $.ajax({
-                            url: url,
-                            success: function(data, textStatus, jqXHR) {
-                                $(element).removeClass('load-portfolio-details');
-                                $(element).html('');
-                                $(element).append(data);
-                                table.column(2).visible(false);
-                                table.column(4).visible(false);
-                                $(table.column(3).header()).text("");
-                            }
-                        });
+                    var url = "/alma/portfolio_details?mms_id="+mmsid+"&portfolio_pid="+portfoliopid+"&collection_id="+collectionid+"&coverage="+coverage+"&public_note="+publicnote
+                    $.ajax({
+                        url: url,
+                        success: function(data, textStatus, jqXHR) {
+                            $(element).removeClass('load-portfolio-details');
+                            $(element).html('');
+                            $(element).append(data);
+                        }
                     });
-                }
+                });
             }
         });
     };
