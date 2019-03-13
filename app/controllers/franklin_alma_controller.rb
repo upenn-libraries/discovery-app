@@ -405,9 +405,9 @@ class FranklinAlmaController < ApplicationController
     } .compact
       .sort { |a,b| cmpRequestOptions(a,b) }
 
-    # TODO: Remove when GES is updated in Alma
+    # TODO: Remove when GES is updated in Alma & request option API is fixed (again)
     results.reject! { |option| 
-      option[:option_name] == 'Send Penn Libraries a question'
+      ['Send Penn Libraries a question','Books By Mail'].member?(option[:option_name])
     }
 
     # TODO: Remove when GES is updated in Alma
@@ -417,6 +417,13 @@ class FranklinAlmaController < ApplicationController
           option[:option_name] = "Report Error"
       end
     }
+
+    results.append({
+                     :option_name => "Books By Mail",
+                     :option_url => "https://franklin.library.upenn.edu/redir/booksbymail?bibid=#{params['mms_id']}",
+                     :avail_for_physical => true,
+                     :avail_for_electronic => false
+                   }) if ['Athenaeum Member','Faculty','Faculty Express','Grad Student','Library Staff'].member?(session['user_group'])
 
     render :json => results
   end
