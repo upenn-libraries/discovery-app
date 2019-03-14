@@ -42,14 +42,15 @@ button.btn-request-option {
 button.btn-request-options,
 button.btn-request-options:focus,
 button.btn-request-options:active {
-  background-color: #092054;
+  margin-left: 16px;
+  background-color: white;
   border-color: #204d74;
-  color: white;
+  color: black;
 }
 
 button.btn-request-options:hover {
-  background-color: #286090;
-  color: white;
+  background-color: #e6e6e6;
+  color: black;
 }
 
 button.toggle {
