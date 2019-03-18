@@ -406,7 +406,7 @@ module PennLib
 
     def get_db_categories(rec)
       return [] unless is_curated_database(rec)
-      rec.fields('690').map do |field|
+      rec.fields('943').map do |field|
         if field.any? { |sf| sf.code == '2' && sf.value == 'penncoi' }
           sf = field.find { |sf| sf.code == 'a' }
           sf.nil? ? nil : sf.value
@@ -416,7 +416,7 @@ module PennLib
 
     def get_db_subcategories(rec)
       return [] unless is_curated_database(rec)
-      rec.fields('690').map do |field|
+      rec.fields('943').map do |field|
         if field.any? { |sf| sf.code == '2' && sf.value == 'penncoi' }
           category = field.find { |sf| sf.code == 'a' }
           unless category.nil?
