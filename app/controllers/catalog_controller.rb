@@ -188,6 +188,10 @@ class CatalogController < ApplicationController
       a.params.dig(:f, :format_f)&.include?('Database & Article Index')
     }
 
+    config.induce_sort = lambda { |blacklight_params|
+      return 'title_nssort asc' if blacklight_params.dig(:f, :format_f)&.include?('Database & Article Index')
+    }
+
     config.facet_types = {
       :header => {
         :priority => 2,
@@ -206,18 +210,20 @@ class CatalogController < ApplicationController
 
     @@DATABASE_CATEGORY_TAXONOMY = [
         '{',
-          'database_taxonomy:{',
+          'db_category_f:{',
             'type: terms,',
             'field: db_category_f,',
             'mincount: 1,',
             'limit: -1,',
+            'sort: index,',
             'facet:{',
               'db_subcategory_f: {',
                 'type : terms,',
                 'prefix : $parent--,',
                 'field: db_subcategory_f,',
                 'mincount: 1,',
-                'limit: -1',
+                'limit: -1,',
+                'sort: index',
               '}',
             '}',
           '}',
@@ -246,13 +252,13 @@ class CatalogController < ApplicationController
 
     @@MINCOUNT = { 'facet.mincount' => 1 }
 
-    config.add_facet_field 'db_subcategory_f', label: 'Database Category', if: lambda { |a,b,c| false }
+    config.add_facet_field 'db_subcategory_f', label: 'Database Subject', if: lambda { |a,b,c| false }
     config.add_facet_field 'db_type_f', label: 'Database Type', limit: -1, collapse: false, :if => database_selected,
         :facet_type => :database, solr_params: @@MINCOUNT
-    config.add_facet_field 'database_taxonomy', label: 'Database Category', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy',
+    config.add_facet_field 'db_category_f', label: 'Database Subject', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy',
         :json_facet => @@DATABASE_CATEGORY_TAXONOMY, :top_level_field => 'db_category_f', :facet_type => :database,
         :helper_method => :render_subcategories, :if => database_selected
-    config.add_facet_field 'azlist', label: 'A-Z List', collapse: false, induce_sort: 'title_nssort asc', single: :manual, :facet_type => :header,
+    config.add_facet_field 'azlist', label: 'A-Z List', collapse: false, single: :manual, :facet_type => :header,
         options: {:layout => 'horizontal_facet_list'}, solr_params: { 'facet.mincount' => 0 }, :if => database_selected, query: {
       'A' => { :label => 'A', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='a'}"},
       'B' => { :label => 'B', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='b'}"},
