@@ -3,7 +3,10 @@
   <dl class="dl-horizontal dl-invert">
     <%= render_rbrowse_display_fields(facet, doc_presenter) %>
 
-    <%= render partial: 'catalog/alma_availability_button', locals: { document: doc_presenter.document } %>
+    <%# render partial: 'catalog/alma_availability_button', locals: { document: doc_presenter.document } %>
+    <% if doc_presenter.document.alma_mms_id.present? %>
+      <%= render partial: 'alma_availability', locals: { document: doc_presenter.document, collapsed: true } %>
+    <% end %>
   </dl>
 
   <%= render partial: 'catalog/alma_availability_iframe_ajax_container', locals: { document: doc_presenter.document } %>

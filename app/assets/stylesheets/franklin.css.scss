@@ -14,7 +14,7 @@
 }
 @media screen and (min-width: 1900px) {
   .container {
-    width: 1870px;
+    width: 1700px;
   }
 }
 
@@ -53,6 +53,48 @@ span.site-name, span.site-name a {
   text-shadow: 2px 2px 2px #000000;
 }
 
+
+button.btn-request-option {
+  padding: 3px;
+  margin: 2px 2px 16px 2px;
+  border-color: #aaa;
+}
+
+button.btn-request-options,
+button.btn-request-options:focus,
+button.btn-request-options:active {
+  margin-left: 16px;
+  background-color: white;
+  border-color: #204d74;
+  color: black;
+}
+
+button.btn-request-options:hover {
+  background-color: #e6e6e6;
+  color: black;
+}
+
+button.toggle {
+  margin-bottom: 20px;
+}
+
+button.toggle span.avail-label::after {
+  content: "  \e114";
+  font-family: 'Glyphicons Halflings';
+}
+
+dd.btn-group.unauthenticated {
+  margin-left: 0px;
+}
+
+div[id^="table-wrapper"] {
+  border: 1px solid #77F;
+  padding: 6px;
+}
+
+div.backbutton-top {
+  margin-bottom: 10px;
+}
 
 /*************
 *
@@ -775,4 +817,10 @@ h3.ongray {
 #beta-label .text {
   text-transform: uppercase;
   color: #ffffff;
+}
+
+#heavily-used-databases {
+  li {
+    background-color: #FF0000;
+  }
 }

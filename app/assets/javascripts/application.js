@@ -15,6 +15,7 @@
 //= require jquery.color.js
 
 //= require bootstrap/tab
+//= require_directory ./DataTables
 // Required by Blacklight
 //= require blacklight/blacklight
 //= require blacklight_solrplugins/blacklight_solrplugins

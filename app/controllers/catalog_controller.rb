@@ -78,7 +78,7 @@ class CatalogController < ApplicationController
     config.advanced_search ||= Blacklight::OpenStructWithHashAccess.new
     # config.advanced_search[:qt] ||= 'advanced'
     config.advanced_search[:url_key] ||= 'advanced'
-    config.advanced_search[:query_parser] ||= 'edismax'
+    config.advanced_search[:query_parser] ||= 'perEndPosition_dense_shingle_graphSpans'
     config.advanced_search[:form_solr_parameters] ||= {}
 
 
@@ -93,15 +93,11 @@ class CatalogController < ApplicationController
 
     ## Default parameters to send to solr for all search-like requests. See also SearchBuilder#processed_parameters
     config.default_solr_params = {
-      #cache: 'false',
-      defType: 'perEndPosition_dense_shingle',
-      combo: '{!filters param=$q param=$fq excludeTags=cluster}',
-      #combo: '{!bool must=$q filter=\'{!filters param=$fq v=*:*}\'}',
-      #combo: '{!query v=$q}',
-      back: '*:*',
-      # this list is annoying to maintain, but this avoids hard-coding a field list
-      # in the search request handler in solrconfig.xml
-      fl: %w{
+        #cache: 'false',
+        defType: 'perEndPosition_dense_shingle_graphSpans',
+        # this list is annoying to maintain, but this avoids hard-coding a field list
+        # in the search request handler in solrconfig.xml
+        fl: %w{
         id
         cluster_id
         alma_mms_id
@@ -126,16 +122,16 @@ class CatalogController < ApplicationController
         marcrecord_text
         recently_added_isort
       }.join(','),
-      'facet.threads': 2,
-      'facet.mincount': 0,
-#      fq: '{!tag=cluster}{!collapse field=cluster_id nullPolicy=expand size=5000000 min=record_source_id}',
-      # this approach needs expand.field=cluster_id
-      fq: %q~{!edismax tag=cluster v='NOT ({!join from=cluster_id to=cluster_id v=\'record_source_f:"Penn"\'} AND record_source_f:"HathiTrust")'}~,
-      expand: 'true',
-      'expand.field': 'cluster_id',
-      'expand.q': '*:*',
-      'expand.fq': '*:*',
-      rows: 10
+        'facet.threads': 2,
+        'facet.mincount': 0,
+        #      fq: '{!tag=cluster}{!collapse field=cluster_id nullPolicy=expand size=5000000 min=record_source_id}',
+        # this approach needs expand.field=cluster_id
+        fq: %q~{!tag=cluster}NOT ({!join from=cluster_id to=cluster_id v='record_source_f:"Penn"'} AND record_source_f:"HathiTrust")~,
+        expand: 'true',
+        'expand.field': 'cluster_id',
+        'expand.q': '*:*',
+        'expand.fq': '*:*',
+        rows: 10
     }
 
     # solr path which will be added to solr base url before the other solr params.
@@ -147,9 +143,9 @@ class CatalogController < ApplicationController
     ## Default parameters to send on single-document requests to Solr. These settings are the Blackligt defaults (see SearchHelper#solr_doc_params) or
     ## parameters included in the Blacklight-jetty document requestHandler.
     config.default_document_solr_params = {
-      expand: 'true',
-      'expand.field': 'cluster_id',
-      'expand.q': '*:*',
+        expand: 'true',
+        'expand.field': 'cluster_id',
+        'expand.q': '*:*',
     }
 
     # solr field configuration for search results/index views
@@ -192,122 +188,113 @@ class CatalogController < ApplicationController
       a.params.dig(:f, :format_f)&.include?('Database & Article Index')
     }
 
-    get_hits = lambda { |v|
-      r1 = v[:r1]
-      r1.nil? ? 0 : (r1[:relatedness].to_f * 100000).to_i
-    }
-
-    post_sort = lambda { |items|
-      items.sort { |a,b| b.hits <=> a.hits }
+    config.induce_sort = lambda { |blacklight_params|
+      return 'title_nssort asc' if blacklight_params.dig(:f, :format_f)&.include?('Database & Article Index')
     }
 
     config.facet_types = {
-      :header => {
-        :priority => 2,
-        :sidebar => false,
-        :display => 'Header filters'
-      },
-      :default => {
-        :priority => 1,
-        :display => 'General filters'
-      },
-      :database => {
-        :priority => 0,
-        :display => 'Database filters'
-      }
+        :header => {
+            :priority => 2,
+            :sidebar => false,
+            :display => 'Header filters'
+        },
+        :default => {
+            :priority => 1,
+            :display => 'General filters'
+        },
+        :database => {
+            :priority => 0,
+            :display => 'Database filters'
+        }
     }
-
-    @@SUBJECT_SPECIALISTS = File.open("config/translation_maps/subject_specialists.solr-json", "rb").map do |line|
-      line.strip
-    end.compact.join
 
     @@DATABASE_CATEGORY_TAXONOMY = [
         '{',
-          'database_taxonomy:{',
-            'type: terms,',
-            'field: db_category_f,',
-            'mincount: 1,',
-            'limit: -1,',
-            'facet:{',
-              'db_subcategory_f: {',
-                'type : terms,',
-                'prefix : $parent--,',
-                'field: db_subcategory_f,',
-                'mincount: 1,',
-                'limit: -1',
-              '}',
-            '}',
-          '}',
+        'db_category_f:{',
+        'type: terms,',
+        'field: db_category_f,',
+        'mincount: 1,',
+        'limit: -1,',
+        'sort: index,',
+        'facet:{',
+        'db_subcategory_f: {',
+        'type : terms,',
+        'prefix : $parent--,',
+        'field: db_subcategory_f,',
+        'mincount: 1,',
+        'limit: -1,',
+        'sort: index',
+        '}',
+        '}',
+        '}',
         '}'].join
 
     @@SUBJECT_TAXONOMY = [
         '{',
-          'subject_taxonomy: {',
-            'type: terms,',
-            'field: toplevel_subject_f,',
-            'top_level_term: "term()",',
-            'facet: {',
-              'identity: {',
-                'type: query,',
-                'q: "{!term f=subject_f v=$top_level_term}"',
-              '},',
-              'subject_f: {',
-                'type: terms,',
-                'prefix: $top_level_term--,',
-                'field: subject_f,',
-                'limit: 5',
-              '}',
-            '}',
-          '}',
+        'subject_taxonomy: {',
+        'type: terms,',
+        'field: toplevel_subject_f,',
+        'top_level_term: "term()",',
+        'facet: {',
+        'identity: {',
+        'type: query,',
+        'q: "{!term f=subject_f v=$top_level_term}"',
+        '},',
+        'subject_f: {',
+        'type: terms,',
+        'prefix: $top_level_term--,',
+        'field: subject_f,',
+        'limit: 5',
+        '}',
+        '}',
+        '}',
         '}'].join
 
     @@MINCOUNT = { 'facet.mincount' => 1 }
 
-    config.add_facet_field 'db_subcategory_f', label: 'Database Category', if: lambda { |a,b,c| false }
+    config.add_facet_field 'db_subcategory_f', label: 'Database Subject', if: lambda { |a,b,c| false }
     config.add_facet_field 'db_type_f', label: 'Database Type', limit: -1, collapse: false, :if => database_selected,
-        :facet_type => :database, solr_params: @@MINCOUNT
-    config.add_facet_field 'subject_specialists', label: 'Subject Area Correlation', collapse: true, :partial => 'blacklight/hierarchy/facet_hierarchy',
-        :json_facet => @@SUBJECT_SPECIALISTS, :top_level_field => 'subject_specialists', :get_hits => get_hits, :post_sort => post_sort
-    config.add_facet_field 'database_taxonomy', label: 'Database Category', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy',
-        :json_facet => @@DATABASE_CATEGORY_TAXONOMY, :top_level_field => 'db_category_f', :facet_type => :database,
-        :helper_method => :render_subcategories, :if => database_selected
-    config.add_facet_field 'azlist', label: 'A-Z List', collapse: false, induce_sort: 'title_nssort asc', single: :manual, :facet_type => :header,
-        options: {:layout => 'horizontal_facet_list'}, solr_params: { 'facet.mincount' => 0 }, :if => database_selected, query: {
-      'A' => { :label => 'A', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='a'}"},
-      'B' => { :label => 'B', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='b'}"},
-      'C' => { :label => 'C', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='c'}"},
-      'D' => { :label => 'D', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='d'}"},
-      'E' => { :label => 'E', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='e'}"},
-      'F' => { :label => 'F', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='f'}"},
-      'G' => { :label => 'G', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='g'}"},
-      'H' => { :label => 'H', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='h'}"},
-      'I' => { :label => 'I', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='i'}"},
-      'J' => { :label => 'J', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='j'}"},
-      'K' => { :label => 'K', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='k'}"},
-      'L' => { :label => 'L', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='l'}"},
-      'M' => { :label => 'M', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='m'}"},
-      'N' => { :label => 'N', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='n'}"},
-      'O' => { :label => 'O', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='o'}"},
-      'P' => { :label => 'P', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='p'}"},
-      'Q' => { :label => 'Q', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='q'}"},
-      'R' => { :label => 'R', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='r'}"},
-      'S' => { :label => 'S', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='s'}"},
-      'T' => { :label => 'T', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='t'}"},
-      'U' => { :label => 'U', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='u'}"},
-      'V' => { :label => 'V', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='v'}"},
-      'W' => { :label => 'W', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='w'}"},
-      'X' => { :label => 'X', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='x'}"},
-      'Y' => { :label => 'Y', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='y'}"},
-      'Z' => { :label => 'Z', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='z'}"},
-      'Other' => { :label => 'Other', :fq => "{!tag=azlist ex=azlist}title_xfacet:/[ -`{-~].*/"}
+                           :facet_type => :database, solr_params: @@MINCOUNT
+    config.add_facet_field 'db_category_f', label: 'Database Subject', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy',
+                           :json_facet => @@DATABASE_CATEGORY_TAXONOMY, :top_level_field => 'db_category_f', :facet_type => :database,
+                           :helper_method => :render_subcategories, :if => database_selected
+    config.add_facet_field 'azlist', label: 'A-Z List', collapse: false, single: :manual, :facet_type => :header,
+                           options: {:layout => 'horizontal_facet_list'}, solr_params: { 'facet.mincount' => 0 }, :if => database_selected, query: {
+            'A' => { :label => 'A', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='a'}"},
+            'B' => { :label => 'B', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='b'}"},
+            'C' => { :label => 'C', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='c'}"},
+            'D' => { :label => 'D', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='d'}"},
+            'E' => { :label => 'E', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='e'}"},
+            'F' => { :label => 'F', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='f'}"},
+            'G' => { :label => 'G', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='g'}"},
+            'H' => { :label => 'H', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='h'}"},
+            'I' => { :label => 'I', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='i'}"},
+            'J' => { :label => 'J', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='j'}"},
+            'K' => { :label => 'K', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='k'}"},
+            'L' => { :label => 'L', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='l'}"},
+            'M' => { :label => 'M', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='m'}"},
+            'N' => { :label => 'N', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='n'}"},
+            'O' => { :label => 'O', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='o'}"},
+            'P' => { :label => 'P', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='p'}"},
+            'Q' => { :label => 'Q', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='q'}"},
+            'R' => { :label => 'R', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='r'}"},
+            'S' => { :label => 'S', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='s'}"},
+            'T' => { :label => 'T', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='t'}"},
+            'U' => { :label => 'U', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='u'}"},
+            'V' => { :label => 'V', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='v'}"},
+            'W' => { :label => 'W', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='w'}"},
+            'X' => { :label => 'X', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='x'}"},
+            'Y' => { :label => 'Y', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='y'}"},
+            'Z' => { :label => 'Z', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='z'}"},
+            'Other' => { :label => 'Other', :fq => "{!tag=azlist ex=azlist}title_xfacet:/[ -`{-~].*/"}
+        }
+    config.add_facet_field 'access_f', label: 'Access', collapse: false, solr_params: @@MINCOUNT, query: {
+        'Online' => { :label => 'Online', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'Online\\'}'}"},
+        'At the library' => { :label => 'At the library', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"}
     }
-    config.add_facet_field 'access_f', label: 'Access', collapse: false, query: {
-      'Online' => { :label => 'Online', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'Online\\'}'}"},
-      'At the library' => { :label => 'At the library', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"}
-    }
-    config.add_facet_field 'record_source_f', label: 'Record Source', collapse: false, query: {
-      'HathiTrust' => { :label => 'HathiTrust', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'HathiTrust\\'}'}"},
-      'Penn' => { :label => 'Penn', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Penn\\'}'}"}
+    config.add_facet_field 'record_source_f', label: 'Record Source', collapse: false, solr_params: @@MINCOUNT, query: {
+        'HathiTrust' => { :label => 'HathiTrust', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'HathiTrust\\'}'}"},
+        'Penn' => { :label => 'Penn', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Penn\\'}'}"}
     }
     config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false, solr_params: @@MINCOUNT
     config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z', collapse: false, solr_params: @@MINCOUNT
@@ -319,11 +306,11 @@ class CatalogController < ApplicationController
     config.add_facet_field 'publication_date_f', label: 'Publication date', limit: 5, collapse: false, solr_params: @@MINCOUNT
     config.add_facet_field 'classification_f', label: 'Classification', limit: 5, collapse: false, solr_params: @@MINCOUNT
     config.add_facet_field 'genre_f', label: 'Form/Genre', limit: 5, solr_params: @@MINCOUNT
-    config.add_facet_field 'recently_added_f', label: 'Recently added', :query => {
-      :within_90_days => { label: 'Within 90 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (90 * SECONDS_PER_DAY) } TO *]" },
-      :within_60_days => { label: 'Within 60 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (60 * SECONDS_PER_DAY) } TO *]" },
-      :within_30_days => { label: 'Within 30 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (30 * SECONDS_PER_DAY) } TO *]" },
-      :within_15_days => { label: 'Within 15 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (15 * SECONDS_PER_DAY) } TO *]" },
+    config.add_facet_field 'recently_added_f', label: 'Recently added', solr_params: @@MINCOUNT, :query => {
+        :within_90_days => { label: 'Within 90 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (90 * SECONDS_PER_DAY) } TO *]" },
+        :within_60_days => { label: 'Within 60 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (60 * SECONDS_PER_DAY) } TO *]" },
+        :within_30_days => { label: 'Within 30 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (30 * SECONDS_PER_DAY) } TO *]" },
+        :within_15_days => { label: 'Within 15 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (15 * SECONDS_PER_DAY) } TO *]" },
     }
 
     #config.add_facet_field 'example_pivot_field', label: 'Pivot Field', :pivot => ['format_f', 'language_f']
@@ -335,15 +322,15 @@ class CatalogController < ApplicationController
     # config.add_facet_field 'pub_date_isort', label: 'Publication Year', range: true, collapse: false,
     #                        include_in_advanced_search: false
 
-    config.add_facet_field 'subject_xfacet2', label: 'Subject', limit: 20, show: false,
+    config.add_facet_field 'subject_xfacet2', label: 'Subject', limit: 20, show: false, solr_params: @@MINCOUNT,
                            xfacet: true, xfacet_view_type: 'xbrowse', facet_for_filtering: 'subject_f'
-    config.add_facet_field 'title_xfacet', label: 'Title', limit: 20, show: false,
+    config.add_facet_field 'title_xfacet', label: 'Title', limit: 20, show: false, solr_params: @@MINCOUNT,
                            xfacet: true, xfacet_view_type: 'rbrowse', xfacet_rbrowse_fields: %w(title author_creator_a standardized_title_a edition conference_a series contained_within_a publication_a format_a full_text_links_for_cluster_display availability)
     #config.add_facet_field 'author_creator_xfacet', label: 'Author', limit: 20, show: false,
     #                       xfacet: true, xfacet_view_type: 'xbrowse', facet_for_filtering: 'author_creator_f'
-    config.add_facet_field 'author_creator_xfacet2', label: 'Author', limit: 20, show: false,
+    config.add_facet_field 'author_creator_xfacet2', label: 'Author', limit: 20, show: false, solr_params: @@MINCOUNT,
                            xfacet: true, xfacet_view_type: 'xbrowse', facet_for_filtering: 'author_creator_f'
-    config.add_facet_field 'call_number_xfacet', label: 'Call number', limit: 20, show: false,
+    config.add_facet_field 'call_number_xfacet', label: 'Call number', limit: 20, show: false, solr_params: @@MINCOUNT,
                            xfacet: true, xfacet_view_type: 'rbrowse', xfacet_rbrowse_fields: %w(title author_creator_a standardized_title_a edition conference_a series contained_within_a publication_a format_a full_text_links_for_cluster_display availability)
 
     # Have BL send all facet field names to Solr, which has been the default
@@ -385,14 +372,14 @@ class CatalogController < ApplicationController
     # solr fields to be displayed in the index (search results) view
     #   The ordering of the field names is the order of the display
     add_fields.call(config, 'index', [
-        { name: 'author_creator_a', label: 'Creator', helper_method: 'render_author_with_880' },
+        { name: 'author_creator_a', label: 'Author/Creator', helper_method: 'render_author_with_880' },
         { name: 'standardized_title_a', label: 'Standardized Title' },
         { name: 'edition', label: 'Edition' },
         { name: 'conference_a', label: 'Conference name' },
         { name: 'series', label: 'Series' },
         { name: 'publication_a', label: 'Publication' },
         { name: 'contained_within_a', label: 'Contained in' },
-        { name: 'format_a', label: 'Type' },
+        { name: 'format_a', label: 'Format/Description' },
         # in this view, 'Online resource' is full_text_link; note that
         # 'Online resource' is deliberately different here from what's on show view
         { dynamic_name: 'full_text_links_for_cluster_display', label: 'Online resource', helper_method: 'render_online_resource_display_for_index_view' },
@@ -414,16 +401,17 @@ class CatalogController < ApplicationController
     #       so that only fields containing non-blank values are displayed.
 
     add_fields.call(config, 'show', [
-        { dynamic_name: 'author_display', label: 'Creator', helper_method: 'render_linked_values' },
+        { dynamic_name: 'author_display', label: 'Author/Creator', helper_method: 'render_linked_values' },
         { dynamic_name: 'standardized_title_display', label: 'Standardized Title', helper_method: 'render_linked_values' },
         { dynamic_name: 'other_title_display', label: 'Other Title' },
         { dynamic_name: 'edition_display', label: 'Edition' },
         { dynamic_name: 'publication_display', label: 'Publication' },
+        { dynamic_name: 'production_display', label: 'Production' },
         { dynamic_name: 'distribution_display', label: 'Distribution' },
         { dynamic_name: 'manufacture_display', label: 'Manufacture' },
         { dynamic_name: 'conference_display', label: 'Conference Name', helper_method: 'render_linked_values' },
         { dynamic_name: 'series_display', label: 'Series', helper_method: 'render_linked_values' },
-        { dynamic_name: 'format_display', label: 'Type' },
+        { dynamic_name: 'format_display', label: 'Format/Description' },
         { dynamic_name: 'cartographic_display', label: 'Cartographic Data' },
         { dynamic_name: 'fingerprint_display', label: 'Fingerprint' },
         { dynamic_name: 'arrangement_display', label: 'Arrangement' },
@@ -470,7 +458,7 @@ class CatalogController < ApplicationController
         { dynamic_name: 'bound_with_display', label: 'Bound with' },
         # 'Online' corresponds to the right-side box labeled 'Online' in DLA Franklin
         { dynamic_name: 'full_text_links_for_cluster_display', label: 'Online', helper_method: 'render_online_display_for_show_view' },
-        #{ name: 'electronic_holdings_json', label: 'Online resource', helper_method: 'render_electronic_holdings' },
+    #{ name: 'electronic_holdings_json', label: 'Online resource', helper_method: 'render_electronic_holdings' },
     ])
 
     # "fielded" search configuration. Used by pulldown among other places.
@@ -535,8 +523,8 @@ class CatalogController < ApplicationController
       # Solr parameter de-referencing like $title_qf.
       # See: http://wiki.apache.org/solr/LocalParams
       field.solr_local_parameters = {
-        qf: 'title_1_search^3 title_2_search^0.5',
-        pf: 'title_1_search^3 title_2_search^0.5'
+          qf: 'title_1_search^3 title_2_search^0.5',
+          pf: 'title_1_search^3 title_2_search^0.5'
       }
     end
 
@@ -561,8 +549,8 @@ class CatalogController < ApplicationController
       field.separator_beneath = true
       field.solr_parameters = { :'spellcheck.dictionary' => 'author_search' }
       field.solr_local_parameters = {
-        qf: 'author_creator_1_search^3 author_creator_2_search^0.25',
-        pf: 'author_creator_1_search^3 author_creator_2_search^0.25'
+          qf: 'author_creator_1_search^3 author_creator_2_search^0.25',
+          pf: 'author_creator_1_search^3 author_creator_2_search^0.25'
       }
     end
 
@@ -722,8 +710,8 @@ class CatalogController < ApplicationController
       field.is_numeric_field = true
       field.include_in_advanced_search = true
       field.solr_local_parameters = {
-        qf: 'publication_date_ssort',
-        pf: 'publication_date_ssort'
+          qf: 'publication_date_ssort',
+          pf: 'publication_date_ssort'
       }
     end
 
@@ -753,8 +741,8 @@ class CatalogController < ApplicationController
     config.show.document_actions.delete(:sms)
 
     PennLib::Util.reorder_document_actions(
-      config.show.document_actions,
-      :bookmark, :email, :citation, :print, :refworks, :endnote, :ris, :librarian_view)
+        config.show.document_actions,
+        :bookmark, :email, :citation, :print, :refworks, :endnote, :ris, :librarian_view)
 
     config.navbar.partials.delete(:search_history)
   end

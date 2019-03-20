@@ -89,7 +89,7 @@ class BentoSearch::DatabasesEngine
     f_value = 'Database & Article Index'
 
     #TODO: change for production
-    return "https://blacklight-test.library.upenn.edu/catalog.atom?per_page=5&q=#{CGI.escape(args[:query_term])}&search_field=#{CGI.escape(args[:field_term])}&f#{CGI.escape("[#{f_term}][]")+"="+CGI.escape(f_value)}"
+    return "https://franklin.library.upenn.edu/catalog.atom?per_page=5&q=#{CGI.escape(args[:query_term])}&search_field=#{CGI.escape(args[:field_term])}&f#{CGI.escape("[#{f_term}][]")+"="+CGI.escape(f_value)}"
   end
 
 
