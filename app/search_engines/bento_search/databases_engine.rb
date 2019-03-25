@@ -35,7 +35,7 @@ class BentoSearch::DatabasesEngine
         (! HTTP::Status.successful? response.status))
       results.error ||= {}
       results.error[:exception] = e
-      results.error[:status] = response.status if response
+      results.error[:status] = response.status if response.present?
 
       return results
     end
