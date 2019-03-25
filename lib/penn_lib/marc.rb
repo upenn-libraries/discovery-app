@@ -633,7 +633,7 @@ module PennLib
 
         # only one of these
         if format_code.end_with?('i') || (format_code == 'am' && f006firsts.member?('m') && f006firsts.member?('s'))
-          acc << 'Database/Website'
+          acc << 'Website/Database'
         elsif %w(aa ac am tm).member?(format_code) &&
             f245k.none? { |v| v =~ /kit/i } &&
             f245h.none? { |v| v =~ /micro/i }
