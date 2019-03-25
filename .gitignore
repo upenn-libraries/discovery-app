@@ -25,3 +25,5 @@ local_dev_env
 
 .env
 .idea
+
+public/assets
