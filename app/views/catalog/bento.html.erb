@@ -36,7 +36,20 @@
     <div class="corner left-top hide"></div>
     <div class="corner right-top hide"></div>
     <h3>Library website</h3>
-    <%= bento_search 'google_site_search', :query => params[:q] || '', :per_page => 5, :load => :ajax_auto %>
+
+    <script>
+        (function() {
+            var cx = '015171683814554281596:8nln-kjivsc';
+            var gcse = document.createElement('script');
+            gcse.type = 'text/javascript';
+            gcse.async = true;
+            gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(gcse, s);
+        })();
+    </script>
+    <gcse:searchresults-only webSearchResultSetSize="5"></gcse:searchresults-only>
+
   </div>
 </div>
 
