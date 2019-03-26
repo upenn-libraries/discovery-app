@@ -1,21 +1,5 @@
-
-<ul class="nav nav-tabs ezproxy-login-status" role="tablist">
-  <li role="presentation" class="<%= active_tab_classes('bento') %>">
-    <%= render_tab_link('bento', 'Catalog & Articles+', '#bento', bento_path(q: params[:q]), '#bento-main, #bento-search-navbar') %>
-  </li>
-  <li role="presentation" class="<%= active_tab_classes('catalog') %>">
-    <%= render_tab_link('catalog', 'Catalog', '#catalog', search_catalog_path(q: params[:q], search_field: 'keyword'), '#catalog-main, #catalog-search-navbar') %>
-  </li>
-  <li role="presentation" class="ezproxy-show-not-logged-in">
-    <%= render_tab_link('articles', 'Articles+', '#articles', summon_url(params[:q]), '#articles-main, #articles-search-navbar') %>
-  </li>
-  <li role="presentation" class="ezproxy-show-logged-in">
-    <%= render_tab_link('articles', 'Articles+', '#articles', summon_url(params[:q], true), '#articles-main, #articles-search-navbar') %>
-  </li>
-  <li role="presentation"><a href="http://dla.library.upenn.edu/dla/courseres/index.html">Course Reserves</a></li>
-</ul>
-
 <div class="tab-content">
+
   <div role="tabpanel" class="tab-pane <%= active_tab_classes('bento') %>" id="bento-search-navbar">
     <%= render partial: 'bento_search/search_form' %>
   </div>
@@ -24,7 +8,48 @@
     <%= render partial: 'catalog/search_form' %>
   </div>
 
+  <div role="tabpanel" class="tab-pane <%= active_tab_classes('databases') %>" id="databases-search-navbar">
+    <%= render partial: 'catalog/database_search_form' %>
+  </div>
+
   <div role="tabpanel" class="tab-pane" id="articles-search-navbar">
     <%= render partial: 'bento_search/articles_search_form' %>
   </div>
+</div>
+
+
+<div class="franklin-search">
+  <ul class="nav nav-tabs ezproxy-login-status" role="tablist">
+    <li role="presentation" class="<%= active_tab_classes('bento') %>">
+      <div class="franklin-tab">
+        <%= render_tab_link('bento', image_tag('bento.png') + " Everything", '#bento', bento_path(q: params[:q]), '#bento-main, #bento-search-navbar') %>
+      </div>
+    </li>
+    <li role="presentation" class="<%= active_tab_classes('catalog') %>">
+      <div class="franklin-tab">
+        <%= render_tab_link('catalog', "Catalog", '#catalog', search_catalog_path(q: params[:q], search_field: 'keyword'), '#catalog-main, #catalog-search-navbar') %>
+      </div>
+    </li>
+    <li role="presentation" class="ezproxy-show-not-logged-in">
+      <div class="franklin-tab">
+        <%= render_tab_link('articles', 'Articles+', '#articles', summon_url(params[:q]), '#articles-main, #articles-search-navbar') %>
+      </div>
+    </li>
+    <li role="presentation" class="ezproxy-show-logged-in">
+      <div class="franklin-tab">
+        <%= render_tab_link('articles', 'Articles+', '#articles', summon_url(params[:q], true), '#articles-main, #articles-search-navbar') %>
+      </div>
+    </li>
+
+    <li role="presentation" class="<%= active_tab_classes('databases') %>">
+      <div class="franklin-tab">
+        <%= render_tab_link('databases', "Databases", '#databases', databases_results_url(params[:q]), '#databases-main, #databases-search-navbar') %>
+      </div>
+    </li>
+    <li role="presentation" class="<%= active_tab_classes('website') %>">
+      <div class="franklin-tab">
+        <%= render_tab_link('website', 'Website', '#website', google_site_search_results_url(params[:q]), '#website-main, #website-search-navbar') %>
+      </div>
+    </li>
+  </ul>
 </div>

@@ -53,7 +53,6 @@ module DocumentRenderHelper
 
   def render_online_resource_display_for_index_view(options)
     values = options[:value]
-
     values.map do |value|
       JSON.parse(value).map do |link_struct|
         url = link_struct['linkurl']

@@ -9,26 +9,56 @@ module ApplicationHelper
     end
   end
 
+  def databases_results_url(query)
+    url = "#{search_catalog_path(q: query, search_field: 'keyword')}&f%5Bformat_f%5D%5B%5D=Database+%26+Article+Index"
+    return url
+  end
+
+  def google_site_search_results_url(query)
+    return "https://www.library.upenn.edu/search/web-pages?q=#{query}"
+  end
+
+  def catalog_results_url(query)
+    return search_catalog_path(q: query, search_field: 'keyword')
+  end
   # returns the css classes needed for elements that should be considered 'active'
   # with respect to tabs functionality
   def active_tab_classes(tab_id)
+
     # treat bento as special case; almost everything else falls through to catalog
     on_bento_page = (controller_name == 'catalog') && ['landing', 'bento'].member?(action_name)
+
+    # databases search, falls through to catalog but different tab should be highlighted
+    on_databases_page = params['f'].present? ? (controller_name == 'catalog') && ['index', 'bento'].member?(action_name) && params['f']['format_f'] == ["Database & Article Index"] : false
+
     if tab_id == 'bento' && on_bento_page
       'active'
+    elsif tab_id == 'databases' && on_databases_page
+      'active'
     elsif tab_id == 'catalog'
-      if !on_bento_page
+      if !on_bento_page && !on_databases_page
         'active'
       end
     end
+
   end
 
   # returns a link element to be used for the tab; this could be either an anchor
   # or a link to another page, depending on the needs of the view
   def render_tab_link(tab_id, tab_label, anchor, url, data_target)
-    if params[:q] || !(controller_name == 'catalog' && action_name == 'landing')
+
+    if params[:q] && controller_name == 'catalog' && action_name == 'bento'
+      attrs = {
+          'href': url,
+          'class': "#{tab_id}-anchor"
+      }
+    elsif params[:q] || !(controller_name == 'catalog' && action_name == 'landing')
       attrs = {
           'href': url
+      }
+    elsif tab_id == 'website' && action_name == 'landing'
+      attrs = {
+          'href': "http://www.library.upenn.edu/search/web-pages"
       }
     else
       attrs = {
@@ -64,6 +94,10 @@ module ApplicationHelper
 
   def my_library_card_url
     "https://#{ ENV['ALMA_DELIVERY_DOMAIN'] }/discovery/account?vid=#{ ENV['ALMA_INSTITUTION_CODE'] }:Services&lang=en&section=overview"
+  end
+
+  def profile_url(name)
+    "https://www.library.upenn.edu/people/staff/#{name.downcase.gsub(/\ +/, '-')}"
   end
 
   def refworks_bookmarks_path(opts = {})
