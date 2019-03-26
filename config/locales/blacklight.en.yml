@@ -20,3 +20,5 @@ en:
       placeholder: 'Find articles, books, journals & more'
     articles_search:
       placeholder: 'Find articles & more'
+    databases_search:
+      placeholder: 'Find databases & articles'

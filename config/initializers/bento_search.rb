@@ -27,6 +27,7 @@ BentoSearch.register_engine('summon') do |conf|
   # with total number of hits, link to full results, etc.
   conf.for_display do |display|
     display[:ajax] = { 'wrapper_template' => 'layouts/summon_ajax_results_wrapper' }
+    display[:no_results_partial] = 'layouts/summon_zero_results'
     #display.decorator = "RefworksAndOpenUrlLinkDecorator"
   end
 
@@ -41,6 +42,37 @@ BentoSearch.register_engine('summon') do |conf|
     param_hash
   end
 end
+
+BentoSearch.register_engine('google_site_search') do |conf|
+  conf.engine = 'BentoSearch::GoogleSiteSearchEngine'
+  conf.api_key = ENV['GOOGLE_CSE_API_KEY']
+  conf.cx = ENV['GOOGLE_CSE_CX']
+  # allow ajax load.
+  conf.allow_routable_results = true
+  conf.for_display do |display|
+    display[:ajax] = { 'wrapper_template' => 'layouts/google_site_search_ajax_results_wrapper' }
+    display[:no_results_partial] = 'layouts/google_zero_results'
+  end
+end
+
+BentoSearch.register_engine('catalog') do |conf|
+  conf.engine     = 'BentoSearch::CatalogEngine'
+  conf.allow_routable_results = true
+  conf.for_display do |display|
+    display[:ajax] = { 'wrapper_template' => 'layouts/catalog_ajax_results_wrapper' }
+    display[:no_results_partial] = 'catalog/zero_results_bento'
+  end
+end
+
+BentoSearch.register_engine('databases') do |conf|
+  conf.engine     = 'BentoSearch::DatabasesEngine'
+  conf.allow_routable_results = true
+  conf.for_display do |display|
+    display[:ajax] = { 'wrapper_template' => 'layouts/databases_ajax_results_wrapper' }
+    display[:no_results_partial] = 'layouts/databases_zero_results'
+  end
+end
+
 
 BentoSearch::SearchController.before_action do |controller|
   check_auth = controller.engine.configuration.check_auth

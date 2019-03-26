@@ -27,6 +27,7 @@
         j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-P9SGBHT');</script>
+
     <!-- End Google Tag Manager -->
 
     <%= javascript_include_tag "application" %>
@@ -49,8 +50,13 @@
     <%= content_tag :h1, application_name, class: 'sr-only application-heading' %>
 
     <%= render :partial=>'/flash_msg', layout: 'shared/flash_messages' %>
+    <aside id="feedback">
+      <div id="feedbackout" title="hide"></div>
+      <a id="feedbacklink" title="feedback" href="https://upenn.libsurveys.com/new-homepage-feedback"><span class="visually-hidden">Feedback</span></a>
+    </aside>
 
-    <div class="row">
+    <div class="row" style="padding-top:10px;">
+      <div class="alert alert-success"><p>Welcome to the new version of our library search! We welcome your feedback on our new design and experimental features.</p></div>
       <%= yield %>
     </div>
   </div>

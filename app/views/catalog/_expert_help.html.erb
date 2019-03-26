@@ -1,0 +1,27 @@
+<div class="col-md-2 bento-box expert-results" id="bento-results-expert">
+  <h3>Expert help</h3>
+<% Blacklight::Solr::Response::SubjectSpecialists::Constants::SUBJECTS[subject.to_sym][0..2].each do |specialist| %>
+  <hr />
+  <div class="expert-profile">
+    <p><a href="https://www.library.upenn.edu/people/subject-specialists">See a list of all subject specialists.</a></p>
+    <%= image_tag specialist[:portrait], :alt => specialist[:display_name] %>
+    <div class="upper-content">
+      <%= link_to specialist[:display_name], profile_url(specialist[:display_name]), :class => 'link-to-profile' %>
+      <p class="title"><%= specialist[:job_title] %></p>
+      <%= link_to specialist[:email], "mailto:#{specialist[:email]}" %>
+    </div>
+    <div class="lower-content">
+      <p><%= specialist[:office] %></p>
+      <p><%= link_to specialist[:phone], "tel:#{specialist[:phone]}" %></p>
+      <div class="expert-areas-list">
+        <h4>Contact me for assistance with:</h4>
+        <ul>
+          <% specialist[:subjects].each do |subject| %>
+          <li><%= subject %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  </div>
+<% end %>
+</div>

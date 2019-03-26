@@ -1,32 +1,44 @@
 <div class="container">
 
-<div class="row visible-xs-block">
-  <div class="col-xs-12">
-    <a href="#bento-results-catalog">Jump to Catalog search results</a><br/>
-    <a href="#bento-results-summon">Jump to Articles+ search results</a>
+<div class="row">
+
+    <div class="col-sm-2 bento-box catalog-results" id="bento-results-catalog">
+      <a name="catalog"></a>
+      <div class="corner left-top hide"></div>
+      <div class="corner right-top hide"></div>
+      <h3>Catalog</h3>
+      <div class="view-and-filter text-right">
+        <%= link_to "View and filter #{number_with_delimiter(@response.total)} #{@response.total  != 1 ? 'results' : 'result'}", search_catalog_path(q: params[:q] || params[:query], search_field: 'keyword') %>
+      </div>
+      <%= bento_search 'catalog', :query => params[:q] || '', :per_page => 5, :load => :ajax_auto %>
+    </div>
+
+    <div class="col-sm-2 bento-box summon-results ezproxy-login-status" id="bento-results-summon">
+      <a name="articles"></a>
+      <div class="corner left-top hide"></div>
+      <div class="corner right-top hide"></div>
+      <h3>Articles+</h3>
+      <%= bento_search 'summon', :query => params[:q] || '', :per_page => 5, :load => :ajax_triggered %>
+    </div>
+
+    <div class="col-sm-2 bento-box databases-results" id="bento-results-databases">
+      <a name="databases"></a>
+      <div class="corner left-top hide"></div>
+      <div class="corner right-top hide"></div>
+      <h3>Databases</h3>
+      <%= bento_search 'databases', :query => params[:q] || '', :per_page => 5, :load => :ajax_auto, :f_term => 'format_f', :f_value => 'Database & Article Index' %>
+    </div>
+
+    <%= render_expert_help(@response.aggregations["subject_specialists"]) %>
+
+  <div class="col-sm-2 bento-box google-results" id="bento-results-google">
+    <a name="website"></a>
+    <div class="corner left-top hide"></div>
+    <div class="corner right-top hide"></div>
+    <h3>Library website</h3>
+    <%= bento_search 'google_site_search', :query => params[:q] || '', :per_page => 5, :load => :ajax_auto %>
   </div>
 </div>
 
-<div class="row">
+  </div>
 
-    <div class="col-sm-6 catalog-results" id="bento-results-catalog">
-      <h3>Catalog</h3>
-
-      <div class="view-and-filter text-right">
-      <%= link_to "View and filter #{number_with_delimiter(@response.total)} results", search_catalog_path(q: params[:q] || params[:query], search_field: 'keyword') %>
-      </div>
-
-      <%- if @response.empty? %>
-          <%= render "zero_results_bento" %>
-      <%- else %>
-          <%= render_document_index %>
-      <%- end %>
-    </div>
-
-    <div class="col-sm-6 summon-results ezproxy-login-status" id="bento-results-summon">
-      <%= bento_search 'summon', :query => params[:q] || '', :per_page => 25, :load => :ajax_triggered %>
-    </div>
-
-</div>
-
-</div>

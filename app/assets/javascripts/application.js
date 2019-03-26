@@ -12,6 +12,8 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require jquery.color.js
+
 //= require bootstrap/tab
 //= require_directory ./DataTables
 // Required by Blacklight

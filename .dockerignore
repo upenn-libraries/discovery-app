@@ -4,3 +4,4 @@ jetty
 log
 tmp
 .git
+.env

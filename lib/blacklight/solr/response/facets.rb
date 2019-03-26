@@ -247,10 +247,20 @@ module Blacklight::Solr::Response::Facets
     facet_json.each_with_object({}) do |(facet_config_name, value), hash|
       facet_config = blacklight_config.facet_fields[facet_config_name]
       field_name = facet_config[:top_level_field]
-      items = value[:buckets].map do |lst|
-        construct_subfacet_field(field_name, lst)
+      get_hits = facet_config[:get_hits] || @@DEFAULT_GET_HITS
+      buckets = value[:buckets] || value.each_with_object([]) do |(k, v), arr|
+        if k != 'count'
+          v[:val] = k
+          arr << v
+        end
       end
-
+      items = buckets.map do |lst|
+        construct_subfacet_field(field_name, lst, {}, get_hits)
+      end
+      post_sort = facet_config[:post_sort]
+      if !post_sort.nil?
+        items = post_sort.call(items)
+      end
       # alias all the possible blacklight config names..
       blacklight_config.facet_fields.select { |k,v| v.json_facet and k == facet_config_name }.each do |key, _|
         hash[key] = Blacklight::Solr::Response::Facets::FacetField.new key, items
@@ -258,22 +268,24 @@ module Blacklight::Solr::Response::Facets
     end
   end
   
+  @@DEFAULT_GET_HITS = lambda { |v| v[:count] }
+
   ##
   # Recursively parse the pivot facet response to build up the full pivot tree
-  def construct_subfacet_field field_name, lst, parent_fq = {}
+  def construct_subfacet_field field_name, lst, parent_fq = {}, get_hits = @@DEFAULT_GET_HITS
     subfacet_field = nil
     subfacets = nil
     lst.find do |key, value|
-      if key != 'val' && key != 'count'
+      if key != 'val' && key != 'count' && key != 'r1'
         subfacet_field = key
-        subfacets = value[:buckets]
+        subfacets = value[:buckets] || value
       end
     end
     items = Array(subfacets).map do |i|
-      construct_subfacet_field(subfacet_field, i, parent_fq.merge({ field_name => lst[:val] }))
+      construct_subfacet_field(subfacet_field, i, parent_fq.merge({ field_name => lst[:val] }), get_hits)
     end
 
-    Blacklight::Solr::Response::Facets::FacetItem.new(value: lst[:val], hits: lst[:count], field: field_name, items: items, fq: parent_fq)
+    Blacklight::Solr::Response::Facets::FacetItem.new(value: lst[:val], hits: get_hits.call(lst), field: field_name, items: items, fq: parent_fq)
   end
   
   
