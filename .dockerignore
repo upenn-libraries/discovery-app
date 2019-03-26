@@ -5,3 +5,4 @@ log
 tmp
 .git
 .env
+.ruby-version
