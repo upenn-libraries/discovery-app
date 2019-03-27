@@ -766,14 +766,20 @@ h3.ongray {
   height: 91px;
   background-size: auto 89px;
   position: absolute;
-  top: 11.0rem;
-  z-index: 15;
+  top: 16.0rem;
+  z-index: 1000;
   right: 2.5rem;
 }
 
 @media (min-width: 768px) {
   #feedback {
     display: block;
+  }
+}
+
+@media (min-width: 1200px) {
+  #feedback {
+    top: 11.0rem;
   }
 }
 
