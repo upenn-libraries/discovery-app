@@ -759,7 +759,7 @@ h3.ongray {
 }
 
 #feedback {
-  display: block;
+  display: none;
   background-image: asset-url('feedback.png');
   background-repeat: no-repeat;
   width: 77px;
@@ -771,6 +771,11 @@ h3.ongray {
   right: 2.5rem;
 }
 
+@media (min-width: 768px) {
+  #feedback {
+    display: block;
+  }
+}
 
 #feedbacklink {
   cursor: pointer;
