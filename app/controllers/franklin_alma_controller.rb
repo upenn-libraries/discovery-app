@@ -35,10 +35,10 @@ class FranklinAlmaController < ApplicationController
   @@bottomoptionslist['Place on Course Reserve'] = 2
 
   def cmpOnlineServices(service_a, service_b)
-    collection_a = service_a['collection']
-    interface_a = service_a['interface_name']
-    collection_b = service_b['collection']
-    interface_b = service_b['interface_name']
+    collection_a = service_a['collection'] || ''
+    interface_a = service_a['interface_name'] || ''
+    collection_b = service_b['collection'] || ''
+    interface_b = service_b['interface_name'] || ''
 
     score_a = -[@@toplist['collection'][collection_a] || 0, @@toplist['interface'][interface_a] || 0].max
     score_a = [@@bottomlist['collection'][collection_a] || 0, @@bottomlist['interface'][interface_a] || 0].max if score_a == 0
@@ -50,8 +50,8 @@ class FranklinAlmaController < ApplicationController
   end
 
   def cmpHoldingLocations(holding_a, holding_b)
-    lib_a = holding_a['library_code']
-    lib_b = holding_b['library_code']
+    lib_a = holding_a['library_code'] || ''
+    lib_b = holding_b['library_code'] || ''
 
     score_a = lib_a == 'Libra' ? 1 : 0
     score_b = lib_b == 'Libra' ? 1 : 0
