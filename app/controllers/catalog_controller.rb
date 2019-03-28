@@ -378,6 +378,9 @@ class CatalogController < ApplicationController
         { name: 'conference_a', label: 'Conference name' },
         { name: 'series', label: 'Series' },
         { name: 'publication_a', label: 'Publication' },
+        { dynamic_name: 'production_display', label: 'Production' },
+        { dynamic_name: 'distribution_display', label: 'Distribution' },
+        { dynamic_name: 'manufacture_display', label: 'Manufacture' },
         { name: 'contained_within_a', label: 'Contained in' },
         { name: 'format_a', label: 'Format/Description' },
         # in this view, 'Online resource' is full_text_link; note that
