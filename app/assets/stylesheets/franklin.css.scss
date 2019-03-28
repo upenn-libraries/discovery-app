@@ -829,3 +829,21 @@ h3.ongray {
   text-transform: uppercase;
   color: #ffffff;
 }
+
+@media screen and (min-width: 320px) and (max-width: 568px) {
+
+  .container {
+    padding: 0px;
+  }
+
+  .row {
+    margin: 0px 5px 5px 5px;
+  }
+
+
+  .bento-box {
+    min-width: 300px;
+    margin-bottom: 20px;
+  }
+
+}
