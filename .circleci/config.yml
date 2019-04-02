@@ -15,3 +15,5 @@ workflows:
           registry: quay.io
           image: upennlibraries/discovery-app
           label_prefix: edu.upenn.library
+          requires:
+            - gitleaks/check_local
