@@ -56,7 +56,7 @@ span.site-name, span.site-name a {
 
 button.btn-request-option {
   padding: 3px;
-  margin: 2px 2px 16px 2px;
+  margin: 2px;
   border-color: #aaa;
 }
 
@@ -200,6 +200,11 @@ div.backbutton-top {
   background-image: asset-url('ptswirl-11px.gif');
   background-position: 1px 6px;
   background-repeat: no-repeat;
+}
+
+.request-option-list-wrapper {
+  margin-top: 8px;
+  margin-bottom: 8px;
 }
 
 #sortAndPerPage {
