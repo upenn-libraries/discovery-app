@@ -223,13 +223,14 @@ class FranklinAlmaController < ApplicationController
 
         if has_holding_info
           inventory_type = 'physical'
-          holding['location'] = %Q[<a href="javascript:loadItems('#{mmsid}', '#{holding['holding_id']}')">#{holding['location']} &gt;</a>]
+          holding['location'] = %Q[<a href="javascript:loadItems('#{mmsid}', '#{holding['holding_id']}')">#{holding['location']} &gt;</a><br /><span class="call-number">#{holding['call_number']}</span>]
           holding['availability'] = "<span class='load-holding-details' data-mmsid='#{mmsid}' data-holdingid='#{holding['holding_id']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/></span>"
         elsif has_portfolio_info
           inventory_type = 'electronic'
           holding['availability'] = "<span class='load-portfolio-details' data-mmsid='#{mmsid}' data-portfoliopid='#{holding['portfolio_pid']}' data-collectionid='#{holding['collection_id']}' data-coverage='#{holding['coverage_statement']}' data-publicnote='#{holding['public_note']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/></span>"
         else
           inventory_type = 'physical'
+          holding['location'] = %Q[#{holding['location']}<br /><span class="call-number">#{holding['call_number']}</span>]
           holding['item_pid'] = holding_map.dig(holding['holding_id'], :item_pid)
           holding['due_date_policy'] = holding_map.dig(holding['holding_id'], :due_date_policy)
         end
@@ -241,7 +242,7 @@ class FranklinAlmaController < ApplicationController
       table_data = bib_data['availability'][mmsid]['holdings'].select { |h| h['inventory_type'] == 'physical' }
                    .sort { |a,b| cmpHoldingLocations(a,b) }
                    .each_with_index
-                   .map { |h,i| [i, h['location'], policy || h['due_date_policy'], h['availability'], h['call_number'], h['links'], h['holding_id'], h['item_pid']] }
+                   .map { |h,i| [i, h['location'], policy || h['due_date_policy'], h['availability'], '', h['links'], h['holding_id'], h['item_pid']] }
 
       if table_data.empty?
         table_data = bib_data['availability'][mmsid]['holdings'].select { |h| h['inventory_type'] == 'electronic' }
