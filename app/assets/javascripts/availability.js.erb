@@ -118,12 +118,17 @@ $(document).ready(function() {
                     }
                 }
 
+                if(tableLen <= 10) {
+                  $('#requestOptions-' + mmsid + '_length').hide();
+                }
+                else {
+                  $('#requestOptions-' + mmsid + '_length').show()
+                }
+
                 if(tableLen > pageSize) {
-                  $('#requestOptions-' + mmsid + '_filter').show()
                   $('#requestOptions-' + mmsid + '_paginate').show()
                 }
                 else {
-                  $('#requestOptions-' + mmsid + '_filter').hide();
                   $('#requestOptions-' + mmsid + '_paginate').hide();
                 }
             },
@@ -281,7 +286,20 @@ $(document).ready(function() {
                         } 
                     }
                 }
-                tableLen > pageSize ? $('#holdingItems-' + mmsid + '_filter').show() : $('#holdingItems-' + mmsid + '_filter').hide();
+
+                if(tableLen <= 10) {
+                  $('#holdingItems-' + mmsid + '_length').hide();
+                }
+                else {
+                  $('#holdingItems-' + mmsid + '_length').show()
+                }
+
+                if(tableLen > pageSize) {
+                  $('#holdingItems-' + mmsid + '_paginate').show()
+                }
+                else {
+                  $('#holdingItems-' + mmsid + '_paginate').hide();
+                }
             },
             "initComplete": function(settings, json) {
                 $('#holdingItems-' + mmsid).show();
