@@ -242,7 +242,7 @@ class FranklinAlmaController < ApplicationController
       table_data = bib_data['availability'][mmsid]['holdings'].select { |h| h['inventory_type'] == 'physical' }
                    .sort { |a,b| cmpHoldingLocations(a,b) }
                    .each_with_index
-                   .map { |h,i| [i, h['location'], policy || h['due_date_policy'], h['availability'], '', h['links'], h['holding_id'], h['item_pid']] }
+                   .map { |h,i| [i, h['location'], '', h['availability'], policy || h['due_date_policy'], h['links'], h['holding_id'], h['item_pid']] }
 
       if table_data.empty?
         table_data = bib_data['availability'][mmsid]['holdings'].select { |h| h['inventory_type'] == 'electronic' }
@@ -307,7 +307,7 @@ class FranklinAlmaController < ApplicationController
         policies[data['policy']['value']] = nil
         pids_to_check << [data['pid'], data['policy']['value']]
       end
-      [data['policy']['value'], data['pid'], data['description'], due_date_policy || data['due_date_policy'], data['base_status']['desc'], data['barcode'], [], params['mms_id'], params['holding_id']]
+      [data['policy']['value'], data['pid'], data['description'], data['base_status']['desc'], data['barcode'], due_date_policy || data['due_date_policy'], [], params['mms_id'], params['holding_id']]
     }
 
     while options[:offset] + options[:limit] < response_data['total_record_count']
