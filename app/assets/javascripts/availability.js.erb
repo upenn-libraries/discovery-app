@@ -216,11 +216,15 @@ $(document).ready(function() {
                 }
 
                 data.forEach(function(element) {
-                    $('<button>').attr({
-                        class: 'btn btn-basic btn-request-option',
-                        text: element['option_name'],
-                        onclick: "window.open('" + element["option_url"] + "', '_blank')"
-                    }).text(element['option_name']).appendTo(optionList);
+                    let containingdiv = $('<div class="request-option-wrapper"></div>');
+                    let highlightable = element['highlightable'] ? ' highlightable' : ''
+                    let button = $('<button>').attr({
+                                     class: 'btn btn-basic btn-request-option' + highlightable,
+                                     text: element['option_name'],
+                                     onclick: "window.open('" + element["option_url"] + "', '_blank')"
+                                 }).text(element['option_name']);
+                   button.appendTo(containingdiv);
+                   containingdiv.appendTo(optionList);
                 });
                 $('#request-options-spinner-' + mmsid).remove();
                 console.log(data);

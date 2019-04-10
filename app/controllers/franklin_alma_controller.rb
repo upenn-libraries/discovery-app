@@ -236,6 +236,14 @@ class FranklinAlmaController < ApplicationController
         end
 
         holding['links'] = links
+
+        if holding['availability'] == 'Requestable'
+          if userid == 'GUEST'
+            holding['availability'] = '<span>Log in &amp; Request Below</span>'
+          else
+            holding['availability'] = '<a class="request-option-link">Request Below</a>'
+          end
+        end
       end
 
       policy = 'Please log in for loan and request information' if userid == 'GUEST'
@@ -366,7 +374,8 @@ class FranklinAlmaController < ApplicationController
             #:option_url => option['request_url'],
             :option_url => "/alma/request?mms_id=#{params['mms_id']}",
             :avail_for_physical => true,
-            :avail_for_electronic => true
+            :avail_for_electronic => true,
+            :highlightable => true
           }
         when 'GES'
           option_url = option['request_url']
@@ -381,7 +390,8 @@ class FranklinAlmaController < ApplicationController
             # Remove appended mmsid when SF case #00584311 is resolved
             :option_url => option_url + "bibid=#{params['mms_id']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com",
             :avail_for_physical => details['avail_for_physical'],
-            :avail_for_electronic => details['avail_for_electronic']
+            :avail_for_electronic => details['avail_for_electronic'],
+            :highlightable => ['SCANDEL'].member?(details['code'])
           }
         when 'RS_BROKER'
           # Remove special URL handling when SF case #00584311 is resolved
@@ -397,7 +407,8 @@ class FranklinAlmaController < ApplicationController
             # Remove appended mmsid when SF case #00584311 is resolved
             :option_url => option_url + "bibid=#{params['mms_id']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com",
             :avail_for_physical => true,
-            :avail_for_electronic => true
+            :avail_for_electronic => true,
+            :highlightable => true
           }
         else
           nil
