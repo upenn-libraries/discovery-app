@@ -298,7 +298,7 @@ class FranklinAlmaController < ApplicationController
     due_date_policy = 'Please log in for loan and request information' if userid.nil?
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
-    options = {:expand => 'due_date_policy', :offset => 0, :limit => 100, :user_id => userid}
+    options = {:expand => 'due_date_policy', :offset => 0, :limit => 100, :user_id => userid, :order_by => 'description'}
     response_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items, :get, params.merge(options))
 
     if !response_data.key?('item')
