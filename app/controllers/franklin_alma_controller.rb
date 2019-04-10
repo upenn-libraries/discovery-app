@@ -99,7 +99,7 @@ class FranklinAlmaController < ApplicationController
                     }
     index_details.unshift('Indexes:') unless index_details.empty?
 
-    render :html => ('<span>' + (holding_details + note_details + supplemental_details + index_details).join("<br/>") + '</span>').html_safe
+    render :json => { "holding_details": holding_details.join("<br/>").html_safe, "notes": (note_details + supplemental_details + index_details).join("<br/>").html_safe }
 
   end
 
@@ -141,7 +141,7 @@ class FranklinAlmaController < ApplicationController
     public_note_content = public_note.nil? || public_note.empty? ? [] : ["Public Notes: ", public_note]
     authentication_note_content = authentication_note.nil? || authentication_note.empty? ? [] : ["Authentication Notes: ", authentication_note]
 
-    render :html => ('<span>' + (coverage_content + public_note_content + authentication_note_content).join("<br/>") + '</span>').html_safe
+    render :json => { "portfolio_details": coverage_content.join("<br/>").html_safe, "notes": (public_note_content + authentication_note_content).join("<br/>").html_safe }
   end
 
   def has_holding_info?(api_mms_data, mmsid)
@@ -212,7 +212,7 @@ class FranklinAlmaController < ApplicationController
                      authentication_note_content = authentication_note.nil? || authentication_note.empty? ? [] : ["Authentication Notes: ", authentication_note]
 
                      notes = ('<span>' + (public_note_content + authentication_note_content).join("<br/>") + '</span>').html_safe
-                     [i, link, '', notes, '', '', '', '']
+                     [i, link, notes, '', '', '', '', '']
                    end
                    .reject(&:nil?)
     else
@@ -250,7 +250,7 @@ class FranklinAlmaController < ApplicationController
       table_data = bib_data['availability'][mmsid]['holdings'].select { |h| h['inventory_type'] == 'physical' }
                    .sort { |a,b| cmpHoldingLocations(a,b) }
                    .each_with_index
-                   .map { |h,i| [i, h['location'], '', h['availability'], policy || h['due_date_policy'], h['links'], h['holding_id'], h['item_pid']] }
+                   .map { |h,i| [i, h['location'], h['availability'], "<span id='notes-#{h['holding_id']}'></span>", policy || h['due_date_policy'], h['links'], h['holding_id'], h['item_pid']] }
 
       if table_data.empty?
         table_data = bib_data['availability'][mmsid]['holdings'].select { |h| h['inventory_type'] == 'electronic' }
@@ -258,7 +258,7 @@ class FranklinAlmaController < ApplicationController
                     .each_with_index
                     .map { |p,i|
                       link = "<a target='_blank' href='https://upenn.alma.exlibrisgroup.com/view/uresolver/01UPENN_INST/openurl?Force_direct=true&portfolio_pid=#{p['portfolio_pid']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com&u.ignore_date_coverage=true'>#{p['collection']}</a>"
-                      [i, link, '', p['availability'], '', '', '', '']
+                      [i, link, p['availability'], "<span id='notes-#{p['portfolio_pid']}'></span>", '', '', '', '']
                     }
       end
     end
