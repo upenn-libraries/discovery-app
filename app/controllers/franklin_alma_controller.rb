@@ -239,9 +239,9 @@ class FranklinAlmaController < ApplicationController
 
         if holding['availability'] == 'Requestable'
           if userid == 'GUEST'
-            holding['availability'] = 'Log in &amp; Request Below'
+            holding['availability'] = 'Log in &amp; request below'
           else
-            holding['availability'] = '<a class="request-option-link">Request Below</a>'
+            holding['availability'] = 'Not on shelf; <a class="request-option-link">request below</a>'
           end
         end
       end

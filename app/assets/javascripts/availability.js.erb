@@ -15,7 +15,7 @@ $(document).ready(function() {
 
     function constructAeonLink(mmsid, holding) {
         if(holding['link_to_aeon']) {
-          return '<a href="/redir/aeon?bibid=' + mmsid + '&hldid=' + holding['holding_id'] + '" target="_blank">Request to View</a>';
+          return '<a href="/redir/aeon?bibid=' + mmsid + '&hldid=' + holding['holding_id'] + '" target="_blank">Request to view</a>';
         }
 
         return null;
@@ -27,9 +27,9 @@ $(document).ready(function() {
         if (holding['inventory_type'] == 'physical') {
             var availability = "Unknown";
             if (holding['availability'] == 'check_holdings') {
-                availability = "See availability details";
+                availability = "See options";
             } else if (holding['availability'] == 'unavailable') {
-                availability = "Requestable";
+                availability = "See options";
             } else if (holding['availability'] == 'available') {
                 availability = "Available";
             }
