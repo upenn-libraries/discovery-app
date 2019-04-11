@@ -162,8 +162,8 @@ $(document).ready(function() {
                     $.ajax({
                         url: url,
                         success: function(data, textStatus, jqXHR) {
-                            let holdingdetails = data['holding_details'];
-                            let notes = data['notes'];
+                            var holdingdetails = data['holding_details'];
+                            var notes = data['notes'];
 
                             $(element).removeClass('load-holding-details');
                             $(element).html('');
@@ -184,8 +184,8 @@ $(document).ready(function() {
                     $.ajax({
                         url: url,
                         success: function(data, textStatus, jqXHR) {
-                            let portfoliodetails = data['portfolio_details'];
-                            let notes = data['notes']
+                            var portfoliodetails = data['portfolio_details'];
+                            var notes = data['notes']
                             $(element).removeClass('load-portfolio-details');
                             $(element).html('');
                             $(element).append(portfoliodetails);
@@ -223,9 +223,9 @@ $(document).ready(function() {
                 }
 
                 data.forEach(function(element) {
-                    let containingdiv = $('<div class="request-option-wrapper"></div>');
-                    let highlightable = element['highlightable'] ? ' highlightable' : ''
-                    let button = $('<button>').attr({
+                    var containingdiv = $('<div class="request-option-wrapper"></div>');
+                    var highlightable = element['highlightable'] ? ' highlightable' : ''
+                    var button = $('<button>').attr({
                                      class: 'btn btn-basic btn-request-option' + highlightable,
                                      text: element['option_name'],
                                      onclick: "window.open('" + element["option_url"] + "', '_blank')"
