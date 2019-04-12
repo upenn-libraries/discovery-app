@@ -347,7 +347,7 @@ class FranklinAlmaController < ApplicationController
     table_data.each { |item|
       policy = item.shift()
       request_url = (policies[policy] || '') % params.merge({:item_pid => item[0]})
-      item[5] << "<a target='_blank' href='#{request_url}'>Request</a>" unless (request_url.empty? || item[3] != 'Item in place')
+      item[5] << "<a target='_blank' href='#{request_url}'>Request</a>" unless (request_url.empty? || item[2] != 'Item in place')
     }
 
     render :json => {"data": table_data}
