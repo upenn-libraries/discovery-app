@@ -96,6 +96,10 @@ div.backbutton-top {
   margin-bottom: 10px;
 }
 
+table.dataTable tbody tr td {
+  vertical-align: top;
+}
+
 /*************
 *
 * Overriding Blacklight styles
