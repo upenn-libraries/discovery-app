@@ -15,7 +15,7 @@ $(document).ready(function() {
 
     function constructAeonLink(mmsid, holding) {
         if(holding['link_to_aeon']) {
-          return '<a href="/redir/aeon?bibid=' + mmsid + '&hldid=' + holding['holding_id'] + '" target="_blank">Request to View</a>';
+          return '<a href="/redir/aeon?bibid=' + mmsid + '&hldid=' + holding['holding_id'] + '" target="_blank">Request to view</a>';
         }
 
         return null;
@@ -27,9 +27,9 @@ $(document).ready(function() {
         if (holding['inventory_type'] == 'physical') {
             var availability = "Unknown";
             if (holding['availability'] == 'check_holdings') {
-                availability = "See availability details";
+                availability = "See options";
             } else if (holding['availability'] == 'unavailable') {
-                availability = "Requestable";
+                availability = "See request options";
             } else if (holding['availability'] == 'available') {
                 availability = "Available";
             }
@@ -94,6 +94,7 @@ $(document).ready(function() {
                 { "visible": false, "targets": [0,6,7] },
                 { "orderable": false, "targets": 5 }
             ],
+            "order": [],
             "language": {
               "search": "Filter records:",
               "loadingRecords": "&nbsp;",
@@ -118,12 +119,17 @@ $(document).ready(function() {
                     }
                 }
 
+                if(tableLen <= 10) {
+                  $('#requestOptions-' + mmsid + '_length').hide();
+                }
+                else {
+                  $('#requestOptions-' + mmsid + '_length').show()
+                }
+
                 if(tableLen > pageSize) {
-                  $('#requestOptions-' + mmsid + '_filter').show()
                   $('#requestOptions-' + mmsid + '_paginate').show()
                 }
                 else {
-                  $('#requestOptions-' + mmsid + '_filter').hide();
                   $('#requestOptions-' + mmsid + '_paginate').hide();
                 }
             },
@@ -131,9 +137,8 @@ $(document).ready(function() {
                 var table = $('#requestOptions-' + mmsid).DataTable();
 
                 if(globaldata[mmsid]['inventory_type'] == 'electronic') {
-                    table.column(2).visible(false);
                     table.column(4).visible(false);
-                    $(table.column(3).header()).text("");
+                    $(table.column(2).header()).text("");
                 }
 
                 var dataLen = json.data.length;
@@ -143,7 +148,7 @@ $(document).ready(function() {
                 // Reference: https://stackoverflow.com/a/15458987
                 // Check if the location of the first holding is an HTML element,
                 // indicating this is for a serial
-                else if(/<[a-z][\s\S]*>/i.test(json.data[0][1])) {
+                else if(/<[a-z][\s\S]*>/i.test(json.data[0][2])) {
                     $('#requestOptionsAvailability-' + mmsid).text('Holdings');
                 }
                 else {
@@ -157,9 +162,13 @@ $(document).ready(function() {
                     $.ajax({
                         url: url,
                         success: function(data, textStatus, jqXHR) {
+                            var holdingdetails = data['holding_details'];
+                            var notes = data['notes'];
+
                             $(element).removeClass('load-holding-details');
                             $(element).html('');
-                            $(element).append(data);
+                            $(element).append(holdingdetails);
+                            $('#notes-' + holdingid).append(notes);
                         }
                     });
                 });
@@ -175,9 +184,12 @@ $(document).ready(function() {
                     $.ajax({
                         url: url,
                         success: function(data, textStatus, jqXHR) {
+                            var portfoliodetails = data['portfolio_details'];
+                            var notes = data['notes']
                             $(element).removeClass('load-portfolio-details');
                             $(element).html('');
-                            $(element).append(data);
+                            $(element).append(portfoliodetails);
+                            $('#notes-' + portfoliopid).append(notes);
                         }
                     });
                 });
@@ -211,11 +223,15 @@ $(document).ready(function() {
                 }
 
                 data.forEach(function(element) {
-                    $('<button>').attr({
-                        class: 'btn btn-basic btn-request-option',
-                        text: element['option_name'],
-                        onclick: "window.open('" + element["option_url"] + "', '_blank')"
-                    }).text(element['option_name']).appendTo(optionList);
+                    var containingdiv = $('<div class="request-option-wrapper"></div>');
+                    var highlightable = element['highlightable'] ? ' highlightable' : ''
+                    var button = $('<button>').attr({
+                                     class: 'btn btn-basic btn-request-option' + highlightable,
+                                     text: element['option_name'],
+                                     onclick: "window.open('" + element["option_url"] + "', '_blank')"
+                                 }).text(element['option_name']);
+                   button.appendTo(containingdiv);
+                   containingdiv.appendTo(optionList);
                 });
                 $('#request-options-spinner-' + mmsid).remove();
                 console.log(data);
@@ -258,6 +274,7 @@ $(document).ready(function() {
                 { "visible": false, "targets": [0,6,7] },
                 { "orderable": false, "targets": 5 }
             ],
+            "order": [],
             "language": {
                 "search": "Filter records:",
                 "loadingRecords": "&nbsp;",
@@ -281,7 +298,20 @@ $(document).ready(function() {
                         } 
                     }
                 }
-                tableLen > pageSize ? $('#holdingItems-' + mmsid + '_filter').show() : $('#holdingItems-' + mmsid + '_filter').hide();
+
+                if(tableLen <= 10) {
+                  $('#holdingItems-' + mmsid + '_length').hide();
+                }
+                else {
+                  $('#holdingItems-' + mmsid + '_length').show()
+                }
+
+                if(tableLen > pageSize) {
+                  $('#holdingItems-' + mmsid + '_paginate').show()
+                }
+                else {
+                  $('#holdingItems-' + mmsid + '_paginate').hide();
+                }
             },
             "initComplete": function(settings, json) {
                 $('#holdingItems-' + mmsid).show();

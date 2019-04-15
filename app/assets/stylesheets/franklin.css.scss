@@ -56,7 +56,7 @@ span.site-name, span.site-name a {
 
 button.btn-request-option {
   padding: 3px;
-  margin: 2px 2px 16px 2px;
+  margin: 2px;
   border-color: #aaa;
 }
 
@@ -94,6 +94,10 @@ div[id^="table-wrapper"] {
 
 div.backbutton-top {
   margin-bottom: 10px;
+}
+
+table.dataTable tbody tr td {
+  vertical-align: top;
 }
 
 /*************
@@ -177,6 +181,10 @@ div.backbutton-top {
   border-color: $upenn-blue;
 }
 
+.call-number {
+  font-weight: bold;
+}
+
 .inline {
   display: inline;
   margin: 0;
@@ -198,6 +206,29 @@ div.backbutton-top {
   background-repeat: no-repeat;
 }
 
+.request-option-link {
+  cursor: pointer;
+}
+
+.request-option-list-wrapper {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  display: table;
+}
+
+.request-option-wrapper {
+  @include rounded-corners;
+  display: table;
+  width: auto;
+  float: left;
+  padding: 2px;
+}
+
+.request-option-wrapper.highlighted {
+  border: 2px solid #337ab7;
+  padding: 0px;
+}
+
 #sortAndPerPage {
   border-bottom: 1px dashed #d2d2d2;
 }
@@ -213,6 +244,11 @@ div.backbutton-top {
 
 #documents .document .document-title-heading {
   line-height: 1.42857143;
+}
+
+#documents .document .document-title-heading a {
+  font-size: 16px;
+  font-weight: bold;
 }
 
 .direct-link-trigger {

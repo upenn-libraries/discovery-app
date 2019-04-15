@@ -99,7 +99,7 @@ class FranklinAlmaController < ApplicationController
                     }
     index_details.unshift('Indexes:') unless index_details.empty?
 
-    render :html => ('<span>' + (holding_details + note_details + supplemental_details + index_details).join("<br/>") + '</span>').html_safe
+    render :json => { "holding_details": holding_details.join("<br/>").html_safe, "notes": (note_details + supplemental_details + index_details).join("<br/>").html_safe }
 
   end
 
@@ -141,7 +141,7 @@ class FranklinAlmaController < ApplicationController
     public_note_content = public_note.nil? || public_note.empty? ? [] : ["Public Notes: ", public_note]
     authentication_note_content = authentication_note.nil? || authentication_note.empty? ? [] : ["Authentication Notes: ", authentication_note]
 
-    render :html => ('<span>' + (coverage_content + public_note_content + authentication_note_content).join("<br/>") + '</span>').html_safe
+    render :json => { "portfolio_details": coverage_content.join("<br/>").html_safe, "notes": (public_note_content + authentication_note_content).join("<br/>").html_safe }
   end
 
   def has_holding_info?(api_mms_data, mmsid)
@@ -212,7 +212,7 @@ class FranklinAlmaController < ApplicationController
                      authentication_note_content = authentication_note.nil? || authentication_note.empty? ? [] : ["Authentication Notes: ", authentication_note]
 
                      notes = ('<span>' + (public_note_content + authentication_note_content).join("<br/>") + '</span>').html_safe
-                     [i, link, '', notes, '', '', '', '']
+                     [i, link, notes, '', '', '', '', '']
                    end
                    .reject(&:nil?)
     else
@@ -223,25 +223,34 @@ class FranklinAlmaController < ApplicationController
 
         if has_holding_info
           inventory_type = 'physical'
-          holding['location'] = %Q[<a href="javascript:loadItems('#{mmsid}', '#{holding['holding_id']}')">#{holding['location']} &gt;</a>]
+          holding['location'] = %Q[<a href="javascript:loadItems('#{mmsid}', '#{holding['holding_id']}')">#{holding['location']} &gt;</a><br /><span class="call-number">#{holding['call_number']}</span>]
           holding['availability'] = "<span class='load-holding-details' data-mmsid='#{mmsid}' data-holdingid='#{holding['holding_id']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/></span>"
         elsif has_portfolio_info
           inventory_type = 'electronic'
           holding['availability'] = "<span class='load-portfolio-details' data-mmsid='#{mmsid}' data-portfoliopid='#{holding['portfolio_pid']}' data-collectionid='#{holding['collection_id']}' data-coverage='#{holding['coverage_statement']}' data-publicnote='#{holding['public_note']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/></span>"
         else
           inventory_type = 'physical'
+          holding['location'] = %Q[#{holding['location']}<br /><span class="call-number">#{holding['call_number']}</span>]
           holding['item_pid'] = holding_map.dig(holding['holding_id'], :item_pid)
           holding['due_date_policy'] = holding_map.dig(holding['holding_id'], :due_date_policy)
         end
 
         holding['links'] = links
+
+        if holding['availability'] == 'Requestable'
+          if userid == 'GUEST'
+            holding['availability'] = 'Log in &amp; request below'
+          else
+            holding['availability'] = 'Not on shelf; <a class="request-option-link">request below</a>'
+          end
+        end
       end
 
       policy = 'Please log in for loan and request information' if userid == 'GUEST'
       table_data = bib_data['availability'][mmsid]['holdings'].select { |h| h['inventory_type'] == 'physical' }
                    .sort { |a,b| cmpHoldingLocations(a,b) }
                    .each_with_index
-                   .map { |h,i| [i, h['location'], policy || h['due_date_policy'], h['availability'], h['call_number'], h['links'], h['holding_id'], h['item_pid']] }
+                   .map { |h,i| [i, h['location'], h['availability'], "<span id='notes-#{h['holding_id']}'></span>", policy || h['due_date_policy'], h['links'], h['holding_id'], h['item_pid']] }
 
       if table_data.empty?
         table_data = bib_data['availability'][mmsid]['holdings'].select { |h| h['inventory_type'] == 'electronic' }
@@ -249,7 +258,7 @@ class FranklinAlmaController < ApplicationController
                     .each_with_index
                     .map { |p,i|
                       link = "<a target='_blank' href='https://upenn.alma.exlibrisgroup.com/view/uresolver/01UPENN_INST/openurl?Force_direct=true&portfolio_pid=#{p['portfolio_pid']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com&u.ignore_date_coverage=true'>#{p['collection']}</a>"
-                      [i, link, '', p['availability'], '', '', '', '']
+                      [i, link, p['availability'], "<span id='notes-#{p['portfolio_pid']}'></span>", '', '', '', '']
                     }
       end
     end
@@ -289,7 +298,7 @@ class FranklinAlmaController < ApplicationController
     due_date_policy = 'Please log in for loan and request information' if userid.nil?
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
-    options = {:expand => 'due_date_policy', :offset => 0, :limit => 100, :user_id => userid}
+    options = {:expand => 'due_date_policy', :offset => 0, :limit => 100, :user_id => userid, :order_by => 'description'}
     response_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items, :get, params.merge(options))
 
     if !response_data.key?('item')
@@ -306,7 +315,7 @@ class FranklinAlmaController < ApplicationController
         policies[data['policy']['value']] = nil
         pids_to_check << [data['pid'], data['policy']['value']]
       end
-      [data['policy']['value'], data['pid'], data['description'], due_date_policy || data['due_date_policy'], data['base_status']['desc'], data['barcode'], [], params['mms_id'], params['holding_id']]
+      [data['policy']['value'], data['pid'], data['description'], data['base_status']['desc'], data['barcode'], due_date_policy || data['due_date_policy'], [], params['mms_id'], params['holding_id']]
     }
 
     while options[:offset] + options[:limit] < response_data['total_record_count']
@@ -338,7 +347,7 @@ class FranklinAlmaController < ApplicationController
     table_data.each { |item|
       policy = item.shift()
       request_url = (policies[policy] || '') % params.merge({:item_pid => item[0]})
-      item[5] << "<a target='_blank' href='#{request_url}'>Request</a>" unless (request_url.empty? || item[3] != 'Item in place')
+      item[5] << "<a target='_blank' href='#{request_url}'>Request</a>" unless (request_url.empty? || item[2] != 'Item in place')
     }
 
     render :json => {"data": table_data}
@@ -365,7 +374,8 @@ class FranklinAlmaController < ApplicationController
             #:option_url => option['request_url'],
             :option_url => "/alma/request?mms_id=#{params['mms_id']}",
             :avail_for_physical => true,
-            :avail_for_electronic => true
+            :avail_for_electronic => true,
+            :highlightable => true
           }
         when 'GES'
           option_url = option['request_url']
@@ -380,7 +390,8 @@ class FranklinAlmaController < ApplicationController
             # Remove appended mmsid when SF case #00584311 is resolved
             :option_url => option_url + "bibid=#{params['mms_id']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com",
             :avail_for_physical => details['avail_for_physical'],
-            :avail_for_electronic => details['avail_for_electronic']
+            :avail_for_electronic => details['avail_for_electronic'],
+            :highlightable => ['SCANDEL'].member?(details['code'])
           }
         when 'RS_BROKER'
           # Remove special URL handling when SF case #00584311 is resolved
@@ -396,7 +407,8 @@ class FranklinAlmaController < ApplicationController
             # Remove appended mmsid when SF case #00584311 is resolved
             :option_url => option_url + "bibid=#{params['mms_id']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com",
             :avail_for_physical => true,
-            :avail_for_electronic => true
+            :avail_for_electronic => true,
+            :highlightable => true
           }
         else
           nil
