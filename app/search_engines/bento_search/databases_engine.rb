@@ -41,7 +41,6 @@ class BentoSearch::DatabasesEngine
     end
 
     results.total_items = hash['feed']['totalResults'].to_i
-
     return results unless results.total_items > 0
 
     entries = results.total_items > 1 ? hash['feed']['entry'] : [hash['feed']['entry']]
