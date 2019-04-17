@@ -49,7 +49,7 @@ class BentoSearch::CatalogEngine
     entries.each do |entry|
       online_resource = {}
       item = BentoSearch::ResultItem.new
-      item.title = entry['title'].strip
+      item.title = entry['title'].strip.html_safe
       item.link = entry['id']
 
       item.authors = entry['author'].present? ? [BentoSearch::Author.new(:display => entry['author'].first[1])] : []

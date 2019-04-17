@@ -48,7 +48,7 @@ class BentoSearch::DatabasesEngine
     entries.each do |entry|
       online_resource = {}
       item = BentoSearch::ResultItem.new
-      item.title = entry['title'].strip
+      item.title = entry['title'].strip.html_safe
       item.link = entry['id']
 
       # TODO: Get a hidden reference to this value into the atom payload so it is referencable from the summary variable
