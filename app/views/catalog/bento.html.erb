@@ -1,8 +1,9 @@
-<div class="container">
 
-<div class="row">
+<div class="container-fluid">
 
-    <div class="col-sm-2 bento-box catalog-results" id="bento-results-catalog">
+  <div class="row bento-all">
+
+    <div class="col col-md-3 bento-box catalog-results" id="bento-results-catalog">
       <a name="catalog"></a>
       <div class="corner left-top hide"></div>
       <div class="corner right-top hide"></div>
@@ -13,7 +14,7 @@
       <%= bento_search 'catalog', :query => params[:q] || '', :per_page => 5, :load => :ajax_auto %>
     </div>
 
-    <div class="col-sm-2 bento-box summon-results ezproxy-login-status" id="bento-results-summon">
+    <div class="col col-md-3 bento-box summon-results ezproxy-login-status" id="bento-results-summon">
       <a name="articles"></a>
       <div class="corner left-top hide"></div>
       <div class="corner right-top hide"></div>
@@ -21,7 +22,7 @@
       <%= bento_search 'summon', :query => params[:q] || '', :per_page => 5, :load => :ajax_triggered %>
     </div>
 
-    <div class="col-sm-2 bento-box databases-results" id="bento-results-databases">
+    <div class="col col-md-3 bento-box databases-results" id="bento-results-databases">
       <a name="databases"></a>
       <div class="corner left-top hide"></div>
       <div class="corner right-top hide"></div>
@@ -31,27 +32,34 @@
 
     <%= render_expert_help(@response.aggregations["subject_specialists"]) %>
 
-  <div class="col-sm-2 bento-box google-results" id="bento-results-google">
-    <a name="website"></a>
-    <div class="corner left-top hide"></div>
-    <div class="corner right-top hide"></div>
-    <h3>Library website</h3>
+    <div class="col col-md-3 bento-box google-results" id="bento-results-google">
+      <a name="website"></a>
+      <div class="corner left-top hide"></div>
+      <div class="corner right-top hide"></div>
+      <h3>Library website</h3>
+      <div class="view-and-filter text-right">
+        <%= link_to "View all results", google_site_search_results_url(params[:q] || params[:query]) %>
+      </div>
 
-    <script>
-        (function() {
-            var cx = '015171683814554281596:8nln-kjivsc';
-            var gcse = document.createElement('script');
-            gcse.type = 'text/javascript';
-            gcse.async = true;
-            gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(gcse, s);
-        })();
-    </script>
-    <gcse:searchresults-only webSearchResultSetSize="5"></gcse:searchresults-only>
+      <script>
+          (function() {
+              var cx = '015171683814554281596:8nln-kjivsc';
+              var gcse = document.createElement('script');
+              gcse.type = 'text/javascript';
+              gcse.async = true;
+              gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+              var s = document.getElementsByTagName('script')[0];
+              s.parentNode.insertBefore(gcse, s);
+          })();
+      </script>
+      <gcse:searchresults-only webSearchResultSetSize="5"></gcse:searchresults-only>
 
+      <div class="view-all">
+        <%= link_to(("View all results #{image_tag('view_all_arrow.png', :alt => '')}").html_safe, google_site_search_results_url(params[:q] || params[:query])) %>
+      </div>
+
+    </div>
   </div>
+
 </div>
-
-  </div>
 

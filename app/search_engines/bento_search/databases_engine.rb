@@ -41,7 +41,6 @@ class BentoSearch::DatabasesEngine
     end
 
     results.total_items = hash['feed']['totalResults'].to_i
-
     return results unless results.total_items > 0
 
     entries = results.total_items > 1 ? hash['feed']['entry'] : [hash['feed']['entry']]
@@ -49,7 +48,7 @@ class BentoSearch::DatabasesEngine
     entries.each do |entry|
       online_resource = {}
       item = BentoSearch::ResultItem.new
-      item.title = entry['title'].strip
+      item.title = entry['title'].strip.html_safe
       item.link = entry['id']
 
       # TODO: Get a hidden reference to this value into the atom payload so it is referencable from the summary variable

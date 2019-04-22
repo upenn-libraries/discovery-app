@@ -1,7 +1,7 @@
 {
     "name": "discovery",
     "description": "top-level package file for rails-browserify to use",
-    "dependencies" : {
+    "dependencies": {
         "browserify": "13.3.0",
         "browserify-incremental": "3.1.1",
         "ezproxy-login-status": "./jslib/ezproxy-login-status"

@@ -51,7 +51,8 @@ BentoSearch.register_engine('google_site_search') do |conf|
   conf.allow_routable_results = true
   conf.for_display do |display|
     display[:ajax] = { 'wrapper_template' => 'layouts/google_site_search_ajax_results_wrapper' }
-    display[:no_results_partial] = 'layouts/google_zero_results'
+    display[:no_results_partial] = 'layouts/zero_google_results'
+    #display[:no_results_partial] = 'layouts/google_zero_results'
   end
 end
 
@@ -69,7 +70,8 @@ BentoSearch.register_engine('databases') do |conf|
   conf.allow_routable_results = true
   conf.for_display do |display|
     display[:ajax] = { 'wrapper_template' => 'layouts/databases_ajax_results_wrapper' }
-    display[:no_results_partial] = 'layouts/databases_zero_results'
+    display[:no_results_partial] = 'layouts/hide_databases_zero_results'
+    #display[:no_results_partial] = 'layouts/databases_zero_results'
   end
 end
 
