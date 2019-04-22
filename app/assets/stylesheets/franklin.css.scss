@@ -10,9 +10,15 @@
 
 @media (min-width: 992px) and (max-width: 1199px) {
   .col-md-3 {
+    width: 25%;
+  }
+
+  .bento-box {
     width: 32%;
   }
+
 }
+
 
 .list-inline {
   display: flex;
@@ -52,7 +58,7 @@ span.site-name, span.site-name a {
 
 button.btn-request-option {
   padding: 3px;
-  margin: 2px;
+  margin: 2px 2px 16px 2px;
   border-color: #aaa;
 }
 
@@ -89,10 +95,6 @@ div[id^="table-wrapper"] {
 
 div.backbutton-top {
   margin-bottom: 10px;
-}
-
-table.dataTable tbody tr td {
-  vertical-align: top;
 }
 
 /*************
@@ -135,8 +137,8 @@ table.dataTable tbody tr td {
 @media (min-width: 768px) {
 
   .navbar-header {
-    /* without min-width, Safari will render site-name below the logo image. sigh. */
-    min-width: 300px;
+    /* without min-width at 320px at least, Safari will render site-name below the logo image. sigh. */
+    min-width: 320px;
   }
 
   .navbar-nav > li > div {
@@ -176,10 +178,6 @@ table.dataTable tbody tr td {
   border-color: $upenn-blue;
 }
 
-.call-number {
-  font-weight: bold;
-}
-
 .inline {
   display: inline;
   margin: 0;
@@ -201,29 +199,6 @@ table.dataTable tbody tr td {
   background-repeat: no-repeat;
 }
 
-.request-option-link {
-  cursor: pointer;
-}
-
-.request-option-list-wrapper {
-  margin-top: 8px;
-  margin-bottom: 8px;
-  display: table;
-}
-
-.request-option-wrapper {
-  @include rounded-corners;
-  display: table;
-  width: auto;
-  float: left;
-  padding: 2px;
-}
-
-.request-option-wrapper.highlighted {
-  border: 2px solid #337ab7;
-  padding: 0px;
-}
-
 #sortAndPerPage {
   border-bottom: 1px dashed #d2d2d2;
 }
@@ -239,11 +214,6 @@ table.dataTable tbody tr td {
 
 #documents .document .document-title-heading {
   line-height: 1.42857143;
-}
-
-#documents .document .document-title-heading a {
-  font-size: 16px;
-  font-weight: bold;
 }
 
 .direct-link-trigger {
@@ -850,6 +820,16 @@ h3.ongray {
   display: none;
 }
 
+.fifty-percent {
+  width: 48%;
+}
+
+@media (max-width:992px) {
+  .fifty-percent {
+    width: 98%;
+  }
+}
+
 #beta-announcement {
   clear: both;
   padding: 5px 10px;
@@ -963,7 +943,6 @@ h4, .facets .facets-heading, .h4 {
 /* Requests */
 
 button.btn-request-options {
-  color: #333333;
-  border-color: #ddd;
   margin-left: 12px;
+  border: 1px solid #204d74;
 }
