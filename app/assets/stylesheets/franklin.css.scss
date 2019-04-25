@@ -1,3 +1,4 @@
+
 @import 'base/globals.css.scss';
 @import 'base/colors.css.scss';
 @import 'base/mixins.css.scss';
@@ -18,7 +19,6 @@
   }
 
 }
-
 
 .list-inline {
   display: flex;
@@ -58,7 +58,7 @@ span.site-name, span.site-name a {
 
 button.btn-request-option {
   padding: 3px;
-  margin: 2px 2px 16px 2px;
+  margin: 2px;
   border-color: #aaa;
 }
 
@@ -945,4 +945,27 @@ h4, .facets .facets-heading, .h4 {
 button.btn-request-options {
   margin-left: 12px;
   border: 1px solid #204d74;
+}
+
+.request-option-link {
+  cursor: pointer;
+}
+
+.request-option-list-wrapper {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  display: table;
+}
+
+.request-option-wrapper {
+  @include rounded-corners;
+  display: table;
+  width: auto;
+  float: left;
+  padding: 2px;
+}
+
+.request-option-wrapper.highlighted {
+  border: 2px solid #337ab7;
+  padding: 0px;
 }
