@@ -391,7 +391,7 @@ module PennLib
       rec.fields('944').map do |field|
         sf = field.find { |sf| sf.code == 'a' }
         sf.nil? ? nil : sf.value
-      end.compact
+      end.compact.uniq
     end
 
     def get_db_types(rec)
