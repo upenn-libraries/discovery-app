@@ -255,6 +255,7 @@ class FranklinAlmaController < ApplicationController
       if table_data.empty?
         table_data = bib_data['availability'][mmsid]['holdings'].select { |h| h['inventory_type'] == 'electronic' }
                     .sort { |a,b| cmpOnlineServices(a,b) }
+                    .reject { |p| p['activation_status'] == 'Not Available' }
                     .each_with_index
                     .map { |p,i|
                       link = "<a target='_blank' href='https://upenn.alma.exlibrisgroup.com/view/uresolver/01UPENN_INST/openurl?Force_direct=true&portfolio_pid=#{p['portfolio_pid']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com&u.ignore_date_coverage=true'>#{p['collection']}</a>"
