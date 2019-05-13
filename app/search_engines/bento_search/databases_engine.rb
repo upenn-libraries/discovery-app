@@ -65,8 +65,6 @@ class BentoSearch::DatabasesEngine
         case term.downcase[0..term.length-2]
         when 'publication'
           item.publisher = list_definitions[index]
-        when 'format/description'
-          item.format = list_definitions[index]
         when 'online resource'
           #TODO: Support multiple online resource links
           item.other_links = online_resource
