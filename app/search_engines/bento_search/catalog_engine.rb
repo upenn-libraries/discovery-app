@@ -68,7 +68,7 @@ class BentoSearch::CatalogEngine
         online_resource[Oga.parse_html(entry['summary']).at_xpath('//a/@href').text] = Oga.parse_html(entry['summary']).at_xpath('//a/text()').text.strip
       end
 
-      holdings_string = determine_holdings_status(holdings, mms_id, online_resource)
+      holdings_string = mms_id.downcase.start_with?("hathi") ? '' : determine_holdings_status(holdings, mms_id, online_resource)
 
       item.authors = entry['author'].present? ? [BentoSearch::Author.new(:display => entry['author'].first[1])] : []
 
