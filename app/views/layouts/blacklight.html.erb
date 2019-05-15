@@ -46,16 +46,16 @@
 
   <%= render partial: 'shared/ajax_modal' %>
 
-  <div id="main-container" class="<%= container_classes %>">
+  <div id="main-container" class="container-fluid">
     <%= content_tag :h1, application_name, class: 'sr-only application-heading' %>
 
     <%= render :partial=>'/flash_msg', layout: 'shared/flash_messages' %>
     <aside id="feedback">
       <div id="feedbackout" title="hide"></div>
-      <a id="feedbacklink" title="feedback" href="https://upenn.libsurveys.com/new-homepage-feedback"><span class="visually-hidden">Feedback</span></a>
+      <a id="feedbacklink" title="feedback" href="https://faq.library.upenn.edu/feedback"><span class="visually-hidden">Feedback</span></a>
     </aside>
 
-    <div class="row" style="padding-top:10px;">
+    <div class="row no-gutters">
       <%= yield %>
     </div>
   </div>

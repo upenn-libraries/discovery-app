@@ -9,14 +9,18 @@
       <%= render :partial => "bento_search/item_title", :object => item, :as => 'item' %>
 
       <div class="bento_item_body">
-
         <dl class="document-metadata dl-horizontal dl-invert">
-          <% if item.display_format.present? %>
-              <dd><%= item.display_format %></dd>
-          <% end %>
 
           <% if item.authors.present? %>
             <dd><%= item.render_authors_list %></dd>
+          <% end %>
+
+          <% if item.has_source_info? %>
+            <dd class="source-info"><%= item.render_source_info %></dd>
+          <% end %>
+
+          <% if item.display_format.present? %>
+              <dd><%= item.display_format %></dd>
           <% end %>
 
           <% if item.display_date.present? %>
@@ -27,13 +31,15 @@
             <dd><%= item.render_summary %></dd>
           <% end %>
 
-          <% if item.has_source_info? %>
-            <dd class="source-info"><%= item.render_source_info %></dd>
-          <% end %>
-
           <% if item.other_links.present? %>
             <dd><%= render_other_links(item.other_links) %></dd>
-        <% end %>
+          <% end %>
+
+          <%=  %>
+
+          <% if item.custom_data['holdings'].present? %>
+            <dd><%= link_to(item.custom_data['holdings'], "#{item.link}#franklin-availability") %></dd>
+          <% end %>
         </dl>
 
       </div>
