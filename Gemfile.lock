@@ -381,6 +381,7 @@ DEPENDENCIES
   dotenv-rails
   font-awesome-rails
   globalid (= 0.3.7)
+  httparty
   jbuilder (= 2.6.0)
   jdbc-sqlite3 (= 3.8.11.2)
   jettywrapper (= 2.0.4)
