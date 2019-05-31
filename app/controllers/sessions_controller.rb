@@ -36,6 +36,7 @@ class SessionsController < Devise::SessionsController
           session['user_group'] = response['user']['user_group']['desc']
         end
       else
+        flash[:alert] = "The credentials you have entered to authenticate are not registered in our library system. Please contact the circulation desk at vpcircdk@pobox.upenn.edu or 215-898-7566 for assistance."
         Rails.logger.error("ERROR: Got non-200 response from Alma User API, user account may not exist for id=#{id}. response=#{response}")
       end
     end
