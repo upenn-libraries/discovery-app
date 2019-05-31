@@ -102,6 +102,10 @@ table[id^="requestOptions"] tr.even, table[id^="holdingItems"] tr.even {
   background: #ececec;
 }
 
+table[id^="requestOptions"] td, table[id^="holdingItems"] td {
+  vertical-align: top;
+}
+
 /*************
 *
 * Overriding Blacklight styles
