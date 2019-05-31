@@ -98,6 +98,10 @@ div.backbutton-top {
   margin-bottom: 10px;
 }
 
+table[id^="requestOptions"] tr.even, table[id^="holdingItems"] tr.even {
+  background: #ececec;
+}
+
 /*************
 *
 * Overriding Blacklight styles

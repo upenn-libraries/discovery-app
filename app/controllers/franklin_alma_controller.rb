@@ -223,7 +223,7 @@ class FranklinAlmaController < ApplicationController
 
         if has_holding_info
           inventory_type = 'physical'
-          holding['location'] = %Q[<a href="javascript:loadItems('#{mmsid}', '#{holding['holding_id']}')">#{holding['location']} &gt;</a><br /><span class="call-number">#{holding['call_number']}</span>]
+          holding['location'] = %Q[<a href="javascript:loadItems('#{mmsid}', '#{holding['holding_id'].presence || 'ALL'}', '#{holding['location_code']}')">#{holding['location']} &gt;</a><br /><span class="call-number">#{holding['call_number']}</span>]
           holding['availability'] = "<span class='load-holding-details' data-mmsid='#{mmsid}' data-holdingid='#{holding['holding_id']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/></span>"
         elsif has_portfolio_info
           inventory_type = 'electronic'
