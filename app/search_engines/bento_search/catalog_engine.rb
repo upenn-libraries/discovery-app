@@ -110,7 +110,7 @@ class BentoSearch::CatalogEngine
     number_of_print = holdings.dig("availability",mms_id,"holdings")&.select { |p| p['availability'] == 'available' }&.length || 0
     number_of_online = holdings.dig("availability",mms_id,"holdings")&.select { |p| p['activation_status']&.downcase == 'available' } &.length || 0
 
-    holdings_string = "See request options" if (holdings_length == 0) || (number_of_print == 0 && number_of_online == 0)
+    holdings_string = "See request options" if ((holdings_length == 0) || (number_of_print == 0 && number_of_online == 0)) && online_resource.empty?
     holdings_string = "#{number_of_print} #{holdings_type} #{"option".pluralize(number_of_print)}" if number_of_print > 1
     holdings_string = "Available - #{holdings.dig("availability",mms_id,"holdings",0,"library")} #{holdings.dig("availability",mms_id,"holdings",0,"call_number")}" if number_of_print == 1
     holdings_string = "#{number_of_online} #{holdings_type} #{"option".pluralize(number_of_online)}" if number_of_online > 0 && online_resource.empty?
