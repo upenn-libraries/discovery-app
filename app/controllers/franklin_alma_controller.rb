@@ -356,6 +356,7 @@ class FranklinAlmaController < ApplicationController
 
   def request_options
     userid = session['id'].presence || nil
+    usergroup = session['user_group'].presence
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
     options = {:user_id => userid, :consider_dlr => true}
@@ -416,12 +417,13 @@ class FranklinAlmaController < ApplicationController
         end
       end
     } .compact
+      .uniq # Required due to request options API bug returning duplicate options
       .sort { |a,b| cmpRequestOptions(a,b) }
-
     # TODO: Remove when GES is updated in Alma & request option API is fixed (again)
     results.reject! { |option| 
-      ['Send Penn Libraries a question','Books By Mail'].member?(option[:option_name])
+      ['Send Penn Libraries a question','Books By Mail'].member?(option[:option_name]) || (option[:option_name] == 'FacultyEXPRESS' && usergroup != 'Faculty Express')
     }
+
 
     # TODO: Remove when GES is updated in Alma
     results.each { |option|
