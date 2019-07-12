@@ -312,7 +312,7 @@ class FranklinAlmaController < ApplicationController
 
     table_data = response_data['item'].map { |item|
       data = item['item_data']
-      unless(policies.has_key?(data['policy']['value']) || data['base_status']['desc'] != "Item in place")
+      unless(policies.has_key?(data['policy']['value']) || data['base_status']['desc'] != "Item in place" || userid.nil?)
         policies[data['policy']['value']] = nil
         pids_to_check << [data['pid'], data['policy']['value']]
       end
@@ -325,7 +325,7 @@ class FranklinAlmaController < ApplicationController
       
       table_data += response_data['item'].map { |item|
         data = item['item_data']
-        unless(policies.has_key?(data['policy']['value']) || data['base_status']['desc'] != "Item in place")
+        unless(policies.has_key?(data['policy']['value']) || data['base_status']['desc'] != "Item in place" || userid.nil?)
           policies[data['policy']['value']] = nil
           pids_to_check << [data['pid'], data['policy']['value']]
         end
@@ -338,6 +338,7 @@ class FranklinAlmaController < ApplicationController
       response_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items_item_pid_request_options, :get, params.merge(options))
       not_requestable = true
       if response_data.body != '{}'
+
         not_requestable = response_data['request_option'].select { |option|
           option['type']['value'] == 'HOLD'
         }.empty?
