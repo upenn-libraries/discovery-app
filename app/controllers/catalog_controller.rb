@@ -73,6 +73,14 @@ class CatalogController < ApplicationController
     end
   end
 
+  FACET_PAGINATION_THRESHOLD=50
+  before_action only: :facet do
+    if params['facet.page'] && params['facet.page'].to_i > FACET_PAGINATION_THRESHOLD
+      flash[:error] = "You have paginated too deep into facets. Please contact us using the feedback form if you have a need to view facets past page #{FACET_PAGINATION_THRESHOLD}."
+      redirect_to root_path
+    end
+  end
+
   configure_blacklight do |config|
     # default advanced config values
     config.advanced_search ||= Blacklight::OpenStructWithHashAccess.new
