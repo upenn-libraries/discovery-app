@@ -10,7 +10,11 @@ module ApplicationHelper
   end
 
   def databases_results_url(query)
-    url = "#{search_catalog_path(q: query, search_field: 'keyword')}&f%5Bformat_f%5D%5B%5D=Database+%26+Article+Index"
+    if query.present?
+      url = "#{search_catalog_path(q: query, search_field: 'keyword')}&f%5Bformat_f%5D%5B%5D=Database+%26+Article+Index"
+    else
+      url = "#{search_catalog_path(q:'')}search_field=keyword&f%5Bformat_f%5D%5B%5D=Database+%26+Article+Index"
+    end
     return url
   end
 
