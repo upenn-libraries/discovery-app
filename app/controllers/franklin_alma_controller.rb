@@ -250,7 +250,7 @@ class FranklinAlmaController < ApplicationController
       table_data = bib_data['availability'][mmsid]['holdings'].select { |h| h['inventory_type'] == 'physical' }
                    .sort { |a,b| cmpHoldingLocations(a,b) }
                    .each_with_index
-                   .map { |h,i| [i, h['location'], h['availability'], "<span id='notes-#{h['holding_id']}'></span>", policy || h['due_date_policy'], h['links'], h['holding_id'], h['item_pid']] }
+                   .map { |h,i| [i, h['location'], h['availability'], (has_holding_info ? "" : "<span class='load-holding-details' data-mmsid='#{mmsid}' data-holdingid='#{h['holding_id']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/>") + "</span><span id='notes-#{h['holding_id']}'></span>", policy || h['due_date_policy'], h['links'], h['holding_id'], h['item_pid']] }
 
       if table_data.empty?
         table_data = bib_data['availability'][mmsid]['holdings'].select { |h| h['inventory_type'] == 'electronic' }
