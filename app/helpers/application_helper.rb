@@ -54,7 +54,7 @@ module ApplicationHelper
           'href': url,
           'class': "#{tab_id}-anchor"
       }
-    elsif params[:q] || !(controller_name == 'catalog' && action_name == 'landing')
+    elsif params[:q] || tab_id == 'databases' || !(controller_name == 'catalog' && action_name == 'landing')
       attrs = {
           'href': url
       }
