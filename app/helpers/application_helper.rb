@@ -33,7 +33,7 @@ module ApplicationHelper
     on_bento_page = (controller_name == 'catalog') && ['landing', 'bento'].member?(action_name)
 
     # databases search, falls through to catalog but different tab should be highlighted
-    on_databases_page = params['f'].present? ? (controller_name == 'catalog') && ['index', 'bento'].member?(action_name) && params['f']['format_f'] == ["Database & Article Index"] : false
+    on_databases_page = params.dig('f', 'format_f')&.include?('Database & Article Index')
 
     if tab_id == 'bento' && on_bento_page
       'active'
