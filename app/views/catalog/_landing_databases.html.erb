@@ -1,9 +1,3 @@
 <div id="content" class="<%= main_content_classes %>">
-  <% unless has_search_parameters? %>
-    <%# if there are no input/search related params, display the "database" partial -%>
-    <%= render 'databases' %>
-    <%= render 'shared/sitelinks_search_box' %>
-  <% else %>
-    <%= render 'search_results' %>
-  <% end %>
+  <%= render 'search_results' %>
 </div>

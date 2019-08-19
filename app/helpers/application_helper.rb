@@ -10,7 +10,9 @@ module ApplicationHelper
   end
 
   def databases_results_url(query)
-    url = "#{search_catalog_path(q: query, search_field: 'keyword')}&f%5Bformat_f%5D%5B%5D=Database+%26+Article+Index"
+    if !params.dig('f', 'format_f')&.include?('Database & Article Index')
+      url = path_for_facet('format_f', 'Database & Article Index')
+    end
     return url
   end
 
@@ -29,7 +31,7 @@ module ApplicationHelper
     on_bento_page = (controller_name == 'catalog') && ['landing', 'bento'].member?(action_name)
 
     # databases search, falls through to catalog but different tab should be highlighted
-    on_databases_page = params['f'].present? ? (controller_name == 'catalog') && ['index', 'bento'].member?(action_name) && params['f']['format_f'] == ["Database & Article Index"] : false
+    on_databases_page = params.dig('f', 'format_f')&.include?('Database & Article Index')
 
     if tab_id == 'bento' && on_bento_page
       'active'
@@ -52,7 +54,7 @@ module ApplicationHelper
           'href': url,
           'class': "#{tab_id}-anchor"
       }
-    elsif params[:q] || !(controller_name == 'catalog' && action_name == 'landing')
+    elsif params[:q] || tab_id == 'databases' || !(controller_name == 'catalog' && action_name == 'landing')
       attrs = {
           'href': url
       }
