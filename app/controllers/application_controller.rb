@@ -40,9 +40,4 @@ class ApplicationController < ActionController::Base
     render :template => "/known_issues"
   end
 
-  def databases_empty_url
-    url = "#{search_catalog_path}&f%5Bformat_f%5D%5B%5D=Database+%26+Article+Index"
-    redirect_to url
-  end
-
 end
