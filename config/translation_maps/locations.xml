@@ -185,6 +185,11 @@
   <library>LIBRA</library>
   <display>LIBRA - Athenaeum of Philadelphia</display>
 </location>
+<location location_code="athstorcirc">
+  <specific_location>LIBRA - Athenaeum of Philadelphia Circulating</specific_location>
+  <library>LIBRA</library>
+  <display>LIBRA - Athenaeum of Philadelphia Circulating</display>
+</location>
 <location location_code="biom">
   <specific_location>Biomedical Library</specific_location>
   <library>Health Sciences Libraries</library>
@@ -401,6 +406,18 @@
   <library>Library at the Katz Center for Advanced Judaic Studies</library>
   <display>Library at the Katz Center - Rare Book Incunabula</display>
 </location>
+<location location_code="cjsinproc">
+  <specific_location>Library at the Katz Center - Stacks</specific_location>
+  <library>Special Collections</library>
+  <library>Library at the Katz Center for Advanced Judaic Studies</library>
+  <display>Library at the Katz Center - Processing</display>
+</location>
+<location location_code="cjsinprocn">
+  <specific_location>Library at the Katz Center - Rare Book Room</specific_location>
+  <library>Special Collections</library>
+  <library>Library at the Katz Center for Advanced Judaic Studies</library>
+  <display>Library at the Katz Center - Processing Non-Circulating</display>
+</location>
 <location location_code="cjsmar">
   <specific_location>Library at the Katz Center - Stacks</specific_location>
   <library>Special Collections</library>
@@ -567,36 +584,42 @@
   <display>Van Pelt - Classics Resource Room (301)</display>
 </location>
 <location location_code="dent">
-  <specific_location>Dental Library - Stacks</specific_location>
+  <specific_location>Levy Dental Medicine Library - Stacks</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Dental Library</library>
-  <display>Dental Library - Stacks</display>
+  <library>Levy Dental Medicine Library</library>
+  <display>Levy Dental Medicine Library - Stacks</display>
 </location>
 <location location_code="dentrare">
-  <specific_location>Dental Library - Rare Books</specific_location>
+  <specific_location>Levy Dental Medicine Library - Rare Books</specific_location>
   <library>Special Collections</library>
   <library>Health Sciences Libraries</library>
-  <library>Dental Library</library>
-  <display>Dental Library - Rare Books</display>
+  <library>Levy Dental Medicine Library</library>
+  <display>Levy Dental Medicine Library - Rare Books</display>
 </location>
 <location location_code="dentrefe">
-  <specific_location>Dental Library - Reference</specific_location>
+  <specific_location>Levy Dental Medicine Library - Reference</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Dental Library</library>
-  <display>Dental Library - Reference</display>
+  <library>Levy Dental Medicine Library</library>
+  <display>Levy Dental Medicine Library - Reference</display>
 </location>
 <location location_code="dentrese">
-  <specific_location>Dental Library - Reserve</specific_location>
+  <specific_location>Levy Dental Medicine Library - Reserve</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Dental Library</library>
+  <library>Levy Dental Medicine Library</library>
   <library>Reserve</library>
-  <display>Dental Library - Reserve</display>
+  <display>Levy Dental Medicine Library - Reserve</display>
+</location>
+<location location_code="dentshils">
+  <specific_location>Levy Dental Medicine Library - Shils Boardroom</specific_location>
+  <library>Health Sciences Libraries</library>
+  <library>Levy Dental Medicine Library</library>
+  <display>Levy Dental Medicine Library - Shils Boardroom</display>
 </location>
 <location location_code="dncirc">
-  <specific_location>Dental Library - Circulation</specific_location>
+  <specific_location>Levy Dental Medicine Library - Circulation</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Dental Library</library>
-  <display>Dental Library - Circulation</display>
+  <library>Levy Dental Medicine Library</library>
+  <display>Levy Dental Medicine Library - Circulation</display>
 </location>
 <location location_code="easiacom">
   <specific_location>Van Pelt - East Asia Compact Shelving</specific_location>
@@ -769,6 +792,12 @@
   <library>LIBRA</library>
   <display>LIBRA</display>
 </location>
+<location location_code="lippbtrend">
+  <specific_location>Lippincott Library - Business Trends</specific_location>
+  <library>Van Pelt-Dietrich Library Center</library>
+  <library>Lippincott Library</library>
+  <display>Lippincott Library - Business Trends</display>
+</location>
 <location location_code="lippbusc">
   <specific_location>Lippincott Library - Business Collection</specific_location>
   <library>Van Pelt-Dietrich Library Center</library>
@@ -902,57 +931,62 @@
   <display>Engineering Library - Reserve</display>
 </location>
 <location location_code="muse">
-  <specific_location>University Museum Library</specific_location>
-  <library>University Museum Library</library>
-  <display>University Museum Library</display>
+  <specific_location>Penn Museum Library</specific_location>
+  <library>Penn Museum Library</library>
+  <display>Penn Museum Library</display>
 </location>
 <location location_code="musearch">
-  <specific_location>University Museum Archives</specific_location>
-  <library>University Museum Archives</library>
-  <display>University Museum Archives, 215-898-8304</display>
+  <specific_location>Penn Museum Archives</specific_location>
+  <library>Penn Museum Archives</library>
+  <display>Penn Museum Archives, 215-898-8304</display>
 </location>
 <location location_code="musebrin">
-  <specific_location>University Museum Library - Brinton Collection</specific_location>
+  <specific_location>Penn Museum Library - Brinton Collection</specific_location>
   <library>Special Collections</library>
-  <library>University Museum Library</library>
-  <display>University Museum Library - Brinton Collection</display>
+  <library>Penn Museum Library</library>
+  <display>Penn Museum Library - Brinton Collection</display>
 </location>
 <location location_code="musedesk">
-  <specific_location>University Museum Library - Circulation</specific_location>
-  <library>University Museum Library</library>
-  <display>University Museum Library - Desk</display>
+  <specific_location>Penn Museum Library - Circulation</specific_location>
+  <library>Penn Museum Library</library>
+  <display>Penn Museum Library - Desk</display>
 </location>
 <location location_code="museegyp">
-  <specific_location>University Museum Library - Egyptian</specific_location>
-  <library>University Museum Library</library>
-  <display>University Museum Library - Egyptian Collection</display>
+  <specific_location>Penn Museum Library - Egyptian</specific_location>
+  <library>Penn Museum Library</library>
+  <display>Penn Museum Library - Egyptian Collection</display>
+</location>
+<location location_code="museegypov">
+  <specific_location>Penn Museum Library - Egyptian Oversize</specific_location>
+  <library>Penn Museum Library</library>
+  <display>Penn Museum Library - Egyptian Oversize</display>
 </location>
 <location location_code="musekolb">
-  <specific_location>University Museum Library - Kolb</specific_location>
-  <library>University Museum Library</library>
-  <display>University Museum Library - Kolb</display>
+  <specific_location>Penn Museum Library - Kolb</specific_location>
+  <library>Penn Museum Library</library>
+  <display>Penn Museum Library - Kolb</display>
 </location>
 <location location_code="muselock">
-  <specific_location>University Museum Library - Locked</specific_location>
+  <specific_location>Penn Museum Library - Locked</specific_location>
   <library>Special Collections</library>
-  <library>University Museum Library</library>
-  <display>University Museum Library - Locked Cases (ask staff)</display>
+  <library>Penn Museum Library</library>
+  <display>Penn Museum Library - Locked Cases (ask staff)</display>
 </location>
 <location location_code="musemedia">
-    <specific_location>University Museum Library - Media</specific_location>
-    <library>University Museum Library</library>
-    <display>University Museum Library - Media</display>
+    <specific_location>Penn Museum Library - Media</specific_location>
+    <library>Penn Museum Library</library>
+    <display>Penn Museum Library - Media</display>
 </location>
 <location location_code="muserefe">
-  <specific_location>University Museum Library - Reference</specific_location>
-  <library>University Museum Library</library>
-  <display>University Museum Library - Reference</display>
+  <specific_location>Penn Museum Library - Reference</specific_location>
+  <library>Penn Museum Library</library>
+  <display>Penn Museum Library - Reference</display>
 </location>
 <location location_code="muserese">
-  <specific_location>University Museum Library - Reserve</specific_location>
-  <library>University Museum Library</library>
+  <specific_location>Penn Museum Library - Reserve</specific_location>
+  <library>Penn Museum Library</library>
   <library>Reserve</library>
-  <display>University Museum Library - Reserve</display>
+  <display>Penn Museum Library - Reserve</display>
 </location>
 <location location_code="musiclist">
   <specific_location>Van Pelt - Ormandy Center</specific_location>
@@ -967,7 +1001,7 @@
 </location>
 <location location_code="musicsem">
   <specific_location>Van Pelt - Marian Anderson Music Study Center</specific_location>
-  <library>Van Pelt-Dietrich Library Center</library>
+  <library>Van Pelt-Dietrich Library Center</library> 
   <display>Van Pelt - Marian Anderson Music Study Center (452)</display>
 </location>
 <location location_code="musictech">
@@ -975,57 +1009,57 @@
 </location>
 <location location_code="musicup">
   <specific_location>Van Pelt - Ormandy Center</specific_location>
-  <library>Van Pelt-Dietrich Library Center</library>
+  <library>Van Pelt-Dietrich Library Center</library> 
   <display>Van Pelt - Ormandy University Performances</display>
 </location>
 <location location_code="musinwbk">
   <specific_location>Van Pelt - Music Library New Book Shelf</specific_location>
-  <library>Van Pelt-Dietrich Library Center</library>
+  <library>Van Pelt-Dietrich Library Center</library> 
   <display>Van Pelt - Music Library New Book Shelf</display>
 </location>
 <location location_code="musisemres">
   <specific_location>Van Pelt - Marian Anderson Study Center Reserve</specific_location>
-  <library>Van Pelt-Dietrich Library Center</library>
+  <library>Van Pelt-Dietrich Library Center</library> 
   <library>Reserve</library>
   <display>Van Pelt - Marian Anderson Study Center Reserve</display>
 </location>
 <location location_code="newb">
-  <specific_location>New Bolton Library</specific_location>
+  <specific_location>Veterinary: du Pont Library (New Bolton)</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>New Bolton Library</library>
-  <display>New Bolton Library</display>
+  <library>Veterinary: du Pont Library (New Bolton)</library>
+  <display>Veterinary: du Pont Library (New Bolton)</display>
 </location>
 <location location_code="newbcirc">
-  <specific_location>New Bolton Library - Circulation Desk</specific_location>
+  <specific_location>Veterinary: du Pont Library (New Bolton) - Circulation Desk</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>New Bolton Library</library>
-  <display>New Bolton Library - Circulation Desk</display>
+  <library>Veterinary: du Pont Library (New Bolton)</library>
+  <display>Veterinary: du Pont Library (New Bolton) - Circulation Desk</display>
 </location>
 <location location_code="newbofc">
-  <specific_location>New Bolton Library - Office</specific_location>
+  <specific_location>Veterinary: du Pont Library (New Bolton) - Office</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>New Bolton Library</library>
-  <display>New Bolton Library - Office</display>
+  <library>Veterinary: du Pont Library (New Bolton)</library>
+  <display>Veterinary: du Pont Library (New Bolton) - Office</display>
 </location>
 <location location_code="newbrare">
-  <specific_location>Rare Book &amp; Manuscript Library - Fairman Rogers Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - Fairman Rogers Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Fairman Rogers Coll.</display>
+  <display>Kislak Center for Special Collections - Fairman Rogers Coll.</display>
 </location>
 <location location_code="newbrefe">
-  <specific_location>New Bolton Library - Reference</specific_location>
+  <specific_location>Veterinary: du Pont Library (New Bolton) - Reference</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>New Bolton Library</library>
-  <display>New Bolton Library - Reference</display>
+  <library>Veterinary: du Pont Library (New Bolton)</library>
+  <display>Veterinary: du Pont Library (New Bolton) - Reference</display>
 </location>
 <location location_code="newbrese">
-  <specific_location>New Bolton Library - Reserve</specific_location>
+  <specific_location>Veterinary: du Pont Library (New Bolton) - Reserve</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>New Bolton Library</library>
+  <library>Veterinary: du Pont Library (New Bolton)</library>
   <library>Reserve</library>
-  <display>New Bolton Library - Reserve</display>
+  <display>Veterinary: du Pont Library (New Bolton) - Reserve</display>
 </location>
 <location location_code="nursarch">
   <specific_location>Nursing Archives</specific_location>
@@ -1051,8 +1085,8 @@
 <location location_code="oodental">
   <specific_location>On Order</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Dental Library</library>
-  <display>Ordered for Dental Library</display>
+  <library>Levy Dental Medicine Library</library>
+  <display>Ordered for Levy Dental Medicine Library</display>
 </location>
 <location location_code="ooeastasia">
   <specific_location>On Order</specific_location>
@@ -1081,7 +1115,7 @@
 </location>
 <location location_code="oomuse">
   <specific_location>On Order</specific_location>
-  <library>University Museum Library</library>
+  <library>Penn Museum Library</library>
   <display>Ordered for Museum Library</display>
 </location>
 <location location_code="oomusic">
@@ -1092,7 +1126,7 @@
 <location location_code="oonewbolt">
   <specific_location>On Order</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>New Bolton Library</library>
+  <library>Veterinary: du Pont Library (New Bolton)</library>
   <display>Ordered for New Bolton Library</display>
 </location>
 <location location_code="ooormandy">
@@ -1113,7 +1147,7 @@
 <location location_code="oovete">
   <specific_location>On Order</specific_location>
   <library>Health Sciences Libraries</library>
-  <display>Ordered for Veterinary Library</display>
+  <display>Ordered for Veterinary: Atwood Library (Campus)</display>
 </location>
 <location location_code="ooyarn">
   <specific_location>On Order</specific_location>
@@ -1121,102 +1155,102 @@
   <display>Ordered for Yarnall collection</display>
 </location>
 <location location_code="pah">
-  <specific_location>Pennsylvania Hospital Library</specific_location>
+  <specific_location>Pennsylvania Hospital Medical Library</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Pennsylvania Hospital Library</library>
-  <display>Pennsylvania Hospital Library</display>
+  <library>Pennsylvania Hospital Medical Library</library>
+  <display>Pennsylvania Hospital Medical Library</display>
 </location>
 <location location_code="paharch">
-  <specific_location>Pennsylvania Hospital Library - Archivist's Office</specific_location>
+  <specific_location>Pennsylvania Hospital Medical Library - Archivist's Office</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Pennsylvania Hospital Library</library>
-  <display>Pennsylvania Hospital Library - Archivist's Office</display>
+  <library>Pennsylvania Hospital Medical Library</library>
+  <display>Pennsylvania Hospital Medical Library - Archivist's Office</display>
 </location>
 <location location_code="pahcirc">
-  <specific_location>Pennsylvania Hospital Library - Circulation</specific_location>
+  <specific_location>Pennsylvania Hospital Medical Library - Circulation</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Pennsylvania Hospital Library</library>
-  <display>Pennsylvania Hospital Library - Circulation</display>
+  <library>Pennsylvania Hospital Medical Library</library>
+  <display>Pennsylvania Hospital Medical Library - Circulation</display>
 </location>
 <location location_code="pahhall">
-  <specific_location>Pennsylvania Hospital Library - Hall Closet</specific_location>
+  <specific_location>Pennsylvania Hospital Medical Library - Hall Closet</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Pennsylvania Hospital Library</library>
-  <display>Pennsylvania Hospital Library - Hall Closet</display>
+  <library>Pennsylvania Hospital Medical Library</library>
+  <display>Pennsylvania Hospital Medical Library - Hall Closet</display>
 </location>
 <location location_code="pahhc">
-  <specific_location>Pennsylvania Hospital Library - Historic Collection</specific_location>
+  <specific_location>Pennsylvania Hospital Medical Library - Historic Collection</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Pennsylvania Hospital Library</library>
-  <display>Pennsylvania Hospital Library - Historic Collection</display>
+  <library>Pennsylvania Hospital Medical Library</library>
+  <display>Pennsylvania Hospital Medical Library - Historic Collection</display>
 </location>
 <location location_code="pahhist">
-  <specific_location>Pennsylvania Hospital Library - History</specific_location>
+  <specific_location>Pennsylvania Hospital Medical Library - History</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Pennsylvania Hospital Library</library>
-  <display>Pennsylvania Hospital Library - History</display>
+  <library>Pennsylvania Hospital Medical Library</library>
+  <display>Pennsylvania Hospital Medical Library - History</display>
 </location>
 <location location_code="pahiph">
-  <specific_location>Pennsylvania Hospital Library - IPH Collection</specific_location>
+  <specific_location>Pennsylvania Hospital Medical Library - IPH Collection</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Pennsylvania Hospital Library</library>
-  <display>Pennsylvania Hospital Library - IPH Collection</display>
+  <library>Pennsylvania Hospital Medical Library</library>
+  <display>Pennsylvania Hospital Medical Library - IPH Collection</display>
 </location>
 <location location_code="pahiphf">
-  <specific_location>Pennsylvania Hospital Library - IPH Collection</specific_location>
+  <specific_location>Pennsylvania Hospital Medical Library - IPH Collection</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Pennsylvania Hospital Library</library>
-  <display>Pennsylvania Hospital Library - IPH Collection Freud</display>
+  <library>Pennsylvania Hospital Medical Library</library>
+  <display>Pennsylvania Hospital Medical Library - IPH Collection Freud</display>
 </location>
 <location location_code="pahiphhist">
-  <specific_location>Pennsylvania Hospital Library - IPH Collection</specific_location>
+  <specific_location>Pennsylvania Hospital Medical Library - IPH Collection</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Pennsylvania Hospital Library</library>
-  <display>Pennsylvania Hospital Library - IPH Collection History</display>
+  <library>Pennsylvania Hospital Medical Library</library>
+  <display>Pennsylvania Hospital Medical Library - IPH Collection History</display>
 </location>
 <location location_code="pahiphref">
-  <specific_location>Pennsylvania Hospital Library - IPH Collection</specific_location>
+  <specific_location>Pennsylvania Hospital Medical Library - IPH Collection</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Pennsylvania Hospital Library</library>
-  <display>Pennsylvania Hospital Library - IPH Collection Reference</display>
+  <library>Pennsylvania Hospital Medical Library</library>
+  <display>Pennsylvania Hospital Medical Library - IPH Collection Reference</display>
 </location>
 <location location_code="pahiphrr">
-  <specific_location>Pennsylvania Hospital Library - IPH Collection</specific_location>
+  <specific_location>Pennsylvania Hospital Medical Library - IPH Collection</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Pennsylvania Hospital Library</library>
-  <display>Pennsylvania Hospital Library - IPH Collection Reading Room</display>
+  <library>Pennsylvania Hospital Medical Library</library>
+  <display>Pennsylvania Hospital Medical Library - IPH Collection Reading Room</display>
 </location>
 <location location_code="pahiphstk">
-  <specific_location>Pennsylvania Hospital Library - IPH Collection</specific_location>
+  <specific_location>Pennsylvania Hospital Medical Library - IPH Collection</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Pennsylvania Hospital Library</library>
-  <display>Pennsylvania Hospital Library - IPH Collection Psych Stacks</display>
+  <library>Pennsylvania Hospital Medical Library</library>
+  <display>Pennsylvania Hospital Medical Library - IPH Collection Psych Stacks</display>
 </location>
 <location location_code="pahref">
-  <specific_location>Pennsylvania Hospital Library - Reference</specific_location>
+  <specific_location>Pennsylvania Hospital Medical Library - Reference</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Pennsylvania Hospital Library</library>
-  <display>Pennsylvania Hospital Library - Reference</display>
+  <library>Pennsylvania Hospital Medical Library</library>
+  <display>Pennsylvania Hospital Medical Library - Reference</display>
 </location>
 <location location_code="pahres">
-  <specific_location>Pennsylvania Hospital Library - Reserve</specific_location>
+  <specific_location>Pennsylvania Hospital Medical Library - Reserve</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Pennsylvania Hospital Library</library>
+  <library>Pennsylvania Hospital Medical Library</library>
   <library>Reserve</library>
-  <display>Pennsylvania Hospital Library - Reserve</display>
+  <display>Pennsylvania Hospital Medical Library - Reserve</display>
 </location>
 <location location_code="pahresrm">
-  <specific_location>Pennsylvania Hospital Library - Reserve Room</specific_location>
+  <specific_location>Pennsylvania Hospital Medical Library - Reserve Room</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Pennsylvania Hospital Library</library>
+  <library>Pennsylvania Hospital Medical Library</library>
   <library>Reserve</library>
-  <display>Pennsylvania Hospital Library - Reserve Room</display>
+  <display>Pennsylvania Hospital Medical Library - Reserve Room</display>
 </location>
 <location location_code="pahstk">
-  <specific_location>Pennsylvania Hospital Library - Stacks</specific_location>
+  <specific_location>Pennsylvania Hospital Medical Library - Stacks</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Pennsylvania Hospital Library</library>
-  <display>Pennsylvania Hospital Library - Stacks</display>
+  <library>Pennsylvania Hospital Medical Library</library>
+  <display>Pennsylvania Hospital Medical Library - Stacks</display>
 </location>
 <location location_code="religious">
   <specific_location>Van Pelt - Medieval Studies Resource Room</specific_location>
@@ -1256,340 +1290,340 @@
   <display>Van Pelt - South Asia Reserve (551)</display>
 </location>
 <location location_code="scg123">
-  <specific_location>Rare Book &amp; Manuscript Library - Rare Book Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - Rare Book Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Rare Book Collection 123</display>
+  <display>Kislak Center for Special Collections - Rare Book Collection 123</display>
 </location>
 <location location_code="sc1100c">
-  <specific_location>Rare Book &amp; Manuscript Library - 1100C Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - 1100C Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - 1100C Collection</display>
+  <display>Kislak Center for Special Collections - 1100C Collection</display>
 </location>
 <location location_code="scadams">
-  <specific_location>Rare Book &amp; Manuscript Library - Adams Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - Adams Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Adams Collection</display>
+  <display>Kislak Center for Special Collections - Adams Collection</display>
 </location>
 <location location_code="scartbk">
-  <specific_location>Rare Book &amp; Manuscript Library - Artists' Books</specific_location>
+  <specific_location>Kislak Center for Special Collections - Artists' Books</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Artists' Books</display>
+  <display>Kislak Center for Special Collections - Artists' Books</display>
 </location>
     <location location_code="scbanks">
-        <specific_location>Rare Book &amp; Manuscript Library - Joanna Banks Collection</specific_location>
+        <specific_location>Kislak Center for Special Collections - Joanna Banks Collection</specific_location>
         <library>Special Collections</library>
-        <library>Rare Book &amp; Manuscript Library</library>
+        <library>Kislak Center for Special Collections</library>
         <library>Van Pelt-Dietrich Library Center</library>
-        <display>Rare Book &amp; Manuscript Library - Joanna Banks Collection</display>
+        <display>Kislak Center for Special Collections - Joanna Banks Collection</display>
     </location>
 <location location_code="scblank">
-  <specific_location>Rare Book &amp; Manuscript Library - Blank Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - Blank Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Blank Collection</display>
+  <display>Kislak Center for Special Collections - Blank Collection</display>
 </location>
 <location location_code="scbyron">
-  <specific_location>Rare Book &amp; Manuscript Library - Byron Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - Byron Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Byron Collection</display>
+  <display>Kislak Center for Special Collections - Byron Collection</display>
 </location>
 <location location_code="sccanvas">
-  <specific_location>Rare Book &amp; Manuscript Library - Canvassing Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - Canvassing Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Canvassing Collection</display>
+  <display>Kislak Center for Special Collections - Canvassing Collection</display>
 </location>
 <location location_code="sccomics">
-  <specific_location>Rare Book &amp; Manuscript Library - Comics Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - Comics Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Comics Collection</display>
+  <display>Kislak Center for Special Collections - Comics Collection</display>
 </location>
 <location location_code="sccurt">
-  <specific_location>Rare Book &amp; Manuscript Library - Curtis Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - Curtis Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Curtis Collection</display>
+  <display>Kislak Center for Special Collections - Curtis Collection</display>
 </location>
 <location location_code="scdech">
-  <specific_location>Rare Book &amp; Manuscript Library - Dechert Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - Dechert Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Dechert Collection</display>
+  <display>Kislak Center for Special Collections - Dechert Collection</display>
 </location>
 <location location_code="scdethou">
-  <specific_location>Rare Book &amp; Manuscript Library - De Thou Library</specific_location>
+  <specific_location>Kislak Center for Special Collections - De Thou Library</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - De Thou Library</display>
+  <display>Kislak Center for Special Collections - De Thou Library</display>
 </location>
 <location location_code="scdreis">
-  <specific_location>Rare Book &amp; Manuscript Library - Dreiser Library</specific_location>
+  <specific_location>Kislak Center for Special Collections - Dreiser Library</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Dreiser Library</display>
+  <display>Kislak Center for Special Collections - Dreiser Library</display>
 </location>
 <location location_code="scdrey">
-  <specific_location>Rare Book &amp; Manuscript Library - Dreyfus Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - Dreyfus Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Dreyfus Collection</display>
+  <display>Kislak Center for Special Collections - Dreyfus Collection</display>
 </location>
 <location location_code="scelias">
-  <specific_location>Rare Book &amp; Manuscript Library - Swift's Reading Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - Swift's Reading Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Swift's Reading Collection</display>
+  <display>Kislak Center for Special Collections - Swift's Reading Collection</display>
 </location>
 <location location_code="scelz">
-  <specific_location>Rare Book &amp; Manuscript Library - Elzevier Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - Elzevier Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Elzevier Collection</display>
+  <display>Kislak Center for Special Collections - Elzevier Collection</display>
 </location>
 <location location_code="scfast">
-  <specific_location>Rare Book &amp; Manuscript Library - Fast Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - Fast Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Fast Collection</display>
+  <display>Kislak Center for Special Collections - Fast Collection</display>
 </location>
 <location location_code="scforr">
-  <specific_location>Rare Book &amp; Manuscript Library - Forrest Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - Forrest Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Forrest Collection</display>
+  <display>Kislak Center for Special Collections - Forrest Collection</display>
 </location>
 <location location_code="scfoun">
-  <specific_location>Rare Book &amp; Manuscript Library - Founders Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - Founders Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Founders Collection</display>
+  <display>Kislak Center for Special Collections - Founders Collection</display>
 </location>
 <location location_code="scfreed">
   <specific_location>Freedman Jewish Sound Archives</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
   <display>Van Pelt - Freedman Jewish Sound Archives</display>
 </location>
 <location location_code="scfurn">
-  <specific_location>Rare Book &amp; Manuscript Library - Furness Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - Furness Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Furness Collection</display>
+  <display>Kislak Center for Special Collections - Furness Collection</display>
 </location>
 <location location_code="scfurnlib">
-  <specific_location>Rare Book &amp; Manuscript Library - Furness Shakespeare Library (Van Pelt 628)</specific_location>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <specific_location>Kislak Center for Special Collections - Furness Shakespeare Library (Van Pelt 628)</specific_location>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Furness Shakespeare Library (Van Pelt 628)</display>
+  <display>Kislak Center for Special Collections - Furness Shakespeare Library (Van Pelt 628)</display>
 </location>
 <location location_code="scfurnst">
-  <specific_location>Rare Book &amp; Manuscript Library - Furness Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - Furness Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Furness Storage</display>
+  <display>Kislak Center for Special Collections - Furness Storage</display>
 </location>
 <location location_code="scgull">
-  <specific_location>Rare Book &amp; Manuscript Library - Gulliver's Travels Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - Gulliver's Travels Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Gulliver's Travels Collection</display>
+  <display>Kislak Center for Special Collections - Gulliver's Travels Collection</display>
 </location>
 <location location_code="scinc">
-  <specific_location>Rare Book &amp; Manuscript Library - Incunables</specific_location>
+  <specific_location>Kislak Center for Special Collections - Incunables</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Incunables</display>
+  <display>Kislak Center for Special Collections - Incunables</display>
 </location>
 <location location_code="sclea">
-  <specific_location>Rare Book &amp; Manuscript Library - Lea Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - Lea Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Lea Collection</display>
+  <display>Kislak Center for Special Collections - Lea Collection</display>
 </location>
 <location location_code="scmap">
-  <specific_location>Rare Book &amp; Manuscript Library - Rare Book Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - Rare Book Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Rare Book Collection</display>
+  <display>Kislak Center for Special Collections - Rare Book Collection</display>
 </location>
 <location location_code="scmss">
-  <specific_location>Rare Book &amp; Manuscript Library - Manuscripts</specific_location>
+  <specific_location>Kislak Center for Special Collections - Manuscripts</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Manuscripts</display>
+  <display>Kislak Center for Special Collections - Manuscripts</display>
 </location>
 <location location_code="scmst">
-  <specific_location>Rare Book &amp; Manuscript Library - Manuscripts Storage</specific_location>
+  <specific_location>Kislak Center for Special Collections - Manuscripts Storage</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Manuscripts Storage, contact <a href="mailto:shawcros@pobox.upenn.edu,ameyh@pobox.upenn.edu">Manuscripts staff</a></display>
+  <display>Kislak Center for Special Collections - Manuscripts Storage, contact <a href="mailto:shawcros@pobox.upenn.edu,ameyh@pobox.upenn.edu">Manuscripts staff</a></display>
 </location>
 <location location_code="scmsw">
-  <specific_location>Rare Book &amp; Manuscript Library - Web</specific_location>
+  <specific_location>Kislak Center for Special Collections - Web</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Web</display>
+  <display>Kislak Center for Special Collections - Web</display>
 </location>
 <location location_code="scparts">
-  <specific_location>Rare Book &amp; Manuscript Library - Books-in-Parts Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - Books-in-Parts Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Books-in-Parts Collection</display>
+  <display>Kislak Center for Special Collections - Books-in-Parts Collection</display>
 </location>
 <location location_code="scpspa">
-  <specific_location>Rare Book &amp; Manuscript Library - Phila. Society for Promoting Agriculture Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - Phila. Society for Promoting Agriculture Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Phila. Society for Promoting Agriculture Collection</display>
+  <display>Kislak Center for Special Collections - Phila. Society for Promoting Agriculture Collection</display>
 </location>
 <location location_code="scrare">
-  <specific_location>Rare Book &amp; Manuscript Library - Rare Book Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - Rare Book Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Rare Book Collection</display>
+  <display>Kislak Center for Special Collections - Rare Book Collection</display>
 </location>
 <location location_code="screading">
-  <specific_location>Rare Book &amp; Manuscript Library - Reading Room</specific_location>
+  <specific_location>Kislak Center for Special Collections - Reading Room</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library Reading Room</display>
+  <display>Kislak Center for Special Collections Reading Room</display>
 </location>
 <location location_code="screfe">
-  <specific_location>Rare Book &amp; Manuscript Library - Reference Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - Reference Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Reference Collection</display>
+  <display>Kislak Center for Special Collections - Reference Collection</display>
 </location>
 <location location_code="screfestor">
-  <specific_location>Rare Book &amp; Manuscript Library - Reference Storage</specific_location>
+  <specific_location>Kislak Center for Special Collections - Reference Storage</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library Reference Storage</display>
+  <display>Kislak Center for Special Collections Reference Storage</display>
 </location>
 <location location_code="scschimmel">
-  <specific_location>Rare Book &amp; Manuscript Library - Schimmel Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - Schimmel Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Schimmel Collection</display>
+  <display>Kislak Center for Special Collections - Schimmel Collection</display>
 </location>
 <location location_code="scsing">
-  <specific_location>Rare Book &amp; Manuscript Library - Singer-Mendenhall Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - Singer-Mendenhall Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Singer-Mendenhall Collection</display>
+  <display>Kislak Center for Special Collections - Singer-Mendenhall Collection</display>
 </location>
 <location location_code="scsmith">
-  <specific_location>Rare Book &amp; Manuscript Library - E.F. Smith Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - E.F. Smith Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - E.F. Smith Collection</display>
+  <display>Kislak Center for Special Collections - E.F. Smith Collection</display>
 </location>
 <location location_code="scsmithst">
-  <specific_location>Rare Book &amp; Manuscript Library - E.F. Smith Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - E.F. Smith Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - E.F. Smith Collection Storage</display>
+  <display>Kislak Center for Special Collections - E.F. Smith Collection Storage</display>
 </location>
 <location location_code="scsterne">
-  <specific_location>Rare Book &amp; Manuscript Library - Day Sterne Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - Day Sterne Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Day Sterne Collection</display>
+  <display>Kislak Center for Special Collections - Day Sterne Collection</display>
 </location>
 <location location_code="scstor">
-  <specific_location>Rare Book &amp; Manuscript Library - Rare Book Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - Rare Book Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Rare Book Collection Storage</display>
+  <display>Kislak Center for Special Collections - Rare Book Collection Storage</display>
 </location>
 <location location_code="scteer">
-  <specific_location>Rare Book &amp; Manuscript Library - Teerink Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - Teerink Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Teerink Collection</display>
+  <display>Kislak Center for Special Collections - Teerink Collection</display>
 </location>
 <location location_code="sctehon">
-  <specific_location>Rare Book &amp; Manuscript Library - Tehon Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - Tehon Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Tehon Collection</display>
+  <display>Kislak Center for Special Collections - Tehon Collection</display>
 </location>
-    <location location_code="sctress">
-        <specific_location>Rare Book &amp; Manuscript Library - Arthur Tress Collection</specific_location>
-        <library>Special Collections</library>
-        <library>Rare Book &amp; Manuscript Library</library>
-        <library>Van Pelt-Dietrich Library Center</library>
-        <display>Rare Book &amp; Manuscript Library - Arthur Tress Collection</display>
+<location location_code="sctress">
+    <specific_location>Kislak Center for Special Collections - Arthur Tress Collection</specific_location>
+    <library>Special Collections</library>
+    <library>Kislak Center for Special Collections</library>
+    <library>Van Pelt-Dietrich Library Center</library>
+    <display>Kislak Center for Special Collections - Arthur Tress Collection</display>
     </location>
 <location location_code="scvilain">
-  <specific_location>Rare Book &amp; Manuscript Library - Vilain-Wieck Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - Vilain-Wieck Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Vilain-Wieck Collection</display>
+  <display>Kislak Center for Special Collections - Vilain-Wieck Collection</display>
 </location>
 <location location_code="scwhit">
-  <specific_location>Rare Book &amp; Manuscript Library - Whitman Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - Whitman Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
-  <display>Rare Book &amp; Manuscript Library - Whitman Collection</display>
+  <display>Kislak Center for Special Collections - Whitman Collection</display>
 </location>
 <location location_code="scyarn">
-  <specific_location>Rare Book &amp; Manuscript Library - Yarnall Collection</specific_location>
+  <specific_location>Kislak Center for Special Collections - Yarnall Collection</specific_location>
   <library>Special Collections</library>
-  <library>Rare Book &amp; Manuscript Library</library>
+  <library>Kislak Center for Special Collections</library>
   <library>Van Pelt-Dietrich Library Center</library>
   <library>Yarnall Collection</library>
-  <display>Rare Book &amp; Manuscript Library - Yarnall Collection</display>
+  <display>Kislak Center for Special Collections - Yarnall Collection</display>
 </location>
 <location location_code="stor">
   <specific_location>LIBRA</specific_location>
@@ -1704,54 +1738,54 @@
   <display>Van Pelt - Z oversize</display>
 </location>
 <location location_code="vete">
-  <specific_location>Veterinary Library</specific_location>
+  <specific_location>Veterinary: Atwood Library (Campus)</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Veterinary Library</library>
-  <display>Veterinary Library</display>
+  <library>Veterinary: Atwood Library (Campus)</library>
+  <display>Veterinary: Atwood Library (Campus)</display>
 </location>
 <location location_code="vetedisp">
-  <specific_location>Veterinary Library - Display</specific_location>
+  <specific_location>Veterinary: Atwood Library (Campus) - Display</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Veterinary Library</library>
-  <display>Veterinary Library - Display</display>
+  <library>Veterinary: Atwood Library (Campus)</library>
+  <display>Veterinary: Atwood Library (Campus) - Display</display>
 </location>
 <location location_code="vetelibr">
-  <specific_location>Veterinary Library - Librarian's Office</specific_location>
+  <specific_location>Veterinary: Atwood Library (Campus) - Librarian's Office</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Veterinary Library</library>
-  <display>Veterinary Library - Librarian's Office</display>
+  <library>Veterinary: Atwood Library (Campus)</library>
+  <display>Veterinary: Atwood Library (Campus) - Librarian's Office</display>
 </location>
 <location location_code="veteover">
-  <specific_location>Veterinary Library - Oversize</specific_location>
+  <specific_location>Veterinary: Atwood Library (Campus) - Oversize</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Veterinary Library</library>
-  <display>Veterinary Library - Oversize</display>
+  <library>Veterinary: Atwood Library (Campus)</library>
+  <display>Veterinary: Atwood Library (Campus) - Oversize</display>
 </location>
 <location location_code="veterefe">
-  <specific_location>Veterinary Library - Reference</specific_location>
+  <specific_location>Veterinary: Atwood Library (Campus) - Reference</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Veterinary Library</library>
-  <display>Veterinary Library - Reference</display>
+  <library>Veterinary: Atwood Library (Campus)</library>
+  <display>Veterinary: Atwood Library (Campus) - Reference</display>
 </location>
 <location location_code="veterefov">
-  <specific_location>Veterinary Library - Reference Oversize</specific_location>
+  <specific_location>Veterinary: Atwood Library (Campus) - Reference Oversize</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Veterinary Library</library>
-  <display>Veterinary Library - Reference Oversize</display>
+  <library>Veterinary: Atwood Library (Campus)</library>
+  <display>Veterinary: Atwood Library (Campus) - Reference Oversize</display>
 </location>
 <location location_code="veterese">
-  <specific_location>Veterinary Library - Reserve</specific_location>
+  <specific_location>Veterinary: Atwood Library (Campus) - Reserve</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Veterinary Library</library>
+  <library>Veterinary: Atwood Library (Campus)</library>
   <library>Reserve</library>
-  <display>Veterinary Library - Reserve</display>
+  <display>Veterinary: Atwood Library (Campus) - Reserve</display>
 </location>
 <location location_code="veteresov">
-  <specific_location>Veterinary Library - Reserve Oversize</specific_location>
+  <specific_location>Veterinary: Atwood Library (Campus) - Reserve Oversize</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Veterinary Library</library>
+  <library>Veterinary: Atwood Library (Campus)</library>
   <library>Reserve</library>
-  <display>Veterinary Library - Reserve Oversize</display>
+  <display>Veterinary: Atwood Library (Campus) - Reserve Oversize</display>
 </location>
 <location location_code="vpnewbook">
   <specific_location>Van Pelt - New Book Display</specific_location>
@@ -1827,6 +1861,12 @@
   <specific_location>Penn Library Web</specific_location>
   <library>Penn Library Web</library>
   <display>Penn Library Web</display>
+</location>
+<location location_code="WICDIS">
+  <specific_location>Van Pelt - Weigle Information Commons</specific_location>
+  <library>Van Pelt-Dietrich Library Center</library>
+  <library>Weigle Information Commons</library>
+  <display>Van Pelt - Weigle Information Commons</display>
 </location>
 <location location_code="yarn">
   <specific_location>Van Pelt - Yarnall Collection</specific_location>
