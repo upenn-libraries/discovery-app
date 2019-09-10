@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.2.8'
+gem 'rails', '~> 4.2.0'
 
 # we always need sqlite to the boundwiths database
 gem 'sqlite3', '1.3.12', platforms: :ruby
@@ -84,7 +84,7 @@ gem 'rsolr', '1.1.2'
 
 gem 'globalid', '0.3.7'
 
-gem 'devise', '4.2.1'
+gem 'devise', '~> 4.6.0'
 
 gem 'devise-guests', '0.5.0'
 
@@ -92,7 +92,7 @@ gem 'blacklight_range_limit', '6.0.0'
 
 gem 'traject', '2.3.3'
 
-gem 'nokogiri', '1.7.1'
+gem 'nokogiri', '~> 1.10.0'
 
 gem 'blacklight-marc', '6.2.0'
 
