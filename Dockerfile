@@ -14,6 +14,10 @@ RUN rm -f /etc/localtime && ln -s /usr/share/zoneinfo/US/Eastern /etc/localtime
 
 RUN apt-get update && apt-get install -y --no-install-recommends npm libxml2-utils unzip openjdk-8-jre
 
+# Update nginx to mitigate high severity CVEs in base image. Should be removed
+# when base image version of nginx is upgraded.
+RUN apt-get install -y --no-install-recommends -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" nginx-extras
+
 # docker caches this step, but it does download the file each time.
 ADD https://downloads.sourceforge.net/project/saxon/Saxon-HE/9.7/SaxonHE9-7-0-15J.zip /tmp
 RUN mkdir -p /opt/saxon && cd /opt/saxon && unzip /tmp/SaxonHE9-7-0-15J.zip && rm /tmp/SaxonHE9-7-0-15J.zip
