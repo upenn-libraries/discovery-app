@@ -1787,6 +1787,11 @@
   <library>Reserve</library>
   <display>Veterinary: Atwood Library (Campus) - Reserve Oversize</display>
 </location>
+<location location_code="vpfeatdvd">
+  <specific_location>Van Pelt - Featured DVD Display - First Floor</specific_location>
+  <library>Van Pelt-Dietrich Library Center</library>
+  <display>Van Pelt - Featured DVD Display - First Floor</display>
+</location>
 <location location_code="vpnewbook">
   <specific_location>Van Pelt - New Book Display</specific_location>
   <library>Van Pelt-Dietrich Library Center</library>
