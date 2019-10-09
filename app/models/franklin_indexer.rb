@@ -57,7 +57,7 @@ class FranklinIndexer < BaseIndexer
 
     # append extra params to the Solr update URL for solr-side cross reference handling
     # and duplicate ID deletion
-    processors = [ 'xref-copyfield', 'fl-multiplex', 'shingles' ]
+    processors = [ 'xref-copyfield', 'fl-multiplex', 'shingles', 'id_hash' ]
     if ENV['SOLR_USE_UID_DISTRIB_PROCESSOR']
       # disable; handle deletion outside of solr, either permanently or pending bug fixes
       #processors << 'uid-distrib'
