@@ -264,6 +264,11 @@ class FranklinAlmaController < ApplicationController
       end
     end
 
+    if bib_data['availability'][mmsid]['holdings'].length() == 1 && has_holding_info
+      holding = bib_data['availability'][mmsid]['holdings'].first
+      table_data = {"mmsid": mmsid, "holding_id": holding['holding_id'], "location_code": holding['location_code']}
+    end
+
     metadata[mmsid][:inventory_type] = inventory_type
     render :json => {"metadata": metadata, "data": table_data}
   end
@@ -297,6 +302,7 @@ class FranklinAlmaController < ApplicationController
   def holding_items
     userid = session['id'].presence || nil
     due_date_policy = 'Please log in for loan and request information' if userid.nil?
+    show_location = params.delete("show_location") == "true"
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
     options = {:expand => 'due_date_policy', :offset => 0, :limit => 100, :user_id => userid, :order_by => 'description'}
@@ -309,14 +315,18 @@ class FranklinAlmaController < ApplicationController
 
     policies = {}
     pids_to_check = []
-
     table_data = response_data['item'].map { |item|
       data = item['item_data']
+
+      location = show_location ?
+        "#{item['item_data']['location']['desc']}<br /><spann class='call-number'>#{item['holding_data']['call_number']}<br />" :
+        ""
+
       unless(policies.has_key?(data['policy']['value']) || data['base_status']['desc'] != "Item in place" || userid.nil?)
         policies[data['policy']['value']] = nil
         pids_to_check << [data['pid'], data['policy']['value']]
       end
-      [data['policy']['value'], data['pid'], data['description'], data['base_status']['desc'], data['barcode'], due_date_policy || data['due_date_policy'], [], params['mms_id'], params['holding_id']]
+      [data['policy']['value'], data['pid'], location + data['description'], data['base_status']['desc'], data['barcode'], due_date_policy || data['due_date_policy'], [], params['mms_id'], params['holding_id']]
     }
 
     while options[:offset] + options[:limit] < response_data['total_record_count']
@@ -329,7 +339,7 @@ class FranklinAlmaController < ApplicationController
           policies[data['policy']['value']] = nil
           pids_to_check << [data['pid'], data['policy']['value']]
         end
-        [data['policy']['value'], data['pid'], data['description'], due_date_policy || data['due_date_policy'], data['base_status']['desc'], data['barcode'], [], params['mms_id'], params['holding_id']]
+        [data['policy']['value'], data['pid'], location + data['description'], due_date_policy || data['due_date_policy'], data['base_status']['desc'], data['barcode'], [], params['mms_id'], params['holding_id']]
       }
     end
 
