@@ -358,8 +358,13 @@ $(document).ready(function() {
     ba.loadRequestOptions();
 });
 
-function loadItems(mms_id, holding_id, location_code, show_location = false) {
+function loadItems(mms_id, holding_id, location_code, show_location) {
     renderdata[mms_id] = [];
+
+    // Reference: https://stackoverflow.com/a/35464024
+    // This is needed so that asset precompilation doesn't fail
+    show_location = typeof show_location !== 'undefined' ? show_location : false;
+
     var holdingItemsTable = $('#holdingItems-' + mms_id).DataTable();
     holdingItemsTable.clear().draw();
     holdingItemsTable.ajax.url('/alma/holding_items.json?mms_id=' + mms_id + "&holding_id=" + holding_id + "&current_location=" + location_code + "&show_location=" + show_location).load();
