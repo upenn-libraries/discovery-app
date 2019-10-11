@@ -319,7 +319,7 @@ class FranklinAlmaController < ApplicationController
       data = item['item_data']
 
       location = show_location ?
-        "#{item['item_data']['location']['desc']}<br /><spann class='call-number'>#{item['holding_data']['call_number']}<br />" :
+        "#{item['item_data']['location']['desc']}<br /><span class='call-number'>#{item['holding_data']['call_number']}<span><br />" :
         ""
 
       unless(policies.has_key?(data['policy']['value']) || data['base_status']['desc'] != "Item in place" || userid.nil?)
