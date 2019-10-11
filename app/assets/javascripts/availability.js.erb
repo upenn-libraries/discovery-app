@@ -143,17 +143,23 @@ $(document).ready(function() {
                 }
 
                 var dataLen = json.data.length;
-                if(dataLen == 0) {
-                    //$('#table-wrapper-' + mmsid).hide();
+                if(dataLen > 0) {
+                    // Reference: https://stackoverflow.com/a/15458987
+                    // Check if the location of the first holding is an HTML element,
+                    // indicating this is for a serial
+                    if(/<[a-z][\s\S]*>/i.test(json.data[0][2])) {
+                        $('#requestOptionsAvailability-' + mmsid).text('Holdings');
+                    }
+                    else {
+                        $('#requestOptionsAvailability-' + mmsid).text('Availability');
+                    }
                 }
-                // Reference: https://stackoverflow.com/a/15458987
-                // Check if the location of the first holding is an HTML element,
-                // indicating this is for a serial
-                else if(/<[a-z][\s\S]*>/i.test(json.data[0][2])) {
-                    $('#requestOptionsAvailability-' + mmsid).text('Holdings');
-                }
-                else {
-                    $('#requestOptionsAvailability-' + mmsid).text('Availability');
+                else if(dataLen === undefined && !Array.isArray(json.data)) {
+                    // Single holding case
+                    var show_location = true;
+                    loadItems(json.data.mmsid, json.data.holding_id, json.data.location_code, show_location);
+                    $('.backbutton-top-' + mmsid).hide();
+                    $('.backbutton-' + mmsid).hide();
                 }
 
                 $('.load-holding-details').each(function(idx, element) {
@@ -352,11 +358,11 @@ $(document).ready(function() {
     ba.loadRequestOptions();
 });
 
-function loadItems(mms_id, holding_id, location_code) {
+function loadItems(mms_id, holding_id, location_code, show_location = false) {
     renderdata[mms_id] = [];
     var holdingItemsTable = $('#holdingItems-' + mms_id).DataTable();
     holdingItemsTable.clear().draw();
-    holdingItemsTable.ajax.url('/alma/holding_items.json?mms_id=' + mms_id + "&holding_id=" + holding_id + "&current_location=" + location_code).load();
+    holdingItemsTable.ajax.url('/alma/holding_items.json?mms_id=' + mms_id + "&holding_id=" + holding_id + "&current_location=" + location_code + "&show_location=" + show_location).load();
     swapDataTables(mms_id);
 }
 
