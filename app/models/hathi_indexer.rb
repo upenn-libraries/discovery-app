@@ -79,8 +79,8 @@ class HathiIndexer < FranklinIndexer
     [url, id, suffix].join
   end
 
-  def define_full_text_link_text_a
-    to_field 'full_text_link_text_a' do |rec, acc|
+  def define_full_text_link_a
+    to_field 'full_text_link_a' do |rec, acc|
 
       links = []
 
