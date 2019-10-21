@@ -57,7 +57,7 @@ class FranklinIndexer < BaseIndexer
 
     # append extra params to the Solr update URL for solr-side cross reference handling
     # and duplicate ID deletion
-    processors = [ 'xref-copyfield', 'fl-multiplex', 'shingles', 'id_hash' ]
+    processors = [ 'xref-copyfield', 'fl-multiplex', 'shingles', 'id_hash', 'content_hash', 'hex_to_numeric' ]
     if ENV['SOLR_USE_UID_DISTRIB_PROCESSOR']
       # disable; handle deletion outside of solr, either permanently or pending bug fixes
       #processors << 'uid-distrib'
@@ -110,10 +110,10 @@ class FranklinIndexer < BaseIndexer
 
     define_cluster_id
 
-    define_full_text_link_text_a
+    define_full_text_link_a
 
     # do NOT use *_xml_stored_single because it uses a Str (max 32k) for storage
-    to_field 'marcrecord_xml_stored_single_large', get_plain_marc_xml
+    to_field 'marcrecord_xml', get_plain_marc_xml
 
     # Our keyword searches use pf/qf to search multiple fields, so
     # we don't need this field; leaving it commented out here just in case.
@@ -125,7 +125,7 @@ class FranklinIndexer < BaseIndexer
 
     define_access_facet
 
-    to_field 'format_f_stored' do |rec, acc|
+    to_field 'format_f' do |rec, acc|
       acc.concat(pennlibmarc.get_format(rec))
     end
 
@@ -150,19 +150,19 @@ class FranklinIndexer < BaseIndexer
     end
 
     # this is now automatically copied on the Solr side
-    # to_field 'subject_f_stored' do |rec, acc|
+    # to_field 'subject_f' do |rec, acc|
     #   acc.concat(pennlibmarc.get_subject_facet_values(rec))
     # end
 
-    to_field "db_type_f_stored" do |rec, acc|
+    to_field "db_type_f" do |rec, acc|
       acc.concat(pennlibmarc.get_db_types(rec))
     end
 
-    to_field "db_category_f_stored" do |rec, acc|
+    to_field "db_category_f" do |rec, acc|
       acc.concat(pennlibmarc.get_db_categories(rec))
     end
 
-    to_field "db_subcategory_f_stored" do |rec, acc|
+    to_field "db_subcategory_f" do |rec, acc|
       acc.concat(pennlibmarc.get_db_subcategories(rec))
     end
 
@@ -182,7 +182,7 @@ class FranklinIndexer < BaseIndexer
       acc.concat(pennlibmarc.get_call_number_xfacet_values(rec))
     end
 
-    to_field "language_f_stored" do |rec, acc|
+    to_field "language_f" do |rec, acc|
       acc.concat(pennlibmarc.get_language_values(rec))
     end
 
@@ -190,19 +190,19 @@ class FranklinIndexer < BaseIndexer
       acc.concat(pennlibmarc.get_language_values(rec))
     end
 
-    to_field "library_f_stored" do |rec, acc|
+    to_field "library_f" do |rec, acc|
       acc.concat(pennlibmarc.get_library_values(rec))
     end
 
-    to_field "specific_location_f_stored" do |rec, acc|
+    to_field "specific_location_f" do |rec, acc|
       acc.concat(pennlibmarc.get_specific_location_values(rec))
     end
 
-    to_field "classification_f_stored" do |rec, acc|
+    to_field "classification_f" do |rec, acc|
       acc.concat(pennlibmarc.get_classification_values(rec))
     end
 
-    to_field "genre_f_stored" do |rec, acc|
+    to_field "genre_f" do |rec, acc|
       acc.concat(pennlibmarc.get_genre_values(rec))
     end
 
@@ -352,7 +352,7 @@ class FranklinIndexer < BaseIndexer
       acc << val if val
     end
 
-    to_field 'publication_date_f_stored' do |rec, acc, ctx|
+    to_field 'publication_date_f' do |rec, acc, ctx|
       val = ctx.clipboard.dig(:dates, :pub_date_decade)
       acc << val if val
     end
@@ -367,7 +367,7 @@ class FranklinIndexer < BaseIndexer
       acc << val if val
     end
 
-    to_field "isbn_isxn_stored",  extract_marc(%W{020az 022alz}, :separator=>nil) do |rec, acc|
+    to_field "isbn_isxn",  extract_marc(%W{020az 022alz}, :separator=>nil) do |rec, acc|
       orig = acc.dup
       acc.map!{|x| StdNum::ISBN.allNormalizedValues(x)}
       acc << orig
@@ -446,7 +446,7 @@ class FranklinIndexer < BaseIndexer
   end
 
   def define_access_facet
-    to_field "access_f_stored" do |rec, acc|
+    to_field "access_f" do |rec, acc|
       acc.concat(pennlibmarc.get_access_values(rec))
     end
   end
@@ -498,8 +498,8 @@ class FranklinIndexer < BaseIndexer
     end
   end
 
-  def define_full_text_link_text_a
-    to_field 'full_text_link_text_a' do |rec, acc|
+  def define_full_text_link_a
+    to_field 'full_text_link_a' do |rec, acc|
       result = pennlibmarc.get_full_text_link_values(rec)
       if result.present?
         acc << result.to_json

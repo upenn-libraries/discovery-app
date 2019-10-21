@@ -116,7 +116,7 @@ class CatalogController < ApplicationController
         alma_mms_id
         score
         format_a
-        full_text_link_text_a
+        full_text_link_a
         isbn_isxn
         language_a
         title
