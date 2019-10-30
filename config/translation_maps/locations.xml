@@ -699,7 +699,7 @@
 <location location_code="FEATURED">
     <specific_location>Van Pelt - Featured Books--First Floor</specific_location>
   <library>Van Pelt-Dietrich Library Center</library>
-    <display>Van Pelt - Featured Books--First Floor</display>
+    <display>Van Pelt - Featured Books--First Floor, see also table near Moelis Lounge</display>
 </location>
 <location location_code="fine">
   <specific_location>Fisher Fine Arts Library</specific_location>
