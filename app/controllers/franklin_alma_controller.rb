@@ -329,7 +329,7 @@ class FranklinAlmaController < ApplicationController
           policies[data['policy']['value']] = nil
           pids_to_check << [data['pid'], data['policy']['value']]
         end
-        [data['policy']['value'], data['pid'], data['description'], due_date_policy || data['due_date_policy'], data['base_status']['desc'], data['barcode'], [], params['mms_id'], params['holding_id']]
+        [data['policy']['value'], data['pid'], data['description'], data['base_status']['desc'], data['barcode'], due_date_policy || data['due_date_policy'], [], params['mms_id'], params['holding_id']]
       }
     end
 
