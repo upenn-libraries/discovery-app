@@ -90,7 +90,7 @@ class DukeIndexer < FranklinIndexer
   end
 
   def get_cluster_id(rec)
-    pennlibmarc.get_oclc_id_values(rec).first || begin
+    get_oclc_id_values(rec).first || begin
       id = get_namespaced_id(rec)
       digest = Digest::MD5.hexdigest(id)
       # first 8 hex digits = first 4 bytes. construct an int out of that hex str.
