@@ -134,7 +134,25 @@ class CatalogController < ApplicationController
         'facet.mincount': 0,
         #      fq: '{!tag=cluster}{!collapse field=cluster_id nullPolicy=expand size=5000000 min=record_source_id}',
         # this approach needs expand.field=cluster_id
-        fq: %q~{!tag=cluster}NOT ({!join from=cluster_id to=cluster_id v='record_source_f:"Penn"'} AND record_source_f:"HathiTrust")~,
+        fq: '{!bool tag=cluster must_not=$x1 must_not=$x2 must_not=$x3 must_not=$x4 must_not=$x5 must_not=$x6}',
+        x1: '{!bool filter=$j1 filter=$o1}',
+        x2: '{!bool filter=$j2 filter=$o2}',
+        x3: '{!bool filter=$j3 filter=$o3}',
+        x4: '{!bool filter=$j4 filter=$o4}',
+        x5: '{!bool filter=$j5 filter=$o5}',
+        x6: '{!bool filter=$j6 filter=$o6}',
+        j1: '{!join from=cluster_id to=cluster_id v=record_source_f:Brown}',
+        j2: '{!join from=cluster_id to=cluster_id v=record_source_f:Columbia}',
+        j3: '{!join from=cluster_id to=cluster_id v=record_source_f:Cornell}',
+        j4: '{!join from=cluster_id to=cluster_id v=record_source_f:Duke}',
+        j5: '{!join from=cluster_id to=cluster_id v=record_source_f:Penn}',
+        j6: '{!join from=cluster_id to=cluster_id v=record_source_f:Stanford}',
+        o1: 'record_source_f:(Columbia OR Cornell OR Duke OR Penn OR Stanford OR HathiTrust)',
+        o2: 'record_source_f:(Cornell OR Duke OR Penn OR Stanford OR HathiTrust)',
+        o3: 'record_source_f:(Duke OR Penn OR Stanford OR HathiTrust)',
+        o4: 'record_source_f:(Penn OR Stanford OR HathiTrust)',
+        o5: 'record_source_f:(Stanford OR HathiTrust)',
+        o6: 'record_source_f:HathiTrust',
         expand: 'true',
         'expand.field': 'cluster_id',
         'expand.q': '*:*',
@@ -302,8 +320,13 @@ class CatalogController < ApplicationController
         'At the library' => { :label => 'At the library', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"}
     }
     config.add_facet_field 'record_source_f', label: 'Record Source', collapse: false, solr_params: @@MINCOUNT, query: {
-        'HathiTrust' => { :label => 'HathiTrust', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'HathiTrust\\'}'}"},
-        'Penn' => { :label => 'Penn', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Penn\\'}'}"}
+        'Brown' => { :label => 'Brown', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Brown\\'}'}"},
+        'Columbia' => { :label => 'Columbia', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Columbia\\'}'}"},
+        'Cornell' => { :label => 'Cornell', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Cornell\\'}'}"},
+        'Duke' => { :label => 'Duke', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Duke\\'}'}"},
+        'Penn' => { :label => 'Penn', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Penn\\'}'}"},
+        'Stanford' => { :label => 'Stanford', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Stanford\\'}'}"},
+        'HathiTrust' => { :label => 'HathiTrust', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'HathiTrust\\'}'}"}
     }
     config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false, solr_params: @@MINCOUNT
     config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z', collapse: false, solr_params: @@MINCOUNT
