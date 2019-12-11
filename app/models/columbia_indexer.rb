@@ -62,7 +62,7 @@ class ColumbiaIndexer < FranklinIndexer
       links = []
 
       links << {
-        linktext: 'View record in source context',
+        linktext: 'View record in Columbia\'s catalog',
         linkurl: link_to_source_context(rec)
       }
 
