@@ -328,7 +328,28 @@ class CatalogController < ApplicationController
         'Stanford' => { :label => 'Stanford', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Stanford\\'}'}"},
         'HathiTrust' => { :label => 'HathiTrust', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'HathiTrust\\'}'}"}
     }
-    config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false, solr_params: @@MINCOUNT
+    config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false, solr_params: @@MINCOUNT, query: {
+        'Book' => { :label => 'Book', :fq => "{!term f=format_f v='Book'}"},
+        'Government document' => { :label => 'Government document', :fq => "{!term f=format_f v='Government document'}"},
+        'Journal/Periodical' => { :label => 'Journal/Periodical', :fq => "{!term f=format_f v='Journal/Periodical'}"},
+        'Microformat' => { :label => 'Microformat', :fq => "{!term f=format_f v='Microformat'}"},
+        'Sound recording' => { :label => 'Sound recording', :fq => "{!term f=format_f v='Sound recording'}"},
+        'Musical score' => { :label => 'Musical score', :fq => "{!term f=format_f v='Musical score'}"},
+        'Video' => { :label => 'Video', :fq => "{!term f=format_f v='Video'}"},
+        'Conference/Event' => { :label => 'Conference/Event', :fq => "{!term f=format_f v='Conference/Event'}"},
+        'Manuscript' => { :label => 'Manuscript', :fq => "{!term f=format_f v='Manuscript'}"},
+        'Thesis/Dissertation' => { :label => 'Thesis/Dissertation', :fq => "{!term f=format_f v='Thesis/Dissertation'}"},
+        'Newspaper' => { :label => 'Newspaper', :fq => "{!term f=format_f v='Newspaper'}"},
+        'Datafile' => { :label => 'Datafile', :fq => "{!term f=format_f v='Datafile'}"},
+        'Image' => { :label => 'Image', :fq => "{!term f=format_f v='Image'}"},
+        'Website/Database' => { :label => 'Website/Database', :fq => "{!term f=format_f v='Website/Database'}"},
+        'Map/Atlas' => { :label => 'Map/Atlas', :fq => "{!term f=format_f v='Map/Atlas'}"},
+        'Archive' => { :label => 'Archive', :fq => "{!term f=format_f v='Archive'}"},
+        'Other' => { :label => 'Other', :fq => "{!term f=format_f v='Other'}"},
+        'Database & Article Index' => { :label => 'Database & Article Index', :fq => "{!term f=format_f v='Database & Article Index'}"},
+        '3D object' => { :label => '3D object', :fq => "{!term f=format_f v='3D object'}"},
+        'Projected graphic' => { :label => 'Projected graphic', :fq => "{!term f=format_f v='Projected graphic'}"},
+    }
     config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z', collapse: false, solr_params: @@MINCOUNT
     #config.add_facet_field 'subject_taxonomy', label: 'Subject Taxonomy', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy', :json_facet => @@SUBJECT_TAXONOMY, :top_level_field => 'toplevel_subject_f', :helper_method => :render_subcategories
     config.add_facet_field 'subject_f', label: 'Subject', limit: 5, index_range: 'A'..'Z', collapse: false, solr_params: @@MINCOUNT
