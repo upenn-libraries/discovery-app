@@ -15,7 +15,7 @@ class StanfordIndexer < FranklinIndexer
 
   def get_namespaced_id(rec)
     id = get_001_id(rec)
-    id.blank? ? nil : id
+    id.blank? ? nil : "STANFORD_#{id}"
   end
 
   def link_to_source_context(rec)
