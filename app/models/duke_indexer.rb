@@ -80,7 +80,7 @@ class DukeIndexer < FranklinIndexer
       links = []
 
       links << {
-        linktext: 'View record in source context',
+        linktext: 'View record in Duke\'s catalog',
         linkurl: link_to_source_context(rec)
       }
 
