@@ -11,6 +11,7 @@ class BaseIndexer < Blacklight::Marc::Indexer
     COLUMBIA = 7
     HARVARD = 8
     STANFORD = 9
+    PRINCETON = 10
   end
 
 end
