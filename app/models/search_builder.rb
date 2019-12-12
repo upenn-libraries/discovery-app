@@ -3,7 +3,7 @@ class SearchBuilder < Blacklight::SearchBuilder
   include Blacklight::Solr::SearchBuilderBehavior
   include BlacklightAdvancedSearch::AdvancedSearchBuilder
   self.default_processor_chain += [:add_advanced_search_to_solr, :override_sort_when_q_is_empty, :lowercase_expert_boolean_operators,
-      :add_left_anchored_title, :add_routing_hash]
+      :add_left_anchored_title, :add_routing_hash, :add_cluster_params]
   include BlacklightRangeLimit::RangeLimitBuilder
   include BlacklightSolrplugins::FacetFieldsQueryFilter
 
@@ -66,6 +66,29 @@ class SearchBuilder < Blacklight::SearchBuilder
       end
     end
     super(params_copy)
+  end
+
+  @@record_sources = ['Brown', 'Columbia', 'Cornell', 'Duke', 'Penn', 'Princeton', 'Stanford', 'HathiTrust']
+
+  def add_cluster_params(solr_parameters)
+    if 'Dynamic' == blacklight_params.dig(:f, :cluster, 0)
+      solr_parameters[:fq] << '{!collapse tag=cluster ex=cluster field=cluster_id nullPolicy=expand size=3000000}'
+    end
+    source_idx = 0
+    loop do
+      other_sources = @@record_sources.dup
+      cluster = other_sources.delete_at(source_idx)
+      clause = 0
+      loop do
+        solr_parameters["x#{clause}_#{source_idx}"] = "{!bool filter=$j#{clause}_#{source_idx} filter=$o#{clause}_#{source_idx}}"
+        solr_parameters["j#{clause}_#{source_idx}"] = "{!join from=cluster_id to=cluster_id v=record_source_f:#{cluster}}"
+        solr_parameters["o#{clause}_#{source_idx}"] = "record_source_f:(#{other_sources.join(' OR ')})"
+        break if other_sources.length == 1
+        cluster = other_sources.shift
+        clause += 1
+      end
+      break unless (source_idx += 1) < @@record_sources.length
+    end
   end
 
   def add_left_anchored_title(solr_parameters)
