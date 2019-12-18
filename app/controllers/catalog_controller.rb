@@ -81,14 +81,29 @@ class CatalogController < ApplicationController
     end
   end
 
-  def self.generate_cluster_fq(index, limit)
+  def self.generate_cluster_fq(index, limit, elvl = false)
     return '*:*' if limit < 1
     ret = '{!bool tag=cluster ex=cluster'
-    i = 0
-    loop do
-      ret += " must_not=$x#{i}_#{index}"
-      break if i >= limit
-      i += 1
+    if elvl
+      i = 0
+      loop do
+        ret += " must_not=$y#{i}_#{index}"
+        break if i >= limit
+        i += 1
+      end
+      i = 0
+      loop do
+        ret += " must_not=$z#{i}_#{index}"
+        break if i >= limit
+        i += 1
+      end
+    else
+      i = 0
+      loop do
+        ret += " must_not=$x#{i}_#{index}"
+        break if i >= limit
+        i += 1
+      end
     end
     ret + '}'
   end
@@ -313,6 +328,10 @@ class CatalogController < ApplicationController
         'Online' => { :label => 'Online', :fq => "{!join from=cluster_id to=cluster_id v=access_f:Online}"},
         'At the library' => { :label => 'At the library', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"}
     }
+    config.add_facet_field 'elvl', label: 'Encoding Level', collapse: false, solr_params: @@MINCOUNT, query: {
+        'Full' => { :label => 'Full', :fq => "elvl_rank_isort:0"},
+        'Other' => { :label => 'Other', :fq => '{!bool must_not=elvl_rank_isort:0}'}
+    }
     config.add_facet_field 'cluster', label: 'Cluster Prioritize', collapse: false, single: :manual, solr_params: @@MINCOUNT, query: {
         'Brown' => { :label => 'Brown', :fq => generate_cluster_fq(0, 6)},
         'Columbia' => { :label => 'Columbia', :fq => generate_cluster_fq(1, 6)},
@@ -322,6 +341,14 @@ class CatalogController < ApplicationController
         'Princeton' => { :label => 'Princeton', :fq => generate_cluster_fq(5, 6)},
         'Stanford' => { :label => 'Stanford', :fq => generate_cluster_fq(6, 6)},
         'HathiTrust' => { :label => 'HathiTrust', :fq => generate_cluster_fq(7, 6)},
+        'Brown-e' => { :label => 'Brown-e', :fq => generate_cluster_fq(0, 6, true)},
+        'Columbia-e' => { :label => 'Columbia-e', :fq => generate_cluster_fq(1, 6, true)},
+        'Cornell-e' => { :label => 'Cornell-e', :fq => generate_cluster_fq(2, 6, true)},
+        'Duke-e' => { :label => 'Duke-e', :fq => generate_cluster_fq(3, 6, true)},
+        'Penn-e' => { :label => 'Penn-e', :fq => generate_cluster_fq(4, 6, true)},
+        'Princeton-e' => { :label => 'Princeton-e', :fq => generate_cluster_fq(5, 6, true)},
+        'Stanford-e' => { :label => 'Stanford-e', :fq => generate_cluster_fq(6, 6, true)},
+        'HathiTrust-e' => { :label => 'HathiTrust-e', :fq => generate_cluster_fq(7, 6, true)},
         'Dynamic' => { :label => 'Dynamic', :fq => '*:*'}
     }
     config.add_facet_field 'record_source_f', label: 'Record Source', collapse: false, solr_params: @@MINCOUNT, query: {
