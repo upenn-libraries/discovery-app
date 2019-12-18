@@ -81,8 +81,12 @@ class SearchBuilder < Blacklight::SearchBuilder
       clause = 0
       loop do
         solr_parameters["x#{clause}_#{source_idx}"] = "{!bool filter=$j#{clause}_#{source_idx} filter=$o#{clause}_#{source_idx}}"
+        solr_parameters["y#{clause}_#{source_idx}"] = "{!bool filter=$k#{clause}_#{source_idx} filter=$o#{clause}_#{source_idx}}"
+        solr_parameters["z#{clause}_#{source_idx}"] = "{!bool filter=$j#{clause}_#{source_idx} filter=$p#{clause}_#{source_idx}}"
         solr_parameters["j#{clause}_#{source_idx}"] = "{!join from=cluster_id to=cluster_id v=record_source_f:#{cluster}}"
+        solr_parameters["k#{clause}_#{source_idx}"] = "{!join from=cluster_id to=cluster_id v='{!bool filter=record_source_f:#{cluster} filter=elvl_rank_isort:0}'}"
         solr_parameters["o#{clause}_#{source_idx}"] = "record_source_f:(#{other_sources.join(' OR ')})"
+        solr_parameters["p#{clause}_#{source_idx}"] = "{!bool filter='record_source_f:(#{other_sources.join(' OR ')})' must_not=elvl_rank_isort:0}"
         break if other_sources.length == 1
         cluster = other_sources.shift
         clause += 1
