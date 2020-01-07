@@ -877,6 +877,11 @@
   <library>Math/Physics/Astronomy Library</library>
   <display>Math/Physics/Astronomy - Circulation Desk</display>
 </location>
+<location location_code="mathfeat">
+  <specific_location>Math/Physics/Astronomy Library - Featured Books Display</specific_location>
+  <library>Math/Physics/Astronomy Library</library>
+  <display>Math/Physics/Astronomy Library - Featured Books Display</display>
+</location>
 <location location_code="mathnewbk">
   <specific_location>Math/Physics/Astronomy Library - New Book Shelf</specific_location>
   <library>Math/Physics/Astronomy Library</library>
