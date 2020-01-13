@@ -81,6 +81,33 @@ class CatalogController < ApplicationController
     end
   end
 
+  def self.generate_cluster_fq(index, limit, elvl = false)
+    return '*:*' if limit < 1
+    ret = '{!bool tag=cluster ex=cluster'
+    if elvl
+      i = 0
+      loop do
+        ret += " must_not=$y#{i}_#{index}"
+        break if i >= limit
+        i += 1
+      end
+      i = 0
+      loop do
+        ret += " must_not=$z#{i}_#{index}"
+        break if i >= limit
+        i += 1
+      end
+    else
+      i = 0
+      loop do
+        ret += " must_not=$x#{i}_#{index}"
+        break if i >= limit
+        i += 1
+      end
+    end
+    ret + '}'
+  end
+
   configure_blacklight do |config|
     # default advanced config values
     config.advanced_search ||= Blacklight::OpenStructWithHashAccess.new
@@ -111,7 +138,7 @@ class CatalogController < ApplicationController
         alma_mms_id
         score
         format_a
-        full_text_link_text_a
+        full_text_link_a
         isbn_isxn
         language_a
         title
@@ -134,7 +161,7 @@ class CatalogController < ApplicationController
         'facet.mincount': 0,
         #      fq: '{!tag=cluster}{!collapse field=cluster_id nullPolicy=expand size=5000000 min=record_source_id}',
         # this approach needs expand.field=cluster_id
-        fq: %q~{!tag=cluster}NOT ({!join from=cluster_id to=cluster_id v='record_source_f:"Penn"'} AND record_source_f:"HathiTrust")~,
+        # MOVE TO FACET: fq: '{!bool tag=cluster must_not=$x1 must_not=$x2 must_not=$x3 must_not=$x4 must_not=$x5 must_not=$x6 must_not=$x7}',
         expand: 'true',
         'expand.field': 'cluster_id',
         'expand.q': '*:*',
@@ -297,30 +324,93 @@ class CatalogController < ApplicationController
             'Z' => { :label => 'Z', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='z'}"},
             'Other' => { :label => 'Other', :fq => "{!tag=azlist ex=azlist}title_xfacet:/[ -`{-~].*/"}
         }
-    config.add_facet_field 'access_f', label: 'Access', collapse: false, solr_params: @@MINCOUNT, query: {
-        'Online' => { :label => 'Online', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'Online\\'}'}"},
-        'At the library' => { :label => 'At the library', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"}
+#    config.add_facet_field 'access_f', label: 'Access', collapse: false, solr_params: @@MINCOUNT, query: {
+#        'Online' => { :label => 'Online', :fq => "{!join from=cluster_id to=cluster_id v=access_f:Online}"},
+#        'At the library' => { :label => 'At the library', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"}
+#    }
+    config.add_facet_field 'cluster', label: 'Prioritize your institution', collapse: false, single: :manual, solr_params: @@MINCOUNT, query: {
+        'Brown' => { :label => 'Brown', :fq => generate_cluster_fq(0, 7)},
+        'Columbia' => { :label => 'Columbia', :fq => generate_cluster_fq(1, 7)},
+        'Cornell' => { :label => 'Cornell', :fq => generate_cluster_fq(2, 7)},
+        'Duke' => { :label => 'Duke', :fq => generate_cluster_fq(3, 7)},
+        'Harvard' => { :label => 'Harvard', :fq => generate_cluster_fq(4, 7)},
+        'Penn' => { :label => 'Penn', :fq => generate_cluster_fq(5, 7)},
+        'Princeton' => { :label => 'Princeton', :fq => generate_cluster_fq(6, 7)},
+        'Stanford' => { :label => 'Stanford', :fq => generate_cluster_fq(7, 7)},
+        'HathiTrust' => { :label => 'HathiTrust', :fq => generate_cluster_fq(8, 7)},
+#        'Brown-e' => { :label => 'Brown-e', :fq => generate_cluster_fq(0, 6, true)},
+#        'Columbia-e' => { :label => 'Columbia-e', :fq => generate_cluster_fq(1, 6, true)},
+#        'Cornell-e' => { :label => 'Cornell-e', :fq => generate_cluster_fq(2, 6, true)},
+#        'Duke-e' => { :label => 'Duke-e', :fq => generate_cluster_fq(3, 6, true)},
+#        'Penn-e' => { :label => 'Penn-e', :fq => generate_cluster_fq(4, 6, true)},
+#        'Princeton-e' => { :label => 'Princeton-e', :fq => generate_cluster_fq(5, 6, true)},
+#        'Stanford-e' => { :label => 'Stanford-e', :fq => generate_cluster_fq(6, 6, true)},
+#        'HathiTrust-e' => { :label => 'HathiTrust-e', :fq => generate_cluster_fq(7, 6, true)},
+        'Dynamic' => { :label => 'Dynamic', :fq => '*:*'}
     }
-    config.add_facet_field 'record_source_f', label: 'Record Source', collapse: false, solr_params: @@MINCOUNT, query: {
-        'HathiTrust' => { :label => 'HathiTrust', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'HathiTrust\\'}'}"},
-        'Penn' => { :label => 'Penn', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Penn\\'}'}"}
+    config.add_facet_field 'record_source_exclusive', label: 'See exclusively records from', collapse: false, single: :manual, solr_params: @@MINCOUNT, query: {
+        'Brown' => { :label => 'Brown', :fq => '{!term tag=rsx ex=rsx f=record_source_f v=Brown}'},
+        'Columbia' => { :label => 'Columbia', :fq => '{!term tag=rsx ex=rsx f=record_source_f v=Columbia}'},
+        'Cornell' => { :label => 'Cornell', :fq => '{!term tag=rsx ex=rsx f=record_source_f v=Cornell}'},
+        'Duke' => { :label => 'Duke', :fq => '{!term tag=rsx ex=rsx f=record_source_f v=Duke}'},
+        'Harvard' => { :label => 'Harvard', :fq => '{!term tag=rsx ex=rsx f=record_source_f v=Harvard}'},
+        'Penn' => { :label => 'Penn', :fq => '{!term tag=rsx ex=rsx f=record_source_f v=Penn}'},
+        'Princeton' => { :label => 'Princeton', :fq => '{!term tag=rsx ex=rsx f=record_source_f v=Princeton}'},
+        'Stanford' => { :label => 'Stanford', :fq => '{!term tag=rsx ex=rsx f=record_source_f v=Stanford}'},
+        'HathiTrust' => { :label => 'HathiTrust', :fq => '{!term tag=rsx ex=rsx f=record_source_f v=HathiTrust}'},
     }
-    config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false, solr_params: @@MINCOUNT
+    config.add_facet_field 'record_source_f', label: 'See any records clustered with holdings from', collapse: false, solr_params: @@MINCOUNT, query: {
+        'Brown' => { :label => 'Brown', :fq => "{!join from=cluster_id to=cluster_id v=record_source_f:Brown}"},
+        'Columbia' => { :label => 'Columbia', :fq => "{!join from=cluster_id to=cluster_id v=record_source_f:Columbia}"},
+        'Cornell' => { :label => 'Cornell', :fq => "{!join from=cluster_id to=cluster_id v=record_source_f:Cornell}"},
+        'Duke' => { :label => 'Duke', :fq => "{!join from=cluster_id to=cluster_id v=record_source_f:Duke}"},
+        'Harvard' => { :label => 'Harvard', :fq => "{!join from=cluster_id to=cluster_id v=record_source_f:Harvard}"},
+        'Penn' => { :label => 'Penn', :fq => "{!join from=cluster_id to=cluster_id v=record_source_f:Penn}"},
+        'Princeton' => { :label => 'Princeton', :fq => "{!join from=cluster_id to=cluster_id v=record_source_f:Princeton}"},
+        'Stanford' => { :label => 'Stanford', :fq => "{!join from=cluster_id to=cluster_id v=record_source_f:Stanford}"},
+        'HathiTrust' => { :label => 'HathiTrust', :fq => "{!join from=cluster_id to=cluster_id v=record_source_f:HathiTrust}"}
+    }
+    config.add_facet_field 'elvl', label: 'Encoding Level', collapse: false, solr_params: @@MINCOUNT, query: {
+        'Full' => { :label => 'Full', :fq => "elvl_rank_isort:0"},
+        'Other' => { :label => 'Other', :fq => '{!bool must_not=elvl_rank_isort:0}'}
+    }
+    config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false, solr_params: @@MINCOUNT, query: {
+        'Book' => { :label => 'Book', :fq => "{!term f=format_f v='Book'}"},
+        'Government document' => { :label => 'Government document', :fq => "{!term f=format_f v='Government document'}"},
+        'Journal/Periodical' => { :label => 'Journal/Periodical', :fq => "{!term f=format_f v='Journal/Periodical'}"},
+        'Microformat' => { :label => 'Microformat', :fq => "{!term f=format_f v='Microformat'}"},
+        'Sound recording' => { :label => 'Sound recording', :fq => "{!term f=format_f v='Sound recording'}"},
+        'Musical score' => { :label => 'Musical score', :fq => "{!term f=format_f v='Musical score'}"},
+        'Video' => { :label => 'Video', :fq => "{!term f=format_f v='Video'}"},
+        'Conference/Event' => { :label => 'Conference/Event', :fq => "{!term f=format_f v='Conference/Event'}"},
+        'Manuscript' => { :label => 'Manuscript', :fq => "{!term f=format_f v='Manuscript'}"},
+        'Thesis/Dissertation' => { :label => 'Thesis/Dissertation', :fq => "{!term f=format_f v='Thesis/Dissertation'}"},
+        'Newspaper' => { :label => 'Newspaper', :fq => "{!term f=format_f v='Newspaper'}"},
+        'Datafile' => { :label => 'Datafile', :fq => "{!term f=format_f v='Datafile'}"},
+        'Image' => { :label => 'Image', :fq => "{!term f=format_f v='Image'}"},
+        'Website/Database' => { :label => 'Website/Database', :fq => "{!term f=format_f v='Website/Database'}"},
+        'Map/Atlas' => { :label => 'Map/Atlas', :fq => "{!term f=format_f v='Map/Atlas'}"},
+        'Archive' => { :label => 'Archive', :fq => "{!term f=format_f v='Archive'}"},
+        'Other' => { :label => 'Other', :fq => "{!term f=format_f v='Other'}"},
+        'Database & Article Index' => { :label => 'Database & Article Index', :fq => "{!term f=format_f v='Database & Article Index'}"},
+        '3D object' => { :label => '3D object', :fq => "{!term f=format_f v='3D object'}"},
+        'Projected graphic' => { :label => 'Projected graphic', :fq => "{!term f=format_f v='Projected graphic'}"},
+    }
     config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z', collapse: false, solr_params: @@MINCOUNT
     #config.add_facet_field 'subject_taxonomy', label: 'Subject Taxonomy', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy', :json_facet => @@SUBJECT_TAXONOMY, :top_level_field => 'toplevel_subject_f', :helper_method => :render_subcategories
     config.add_facet_field 'subject_f', label: 'Subject', limit: 5, index_range: 'A'..'Z', collapse: false, solr_params: @@MINCOUNT
     config.add_facet_field 'language_f', label: 'Language', limit: 5, collapse: false, solr_params: @@MINCOUNT
-    config.add_facet_field 'library_f', label: 'Library', limit: 5, collapse: false, solr_params: @@MINCOUNT
-    config.add_facet_field 'specific_location_f', label: 'Specific location', limit: 5, solr_params: @@MINCOUNT
+#    config.add_facet_field 'library_f', label: 'Library', limit: 5, collapse: false, solr_params: @@MINCOUNT
+#    config.add_facet_field 'specific_location_f', label: 'Specific location', limit: 5, solr_params: @@MINCOUNT
     config.add_facet_field 'publication_date_f', label: 'Publication date', limit: 5, collapse: false, solr_params: @@MINCOUNT
-    config.add_facet_field 'classification_f', label: 'Classification', limit: 5, collapse: false, solr_params: @@MINCOUNT
+#    config.add_facet_field 'classification_f', label: 'Classification', limit: 5, collapse: false, solr_params: @@MINCOUNT
     config.add_facet_field 'genre_f', label: 'Form/Genre', limit: 5, solr_params: @@MINCOUNT
-    config.add_facet_field 'recently_added_f', label: 'Recently added', solr_params: @@MINCOUNT, :query => {
-        :within_90_days => { label: 'Within 90 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (90 * SECONDS_PER_DAY) } TO *]" },
-        :within_60_days => { label: 'Within 60 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (60 * SECONDS_PER_DAY) } TO *]" },
-        :within_30_days => { label: 'Within 30 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (30 * SECONDS_PER_DAY) } TO *]" },
-        :within_15_days => { label: 'Within 15 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (15 * SECONDS_PER_DAY) } TO *]" },
-    }
+#    config.add_facet_field 'recently_added_f', label: 'Recently added', solr_params: @@MINCOUNT, :query => {
+#        :within_90_days => { label: 'Within 90 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (90 * SECONDS_PER_DAY) } TO *]" },
+#        :within_60_days => { label: 'Within 60 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (60 * SECONDS_PER_DAY) } TO *]" },
+#        :within_30_days => { label: 'Within 30 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (30 * SECONDS_PER_DAY) } TO *]" },
+#        :within_15_days => { label: 'Within 15 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (15 * SECONDS_PER_DAY) } TO *]" },
+#    }
 
     #config.add_facet_field 'example_pivot_field', label: 'Pivot Field', :pivot => ['format_f', 'language_f']
     # config.add_facet_field 'example_query_facet_field', label: 'Publish Date', :query => {

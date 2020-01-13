@@ -27,6 +27,20 @@ namespace :pennlib do
               CrlIndexer.new
             when 'HATHI'
               HathiIndexer.new
+            when 'DUKE'
+              DukeIndexer.new
+            when 'CORNELL'
+              CornellIndexer.new
+            when 'BROWN'
+              BrownIndexer.new
+            when 'COLUMBIA'
+              ColumbiaIndexer.new
+            when 'HARVARD'
+              HarvardIndexer.new
+            when 'STANFORD'
+              StanfordIndexer.new
+            when 'PRINCETON'
+              PrincetonIndexer.new
             else
               FranklinIndexer.new
           end
@@ -44,6 +58,20 @@ namespace :pennlib do
             CrlIndexer.new
           when 'HATHI'
             HathiIndexer.new
+          when 'DUKE'
+            DukeIndexer.new
+          when 'CORNELL'
+            CornellIndexer.new
+          when 'BROWN'
+            BrownIndexer.new
+          when 'COLUMBIA'
+            ColumbiaIndexer.new
+          when 'HARVARD'
+            HarvardIndexer.new
+          when 'STANFORD'
+            StanfordIndexer.new
+          when 'PRINCETON'
+            PrincetonIndexer.new
           else
             FranklinIndexer.new
         end
