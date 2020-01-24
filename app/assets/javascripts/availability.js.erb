@@ -43,7 +43,7 @@ $(document).ready(function() {
             if (holding['activation_status'] == 'Available') {
                 var url = null;
                 if (holding['portfolio_pid']) {
-                    url = "https://<%= ENV['ALMA_DELIVERY_DOMAIN'] %>/view/uresolver/<%= ENV['ALMA_INSTITUTION_CODE'] %>/openurl?Force_direct=true&portfolio_pid=" +
+                    url = "https://<%= ENV['ALMA_DELIVERY_DOMAIN'] %>/view/uresolver/<%= ENV['ALMA_INSTITUTION_CODE'] %>/openurl?Force_direct=true&test_access=true&&portfolio_pid=" +
                         holding['portfolio_pid'] + "&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com&u.ignore_date_coverage=true"
                 }
 
