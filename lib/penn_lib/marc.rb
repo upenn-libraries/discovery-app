@@ -712,12 +712,12 @@ module PennLib
     end
 
     def get_access_values(rec)
-      acc = rec.flat_map do |f|
+      acc = rec.map do |f|
         case f.tag
           when EnrichedMarc::TAG_HOLDING
             'At the library'
           when EnrichedMarc::TAG_ELECTRONIC_INVENTORY
-            ['Online', 'Penn Library Web']
+            'Online'
         end
       end.compact
       acc += rec.fields('856')
@@ -879,7 +879,7 @@ module PennLib
       # we don't facet for 'web' which is the 'Penn Library Web' location used in Voyager.
       # this location should eventually go away completely with data cleanup in Alma.
 
-      rec.fields(tag).flat_map do |field|
+      acc = rec.fields(tag).flat_map do |field|
         results = field.find_all { |sf| sf.code == subfield_code }
                     .select { |sf| sf.value != 'web' }
                     .map { |sf|
@@ -893,6 +893,10 @@ module PennLib
         # flatten multiple 'library' values
         results.select(&:present?).flatten
       end.uniq
+      if rec.fields(EnrichedMarc::TAG_ELECTRONIC_INVENTORY).any?
+        acc << 'Online library'
+      end
+      return acc
     end
 
     def get_library_values(rec)
