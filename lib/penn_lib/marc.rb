@@ -341,7 +341,10 @@ module PennLib
 
     def is_subject_field(field)
       # 10/2018 kms: add 2nd Ind 7
-      subject_codes.member?(field.tag) && %w(0 2 4 7).member?(field.indicator2)
+      subject_codes.member?(field.tag) && (%w(0 2 4).member?(field.indicator2) ||
+            (field.indicator2 == '7' && field.any? do |sf|
+              sf.code == '2' && %w(aat cct fast jlabsh lcsh lcstt lctgm local/osu mesh ndlsh nlksh).member?(sf.value)
+            end))
     end
 
     def reject_pro_chr(sf)
