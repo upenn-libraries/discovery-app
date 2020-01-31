@@ -354,7 +354,7 @@ class FranklinIndexer < BaseIndexer
 
     to_field 'publication_date_f_stored' do |rec, acc, ctx|
       val = ctx.clipboard.dig(:dates, :pub_date_decade)
-      acc << val if val
+      acc.concat(val.nil? ? [] : val)
     end
 
     to_field 'publication_dr' do |rec, acc, ctx|
