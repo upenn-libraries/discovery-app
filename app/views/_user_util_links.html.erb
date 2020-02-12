@@ -1,78 +1,10 @@
 <div class="navbar-right">
 
   <ul class="nav navbar-nav">
-    <% if ENV['SHOW_KNOWN_ISSUES'] == 'true' %>
-    <li><a style="color:red" href="<%= known_issues_url %>">Known Issues</a></li>
-    <% end %>
-    <li>
-      <div class="navbar-btn-group btn-group">
-        <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Franklin Help &nbsp;<span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu">
-          <li><a href="https://guides.library.upenn.edu/franklinaccount">Your Library Account</a></li>
-          <li role="separator" class="divider"></li>
-          <li><a href="https://guides.library.upenn.edu/franklincatalog">Using Franklin Catalog</a></li>
-          <li role="separator" class="divider"></li>
-          <li><a href="https://guides.library.upenn.edu/articlesplus">Using Franklin Articles+</a></li>
-          <li role="separator" class="divider"></li>
-          <li><a href="https://guides.library.upenn.edu/usingeresources">Accessing E-Resources</a></li>
-          <li role="separator" class="divider" style="display:none;"></li>
-          <li style="display:none;"><a href="http://www.library.upenn.edu/catalogs/franklin/patronlogin.html">Troubleshooting guide</a></li>
-        </ul>
-      </div>
-    </li>
-    <li>
-      <div class="navbar-btn-group btn-group">
-        <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Contact us <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu">
-          <li><a href="tel:12158987555">215-898-7555</a></li>
-          <li role="separator" class="divider"></li>
-          <li><a href="//faq.library.upenn.edu/ask">Questions or comments</a></li>
-          <li role="separator" class="divider"></li>
-          <li>
-            <!-- Springshare Chat code //-->
-            <div id="libchat_228dce29c42f82c1eccfb92ca9c3e3d1"></div><script type="text/javascript" src="https://v2.libanswers.com/load_chat.php?hash=228dce29c42f82c1eccfb92ca9c3e3d1"></script>
-             <!-- End Springshare Chat code //-->
-          </li>
-        </ul>
-      </div>
-    </li>
 
     <%= render_nav_actions do |config, action|%>
         <li><%= action %></li>
     <% end %>
   </ul>
 
-  <% if has_user_authentication_provider? %>
-      <ul class="nav navbar-nav">
-        <li>
-          <a class="library-home-link" href="http://www.library.upenn.edu">Library Home</a>
-        </li>
-        <% if current_user %>
-            <li>
-              <a href="<%= my_library_card_url %>"><% if session['first_name'].present? %><span class="user-first-name"><%= session['first_name'] %> - </span><% end %>PennKey Library Account</a>
-            </li>
-            <li>
-              <%= link_to t('blacklight.header_links.logout'), destroy_user_session_path %>
-            </li>
-      <% else %>
-            <li>
-              <div class="navbar-btn-group btn-group">
-                <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Login <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                  <li class="small"><a href="<%= accounts_login_url(next: request.original_url) %>">Current faculty, student, staff login</a></li>
-                  <li role="separator" class="divider"></li>
-                  <li class="small"><a href="https://guides.library.upenn.edu/franklinaccount#s-lg-box-19646803">Subscribed alumni and courtesy user login</a></li>
-                </ul>
-              </div>
-              <%# = link_to t('blacklight.header_links.login'), new_user_session_path %>
-            </li>
-        <% end %>
-      </ul>
-  <% end %>
 </div>
