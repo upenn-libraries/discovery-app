@@ -100,7 +100,12 @@ class CatalogController < ApplicationController
     else
       i = 0
       loop do
-        ret += " must_not=$x#{i}_#{index}"
+        if index < i
+          exclude_filter_label = "x#{i}"
+        else
+          exclude_filter_label = "x#{i}_#{index}"
+        end
+        ret += " must_not=$#{exclude_filter_label}"
         break if i >= limit
         i += 1
       end

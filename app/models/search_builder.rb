@@ -76,22 +76,30 @@ class SearchBuilder < Blacklight::SearchBuilder
     end
     source_idx = 0
     loop do
+      solr_parameters["j#{source_idx}"] = "{!join from=cluster_id to=cluster_id v=record_source_f:#{@@record_sources[source_idx]}}"
       other_sources = @@record_sources.dup
       cluster = other_sources.delete_at(source_idx)
       clause = 0
       loop do
-        solr_parameters["x#{clause}_#{source_idx}"] = "{!bool filter=$j#{clause}_#{source_idx} filter=$o#{clause}_#{source_idx}}"
-#        solr_parameters["y#{clause}_#{source_idx}"] = "{!bool filter=$k#{clause}_#{source_idx} filter=$o#{clause}_#{source_idx}}"
-#        solr_parameters["z#{clause}_#{source_idx}"] = "{!bool filter=$j#{clause}_#{source_idx} filter=$p#{clause}_#{source_idx}}"
-        solr_parameters["j#{clause}_#{source_idx}"] = "{!join from=cluster_id to=cluster_id v=record_source_f:#{cluster}}"
-#        solr_parameters["k#{clause}_#{source_idx}"] = "{!join from=cluster_id to=cluster_id v='{!bool filter=record_source_f:#{cluster} filter=elvl_rank_isort:0}'}"
-        solr_parameters["o#{clause}_#{source_idx}"] = "record_source_f:(#{other_sources.join(' OR ')})"
-#        solr_parameters["p#{clause}_#{source_idx}"] = "{!bool filter='record_source_f:(#{other_sources.join(' OR ')})' must_not=elvl_rank_isort:0}"
+        if source_idx >= clause
+          join_filter_idx = clause == 0 ? clause : clause - 1
+          if source_idx == clause
+            other_filter_label = "o#{clause}"
+          else
+            other_filter_label = "o#{clause}_#{source_idx}"
+          end
+          solr_parameters[other_filter_label] = "record_source_f:(#{other_sources.join(' OR ')})"
+          solr_parameters["x#{clause}_#{source_idx}"] = "{!bool filter=$j#{join_filter_idx} filter=$#{other_filter_label}}"
+        end
         break if other_sources.length == 1
         cluster = other_sources.shift
         clause += 1
       end
+      last_source_idx = source_idx
       break unless (source_idx += 1) < @@record_sources.length
+      if source_idx != 0
+        solr_parameters["x#{last_source_idx}"] = "{!bool filter=$j#{last_source_idx} filter=$o#{last_source_idx}}"
+      end
     end
   end
 
