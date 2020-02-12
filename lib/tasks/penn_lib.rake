@@ -41,6 +41,8 @@ namespace :pennlib do
               StanfordIndexer.new
             when 'PRINCETON'
               PrincetonIndexer.new
+            when 'CHICAGO'
+              ChicagoIndexer.new
             else
               FranklinIndexer.new
           end
@@ -72,6 +74,8 @@ namespace :pennlib do
             StanfordIndexer.new
           when 'PRINCETON'
             PrincetonIndexer.new
+          when 'CHICAGO'
+            ChicagoIndexer.new
           else
             FranklinIndexer.new
         end
