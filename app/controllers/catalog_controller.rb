@@ -349,15 +349,16 @@ class CatalogController < ApplicationController
 #        'At the library' => { :label => 'At the library', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"}
 #    }
     config.add_facet_field 'cluster', label: 'Prioritize your institution', collapse: false, single: :manual, solr_params: @@MINCOUNT, query: {
-        'Brown' => { :label => 'Brown', :fq => generate_cluster_fq(0, 7)},
-        'Columbia' => { :label => 'Columbia', :fq => generate_cluster_fq(1, 7)},
-        'Cornell' => { :label => 'Cornell', :fq => generate_cluster_fq(2, 7)},
-        'Duke' => { :label => 'Duke', :fq => generate_cluster_fq(3, 7)},
-        'Harvard' => { :label => 'Harvard', :fq => generate_cluster_fq(4, 7)},
-        'Penn' => { :label => 'Penn', :fq => generate_cluster_fq(5, 7)},
-        'Princeton' => { :label => 'Princeton', :fq => generate_cluster_fq(6, 7)},
-        'Stanford' => { :label => 'Stanford', :fq => generate_cluster_fq(7, 7)},
-        'HathiTrust' => { :label => 'HathiTrust', :fq => generate_cluster_fq(8, 7)},
+        'Brown' => { :label => 'Brown', :fq => generate_cluster_fq(0, 8)},
+        'Chicago' => { :label => 'Chicago', :fq => generate_cluster_fq(1, 8)},
+        'Columbia' => { :label => 'Columbia', :fq => generate_cluster_fq(2, 8)},
+        'Cornell' => { :label => 'Cornell', :fq => generate_cluster_fq(3, 8)},
+        'Duke' => { :label => 'Duke', :fq => generate_cluster_fq(4, 8)},
+        'Harvard' => { :label => 'Harvard', :fq => generate_cluster_fq(5, 8)},
+        'Penn' => { :label => 'Penn', :fq => generate_cluster_fq(6, 8)},
+        'Princeton' => { :label => 'Princeton', :fq => generate_cluster_fq(7, 8)},
+        'Stanford' => { :label => 'Stanford', :fq => generate_cluster_fq(8, 8)},
+        'HathiTrust' => { :label => 'HathiTrust', :fq => generate_cluster_fq(9, 8)},
 #        'Brown-e' => { :label => 'Brown-e', :fq => generate_cluster_fq(0, 6, true)},
 #        'Columbia-e' => { :label => 'Columbia-e', :fq => generate_cluster_fq(1, 6, true)},
 #        'Cornell-e' => { :label => 'Cornell-e', :fq => generate_cluster_fq(2, 6, true)},
@@ -370,6 +371,7 @@ class CatalogController < ApplicationController
     }
     config.add_facet_field 'record_source_exclusive', label: 'See exclusively records from', collapse: false, single: :manual, solr_params: @@MINCOUNT, query: {
         'Brown' => { :label => 'Brown', :fq => '{!term tag=rsx ex=rsx f=record_source_f v=Brown}'},
+        'Chicago' => { :label => 'Chicago', :fq => '{!term tag=rsx ex=rsx f=record_source_f v=Chicago}'},
         'Columbia' => { :label => 'Columbia', :fq => '{!term tag=rsx ex=rsx f=record_source_f v=Columbia}'},
         'Cornell' => { :label => 'Cornell', :fq => '{!term tag=rsx ex=rsx f=record_source_f v=Cornell}'},
         'Duke' => { :label => 'Duke', :fq => '{!term tag=rsx ex=rsx f=record_source_f v=Duke}'},
@@ -381,6 +383,7 @@ class CatalogController < ApplicationController
     }
     config.add_facet_field 'record_source_f', label: 'See any records clustered with holdings from', collapse: false, solr_params: @@MINCOUNT, query: {
         'Brown' => { :label => 'Brown', :fq => "{!join from=cluster_id to=cluster_id v=record_source_f:Brown}"},
+        'Chicago' => { :label => 'Chicago', :fq => "{!join from=cluster_id to=cluster_id v=record_source_f:Chicago}"},
         'Columbia' => { :label => 'Columbia', :fq => "{!join from=cluster_id to=cluster_id v=record_source_f:Columbia}"},
         'Cornell' => { :label => 'Cornell', :fq => "{!join from=cluster_id to=cluster_id v=record_source_f:Cornell}"},
         'Duke' => { :label => 'Duke', :fq => "{!join from=cluster_id to=cluster_id v=record_source_f:Duke}"},

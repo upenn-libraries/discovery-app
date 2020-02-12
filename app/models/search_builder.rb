@@ -68,7 +68,7 @@ class SearchBuilder < Blacklight::SearchBuilder
     super(params_copy)
   end
 
-  @@record_sources = ['Brown', 'Columbia', 'Cornell', 'Duke', 'Harvard', 'Penn', 'Princeton', 'Stanford', 'HathiTrust']
+  @@record_sources = ['Brown', 'Chicago', 'Columbia', 'Cornell', 'Duke', 'Harvard', 'Penn', 'Princeton', 'Stanford', 'HathiTrust']
 
   def add_cluster_params(solr_parameters)
     if 'Dynamic' == blacklight_params.dig(:f, :cluster, 0)
