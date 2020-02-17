@@ -978,3 +978,57 @@ button.btn-request-options {
   border: 2px solid #337ab7;
   padding: 0px;
 }
+
+/* Tooltip styling for Ivies+ Request button */
+// Reference: https://thoughtbot.com/blog/you-don-t-need-javascript-for-that
+.tooltip-toggle {
+  cursor: pointer;
+  position: relative;
+
+  //Tooltip container and image
+  //You can adjust the position to make the container appear below or beside the element
+  &::before {
+    background-color: #fff;
+    border: 1px solid black;
+    border-radius: 5px;
+    color: #fff;
+    content: url(https://franklin.library.upenn.edu/redir/assets/bdlogo.gif);
+    height: 120px;
+    left: -30px; //This centers the container above the element
+    padding: 1rem;
+    position: absolute;
+    text-transform: none;
+    top: -125px; //This places the container above the element that needs a tooltip
+    transition: all 0.5s ease;
+  }
+
+  //Tooltip text
+  //You can adjust the position of this to align nicely with the element that
+  //needs a tooltip. You can also use `transform` to rotate it to make the
+  //tooltip work below or next to the element.
+  // Reference: https://stackoverflow.com/a/4609491
+  &::after {
+    content: "Patrons will be able to select their\Ainstitution for authentication";
+    left: -20px;
+    position: absolute;
+    top: -52px;
+    text-align: center;
+    white-space: pre;
+  }
+
+  //Setting up the transition
+  &::before,
+  &::after {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  //Triggering the transition
+  &:focus::before,
+  &:focus::after,
+  &:hover::before,
+  &:hover::after {
+    opacity: 1;
+    transition: all 0.75s ease;
+  }
+}
