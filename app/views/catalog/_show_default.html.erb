@@ -16,6 +16,8 @@
 
 <% if document.alma_mms_id.present? %>
   <%= render partial: 'alma_availability', locals: { document: document, collapsed: false } %>
+<% else %>
+  <%= render partial: 'ivies_request', locals: { document: document } %>
 <% end %>
 
 <%#= render partial: 'alma_availability_iframe', locals: { document: document } %>
