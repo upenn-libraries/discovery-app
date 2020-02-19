@@ -292,6 +292,16 @@ $(document).ready(function() {
                     }
                 }
 
+                // Replace BD+ w/Ivies+ Request for demo purposes; correct when fully implemented
+                if(globaldata[mmsid]["inventory_type"] == "physical") {
+                    for(i = 0; i < data.length; i++) {
+                        if(data[i]['option_name'] == 'BorrowDirect+') {
+                            data[i]['option_name'] = 'Ivies+ Request';
+                            break;
+                        }
+                    }
+                }
+
                 data.forEach(function(element) {
                     var containingdiv = $('<div class="request-option-wrapper"></div>');
                     var highlightable = element['highlightable'] ? ' highlightable' : ''
