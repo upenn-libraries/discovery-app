@@ -28,7 +28,7 @@ module ApplicationHelper
   def active_tab_classes(tab_id)
 
     # treat bento as special case; almost everything else falls through to catalog
-    on_bento_page = (controller_name == 'catalog') && ['landing', 'bento'].member?(action_name)
+    on_bento_page = false #(controller_name == 'catalog') && ['landing', 'bento'].member?(action_name)
 
     # databases search, falls through to catalog but different tab should be highlighted
     on_databases_page = params.dig('f', 'format_f')&.include?('Database & Article Index')
