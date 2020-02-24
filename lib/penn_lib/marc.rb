@@ -954,17 +954,9 @@ module PennLib
           content_date_end = pub_date_end
         end
       end
-      if current_year + 15 > pub_date_start.to_i
-        pub_date_decade = [ pub_date_start[0,3] + '0s' ]
-        if current_year - pub_date_start.to_i < 10 || current_year - pub_date_end.to_i < 10
-          pub_date_decade << 'Last 10 years'
-        end
-      else
-        pub_date_decade = nil
-      end
       {
         :pub_date_sort => pub_date_start,
-        :pub_date_decade => pub_date_decade,
+        :pub_date_decade => current_year + 15 > pub_date_start.to_i ? pub_date_start[0,3] + '0s' : nil,
         :pub_date_range => "[#{pub_date_start} TO #{pub_date_end}]",
         :content_date_range => "[#{content_date_start} TO #{content_date_end}]",
         :pub_date_minsort => "#{pub_date_start}-01-01T00:00:00Z",
