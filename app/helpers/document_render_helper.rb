@@ -53,13 +53,15 @@ module DocumentRenderHelper
 
   def render_online_resource_display_for_index_view(options)
     values = options[:value]
-    values.map do |value|
+    suppress_remote_links = 'Include Partner Libraries' != params.dig('f', 'cluster', 0)
+    ret = values.map do |value|
       JSON.parse(value).map do |link_struct|
         url = link_struct['linkurl']
         text = link_struct['linktext']
-        %Q{<a href="#{url}">#{text}</a>}
-      end.join('<br/>')
-    end.join('<br/>').html_safe
+        (suppress_remote_links && text =~ /View record in .*\'s catalog/) ? nil : %Q{<a href="#{url}">#{text}</a>}
+      end.compact.join('<br/>')
+    end.reject { |item| item.blank? }.join('<br/>')
+    ret.blank? ? 'Has partner library holdings' : ret.html_safe
   end
 
   def render_online_display_for_show_view(options)

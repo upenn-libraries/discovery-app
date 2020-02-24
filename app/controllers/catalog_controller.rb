@@ -229,7 +229,7 @@ class CatalogController < ApplicationController
     }
 
     local_only = lambda { |a, b, c|
-      a.params.dig(:f, :cluster)&.include?('Penn')
+      'Include Partner Libraries' != a.params.dig(:f, :cluster, 0)
     }
 
     config.induce_sort = lambda { |blacklight_params|
@@ -296,6 +296,10 @@ class CatalogController < ApplicationController
 
     @@MINCOUNT = { 'facet.mincount' => 1 }
 
+    config.add_facet_field 'cluster', label: 'Search domain', collapse: false, single: :manual, solr_params: @@MINCOUNT, query: {
+        #'Penn' => { :label => 'Penn', :fq => '{!term tag=cluster ex=cluster f=record_source_f v=Penn}'},
+        'Include Partner Libraries' => { :label => 'Include Partner Libraries', :fq => generate_cluster_fq(6, 8)}
+    }
     config.add_facet_field 'db_subcategory_f', label: 'Database Subject', if: lambda { |a,b,c| false }
     config.add_facet_field 'db_category_f', label: 'Database Subject', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy',
                            :json_facet => @@DATABASE_CATEGORY_TAXONOMY, :top_level_field => 'db_category_f', :facet_type => :database,
@@ -336,15 +340,6 @@ class CatalogController < ApplicationController
     config.add_facet_field 'access_f', label: 'Access', collapse: false, solr_params: @@MINCOUNT, :if => local_only, query: {
         'Online' => { :label => 'Online', :fq => "{!join from=cluster_id to=cluster_id v=access_f:Online}"},
         'At the library' => { :label => 'At the library', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"}
-    }
-    config.add_facet_field 'cluster', label: 'Search domain', collapse: false, single: :manual, solr_params: @@MINCOUNT, query: {
-        'Penn' => { :label => 'Penn', :fq => '{!term tag=cluster ex=cluster f=record_source_f v=Penn}'},
-        'All' => { :label => 'All (preclustered)', :fq => generate_cluster_fq(6, 8)},
-        'Dynamic' => { :label => 'All (dynamic)', :fq => '{!tag=cluster ex=cluster v=\'*:*\'}'}
-    }
-    config.add_facet_field 'elvl', label: 'Encoding Level', collapse: false, solr_params: @@MINCOUNT, query: {
-        'Full' => { :label => 'Full', :fq => "elvl_rank_isort:0"},
-        'Other' => { :label => 'Other', :fq => '{!bool must_not=elvl_rank_isort:0}'}
     }
     config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false, solr_params: @@MINCOUNT, :if => local_only, query: {
         'Book' => { :label => 'Book', :fq => "{!term f=format_f v='Book'}"},
