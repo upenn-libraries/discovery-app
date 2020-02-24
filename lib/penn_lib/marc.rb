@@ -506,7 +506,9 @@ module PennLib
         acc += rec.fields
              .select { |f| subject_600s.member?(f.tag) ||
                       (f.tag == '880' && has_subfield6_value(f, /^(#{subject_600s.join('|')})/)) }
-             .select { |f| f.indicator2 == indicator2 || (f.indicator2 == '7' && indicator2 == '0') }
+             .select { |f| f.indicator2 == indicator2 || (f.indicator2 == '7' && indicator2 == '0' && f.any? do |sf|
+                sf.code == '2' && %w(aat cct fast jlabsh lcsh lcstt lctgm local/osu mesh ndlsh nlksh).member?(sf.value)
+              end)}
              .map do |field|
           #added 2017/04/10: filter out 0 (authority record numbers) added by Alma
           value_for_link = join_subfields(field, &subfield_not_in(%w{0 6 8 2 e w}))
