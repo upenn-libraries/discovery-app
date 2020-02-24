@@ -1031,18 +1031,21 @@
 <location location_code="newb">
   <specific_location>Veterinary: du Pont Library (New Bolton)</specific_location>
   <library>Health Sciences Libraries</library>
+  <library>Veterinary</library>
   <library>Veterinary: du Pont Library (New Bolton)</library>
   <display>Veterinary: du Pont Library (New Bolton)</display>
 </location>
 <location location_code="newbcirc">
   <specific_location>Veterinary: du Pont Library (New Bolton) - Circulation Desk</specific_location>
   <library>Health Sciences Libraries</library>
+  <library>Veterinary</library>
   <library>Veterinary: du Pont Library (New Bolton)</library>
   <display>Veterinary: du Pont Library (New Bolton) - Circulation Desk</display>
 </location>
 <location location_code="newbofc">
   <specific_location>Veterinary: du Pont Library (New Bolton) - Office</specific_location>
   <library>Health Sciences Libraries</library>
+  <library>Veterinary</library>
   <library>Veterinary: du Pont Library (New Bolton)</library>
   <display>Veterinary: du Pont Library (New Bolton) - Office</display>
 </location>
@@ -1056,12 +1059,14 @@
 <location location_code="newbrefe">
   <specific_location>Veterinary: du Pont Library (New Bolton) - Reference</specific_location>
   <library>Health Sciences Libraries</library>
+  <library>Veterinary</library>
   <library>Veterinary: du Pont Library (New Bolton)</library>
   <display>Veterinary: du Pont Library (New Bolton) - Reference</display>
 </location>
 <location location_code="newbrese">
   <specific_location>Veterinary: du Pont Library (New Bolton) - Reserve</specific_location>
   <library>Health Sciences Libraries</library>
+  <library>Veterinary</library>
   <library>Veterinary: du Pont Library (New Bolton)</library>
   <library>Reserve</library>
   <display>Veterinary: du Pont Library (New Bolton) - Reserve</display>
@@ -1131,6 +1136,7 @@
 <location location_code="oonewbolt">
   <specific_location>On Order</specific_location>
   <library>Health Sciences Libraries</library>
+  <library>Veterinary</library>
   <library>Veterinary: du Pont Library (New Bolton)</library>
   <display>Ordered for New Bolton Library</display>
 </location>
@@ -1152,6 +1158,7 @@
 <location location_code="oovete">
   <specific_location>On Order</specific_location>
   <library>Health Sciences Libraries</library>
+  <library>Veterinary</library>
   <display>Ordered for Veterinary: Atwood Library (Campus)</display>
 </location>
 <location location_code="ooyarn">
@@ -1745,42 +1752,49 @@
 <location location_code="vete">
   <specific_location>Veterinary: Atwood Library (Campus)</specific_location>
   <library>Health Sciences Libraries</library>
+  <library>Veterinary</library>
   <library>Veterinary: Atwood Library (Campus)</library>
   <display>Veterinary: Atwood Library (Campus)</display>
 </location>
 <location location_code="vetedisp">
   <specific_location>Veterinary: Atwood Library (Campus) - Display</specific_location>
   <library>Health Sciences Libraries</library>
+  <library>Veterinary</library>
   <library>Veterinary: Atwood Library (Campus)</library>
   <display>Veterinary: Atwood Library (Campus) - Display</display>
 </location>
 <location location_code="vetelibr">
   <specific_location>Veterinary: Atwood Library (Campus) - Librarian's Office</specific_location>
   <library>Health Sciences Libraries</library>
+  <library>Veterinary</library>
   <library>Veterinary: Atwood Library (Campus)</library>
   <display>Veterinary: Atwood Library (Campus) - Librarian's Office</display>
 </location>
 <location location_code="veteover">
   <specific_location>Veterinary: Atwood Library (Campus) - Oversize</specific_location>
   <library>Health Sciences Libraries</library>
+  <library>Veterinary</library>
   <library>Veterinary: Atwood Library (Campus)</library>
   <display>Veterinary: Atwood Library (Campus) - Oversize</display>
 </location>
 <location location_code="veterefe">
   <specific_location>Veterinary: Atwood Library (Campus) - Reference</specific_location>
   <library>Health Sciences Libraries</library>
+  <library>Veterinary</library>
   <library>Veterinary: Atwood Library (Campus)</library>
   <display>Veterinary: Atwood Library (Campus) - Reference</display>
 </location>
 <location location_code="veterefov">
   <specific_location>Veterinary: Atwood Library (Campus) - Reference Oversize</specific_location>
   <library>Health Sciences Libraries</library>
+  <library>Veterinary</library>
   <library>Veterinary: Atwood Library (Campus)</library>
   <display>Veterinary: Atwood Library (Campus) - Reference Oversize</display>
 </location>
 <location location_code="veterese">
   <specific_location>Veterinary: Atwood Library (Campus) - Reserve</specific_location>
   <library>Health Sciences Libraries</library>
+  <library>Veterinary</library>
   <library>Veterinary: Atwood Library (Campus)</library>
   <library>Reserve</library>
   <display>Veterinary: Atwood Library (Campus) - Reserve</display>
@@ -1788,6 +1802,7 @@
 <location location_code="veteresov">
   <specific_location>Veterinary: Atwood Library (Campus) - Reserve Oversize</specific_location>
   <library>Health Sciences Libraries</library>
+  <library>Veterinary</library>
   <library>Veterinary: Atwood Library (Campus)</library>
   <library>Reserve</library>
   <display>Veterinary: Atwood Library (Campus) - Reserve Oversize</display>
