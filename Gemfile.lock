@@ -236,7 +236,7 @@ GEM
     multi_xml (0.6.0)
     multipart-post (2.0.0)
     mysql2 (0.4.10)
-    nokogiri (1.10.4)
+    nokogiri (1.10.8)
       mini_portile2 (~> 2.4.0)
     oga (2.15)
       ast
@@ -397,7 +397,7 @@ DEPENDENCIES
   jquery-color
   jquery-rails (= 4.3.1)
   mysql2 (~> 0.4.10)
-  nokogiri (~> 1.10.0)
+  nokogiri (~> 1.10.8)
   oga
   passenger (= 5.1.6)
   pry-rails

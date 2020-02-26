@@ -92,7 +92,7 @@ gem 'blacklight_range_limit', '6.0.0'
 
 gem 'traject', '2.3.3'
 
-gem 'nokogiri', '~> 1.10.0'
+gem 'nokogiri', '~> 1.10.8'
 
 gem 'blacklight-marc', '6.2.0'
 
