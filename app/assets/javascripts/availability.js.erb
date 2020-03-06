@@ -228,6 +228,7 @@ $(document).ready(function() {
                     for(i = 0; i < data.length; i++) {
                         if(data[i]['option_name'] == 'BorrowDirect+') {
                             data[i]['option_name'] = 'Ivies+ Request';
+                            data[i]['option_url'] = '/new_request?id=FRANKLIN_' + mmsid;
                             break;
                         }
                     }
