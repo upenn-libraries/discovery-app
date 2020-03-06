@@ -1,1 +1,17 @@
-<button class='btn btn-classic btn-request-option'><span class="avail-label">Ivies+ Request</span></button>
+<% if current_user %>
+    <button class='btn btn-classic btn-request-option' onclick="javascript:window.open('/new_request?id=<%= document.id %>')"><span class="avail-label">Ivies+ Request</span></button>
+<% else %>
+    <div id="requestOptionList-<%= document.alma_mms_id %>" class="request-option-list-wrapper">
+      <dt class="hidden-print"></dt>
+      <dd class="btn-group unauthenticated">
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Login to view request options <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu">
+        <li class="small"><a href="<%= accounts_login_url(next: request.original_url) %>">Current faculty, student, staff login</a></li>
+        <li role="separator" class="divider"></li>
+        <li class="small"><a href="https://guides.library.upenn.edu/franklinaccount#s-lg-box-19646803">Subscribed alumni and courtesy user login</a></li>
+      </ul>
+      </dd>
+    </div>
+<% end %>
