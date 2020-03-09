@@ -223,11 +223,11 @@ $(document).ready(function() {
                     }
                 }
 
-                // Replace BD+ w/Ivies+ Request for demo purposes; correct when fully implemented
+                // Replace BD+ w/BD+ Request for demo purposes; correct when fully implemented
                 if(globaldata[mmsid]["inventory_type"] == "physical") {
                     for(i = 0; i < data.length; i++) {
                         if(data[i]['option_name'] == 'BorrowDirect+') {
-                            data[i]['option_name'] = 'Ivies+ Request';
+                            data[i]['option_name'] = 'BorrowDirect+ Request';
                             data[i]['option_url'] = '/new_request?id=FRANKLIN_' + mmsid;
                             break;
                         }

@@ -53,7 +53,7 @@
         </li>
         <% if current_user %>
             <li>
-              <%= link_to "Ivies+ Requests", {:controller => "ivies_plus", :action => "index"} %>
+              <%= link_to "BorrowDirect+ Requests", {:controller => "ivies_plus", :action => "index"} %>
             </li>
             <li>
               <a href="<%= my_library_card_url %>"><% if session['first_name'].present? %><span class="user-first-name"><%= session['first_name'] %> - </span><% end %>PennKey Library Account</a>
