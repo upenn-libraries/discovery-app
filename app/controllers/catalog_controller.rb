@@ -57,7 +57,9 @@ class CatalogController < ApplicationController
   # manually expire the session if user has exceeded 'hard expiration' or if
   # shib session has become inactive
   def expire_session
-    invalid_shib = has_shib_session? && !shib_session_valid?
+    #invalid_shib = has_shib_session? && !shib_session_valid?
+    # TODO: the above line is broken when deployed to the test site; Investigate and fix
+    invalid_shib = false
     if (session[:hard_expiration] && session[:hard_expiration] < Time.now.to_i) || invalid_shib
       reset_session
       url = invalid_shib ? "/Shibboleth.sso/Logout?return=#{URI.encode(expire_shib_session_return_url)}" : expire_shib_session_return_url
