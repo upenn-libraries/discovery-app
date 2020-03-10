@@ -341,7 +341,10 @@ module PennLib
 
     def is_subject_field(field)
       # 10/2018 kms: add 2nd Ind 7
-      subject_codes.member?(field.tag) && %w(0 2 4 7).member?(field.indicator2)
+      subject_codes.member?(field.tag) && (%w(0 2 4).member?(field.indicator2) ||
+            (field.indicator2 == '7' && field.any? do |sf|
+              sf.code == '2' && %w(aat cct fast jlabsh lcsh lcstt lctgm local/osu mesh ndlsh nlksh).member?(sf.value)
+            end))
     end
 
     def reject_pro_chr(sf)
@@ -496,6 +499,7 @@ module PennLib
     
     # 11/2018: add 69x as local subj, add 650 _7 as subj
     def get_subjects_from_600s_and_800(rec, indicator2)
+      track_dups = Set.new
       acc = []
       if %w{0 1 2}.member?(indicator2)
         #Subjects, Childrens subjects, and Medical Subjects all share this code
@@ -503,7 +507,9 @@ module PennLib
         acc += rec.fields
              .select { |f| subject_600s.member?(f.tag) ||
                       (f.tag == '880' && has_subfield6_value(f, /^(#{subject_600s.join('|')})/)) }
-             .select { |f| f.indicator2 == indicator2 || (f.indicator2 == '7' && indicator2 == '0') }
+             .select { |f| f.indicator2 == indicator2 || (f.indicator2 == '7' && indicator2 == '0' && f.any? do |sf|
+                sf.code == '2' && %w(aat cct fast jlabsh lcsh lcstt lctgm local/osu mesh ndlsh nlksh).member?(sf.value)
+              end)}
              .map do |field|
           #added 2017/04/10: filter out 0 (authority record numbers) added by Alma
           value_for_link = join_subfields(field, &subfield_not_in(%w{0 6 8 2 e w}))
@@ -522,7 +528,7 @@ module PennLib
                 link_type: 'subject_xfacet2'
             }
           end
-        end.compact
+        end.compact.select { |val| track_dups.add?(val) }
       elsif indicator2 == '4'
         # Local subjects
         # either a tag in subject_600s list with ind2==4, or a tag in subject_69X list with any ind2.
@@ -552,7 +558,7 @@ module PennLib
                 link_type: 'subject_search'
             }
           end
-        end.compact
+        end.compact.select { |val| track_dups.add?(val) }
       end
       acc
     end
@@ -709,12 +715,12 @@ module PennLib
     end
 
     def get_access_values(rec)
-      acc = rec.flat_map do |f|
+      acc = rec.map do |f|
         case f.tag
           when EnrichedMarc::TAG_HOLDING
             'At the library'
           when EnrichedMarc::TAG_ELECTRONIC_INVENTORY
-            ['Online', 'Penn Library Web']
+            'Online'
         end
       end.compact
       acc += rec.fields('856')
@@ -876,7 +882,7 @@ module PennLib
       # we don't facet for 'web' which is the 'Penn Library Web' location used in Voyager.
       # this location should eventually go away completely with data cleanup in Alma.
 
-      rec.fields(tag).flat_map do |field|
+      acc = rec.fields(tag).flat_map do |field|
         results = field.find_all { |sf| sf.code == subfield_code }
                     .select { |sf| sf.value != 'web' }
                     .map { |sf|
@@ -890,6 +896,10 @@ module PennLib
         # flatten multiple 'library' values
         results.select(&:present?).flatten
       end.uniq
+      if rec.fields(EnrichedMarc::TAG_ELECTRONIC_INVENTORY).any?
+        acc << 'Online library'
+      end
+      return acc
     end
 
     def get_library_values(rec)

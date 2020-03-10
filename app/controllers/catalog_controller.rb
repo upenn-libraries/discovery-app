@@ -312,7 +312,12 @@ class CatalogController < ApplicationController
     config.add_facet_field 'language_f', label: 'Language', limit: 5, collapse: false, solr_params: @@MINCOUNT
     config.add_facet_field 'library_f', label: 'Library', limit: 5, collapse: false, solr_params: @@MINCOUNT
     config.add_facet_field 'specific_location_f', label: 'Specific location', limit: 5, solr_params: @@MINCOUNT
-    config.add_facet_field 'publication_date_f', label: 'Publication date', limit: 5, collapse: false, solr_params: @@MINCOUNT
+    config.add_facet_field 'recently_published', label: 'Recently published', collapse: false, solr_params: @@MINCOUNT, :query => {
+        :last_5_years => { label: 'Last 5 years', fq: "pub_max_dtsort:[#{Date.current.year - 4}-01-01T00:00:00Z TO *]" },
+        :last_10_years => { label: 'Last 10 years', fq: "pub_max_dtsort:[#{Date.current.year - 9}-01-01T00:00:00Z TO *]" },
+        :last_15_years => { label: 'Last 15 years', fq: "pub_max_dtsort:[#{Date.current.year - 14}-01-01T00:00:00Z TO *]" },
+    }
+    config.add_facet_field 'publication_date_f', label: 'Publication date', limit: 5, solr_params: @@MINCOUNT
     config.add_facet_field 'classification_f', label: 'Classification', limit: 5, collapse: false, solr_params: @@MINCOUNT
     config.add_facet_field 'genre_f', label: 'Form/Genre', limit: 5, solr_params: @@MINCOUNT
     config.add_facet_field 'recently_added_f', label: 'Recently added', solr_params: @@MINCOUNT, :query => {
