@@ -218,7 +218,8 @@ class FranklinAlmaController < ApplicationController
     else
       bib_data['availability'][mmsid]['holdings'].each do |holding|
         links = []
-        links << "<a href='/redir/aeon?bibid=#{holding['mmsid']}&hldid=#{holding['holding_id']}'' target='_blank'>Request to view in reading room</a>" if holding['link_to_aeon']
+# TODO: Uncomment when libraries reopen
+        #links << "<a href='/redir/aeon?bibid=#{holding['mmsid']}&hldid=#{holding['holding_id']}'' target='_blank'>Request to view in reading room</a>" if holding['link_to_aeon']
         holding['availability'] = availability_status[holding['availability']] || 'Requestable'
 
         if has_holding_info
@@ -345,11 +346,12 @@ class FranklinAlmaController < ApplicationController
       end
       policies[policy] = "/alma/request/?mms_id=%{mms_id}&holding_id=%{holding_id}&item_pid=%{item_pid}" unless not_requestable
     }
-
     table_data.each { |item|
       policy = item.shift()
       request_url = (policies[policy] || '') % params.merge({:item_pid => item[0]})
-      item[5] << "<a target='_blank' href='#{request_url}'>Request</a>" unless (request_url.empty? || item[2] != 'Item in place')
+# TODO: Uncomment when libraries reopen
+      #item[5] << "<a target='_blank' href='#{request_url}'>Request</a>" unless (request_url.empty? || item[2] != 'Item in place')
+      item[5] << "" unless (request_url.empty? || item[2] != 'Item in place')
     }
 
     render :json => {"data": table_data}
@@ -371,15 +373,16 @@ class FranklinAlmaController < ApplicationController
         nil
       else
         case option['type']['value']
-        when 'HOLD'
-          {
-            :option_name => 'Request',
-            #:option_url => option['request_url'],
-            :option_url => "/alma/request?mms_id=#{params['mms_id']}",
-            :avail_for_physical => true,
-            :avail_for_electronic => true,
-            :highlightable => true
-          }
+# TODO: Uncomment when libraries reopen
+        #when 'HOLD'
+          #{
+            #:option_name => 'Request',
+            ##:option_url => option['request_url'],
+            #:option_url => "/alma/request?mms_id=#{params['mms_id']}",
+            #:avail_for_physical => true,
+            #:avail_for_electronic => true,
+            #:highlightable => true
+          #}
         when 'GES'
           option_url = option['request_url']
           if option_url.index('?')
@@ -434,12 +437,13 @@ class FranklinAlmaController < ApplicationController
       end
     }
 
-    results.append({
-                     :option_name => "Books By Mail",
-                     :option_url => "https://franklin.library.upenn.edu/redir/booksbymail?bibid=#{params['mms_id']}",
-                     :avail_for_physical => true,
-                     :avail_for_electronic => false
-                   }) if ['Athenaeum Member','Faculty','Faculty Express','Grad Student','Library Staff'].member?(session['user_group'])
+# TODO: Uncomment when libraries reopen
+    #results.append({
+                     #:option_name => "Books By Mail",
+                     #:option_url => "https://franklin.library.upenn.edu/redir/booksbymail?bibid=#{params['mms_id']}",
+                     #:avail_for_physical => true,
+                     #:avail_for_electronic => false
+                   #}) if ['Athenaeum Member','Faculty','Faculty Express','Grad Student','Library Staff'].member?(session['user_group'])
 
     render :json => results
   end
