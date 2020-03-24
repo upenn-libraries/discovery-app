@@ -45,7 +45,7 @@ $(document).ready(function() {
                 var proxyUrl = PROXY_PREPEND + 'http://127.0.0.1:8082/?redirect=' + encodeURIComponent(currentUrl);
                 $(div).find(".ezproxy-login-link").attr("href", proxyUrl);
 
-                if (auth !== null && auth !== undefined) {
+                if (auth !== null && auth !== undefined && auth.loggedIn) {
                     $(div).find(".view-and-filter").find("a").each(function (idx, element) {
                         // ezproxy handles url param specifically so we don't need to escape it
                         var viewAndFilterUrl = $(element).attr("href");
