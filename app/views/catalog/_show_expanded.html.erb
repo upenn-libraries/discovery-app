@@ -1,4 +1,4 @@
-<% if document.expanded_docs.size > 0 %>
+<% if document.expanded_docs.select { |doc| !doc.id.start_with?('HATHIALL_') }.size > 0 %>
     <dt class="blacklight-other_records">
       Other records:
     </dt>
@@ -7,7 +7,7 @@
         <div class="form-group">
           <select class="form-control document-cluster-select">
             <option>Select one...</option>
-            <% document.all_doc_ids_for_cluster.sort.each do |doc_id| %>
+            <% document.all_doc_ids_for_cluster.select { |doc_id| !doc_id.start_with?('HATHIALL_') }.sort.each do |doc_id| %>
                 <option value="<%= doc_id %>"><%= doc_id %><%= document.id == doc_id ? ' (currently shown)' : '' %></option>
             <% end %>
           </select>
