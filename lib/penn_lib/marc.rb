@@ -1676,7 +1676,7 @@ module PennLib
       rec.fields('880')
           .select { |f| has_subfield6_value(f, /^(800|810|811|830|400|410|411|440|490)/) }
           .each do |field|
-        series = join_subfields(field, &subfield_in(%w{5 6 8}))
+        series = join_subfields(field, &subfield_not_in(%W{5 6 8}))
         acc << { value: series, link: false }
       end
 
