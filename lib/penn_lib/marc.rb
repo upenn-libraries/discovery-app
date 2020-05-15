@@ -839,16 +839,8 @@ module PennLib
           .each do |field|
         acc << join_subfields(field, &subfield_in(['f']))
       end
+      acc += get_264_or_880_fields(rec, '1')
       acc.select(&:present?)
-    end
-
-    # used to determine whether to include faceted publication values
-    # as part of record display
-    def has_264_with_a_or_b(rec)
-      rec.fields('264')
-          .select { |f| f.indicator2 == '1' }
-          .take(1)
-          .any? { |f| f.any?(&subfield_in(%w{a b})) }
     end
 
     def get_language_values(rec)
