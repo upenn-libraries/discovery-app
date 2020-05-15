@@ -90,12 +90,6 @@ class SolrDocument
     @pennlibmarc ||= PennLib::Marc.new(@code_mappings)
   end
 
-  def publication_display
-    @publication_display ||= begin
-      pennlibmarc.get_publication_display(to_marc)
-    end
-  end
-
   def format_display
     @format_display ||= [ fetch('format_a') ] + pennlibmarc.get_format_display(to_marc)
   end
