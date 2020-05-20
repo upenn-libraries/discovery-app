@@ -1,0 +1,14 @@
+<div class="view-and-filter text-right">
+  <%= link_to "View and filter #{number_with_delimiter(results.total_items)} #{results.total_items != 1 ? 'results' : 'result'}", databases_results_url(params[:q] || params[:query]) %>
+</div>
+
+<%= yield %>
+
+<% if results.total_items > 0 %>
+  <div class="view-all">
+    <%= link_to(("View all results #{image_tag('view_all_arrow.png', :alt => '')}").html_safe, databases_results_url(params[:q] || params[:query])) %>
+  </div>
+<% end %>
+
+<div class="corner left-bottom hide"></div>
+<div class="corner right-bottom hide"></div>
