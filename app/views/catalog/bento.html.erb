@@ -11,7 +11,7 @@
       <div class="view-and-filter text-right">
         <%= link_to "View and filter #{number_with_delimiter(@response.total)} #{@response.total  != 1 ? 'results' : 'result'}", search_catalog_path(q: params[:q] || params[:query], search_field: 'keyword') %>
       </div>
-      <%= bento_search 'catalog', :query => params[:q] || '', :per_page => 5, :load => :ajax_auto %>
+      <%= bento_search 'catalog', :query => params[:q] || '', :load => :ajax_auto %>
     </div>
 
     <div class="col col-md-3 bento-box summon-results ezproxy-login-status" id="bento-results-summon">
@@ -27,7 +27,15 @@
       <div class="corner left-top hide"></div>
       <div class="corner right-top hide"></div>
       <h3>Databases</h3>
-      <%= bento_search 'databases', :query => params[:q] || '', :per_page => 5, :load => :ajax_auto, :f_term => 'format_f', :f_value => 'Database & Article Index' %>
+      <%= bento_search 'databases', :query => params[:q] || '', :load => :ajax_auto %>
+    </div>
+
+    <div class="col col-md-3 bento-box colenda-results" id="bento-results-colenda">
+      <a name="colenda"></a>
+      <div class="corner left-top hide"></div>
+      <div class="corner right-top hide"></div>
+      <h3>Colenda</h3>
+      <%= bento_search 'colenda', :query => params[:q] || '', :load => :ajax_auto %>
     </div>
 
     <%= render_expert_help(@response.aggregations["subject_specialists"]) %>
@@ -62,4 +70,3 @@
   </div>
 
 </div>
-
