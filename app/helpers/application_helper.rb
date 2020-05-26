@@ -20,6 +20,10 @@ module ApplicationHelper
     return "https://www.library.upenn.edu/search/web-pages?q=#{query}"
   end
 
+  def colenda_search_results_url(query)
+    return "https://colenda.library.upenn.edu/catalog?q=#{query}"
+  end
+
   def catalog_results_url(query)
     return search_catalog_path(q: query, search_field: 'keyword')
   end
@@ -61,6 +65,10 @@ module ApplicationHelper
     elsif tab_id == 'website' && action_name == 'landing'
       attrs = {
           'href': "http://www.library.upenn.edu/search/web-pages"
+      }
+    elsif tab_id == 'colenda' && action_name == 'landing'
+      attrs = {
+          'href': "https://colenda.library.upenn.edu"
       }
     else
       attrs = {
