@@ -51,6 +51,11 @@
         <%= render_tab_link('colenda', 'Colenda', '#colenda', colenda_search_results_url(params[:q]), '#colenda-main, #colenda-search-navbar') %>
       </div>
     </li>
+    <li role="presentation" class="<%= active_tab_classes('colenda') %>">
+      <div class="franklin-tab">
+        <%= render_tab_link('colenda', 'Colenda', '#colenda', colenda_search_results_url(params[:q]), '#colenda-main, #colenda-search-navbar') %>
+      </div>
+    </li>
     <li role="presentation" class="<%= active_tab_classes('website') %>">
       <div class="franklin-tab">
         <%= render_tab_link('website', 'Website', '#website', google_site_search_results_url(params[:q]), '#website-main, #website-search-navbar') %>
