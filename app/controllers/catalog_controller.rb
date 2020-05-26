@@ -68,7 +68,7 @@ class CatalogController < ApplicationController
   PAGINATION_THRESHOLD=250
   before_action only: :index do
     if params[:page] && params[:page].to_i > PAGINATION_THRESHOLD
-      flash[:error] = "You have paginated too deep into the result set. Please contact us using the feedback form if you have a need to view results past page #{PAGINATION_THRESHOLD}."
+      flash[:error] = "You have paginated too deep into the result set. Please contact us if you have a need to view results past page #{PAGINATION_THRESHOLD}."
       redirect_to root_path
     end
   end
@@ -76,7 +76,7 @@ class CatalogController < ApplicationController
   FACET_PAGINATION_THRESHOLD=50
   before_action only: :facet do
     if params['facet.page'] && params['facet.page'].to_i > FACET_PAGINATION_THRESHOLD
-      flash[:error] = "You have paginated too deep into facets. Please contact us using the feedback form if you have a need to view facets past page #{FACET_PAGINATION_THRESHOLD}."
+      flash[:error] = "You have paginated too deep into facets. Please contact us if you have a need to view facets past page #{FACET_PAGINATION_THRESHOLD}."
       redirect_to root_path
     end
   end
