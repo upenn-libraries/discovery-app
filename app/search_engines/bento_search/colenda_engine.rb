@@ -41,7 +41,7 @@ class BentoSearch::ColendaEngine
     results.total_items = hash['response']['pages']['total_count'].to_i
     return results unless results.total_items > 0
 
-    entries = results.total_items > 1 ? hash['response']['docs'] : [hash['response']['docs']]
+    entries = hash['response']['docs']
 
     entries.each do |entry|
       online_resource = {}
