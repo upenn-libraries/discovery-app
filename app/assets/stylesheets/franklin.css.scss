@@ -710,6 +710,13 @@ h3.ongray {
   }
 }
 
+.colenda-thumbnail {
+  text-align: center;
+  img {
+    max-height: 100px;
+  }
+}
+
 /* hack */
 #bento-results-google .source-info {
   display: none;
