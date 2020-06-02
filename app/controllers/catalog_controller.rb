@@ -86,7 +86,8 @@ class CatalogController < ApplicationController
     config.advanced_search ||= Blacklight::OpenStructWithHashAccess.new
     # config.advanced_search[:qt] ||= 'advanced'
     config.advanced_search[:url_key] ||= 'advanced'
-    config.advanced_search[:query_parser] ||= 'perEndPosition_dense_shingle_graphSpans'
+    #config.advanced_search[:query_parser] ||= 'perEndPosition_dense_shingle_graphSpans'
+    config.advanced_search[:query_parser] ||= 'edismax'
     config.advanced_search[:form_solr_parameters] ||= {}
 
 
@@ -103,6 +104,10 @@ class CatalogController < ApplicationController
     config.default_solr_params = {
         #cache: 'false',
         defType: 'perEndPosition_dense_shingle_graphSpans',
+        combo: '{!filters param=$q param=$fq excludeTags=cluster}',
+        #combo: '{!bool must=$q filter=\'{!filters param=$fq v=*:*}\'}',
+        #combo: '{!query v=$q}',
+        back: '*:*',
         # this list is annoying to maintain, but this avoids hard-coding a field list
         # in the search request handler in solrconfig.xml
         fl: %w{
@@ -196,6 +201,15 @@ class CatalogController < ApplicationController
       a.params.dig(:f, :format_f)&.include?('Database & Article Index')
     }
 
+    get_hits = lambda { |v|
+      r1 = v[:r1]
+      r1.nil? ? 0 : (r1[:relatedness].to_f * 100000).to_i
+    }
+
+    post_sort = lambda { |items|
+      items.sort { |a,b| b.hits <=> a.hits }
+    }
+
     config.induce_sort = lambda { |blacklight_params|
       return 'title_nssort asc' if blacklight_params.dig(:f, :format_f)&.include?('Database & Article Index')
     }
@@ -215,6 +229,10 @@ class CatalogController < ApplicationController
             :display => 'Database filters'
         }
     }
+
+    @@SUBJECT_SPECIALISTS = File.open("config/translation_maps/subject_specialists.solr-json", "rb").map do |line|
+      line.strip
+    end.compact.join
 
     @@DATABASE_CATEGORY_TAXONOMY = [
         '{',
@@ -267,6 +285,8 @@ class CatalogController < ApplicationController
 
     config.add_facet_field 'db_type_f', label: 'Database Type', limit: -1, collapse: false, :if => database_selected,
                            :facet_type => :database, solr_params: @@MINCOUNT
+    config.add_facet_field 'subject_specialists', label: 'Subject Area Correlation', collapse: true, :partial => 'blacklight/hierarchy/facet_hierarchy',
+        :json_facet => @@SUBJECT_SPECIALISTS, :top_level_field => 'subject_specialists', :get_hits => get_hits, :post_sort => post_sort
     config.add_facet_field 'azlist', label: 'A-Z List', collapse: false, single: :manual, :facet_type => :header,
                            options: {:layout => 'horizontal_facet_list'}, solr_params: { 'facet.mincount' => 0 }, :if => database_selected, query: {
             'A' => { :label => 'A', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='a'}"},
