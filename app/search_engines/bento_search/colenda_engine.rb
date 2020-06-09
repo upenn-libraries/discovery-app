@@ -51,7 +51,7 @@ class BentoSearch::ColendaEngine
       item.authors = [entry['personal_name_sim'], entry['creator_sim'], entry['corporate_name_sim']].compact.flatten.join(', ')
       item.format = entry['format_ssim']&.join(', ')
       item.publisher = entry['publisher_ssim']&.join(', ')
-      item.custom_data['thumbnail'] = 'https://crgw.library.upenn.edu/ark81431p3cc4q/SHA256E-s16896--9b299ca8dd82d745012f6fdc53eada34d20d5f2654b2168dc2685ae2dfc1448d.jpeg'
+      item.custom_data['thumbnail'] = entry['thumbnail_url']
 
       results << item
 
