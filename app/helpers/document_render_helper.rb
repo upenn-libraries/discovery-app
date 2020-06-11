@@ -51,6 +51,10 @@ module DocumentRenderHelper
     end
   end
 
+  @@HATHI_TMP_TEXT = 'HathiTrust Digital Library Login for full text'
+  @@HATHI_REPLACEMENT_TEXT = 'COVID-19 Special Access from HathiTrust — Login for full text'
+  @@HATHI_LOGIN_PREFIX = 'https://babel.hathitrust.org/Shibboleth.sso/Login?entityID=https://idp.pennkey.upenn.edu/idp/shibboleth&target=https%3A%2F%2Fbabel.hathitrust.org%2Fcgi%2Fping%2Fpong%3Ftarget%3D'
+
   def render_online_resource_display_for_index_view(options)
     values = options[:value]
     suppress_remote_links = 'Include Partner Libraries' != params.dig('f', 'cluster', 0)
@@ -71,11 +75,16 @@ module DocumentRenderHelper
       JSON.parse(value).map do |link_struct|
         url = link_struct['linkurl']
         text = link_struct['linktext']
+        orig_url = url
+        if text == @@HATHI_TMP_TEXT
+          text = @@HATHI_REPLACEMENT_TEXT
+          url = @@HATHI_LOGIN_PREFIX + URI.encode_www_form_component(url)
+        end
         html = %Q{<div class="online-resource-link-group"><a href="#{url}">#{text}</a>}
         html += '<br/>'.html_safe
 
         if !text.start_with?('http')
-          html += + url
+          html += + orig_url
         end
 
         if link_struct['volumes']
