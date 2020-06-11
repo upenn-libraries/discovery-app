@@ -235,6 +235,15 @@ class CatalogController < ApplicationController
       a.params.dig(:f, :format_f)&.include?('Database & Article Index')
     }
 
+    get_hits = lambda { |v|
+      r1 = v[:r1]
+      r1.nil? ? 0 : (r1[:relatedness].to_f * 100000).to_i
+    }
+
+    post_sort = lambda { |items|
+      items.sort { |a,b| b.hits <=> a.hits }
+    }
+
     local_only = lambda { |a, b, c|
       'Include Partner Libraries' != a.params.dig(:f, :cluster, 0)
     }
