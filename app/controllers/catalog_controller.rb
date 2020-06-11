@@ -120,7 +120,8 @@ class CatalogController < ApplicationController
     config.advanced_search ||= Blacklight::OpenStructWithHashAccess.new
     # config.advanced_search[:qt] ||= 'advanced'
     config.advanced_search[:url_key] ||= 'advanced'
-    config.advanced_search[:query_parser] ||= 'perEndPosition_dense_shingle_graphSpans'
+    #config.advanced_search[:query_parser] ||= 'perEndPosition_dense_shingle_graphSpans'
+    config.advanced_search[:query_parser] ||= 'edismax'
     config.advanced_search[:form_solr_parameters] ||= {}
 
 
@@ -137,6 +138,10 @@ class CatalogController < ApplicationController
     config.default_solr_params = {
         #cache: 'false',
         defType: 'perEndPosition_dense_shingle_graphSpans',
+        combo: '{!filters param=$q param=$fq excludeTags=cluster}',
+        #combo: '{!bool must=$q filter=\'{!filters param=$fq v=*:*}\'}',
+        #combo: '{!query v=$q}',
+        back: '*:*',
         # this list is annoying to maintain, but this avoids hard-coding a field list
         # in the search request handler in solrconfig.xml
         fl: %w{
@@ -168,11 +173,7 @@ class CatalogController < ApplicationController
         'facet.mincount': 0,
         #      fq: '{!tag=cluster}{!collapse field=cluster_id nullPolicy=expand size=5000000 min=record_source_id}',
         # this approach needs expand.field=cluster_id
-<<<<<<< HEAD
         # MOVE TO FACET: fq: '{!bool tag=cluster must_not=$x1 must_not=$x2 must_not=$x3 must_not=$x4 must_not=$x5 must_not=$x6 must_not=$x7}',
-=======
-        fq: %q~{!tag=cluster}NOT ({!join from=cluster_id to=cluster_id v='record_source_f:"Penn"'} AND record_source_f:"HathiTrust") NOT record_source_id:3~,
->>>>>>> 4618572... temporarily add links to hathi records corresponding to local holdings
         expand: 'true',
         'expand.field': 'cluster_id',
         'expand.q': '*:*',
@@ -258,6 +259,10 @@ class CatalogController < ApplicationController
         }
     }
 
+    @@SUBJECT_SPECIALISTS = File.open("config/translation_maps/subject_specialists.solr-json", "rb").map do |line|
+      line.strip
+    end.compact.join
+
     @@DATABASE_CATEGORY_TAXONOMY = [
         '{',
         'db_category_f:{',
@@ -313,6 +318,8 @@ class CatalogController < ApplicationController
 
     config.add_facet_field 'db_type_f', label: 'Database Type', limit: -1, collapse: false, :if => database_selected,
                            :facet_type => :database, solr_params: @@MINCOUNT
+    config.add_facet_field 'subject_specialists', label: 'Subject Area Correlation', collapse: true, :partial => 'blacklight/hierarchy/facet_hierarchy',
+        :json_facet => @@SUBJECT_SPECIALISTS, :top_level_field => 'subject_specialists', :get_hits => get_hits, :post_sort => post_sort
     config.add_facet_field 'azlist', label: 'A-Z List', collapse: false, single: :manual, :facet_type => :header,
                            options: {:layout => 'horizontal_facet_list'}, solr_params: { 'facet.mincount' => 0 }, :if => database_selected, query: {
             'A' => { :label => 'A', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='a'}"},
