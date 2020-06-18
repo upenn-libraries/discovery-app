@@ -14,6 +14,9 @@ $(document).ready(function() {
     }
 
     function constructAeonLink(mmsid, holding) {
+        // TODO: remove this line once the libraries are open again
+        return null;
+
         if(holding['link_to_aeon']) {
           return '<a href="/redir/aeon?bibid=' + mmsid + '&hldid=' + holding['holding_id'] + '" target="_blank">Request to view</a>';
         }
@@ -113,7 +116,8 @@ $(document).ready(function() {
                             var requests = globaldata[data[i][7]];
                             if(validRequestTypes.indexOf(requests[0]) != -1) {
                                 renderdata[mmsid].push(data[i][7]);
-                                data[i][5][0] = "<a target='_blank' href='/alma/request?mms_id=" + mmsid + "&holding_id=" + data[i][6] + "&item_pid=" + data[i][7] + "'>Request</a>";
+                                // TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
+                                data[i][5][0] = etas_monograph ? "" : "<a target='_blank' href='/alma/request?mms_id=" + mmsid + "&holding_id=" + data[i][6] + "&item_pid=" + data[i][7] + "'>Pickup@Penn</a>";
                                 table.row(i).invalidate().draw();
                             }
                         } 
@@ -305,7 +309,8 @@ $(document).ready(function() {
                             var requests = globaldata[data[i][0]];
                             if(validRequestTypes.indexOf(requests[0]) != -1) {
                                 renderdata[mmsid].push(data[i][0]);
-                                data[i][5].push("<a target='_blank' href='/alma/request?mms_id=" + data[i][6] + "&holding_id=" + data[i][7] + "&item_pid=" + data[i][0] + "'>Request</a>");
+                                // TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
+                                data[i][5].push(etas_monograph ? "" : "<a target='_blank' href='/alma/request?mms_id=" + data[i][6] + "&holding_id=" + data[i][7] + "&item_pid=" + data[i][0] + "'>Pickup@Penn</a>");
                                 table.row(i).invalidate().draw();
                             }
                         } 
