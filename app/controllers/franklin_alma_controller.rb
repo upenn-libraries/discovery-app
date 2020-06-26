@@ -34,6 +34,10 @@ class FranklinAlmaController < ApplicationController
   @@bottomoptionslist['Suggest Fix / Enhance Record'] = 1
   @@bottomoptionslist['Place on Course Reserve'] = 2
 
+  def etas_monograph
+    false
+  end
+
   def cmpOnlineServices(service_a, service_b)
     collection_a = service_a['collection'] || ''
     interface_a = service_a['interface_name'] || ''
