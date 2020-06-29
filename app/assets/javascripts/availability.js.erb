@@ -32,7 +32,7 @@ $(document).ready(function() {
       var hathi_etas = false;
       full_text_links.contents().each(function() {
         if (this.nodeType === 3) {
-          var trimmed = $.trim(this.nodeValue));
+          var trimmed = $.trim(this.nodeValue);
           if (trimmed.startsWith('COVID-19')) {
             hathi_etas = true;
             return !hathi_pd; // if also pd, return early
