@@ -53,7 +53,7 @@ $(document).ready(function() {
 
     // Based on hackily-parsed DOM context, determine whether the Pickup@Penn link should be suppressed
     function disable_pickup_at_penn(ctx) {
-      return ctx.monograph && (!ctx.available || ctx.hathi_etas || ctx.hathi_pd);
+      return true;//ctx.monograph && (!ctx.available || ctx.hathi_etas || ctx.hathi_pd);
     }
 
     function constructAeonLink(mmsid, holding) {
@@ -161,7 +161,7 @@ $(document).ready(function() {
                             if(validRequestTypes.indexOf(requests[0]) != -1) {
                                 renderdata[mmsid].push(data[i][7]);
                                 // TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
-                                data[i][5][0] = disable_pickup_at_penn(request_context) ? "" : "<a target='_blank' href='/alma/request?mms_id=" + mmsid + "&holding_id=" + data[i][6] + "&item_pid=" + data[i][7] + "'>Pickup@Penn</a>";
+                                data[i][5][0] = disable_pickup_at_penn(request_context) ? "" : "<a target='_blank' href='/alma/request?mms_id=" + mmsid + "&holding_id=" + data[i][6] + "&item_pid=" + data[i][7] + "'>Pickup@Penn1</a>";
                                 table.row(i).invalidate().draw();
                             }
                         } 
@@ -355,7 +355,7 @@ $(document).ready(function() {
                             if(validRequestTypes.indexOf(requests[0]) != -1) {
                                 renderdata[mmsid].push(data[i][0]);
                                 // TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
-                                data[i][5].push(disable_pickup_at_penn(request_context) ? "" : "<a target='_blank' href='/alma/request?mms_id=" + data[i][6] + "&holding_id=" + data[i][7] + "&item_pid=" + data[i][0] + "'>Pickup@Penn</a>");
+                                data[i][5].push(disable_pickup_at_penn(request_context) ? "" : "<a target='_blank' href='/alma/request?mms_id=" + data[i][6] + "&holding_id=" + data[i][7] + "&item_pid=" + data[i][0] + "'>Pickup@Penn2</a>");
                                 table.row(i).invalidate().draw();
                             }
                         } 

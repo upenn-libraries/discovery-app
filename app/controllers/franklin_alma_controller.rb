@@ -354,7 +354,7 @@ class FranklinAlmaController < ApplicationController
       policy = item.shift()
       request_url = (policies[policy] || '') % params.merge({:item_pid => item[0]})
       # TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
-      item[5] << (etas_monograph ? "" : "<a target='_blank' href='#{request_url}'>Pickup@Penn</a>") unless (request_url.empty? || item[2] != 'Item in place')
+      item[5] << (etas_monograph ? "" : "<a target='_blank' href='#{request_url}'>Pickup@Penn3</a>") unless (request_url.empty? || item[2] != 'Item in place')
     }
 
     render :json => {"data": table_data}
@@ -378,7 +378,7 @@ class FranklinAlmaController < ApplicationController
         case option['type']['value']
         when 'HOLD'
           {
-            :option_name => 'Pickup@Penn',
+            :option_name => 'Pickup@Penn4',
             #:option_url => option['request_url'],
             :option_url => "/alma/request?mms_id=#{params['mms_id']}",
             :avail_for_physical => true,
