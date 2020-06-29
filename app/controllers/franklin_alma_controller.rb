@@ -34,6 +34,10 @@ class FranklinAlmaController < ApplicationController
   @@bottomoptionslist['Suggest Fix / Enhance Record'] = 1
   @@bottomoptionslist['Place on Course Reserve'] = 2
 
+  def etas_monograph
+    false
+  end
+
   def cmpOnlineServices(service_a, service_b)
     collection_a = service_a['collection'] || ''
     interface_a = service_a['interface_name'] || ''
@@ -349,9 +353,8 @@ class FranklinAlmaController < ApplicationController
     table_data.each { |item|
       policy = item.shift()
       request_url = (policies[policy] || '') % params.merge({:item_pid => item[0]})
-# TODO: Uncomment when libraries reopen
-      #item[5] << "<a target='_blank' href='#{request_url}'>Request</a>" unless (request_url.empty? || item[2] != 'Item in place')
-      item[5] << "" unless (request_url.empty? || item[2] != 'Item in place')
+      # TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
+      item[5] << (etas_monograph ? "" : "<a target='_blank' href='#{request_url}'>Pickup@Penn3</a>") unless (request_url.empty? || item[2] != 'Item in place')
     }
 
     render :json => {"data": table_data}
@@ -373,16 +376,15 @@ class FranklinAlmaController < ApplicationController
         nil
       else
         case option['type']['value']
-# TODO: Uncomment when libraries reopen
-        #when 'HOLD'
-          #{
-            #:option_name => 'Request',
-            ##:option_url => option['request_url'],
-            #:option_url => "/alma/request?mms_id=#{params['mms_id']}",
-            #:avail_for_physical => true,
-            #:avail_for_electronic => true,
-            #:highlightable => true
-          #}
+        when 'HOLD'
+          {
+            :option_name => 'Pickup@Penn4',
+            #:option_url => option['request_url'],
+            :option_url => "/alma/request?mms_id=#{params['mms_id']}",
+            :avail_for_physical => true,
+            :avail_for_electronic => true,
+            :highlightable => true
+          } unless etas_monograph # TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
         when 'GES'
           option_url = option['request_url']
           if option_url.index('?')
@@ -437,13 +439,12 @@ class FranklinAlmaController < ApplicationController
       end
     }
 
-# TODO: Uncomment when libraries reopen
-    #results.append({
-                     #:option_name => "Books By Mail",
-                     #:option_url => "https://franklin.library.upenn.edu/redir/booksbymail?bibid=#{params['mms_id']}",
-                     #:avail_for_physical => true,
-                     #:avail_for_electronic => false
-                   #}) if ['Athenaeum Member','Faculty','Faculty Express','Grad Student','Library Staff'].member?(session['user_group'])
+    results.append({
+                     :option_name => "Books By Mail",
+                     :option_url => "https://franklin.library.upenn.edu/redir/booksbymail?bibid=#{params['mms_id']}",
+                     :avail_for_physical => true,
+                     :avail_for_electronic => false
+                   }) if ['Athenaeum Member','Faculty','Faculty Express','Grad Student','Library Staff'].member?(session['user_group'])
 
     render :json => results
   end
