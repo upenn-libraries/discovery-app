@@ -15,9 +15,9 @@ $(document).ready(function() {
 
     // Hackily parses relevant context out of the DOM for the specified mmsid
     function get_request_context(mmsid) {
-      var record_root = $('#documents > div.document').has('div.documentHeader > h3.index_title a[href $= "_'+mmsid+'"]');
+      var record_root = $('#doc_franklin_'+mmsid);
       if (record_root.length == 0) {
-        record_root = $('#document, #doc_franklin_'+mmsid);
+        record_root = $('#documents > div.document').has('div.documentHeader > h3.index_title a[href $= "_'+mmsid+'"]');
       }
       var avail_jq_node = record_root.find('.availability-ajax-loaded[data-availability-ids='+mmsid+']')
       var available = false;
@@ -36,7 +36,7 @@ $(document).ready(function() {
           if (trimmed.startsWith('COVID-19')) {
             hathi_etas = true;
             return !hathi_pd; // if also pd, return early
-          else if (trimmed.endsWith('HathiTrust')) {
+          } else if (trimmed.endsWith('HathiTrust')) {
             hathi_pd = true;
             return !hath_etas; // if also etas, return early
           }
