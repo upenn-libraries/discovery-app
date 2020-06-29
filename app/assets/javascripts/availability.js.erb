@@ -13,6 +13,49 @@ $(document).ready(function() {
         BlacklightAlma.call(this);
     }
 
+    // Hackily parses relevant context out of the DOM for the specified mmsid
+    function get_request_context(mmsid) {
+      var record_root = $('#documents > div.document').has('div.documentHeader > h3.index_title a[href $= "_'+mmsid+'"]');
+      if (record_root.length == 0) {
+        record_root = $('#document, #doc_franklin_'+mmsid);
+      }
+      var avail_jq_node = record_root.find('.availability-ajax-loaded[data-availability-ids='+mmsid+']')
+      var available = false;
+      avail_jq_node.contents().each(function() {
+        if (this.nodeType === 3 && $.trim(this.nodeValue).startsWith('Available')) {
+          available = true;
+          return false; // there's at least one "Available", so return early
+        }
+      });
+      var full_text_links = record_root.find('dd.blacklight-full_text_links_for_cluster_display a');
+      var hathi_pd = false;
+      var hathi_etas = false;
+      full_text_links.contents().each(function() {
+        if (this.nodeType === 3) {
+          var trimmed = $.trim(this.nodeValue));
+          if (trimmed.startsWith('COVID-19')) {
+            hathi_etas = true;
+            return !hathi_pd; // if also pd, return early
+          else if (trimmed.endsWith('HathiTrust')) {
+            hathi_pd = true;
+            return !hath_etas; // if also etas, return early
+          }
+        }
+      });
+      var monograph = true; //TODO: determine whether this is actually a monograph?
+      return {
+        'available': available,
+        'hathi_etas': hathi_etas,
+        'hathi_pd': hathi_pd,
+        'monograph': monograph
+      };
+    }
+
+    // Based on hackily-parsed DOM context, determine whether the Pickup@Penn link should be suppressed
+    function disable_pickup_at_penn(ctx) {
+      return ctx.monograph && (!ctx.available || ctx.hathi_etas || ctx.hathi_pd);
+    }
+
     function constructAeonLink(mmsid, holding) {
         // TODO: remove this line once the libraries are open again
         return null;
@@ -105,6 +148,7 @@ $(document).ready(function() {
               "emptyTable": "No item data available"
             },
             "drawCallback": function(settings) {
+                var request_context = get_request_context(mmsid);
                 var table = $('#requestOptions-' + mmsid).DataTable();
                 var pageSize = table.settings()[0]['_iDisplayLength'];
                 var tableLen = table.data().length;
@@ -117,7 +161,7 @@ $(document).ready(function() {
                             if(validRequestTypes.indexOf(requests[0]) != -1) {
                                 renderdata[mmsid].push(data[i][7]);
                                 // TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
-                                data[i][5][0] = etas_monograph ? "" : "<a target='_blank' href='/alma/request?mms_id=" + mmsid + "&holding_id=" + data[i][6] + "&item_pid=" + data[i][7] + "'>Pickup@Penn</a>";
+                                data[i][5][0] = disable_pickup_at_penn(request_context) ? "" : "<a target='_blank' href='/alma/request?mms_id=" + mmsid + "&holding_id=" + data[i][6] + "&item_pid=" + data[i][7] + "'>Pickup@Penn</a>";
                                 table.row(i).invalidate().draw();
                             }
                         } 
@@ -298,6 +342,7 @@ $(document).ready(function() {
                 "emptyTable": "No item data available"
             },
             "drawCallback": function(settings) {
+                var request_context = get_request_context(mmsid);
                 var table = $('#holdingItems-' + mmsid).DataTable();
                 var pageSize = table.settings()[0]['_iDisplayLength'];
                 var tableLen = table.data().length;
@@ -310,7 +355,7 @@ $(document).ready(function() {
                             if(validRequestTypes.indexOf(requests[0]) != -1) {
                                 renderdata[mmsid].push(data[i][0]);
                                 // TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
-                                data[i][5].push(etas_monograph ? "" : "<a target='_blank' href='/alma/request?mms_id=" + data[i][6] + "&holding_id=" + data[i][7] + "&item_pid=" + data[i][0] + "'>Pickup@Penn</a>");
+                                data[i][5].push(disable_pickup_at_penn(request_context) ? "" : "<a target='_blank' href='/alma/request?mms_id=" + data[i][6] + "&holding_id=" + data[i][7] + "&item_pid=" + data[i][0] + "'>Pickup@Penn</a>");
                                 table.row(i).invalidate().draw();
                             }
                         } 
