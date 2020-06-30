@@ -1,3 +1,4 @@
+require 'json'
 
 #class FranklinAlmaController < BlacklightAlma::AlmaController
 class FranklinAlmaController < ApplicationController
@@ -300,7 +301,7 @@ class FranklinAlmaController < ApplicationController
   end
 
   def holding_items
-    userid = session['id'].presence || nil
+    userid = 'mgibney'#session['id'].presence || nil
     due_date_policy = 'Please log in for loan and request information' if userid.nil?
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
@@ -360,9 +361,17 @@ class FranklinAlmaController < ApplicationController
     render :json => {"data": table_data}
   end
 
+  def suppress_pickup_at_penn(ctx)
+    return false unless ctx.monograph
+    return true unless ctx.available
+    return true if ctx.hathi_etas || ctx.hathi_pd
+    return false
+  end
+
   def request_options
-    userid = session['id'].presence || nil
+    userid = 'mgibney'#session['id'].presence || nil
     usergroup = session['user_group'].presence
+    ctx = JSON.parse(params['request_context'])
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
     options = {:user_id => userid, :consider_dlr => true}
@@ -384,7 +393,7 @@ class FranklinAlmaController < ApplicationController
             :avail_for_physical => true,
             :avail_for_electronic => true,
             :highlightable => true
-          } unless etas_monograph # TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
+          } unless suppress_pickup_at_penn(ctx) # TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
         when 'GES'
           option_url = option['request_url']
           if option_url.index('?')

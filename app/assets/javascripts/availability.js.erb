@@ -15,39 +15,11 @@ $(document).ready(function() {
 
     // Hackily parses relevant context out of the DOM for the specified mmsid
     function get_request_context(mmsid) {
-      var record_root = $('#doc_franklin_'+mmsid);
-      if (record_root.length == 0) {
-        record_root = $('#documents > div.document').has('div.documentHeader > h3.index_title a[href $= "_'+mmsid+'"]');
-      }
-      var avail_jq_node = record_root.find('.availability-ajax-loaded[data-availability-ids='+mmsid+']')
-      var available = false;
-      avail_jq_node.contents().each(function() {
-        if (this.nodeType === 3 && $.trim(this.nodeValue).startsWith('Available')) {
-          available = true;
-          return false; // there's at least one "Available", so return early
-        }
-      });
-      var full_text_links = record_root.find('dd.blacklight-full_text_links_for_cluster_display a');
-      var hathi_pd = false;
-      var hathi_etas = false;
-      full_text_links.contents().each(function() {
-        if (this.nodeType === 3) {
-          var trimmed = $.trim(this.nodeValue);
-          if (trimmed.startsWith('COVID-19')) {
-            hathi_etas = true;
-            return !hathi_pd; // if also pd, return early
-          } else if (trimmed.endsWith('HathiTrust')) {
-            hathi_pd = true;
-            return !hath_etas; // if also etas, return early
-          }
-        }
-      });
-      var monograph = true; //TODO: determine whether this is actually a monograph?
       return {
-        available: available,
-        hathi_etas: hathi_etas,
-        hathi_pd: hathi_pd,
-        monograph: monograph
+        available: (document.getElementById('available-'+mmsid) != null),
+        hathi_etas: (document.getElementById('hathi_etas-'+mmsid) != null),
+        hathi_pd: (document.getElementById('hathi_pd-'+mmsid) != null),
+        monograph: (document.getElementById('monograph-'+mmsid) != null)
       };
     }
 
@@ -121,6 +93,7 @@ $(document).ready(function() {
     };
 
     Franklin.prototype.loadRequestOptionsAjax = function(mmsid) {
+        var request_context = get_request_context(mmsid);
         var url = "/alma/single_availability.json?mms_id=" + encodeURIComponent(mmsid);
 
         $('#requestOptions-' + mmsid).on('error.dt', function(e, settings, techNote, message) {
@@ -130,9 +103,11 @@ $(document).ready(function() {
         .DataTable({
             "ajax": function(data, callback, settings) {
                 $.get(url, function(data) {
+                    console.log("XXX1");
+                    console.log(data);
                     globaldata = $.extend({}, globaldata, data["metadata"]);
                     callback({"data": data["data"]});
-                    Franklin.prototype.loadRequestOptionListAjax(mmsid);
+                    Franklin.prototype.loadRequestOptionListAjax(mmsid, request_context);
                 });
             },
             "processing": true,
@@ -148,7 +123,6 @@ $(document).ready(function() {
               "emptyTable": "No item data available"
             },
             "drawCallback": function(settings) {
-                var request_context = get_request_context(mmsid);
                 var table = $('#requestOptions-' + mmsid).DataTable();
                 var pageSize = table.settings()[0]['_iDisplayLength'];
                 var tableLen = table.data().length;
@@ -246,10 +220,14 @@ $(document).ready(function() {
         });
     };
 
-    Franklin.prototype.loadRequestOptionListAjax = function(mmsid) {
+    Franklin.prototype.loadRequestOptionListAjax = function(mmsid, request_context) {
+        console.log("XXX2")
+        console.log(request_context)
         $.ajax({
-            url: "/alma/request_options.json?mms_id="+mmsid,
+            url: "/alma/request_options.json?mms_id="+mmsid+"&request_context="+encodeURIComponent(JSON.stringify(request_context)),
             success: function(data, textStatus, jqXHR) {
+                console.log("XXX3")
+                console.log(data)
                 var optionList = $('#requestOptionList-' + mmsid);
 
                 if(globaldata[mmsid]["facultyexpress"]) {
