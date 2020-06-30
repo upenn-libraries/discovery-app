@@ -4,7 +4,7 @@ var validRequestTypes = ["CentralCAT","MAINT-EC","CHI CAT","CatMet","HEB CAT",
                          "Jap-KorCAT","MUSIC CAT","MidEastCat","SASIA CAT",
                          "SCPC CAT","SLAV CAT","BindRepair","MAINT-enh",
                          "MAINT-otf","MAINT-tr"];
-$.fn.dataTable.ext.errMode = 'none';          
+$.fn.dataTable.ext.errMode = 'none';
 
 $(document).ready(function() {
 
@@ -16,10 +16,10 @@ $(document).ready(function() {
     // Hackily parses relevant context out of the DOM for the specified mmsid
     function get_request_context(mmsid) {
       return {
-        available: (document.getElementById('available-'+mmsid) != null),
+        pickupable: null,
         hathi_etas: (document.getElementById('hathi_etas-'+mmsid) != null),
         hathi_pd: (document.getElementById('hathi_pd-'+mmsid) != null),
-        monograph: (document.getElementById('monograph-'+mmsid) != null)
+        monograph: true //(document.getElementById('monograph-'+mmsid) != null)
       };
     }
 
@@ -138,7 +138,7 @@ $(document).ready(function() {
                                 data[i][5][0] = disable_pickup_at_penn(request_context) ? "" : "<a target='_blank' href='/alma/request?mms_id=" + mmsid + "&holding_id=" + data[i][6] + "&item_pid=" + data[i][7] + "'>Pickup@Penn1</a>";
                                 table.row(i).invalidate().draw();
                             }
-                        } 
+                        }
                     }
                 }
 
@@ -221,8 +221,7 @@ $(document).ready(function() {
     };
 
     Franklin.prototype.loadRequestOptionListAjax = function(mmsid, request_context) {
-        console.log("XXX2")
-        console.log(request_context)
+        request_context.pickupable = globaldata[mmsid]["pickupable"];
         $.ajax({
             url: "/alma/request_options.json?mms_id="+mmsid+"&request_context="+encodeURIComponent(JSON.stringify(request_context)),
             success: function(data, textStatus, jqXHR) {
@@ -263,7 +262,7 @@ $(document).ready(function() {
                 $('#request-options-spinner-' + mmsid).remove();
                 console.log(data);
             }
-        });   
+        });
     };
 
     Franklin.prototype.loadRequestOptions = function() {
@@ -325,7 +324,7 @@ $(document).ready(function() {
                                 data[i][5].push(disable_pickup_at_penn(request_context) ? "" : "<a target='_blank' href='/alma/request?mms_id=" + data[i][6] + "&holding_id=" + data[i][7] + "&item_pid=" + data[i][0] + "'>Pickup@Penn2</a>");
                                 table.row(i).invalidate().draw();
                             }
-                        } 
+                        }
                     }
                 }
 
