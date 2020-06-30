@@ -301,7 +301,7 @@ class FranklinAlmaController < ApplicationController
   end
 
   def holding_items
-    userid = 'mgibney'#session['id'].presence || nil
+    userid = session['id'].presence || nil
     due_date_policy = 'Please log in for loan and request information' if userid.nil?
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
@@ -369,7 +369,7 @@ class FranklinAlmaController < ApplicationController
   end
 
   def request_options
-    userid = 'mgibney'#session['id'].presence || nil
+    userid = session['id'].presence || nil
     usergroup = session['user_group'].presence
     ctx = JSON.parse(params['request_context'])
     api_instance = BlacklightAlma::BibsApi.instance
