@@ -172,6 +172,7 @@ class FranklinAlmaController < ApplicationController
     bib_data = bibapi.get_availability([mmsid])
     holding_data = nil
     holding_map = {}
+    pickupable = false
 
     inventory_type = ''
 
@@ -222,6 +223,7 @@ class FranklinAlmaController < ApplicationController
                    .reject(&:nil?)
     else
       bib_data['availability'][mmsid]['holdings'].each do |holding|
+        pickupable = true if holding['availability'] == 'available'
         links = []
 # TODO: Uncomment when libraries reopen
         #links << "<a href='/redir/aeon?bibid=#{holding['mmsid']}&hldid=#{holding['holding_id']}'' target='_blank'>Request to view in reading room</a>" if holding['link_to_aeon']
@@ -271,7 +273,8 @@ class FranklinAlmaController < ApplicationController
     end
 
     metadata[mmsid][:inventory_type] = inventory_type
-    render :json => {"metadata": metadata, "data": table_data}
+    metadata[mmsid][:pickupable] = pickupable
+    render :json => { "metadata": metadata, "data": table_data }
   end
 
   def check_requestable(has_holding_info = false)
@@ -363,7 +366,7 @@ class FranklinAlmaController < ApplicationController
 
   def suppress_pickup_at_penn(ctx)
     return false unless ctx.monograph
-    return true unless ctx.available
+    return true unless ctx.pickupable
     return true if ctx.hathi_etas || ctx.hathi_pd
     return false
   end
