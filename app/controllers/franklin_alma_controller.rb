@@ -182,7 +182,7 @@ class FranklinAlmaController < ApplicationController
     # a 'holding_info' value.
     unless has_holding_info
       holding_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items, :get, :mms_id => mmsid, :holding_id => 'ALL', :expand => 'due_date_policy', :user_id => userid)
-      
+
       [holding_data['items']['item']].flatten.reject(&:nil?).each do |item|
         holding_id = item['holding_data']['holding_id']
         item_pid = item['item_data']['pid']
@@ -323,7 +323,7 @@ class FranklinAlmaController < ApplicationController
     while options[:offset] + options[:limit] < response_data['total_record_count']
       options[:offset] += options[:limit]
       response_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items, :get, params.merge(options))
-      
+
       table_data += response_data['item'].map { |item|
         data = item['item_data']
         unless(policies.has_key?(data['policy']['value']) || data['base_status']['desc'] != "Item in place" || userid.nil?)
@@ -334,7 +334,7 @@ class FranklinAlmaController < ApplicationController
       }
     end
 
-    pids_to_check.each{ |pid, policy| 
+    pids_to_check.each{ |pid, policy|
       options = {:user_id => userid, :item_pid => pid}
       response_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items_item_pid_request_options, :get, params.merge(options))
       not_requestable = true
@@ -424,7 +424,7 @@ class FranklinAlmaController < ApplicationController
       .uniq # Required due to request options API bug returning duplicate options
       .sort { |a,b| cmpRequestOptions(a,b) }
     # TODO: Remove when GES is updated in Alma & request option API is fixed (again)
-    results.reject! { |option| 
+    results.reject! { |option|
       ['Send Penn Libraries a question','Books By Mail'].member?(option[:option_name]) || (option[:option_name] == 'FacultyEXPRESS' && usergroup != 'Faculty Express')
     }
 
@@ -456,7 +456,7 @@ class FranklinAlmaController < ApplicationController
 
     response_data = api_instance.request(api.almaws_v1_bibs.mms_id_request_options, :get, params.merge(options))
 
-    return (response_data['request_option'] || []).map { |option| 
+    return (response_data['request_option'] || []).map { |option|
       option['type']['value']
     }.member?('HOLD')
   end
@@ -469,7 +469,7 @@ class FranklinAlmaController < ApplicationController
 
     response_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items_item_pid_request_options, :get, params.merge(options))
 
-    return (response_data['request_option'] || []).map { |option| 
+    return (response_data['request_option'] || []).map { |option|
       option['type']['value']
     }.member?('HOLD')
   end
@@ -482,7 +482,7 @@ class FranklinAlmaController < ApplicationController
       render 'catalog/bad_request'
       return
     end
-    
+
     if params['item_pid'].present?
       render 'catalog/bad_request' unless request_item?
     else
@@ -507,20 +507,21 @@ class FranklinAlmaController < ApplicationController
                          #.reject { |k,v| exclude_libs.member?(k) }
                         #)
 
-    libraries = { "Annenberg Library" => "AnnenLib",
+    # Uncomment these as more libraries open up as delivery options
+    libraries = { #"Annenberg Library" => "AnnenLib",
                   "Athenaeum Library" => "AthLib",
-                  "Biomedical Library" => "BiomLib",
-                  "Chemistry Library" => "ChemLib",
-                  "Dental Medicine Library" => "DentalLib",
-                  "Fisher Fine Arts Library" => "FisherFAL",
-                  "Library at the Katz Center" => "KatzLib",
-                  "Math/Physics/Astronomy Library" => "MPALib",
-                  "Museum Library" => "MuseumLib",
-                  "Ormandy Music and Media Center" => "MusicLib",
-                  "Pennsylvania Hospital Library" => "PAHospLib",
-                  "Van Pelt Library" => "VanPeltLib",
-                  "Veterinary Library - New Bolton Center" => "VetNBLib",
-                  "Veterinary Library - Penn Campus" => "VetPennLib"
+                  #"Biomedical Library" => "BiomLib",
+                  #"Chemistry Library" => "ChemLib",
+                  #"Dental Medicine Library" => "DentalLib",
+                  #"Fisher Fine Arts Library" => "FisherFAL",
+                  #"Library at the Katz Center" => "KatzLib",
+                  #"Math/Physics/Astronomy Library" => "MPALib",
+                  #"Museum Library" => "MuseumLib",
+                  #"Ormandy Music and Media Center" => "MusicLib",
+                  #"Pennsylvania Hospital Library" => "PAHospLib",
+                  "Van Pelt Library" => "VanPeltLib"
+                  #"Veterinary Library - New Bolton Center" => "VetNBLib",
+                  #"Veterinary Library - Penn Campus" => "VetPennLib"
                 }
 
     if params['item_pid'].present?
@@ -542,7 +543,7 @@ class FranklinAlmaController < ApplicationController
       render 'catalog/bad_request'
       return
     end
-    
+
     if params['item_pid'].present?
       render 'catalog/bad_request' unless request_item?
     else
