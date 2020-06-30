@@ -6,21 +6,21 @@ var validRequestTypes = ["CentralCAT","MAINT-EC","CHI CAT","CatMet","HEB CAT",
                          "MAINT-otf","MAINT-tr"];
 $.fn.dataTable.ext.errMode = 'none';
 
+// Hackily parses relevant context out of the DOM for the specified mmsid
+function get_request_context(mmsid) {
+  return {
+    pickupable: null,
+    hathi_etas: (document.getElementById('hathi_etas-'+mmsid) != null),
+    hathi_pd: (document.getElementById('hathi_pd-'+mmsid) != null),
+    monograph: false //(document.getElementById('monograph-'+mmsid) != null)
+  };
+}
+
 $(document).ready(function() {
 
     // subclass BlacklightAlma
     function Franklin() {
         BlacklightAlma.call(this);
-    }
-
-    // Hackily parses relevant context out of the DOM for the specified mmsid
-    function get_request_context(mmsid) {
-      return {
-        pickupable: null,
-        hathi_etas: (document.getElementById('hathi_etas-'+mmsid) != null),
-        hathi_pd: (document.getElementById('hathi_pd-'+mmsid) != null),
-        monograph: true //(document.getElementById('monograph-'+mmsid) != null)
-      };
     }
 
     // Based on hackily-parsed DOM context, determine whether the Pickup@Penn link should be suppressed
@@ -368,11 +368,13 @@ $(document).ready(function() {
     ba.loadRequestOptions();
 });
 
-function loadItems(mms_id, holding_id, location_code) {
+function loadItems(mms_id, holding_id, location_code, pickupable) {
+    var request_context = get_request_context(mms_id);
+    request_context.pickupable = pickupable;
     renderdata[mms_id] = [];
     var holdingItemsTable = $('#holdingItems-' + mms_id).DataTable();
     holdingItemsTable.clear().draw();
-    holdingItemsTable.ajax.url('/alma/holding_items.json?mms_id=' + mms_id + "&holding_id=" + holding_id + "&current_location=" + location_code).load();
+    holdingItemsTable.ajax.url('/alma/holding_items.json?mms_id=' + mms_id + "&holding_id=" + holding_id + "&current_location=" + location_code + "&request_context=" + encodeURIComponent(JSON.stringify(request_context))).load();
     swapDataTables(mms_id);
 }
 

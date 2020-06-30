@@ -223,7 +223,8 @@ class FranklinAlmaController < ApplicationController
                    .reject(&:nil?)
     else
       bib_data['availability'][mmsid]['holdings'].each do |holding|
-        pickupable = true if holding['availability'] == 'available'
+        holding_pickupable = holding['availability'] == 'available'
+        pickupable = true if holding_pickupable
         links = []
 # TODO: Uncomment when libraries reopen
         #links << "<a href='/redir/aeon?bibid=#{holding['mmsid']}&hldid=#{holding['holding_id']}'' target='_blank'>Request to view in reading room</a>" if holding['link_to_aeon']
@@ -231,7 +232,7 @@ class FranklinAlmaController < ApplicationController
 
         if has_holding_info
           inventory_type = 'physical'
-          holding['location'] = %Q[<a href="javascript:loadItems('#{mmsid}', '#{holding['holding_id'].presence || 'ALL'}', '#{holding['location_code']}')">#{holding['location']} &gt;</a><br /><span class="call-number">#{holding['call_number']}</span>]
+          holding['location'] = %Q[<a href="javascript:loadItems('#{mmsid}', '#{holding['holding_id'].presence || 'ALL'}', '#{holding['location_code']}', '#{holding_pickupable}')">#{holding['location']} &gt;</a><br /><span class="call-number">#{holding['call_number']}</span>]
           holding['availability'] = "<span class='load-holding-details' data-mmsid='#{mmsid}' data-holdingid='#{holding['holding_id']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/></span>"
         elsif has_portfolio_info
           inventory_type = 'electronic'
@@ -354,11 +355,12 @@ class FranklinAlmaController < ApplicationController
       end
       policies[policy] = "/alma/request/?mms_id=%{mms_id}&holding_id=%{holding_id}&item_pid=%{item_pid}" unless not_requestable
     }
+    suppress = suppress_pickup_at_penn(JSON.parse(params['request_context']))
     table_data.each { |item|
       policy = item.shift()
       request_url = (policies[policy] || '') % params.merge({:item_pid => item[0]})
       # TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
-      item[5] << (etas_monograph ? "" : "<a target='_blank' href='#{request_url}'>Pickup@Penn3</a>") unless (request_url.empty? || item[2] != 'Item in place')
+      item[5] << (suppress ? "" : "<a target='_blank' href='#{request_url}'>Pickup@Penn3</a>") unless (request_url.empty? || item[2] != 'Item in place')
     }
 
     render :json => {"data": table_data}
