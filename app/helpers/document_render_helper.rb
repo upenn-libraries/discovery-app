@@ -57,6 +57,12 @@ module DocumentRenderHelper
   @@HATHI_INFO = ' — Full text access only for <a data-toggle="tooltip" title="details regarding HathiTrust ETAS access authorization" href="https://guides.library.upenn.edu/hathitrust">students, active faculty, and permanent staff</a>'
   @@HATHI_LOGIN_PREFIX = 'https://babel.hathitrust.org/Shibboleth.sso/Login?entityID=https://idp.pennkey.upenn.edu/idp/shibboleth&target=https%3A%2F%2Fbabel.hathitrust.org%2Fcgi%2Fping%2Fpong%3Ftarget%3D'
 
+  def detect_monograph(document)
+    return nil unless (alma_mms_id = document[:alma_mms_id]).presence
+    return nil unless ['a','m'].include?(document.to_marc.leader[7])
+    "<div id=\"monograph-#{alma_mms_id}\" display=\"none\"></div>".html_safe
+  end
+
   def render_online_resource_display_for_index_view(options)
     values = options[:value]
     alma_mms_id = options[:document][:alma_mms_id]
