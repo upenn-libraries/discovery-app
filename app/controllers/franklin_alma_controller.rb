@@ -167,7 +167,7 @@ class FranklinAlmaController < ApplicationController
     api = api_instance.ezwadl_api[0]
 
     mmsid = params[:mms_id]
-    userid = session['id'].presence || 'GUEST'
+    userid = ENV['FORCE_USER_ID'] || session['id'].presence || 'GUEST'
     bibapi = alma_api_class.new()
     bib_data = bibapi.get_availability([mmsid])
     holding_data = nil
@@ -294,7 +294,7 @@ class FranklinAlmaController < ApplicationController
       end
     end
 
-    userid = session['id'].presence
+    userid = ENV['FORCE_USER_ID'].presence || session['id'].presence
     usergroup = session['user_group'].presence
     mmsid = params[:mms_id]
 
@@ -305,7 +305,7 @@ class FranklinAlmaController < ApplicationController
   end
 
   def holding_items
-    userid = session['id'].presence || nil
+    userid = ENV['FORCE_USER_ID'].presence || session['id'].presence || nil
     due_date_policy = 'Please log in for loan and request information' if userid.nil?
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
@@ -374,7 +374,7 @@ class FranklinAlmaController < ApplicationController
   end
 
   def request_options
-    userid = session['id'].presence || nil
+    userid = ENV['FORCE_USER_ID'].presence || session['id'].presence || nil
     usergroup = session['user_group'].presence
     ctx = JSON.parse(params['request_context'])
     api_instance = BlacklightAlma::BibsApi.instance
@@ -466,7 +466,7 @@ class FranklinAlmaController < ApplicationController
   def request_title?
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
-    userid = session['id'].presence || 'GUEST'
+    userid = ENV['FORCE_USER_ID'].presence || session['id'].presence || 'GUEST'
     options = {:user_id => userid, :format => 'json', :consider_dlr => true}
 
     response_data = api_instance.request(api.almaws_v1_bibs.mms_id_request_options, :get, params.merge(options))
@@ -479,7 +479,7 @@ class FranklinAlmaController < ApplicationController
   def request_item?
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
-    userid = session['id'].presence || 'GUEST'
+    userid = ENV['FORCE_USER_ID'].presence || session['id'].presence || 'GUEST'
     options = {:user_id => userid, :format => 'json'}
 
     response_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items_item_pid_request_options, :get, params.merge(options))
