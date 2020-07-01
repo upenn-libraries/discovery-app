@@ -295,7 +295,7 @@ class FranklinAlmaController < ApplicationController
     end
 
     userid = ENV['FORCE_USER_ID'].presence || session['id'].presence
-    usergroup = session['user_group'].presence
+    usergroup = ENV['FORCE_USER_GROUP'].presence || session['user_group'].presence
     mmsid = params[:mms_id]
 
     result[mmsid] = {:facultyexpress => usergroup == 'Faculty Express', :group => usergroup}
@@ -375,7 +375,7 @@ class FranklinAlmaController < ApplicationController
 
   def request_options
     userid = ENV['FORCE_USER_ID'].presence || session['id'].presence || nil
-    usergroup = session['user_group'].presence
+    usergroup = ENV['FORCE_USER_GROUP'].presence || session['user_group'].presence
     ctx = JSON.parse(params['request_context'])
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
@@ -458,7 +458,7 @@ class FranklinAlmaController < ApplicationController
                      :option_url => "https://franklin.library.upenn.edu/redir/booksbymail?bibid=#{params['mms_id']}",
                      :avail_for_physical => true,
                      :avail_for_electronic => false
-                   }) if ['Athenaeum Member','Faculty','Faculty Express','Grad Student','Library Staff'].member?(session['user_group'])
+                   }) if ['Athenaeum Member','Faculty','Faculty Express','Grad Student','Library Staff'].member?(ENV['FORCE_USER_GROUP'].presence || session['user_group'])
 
     render :json => results
   end
