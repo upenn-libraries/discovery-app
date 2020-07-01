@@ -12,7 +12,7 @@ function get_request_context(mmsid) {
     pickupable: null,
     hathi_etas: (document.getElementById('hathi_etas-'+mmsid) != null),
     hathi_pd: (document.getElementById('hathi_pd-'+mmsid) != null),
-    monograph: false //(document.getElementById('monograph-'+mmsid) != null)
+    monograph: (document.getElementById('monograph-'+mmsid) != null)
   };
 }
 
