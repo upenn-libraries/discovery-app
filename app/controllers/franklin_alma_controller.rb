@@ -35,10 +35,6 @@ class FranklinAlmaController < ApplicationController
   @@bottomoptionslist['Suggest Fix / Enhance Record'] = 1
   @@bottomoptionslist['Place on Course Reserve'] = 2
 
-  def etas_monograph
-    false
-  end
-
   def cmpOnlineServices(service_a, service_b)
     collection_a = service_a['collection'] || ''
     interface_a = service_a['interface_name'] || ''
@@ -222,6 +218,7 @@ class FranklinAlmaController < ApplicationController
                    end
                    .reject(&:nil?)
     else
+      ctx = JSON.parse(params[:request_context])
       bib_data['availability'][mmsid]['holdings'].each do |holding|
         holding_pickupable = holding['availability'] == 'available'
         pickupable = true if holding_pickupable
@@ -250,8 +247,16 @@ class FranklinAlmaController < ApplicationController
           if userid == 'GUEST'
             holding['availability'] = 'Log in &amp; request below'
           else
-            holding['availability'] = 'Not on shelf; <a class="request-option-link">request below</a>'
+            if suppress_pickup_at_penn(ctx) || (ENV['FORCE_USER_GROUP'].presence || session['user_group']) == 'Faculty Express'
+              # we're temporarily disabling all request options for non facex
+              holding['availability'] = 'Not on shelf'
+            else
+              # for non-request-suppressed items and FacEx users, still present the usual link
+              holding['availability'] = 'Not on shelf; <a class="request-option-link">request below</a>'
+            end
           end
+        elsif holding['availability'] == 'Available' && suppress_pickup_at_penn(ctx)
+          holding['availability'] = 'Restricted (COVID-19)'
         end
       end
 
@@ -368,8 +373,8 @@ class FranklinAlmaController < ApplicationController
 
   def suppress_pickup_at_penn(ctx)
     return false unless ctx['monograph']
-    return true unless ctx['pickupable']
-    return true if ctx['hathi_etas'] || ctx['hathi_pd']
+    return true unless ctx['pickupable'] != false
+    return true if ctx['hathi_etas'] #|| ctx['hathi_pd']
     return false
   end
 
@@ -457,7 +462,8 @@ class FranklinAlmaController < ApplicationController
                      :option_name => "Books By Mail",
                      :option_url => "https://franklin.library.upenn.edu/redir/booksbymail?bibid=#{params['mms_id']}",
                      :avail_for_physical => true,
-                     :avail_for_electronic => false
+                     :avail_for_electronic => false,
+                     :highlightable => true
                    }) if ['Athenaeum Member','Faculty','Faculty Express','Grad Student','Library Staff'].member?(ENV['FORCE_USER_GROUP'].presence || session['user_group'])
 
     render :json => results

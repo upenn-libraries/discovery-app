@@ -25,7 +25,7 @@ $(document).ready(function() {
 
     // Based on hackily-parsed DOM context, determine whether the Pickup@Penn link should be suppressed
     function disable_pickup_at_penn(ctx) {
-      return ctx.monograph && (!ctx.available || ctx.hathi_etas || ctx.hathi_pd);
+      return ctx.monograph && (ctx.pickupable === false || ctx.hathi_etas /*|| ctx.hathi_pd*/);
     }
 
     function constructAeonLink(mmsid, holding) {
@@ -42,14 +42,15 @@ $(document).ready(function() {
     Franklin.prototype = Object.create(BlacklightAlma.prototype);
 
     Franklin.prototype.formatHolding = function (mms_id, holding) {
+        var ctx = get_request_context(mms_id);
         if (holding['inventory_type'] == 'physical') {
             var availability = "Unknown";
             if (holding['availability'] == 'check_holdings') {
                 availability = "See options";
             } else if (holding['availability'] == 'unavailable') {
-                availability = "See request options";
+                availability = "Unavailable";//"See request options";
             } else if (holding['availability'] == 'available') {
-                availability = "Available";
+                availability = disable_pickup_at_penn(ctx) ? "Restricted (COVID-19)" : "Available";
             }
             // TODO: pass in format to shelfLocatorLink() somehow
             return [availability, holding['location'], holding['call_number'], $.shelfLocatorLink(mms_id, holding, "TODO"), constructAeonLink(mms_id, holding)]
@@ -94,7 +95,7 @@ $(document).ready(function() {
 
     Franklin.prototype.loadRequestOptionsAjax = function(mmsid) {
         var request_context = get_request_context(mmsid);
-        var url = "/alma/single_availability.json?mms_id=" + encodeURIComponent(mmsid);
+        var url = "/alma/single_availability.json?mms_id=" + encodeURIComponent(mmsid) + "&request_context=" + encodeURIComponent(JSON.stringify(request_context));
 
         $('#requestOptions-' + mmsid).on('error.dt', function(e, settings, techNote, message) {
             $(this).dataTable().fnSettings().oLanguage.sEmptyTable = 'An error has occurred.';
@@ -230,11 +231,20 @@ $(document).ready(function() {
                 var optionList = $('#requestOptionList-' + mmsid);
 
                 if(globaldata[mmsid]["facultyexpress"]) {
+                    registeredFacEx = false;
                     for(i = 0; i < data.length; i++) {
                         if(data[i]['option_name'] == 'Interlibrary Loan') {
                             data[i]['option_name'] = 'FacultyEXPRESS';
+                            registeredFacEx = true;
                             break;
                         }
+                    }
+                    if (!registeredFacEx) {
+                        data.push({
+                            option_name: 'FacultyEXPRESS',
+                            option_url: 'https://franklin.library.upenn.edu/forms/ill?requesttype=book', //TODO: openurl params to pre-populate form?
+                            highlightable: true
+                        });
                     }
                 }
 
