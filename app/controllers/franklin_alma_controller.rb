@@ -449,7 +449,7 @@ class FranklinAlmaController < ApplicationController
     results.each { |option|
       case option[:option_name]
       when 'Suggest Fix / Enhance Record'
-          option[:option_name] = "Report Error"
+          option[:option_name] = "Report Cataloging Error"
       end
     }
 
@@ -524,7 +524,7 @@ class FranklinAlmaController < ApplicationController
 
     # Uncomment these as more libraries open up as delivery options
     libraries = { #"Annenberg Library" => "AnnenLib",
-                  "Athenaeum Library" => "AthLib",
+                  #"Athenaeum Library" => "AthLib",
                   #"Biomedical Library" => "BiomLib",
                   #"Chemistry Library" => "ChemLib",
                   #"Dental Medicine Library" => "DentalLib",
