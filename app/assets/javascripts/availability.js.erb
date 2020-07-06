@@ -228,17 +228,27 @@ $(document).ready(function() {
 
                 if(globaldata[mmsid]["facultyexpress"]) {
                     registeredFacEx = false;
+                    openUrlTemplate = null;
                     for(i = 0; i < data.length; i++) {
                         if(data[i]['option_name'] == 'Interlibrary Loan') {
                             data[i]['option_name'] = 'FacultyEXPRESS';
                             registeredFacEx = true;
                             break;
+                        } else if (!registeredFacEx && data[i]['option_name'] == 'Request Digital Delivery') {
+                            // always expect to have 'Request Digital Delivery' -- we'll grab the openUrl params from here if necessary
+                            openUrlTemplate = data[i]['option_url'];
                         }
                     }
                     if (!registeredFacEx) {
+                        prefix = 'https://franklin.library.upenn.edu/redir/ill?requesttype=ScanDelivery';
+                        if (openUrlTemplate != null && openUrlTemplate.startsWith(prefix)) {
+                            appendOpenUrlParams = openUrlTemplate.slice(prefix.length);
+                        } else {
+                            appendOpenUrlParams = '';
+                        }
                         data.push({
                             option_name: 'FacultyEXPRESS',
-                            option_url: 'https://franklin.library.upenn.edu/forms/ill?requesttype=book', //TODO: openurl params to pre-populate form?
+                            option_url: 'https://franklin.library.upenn.edu/forms/ill?requesttype=book' + appendOpenUrlParams,
                             highlightable: true
                         });
                     }
