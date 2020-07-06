@@ -239,7 +239,7 @@ $(document).ready(function() {
                             openUrlTemplate = data[i]['option_url'];
                         }
                     }
-                    if (!registeredFacEx) {
+                    if (!registeredFacEx && (!request_context.monograph || !request_context.hathi_etas)) {
                         prefix = 'https://franklin.library.upenn.edu/redir/ill?requesttype=ScanDelivery';
                         if (openUrlTemplate != null && openUrlTemplate.startsWith(prefix)) {
                             appendOpenUrlParams = openUrlTemplate.slice(prefix.length);
