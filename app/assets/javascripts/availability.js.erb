@@ -104,8 +104,6 @@ $(document).ready(function() {
         .DataTable({
             "ajax": function(data, callback, settings) {
                 $.get(url, function(data) {
-                    console.log("XXX1");
-                    console.log(data);
                     globaldata = $.extend({}, globaldata, data["metadata"]);
                     callback({"data": data["data"]});
                     Franklin.prototype.loadRequestOptionListAjax(mmsid, request_context);
@@ -226,8 +224,6 @@ $(document).ready(function() {
         $.ajax({
             url: "/alma/request_options.json?mms_id="+mmsid+"&request_context="+encodeURIComponent(JSON.stringify(request_context)),
             success: function(data, textStatus, jqXHR) {
-                console.log("XXX3")
-                console.log(data)
                 var optionList = $('#requestOptionList-' + mmsid);
 
                 if(globaldata[mmsid]["facultyexpress"]) {
@@ -270,7 +266,6 @@ $(document).ready(function() {
                    containingdiv.appendTo(optionList);
                 });
                 $('#request-options-spinner-' + mmsid).remove();
-                console.log(data);
             }
         });
     };
