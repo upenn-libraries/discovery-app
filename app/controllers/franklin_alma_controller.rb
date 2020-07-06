@@ -34,6 +34,10 @@ class FranklinAlmaController < ApplicationController
   @@bottomoptionslist['Suggest Fix / Enhance Record'] = 1
   @@bottomoptionslist['Place on Course Reserve'] = 2
 
+  def etas_monograph
+    false
+  end
+
   def cmpOnlineServices(service_a, service_b)
     collection_a = service_a['collection'] || ''
     interface_a = service_a['interface_name'] || ''
@@ -218,7 +222,8 @@ class FranklinAlmaController < ApplicationController
     else
       bib_data['availability'][mmsid]['holdings'].each do |holding|
         links = []
-        links << "<a href='/redir/aeon?bibid=#{holding['mmsid']}&hldid=#{holding['holding_id']}'' target='_blank'>Request to view in reading room</a>" if holding['link_to_aeon']
+# TODO: Uncomment when libraries reopen
+        #links << "<a href='/redir/aeon?bibid=#{holding['mmsid']}&hldid=#{holding['holding_id']}'' target='_blank'>Request to view in reading room</a>" if holding['link_to_aeon']
         holding['availability'] = availability_status[holding['availability']] || 'Requestable'
 
         if has_holding_info
@@ -345,11 +350,11 @@ class FranklinAlmaController < ApplicationController
       end
       policies[policy] = "/alma/request/?mms_id=%{mms_id}&holding_id=%{holding_id}&item_pid=%{item_pid}" unless not_requestable
     }
-
     table_data.each { |item|
       policy = item.shift()
       request_url = (policies[policy] || '') % params.merge({:item_pid => item[0]})
-      item[5] << "<a target='_blank' href='#{request_url}'>Request</a>" unless (request_url.empty? || item[2] != 'Item in place')
+      # TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
+      item[5] << (etas_monograph ? "" : "<a target='_blank' href='#{request_url}'>Pickup@Penn3</a>") unless (request_url.empty? || item[2] != 'Item in place')
     }
 
     render :json => {"data": table_data}
@@ -373,13 +378,13 @@ class FranklinAlmaController < ApplicationController
         case option['type']['value']
         when 'HOLD'
           {
-            :option_name => 'Request',
+            :option_name => 'Pickup@Penn4',
             #:option_url => option['request_url'],
             :option_url => "/alma/request?mms_id=#{params['mms_id']}",
             :avail_for_physical => true,
             :avail_for_electronic => true,
             :highlightable => true
-          }
+          } unless etas_monograph # TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
         when 'GES'
           option_url = option['request_url']
           if option_url.index('?')
