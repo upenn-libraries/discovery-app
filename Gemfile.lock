@@ -287,7 +287,6 @@ GEM
     rb-fsevent (0.10.3)
     rb-inotify (0.10.0)
       ffi (~> 1.0)
-    rb-readline (0.5.5)
     rdoc (4.3.0)
     ref (2.0.0)
     responders (2.4.1)
@@ -403,7 +402,6 @@ DEPENDENCIES
   passenger (= 5.1.6)
   pry-rails
   rails (~> 4.2.0)
-  rb-readline
   rsolr (= 1.1.2)
   sass-rails (= 5.0.6)
   sdoc (= 0.4.2)
