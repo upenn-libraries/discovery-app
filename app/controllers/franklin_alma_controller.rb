@@ -163,7 +163,7 @@ class FranklinAlmaController < ApplicationController
     api = api_instance.ezwadl_api[0]
 
     mmsid = params[:mms_id]
-    userid = ENV['FORCE_USER_ID'] || session['id'].presence || 'GUEST'
+    userid = session['id'].presence || 'GUEST'
     bibapi = alma_api_class.new()
     bib_data = bibapi.get_availability([mmsid])
     holding_data = nil
@@ -247,7 +247,7 @@ class FranklinAlmaController < ApplicationController
           if userid == 'GUEST'
             holding['availability'] = 'Log in &amp; request below'
           else
-            if suppress_pickup_at_penn(ctx) || (ENV['FORCE_USER_GROUP'].presence || session['user_group']) == 'Faculty Express'
+            if suppress_pickup_at_penn(ctx) || session['user_group'] == 'Faculty Express'
               # we're temporarily disabling all request options for non facex
               holding['availability'] = 'Not on shelf'
             else
@@ -299,8 +299,8 @@ class FranklinAlmaController < ApplicationController
       end
     end
 
-    userid = ENV['FORCE_USER_ID'].presence || session['id'].presence
-    usergroup = ENV['FORCE_USER_GROUP'].presence || session['user_group'].presence
+    userid = session['id'].presence
+    usergroup = session['user_group'].presence
     mmsid = params[:mms_id]
 
     result[mmsid] = {:facultyexpress => usergroup == 'Faculty Express', :group => usergroup}
@@ -310,7 +310,7 @@ class FranklinAlmaController < ApplicationController
   end
 
   def holding_items
-    userid = ENV['FORCE_USER_ID'].presence || session['id'].presence || nil
+    userid = session['id'].presence || nil
     due_date_policy = 'Please log in for loan and request information' if userid.nil?
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
@@ -379,8 +379,8 @@ class FranklinAlmaController < ApplicationController
   end
 
   def request_options
-    userid = ENV['FORCE_USER_ID'].presence || session['id'].presence || nil
-    usergroup = ENV['FORCE_USER_GROUP'].presence || session['user_group'].presence
+    userid = session['id'].presence || nil
+    usergroup = session['user_group'].presence
     ctx = JSON.parse(params['request_context'])
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
@@ -464,7 +464,7 @@ class FranklinAlmaController < ApplicationController
                      :avail_for_physical => true,
                      :avail_for_electronic => false,
                      :highlightable => true
-                   }) if ['Athenaeum Member','Faculty','Faculty Express','Grad Student','Library Staff'].member?(ENV['FORCE_USER_GROUP'].presence || session['user_group']) && !suppress_pickup_at_penn(ctx) # suppress for bbm is same as for Pickup@Penn
+                   }) if ['Athenaeum Member','Faculty','Faculty Express','Grad Student','Library Staff'].member?(session['user_group']) && !suppress_pickup_at_penn(ctx) # suppress for bbm is same as for Pickup@Penn
 
     render :json => results
   end
@@ -472,7 +472,7 @@ class FranklinAlmaController < ApplicationController
   def request_title?
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
-    userid = ENV['FORCE_USER_ID'].presence || session['id'].presence || 'GUEST'
+    userid = session['id'].presence || 'GUEST'
     options = {:user_id => userid, :format => 'json', :consider_dlr => true}
 
     response_data = api_instance.request(api.almaws_v1_bibs.mms_id_request_options, :get, params.merge(options))
@@ -485,7 +485,7 @@ class FranklinAlmaController < ApplicationController
   def request_item?
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
-    userid = ENV['FORCE_USER_ID'].presence || session['id'].presence || 'GUEST'
+    userid = session['id'].presence || 'GUEST'
     options = {:user_id => userid, :format => 'json'}
 
     response_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items_item_pid_request_options, :get, params.merge(options))
