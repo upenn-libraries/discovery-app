@@ -464,7 +464,7 @@ class FranklinAlmaController < ApplicationController
                      :avail_for_physical => true,
                      :avail_for_electronic => false,
                      :highlightable => true
-                   }) if ['Athenaeum Member','Faculty','Faculty Express','Grad Student','Library Staff'].member?(ENV['FORCE_USER_GROUP'].presence || session['user_group'])
+                   }) if ['Athenaeum Member','Faculty','Faculty Express','Grad Student','Library Staff'].member?(ENV['FORCE_USER_GROUP'].presence || session['user_group']) && !suppress_pickup_at_penn(ctx) # suppress for bbm is same as for Pickup@Penn
 
     render :json => results
   end
