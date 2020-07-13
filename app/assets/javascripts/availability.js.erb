@@ -226,31 +226,47 @@ $(document).ready(function() {
             success: function(data, textStatus, jqXHR) {
                 var optionList = $('#requestOptionList-' + mmsid);
 
-                if(globaldata[mmsid]["facultyexpress"]) {
-                    registeredFacEx = false;
-                    openUrlTemplate = null;
-                    for(i = 0; i < data.length; i++) {
-                        if(data[i]['option_name'] == 'Interlibrary Loan') {
-                            data[i]['option_name'] = 'FacultyEXPRESS';
-                            registeredFacEx = true;
+                var openUrlTemplate = null; // grab openUrl params from here if necessary
+                var registeredFacEx = globaldata[mmsid]['facultyexpress'] ? false : null; // null if not applicable
+                var booksByMailOption = null;
+                for(var i = 0; i < data.length && (openUrlTemplate === null || booksByMailOption === null || registeredFacEx === false); i++) {
+                    var requestOption = data[i];
+                    switch (requestOption['option_name']) {
+                        case 'Interlibrary Loan':
+                            openUrlTemplate = requestOption['option_url'];
+                            if (registeredFacEx === false) { // careful! must distinguish from "falsey" null
+                                requestOption['option_name'] = 'FacultyEXPRESS';
+                                registeredFacEx = true;
+                            }
                             break;
-                        } else if (!registeredFacEx && data[i]['option_name'] == 'Request Digital Delivery') {
-                            // always expect to have 'Request Digital Delivery' -- we'll grab the openUrl params from here if necessary
-                            openUrlTemplate = data[i]['option_url'];
-                        }
+                        case 'Request Digital Delivery':
+                            if (openUrlTemplate === null) {
+                                // provisionally grab openUrl from here, but prefer from ILL if present for consistency
+                                openUrlTemplate = requestOption['option_url'];
+                            }
+                            break;
+                        case 'Books By Mail':
+                            booksByMailOption = requestOption;
+                            break;
                     }
-                    if (!registeredFacEx && (!request_context.monograph || !request_context.hathi_etas)) {
-                        prefix = 'https://franklin.library.upenn.edu/redir/ill?requesttype=ScanDelivery';
-                        if (openUrlTemplate != null && openUrlTemplate.startsWith(prefix)) {
-                            appendOpenUrlParams = openUrlTemplate.slice(prefix.length);
-                        } else {
-                            appendOpenUrlParams = '';
-                        }
+                }
+                if ((registeredFacEx === false || booksByMailOption != null) && (!request_context.monograph || !request_context.hathi_etas)) {
+                    // assume first querystring param is 'requesttype=[...]' -- subsequent options (preceded by '&') should be openUrl params
+                    var startOpenUrlParams = openUrlTemplate === null ? -1 : openUrlTemplate.indexOf('&');
+                    if (startOpenUrlParams < 0) {
+                        appendOpenUrlParams = '';
+                    } else {
+                        appendOpenUrlParams = openUrlTemplate.slice(startOpenUrlParams);
+                    }
+                    if (registeredFacEx === false) {
                         data.push({
                             option_name: 'FacultyEXPRESS',
                             option_url: 'https://franklin.library.upenn.edu/forms/ill?requesttype=book' + appendOpenUrlParams,
                             highlightable: true
                         });
+                    }
+                    if (booksByMailOption != null) {
+                        booksByMailOption['option_url'] = 'https://franklin.library.upenn.edu/forms/ill?requesttype=book&deliverytype=bbm' + appendOpenUrlParams;
                     }
                 }
 
