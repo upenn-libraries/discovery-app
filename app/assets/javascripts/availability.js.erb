@@ -4,13 +4,28 @@ var validRequestTypes = ["CentralCAT","MAINT-EC","CHI CAT","CatMet","HEB CAT",
                          "Jap-KorCAT","MUSIC CAT","MidEastCat","SASIA CAT",
                          "SCPC CAT","SLAV CAT","BindRepair","MAINT-enh",
                          "MAINT-otf","MAINT-tr"];
-$.fn.dataTable.ext.errMode = 'none';          
+$.fn.dataTable.ext.errMode = 'none';
+
+// Hackily parses relevant context out of the DOM for the specified mmsid
+function get_request_context(mmsid) {
+  return {
+    pickupable: null,
+    hathi_etas: (document.getElementById('hathi_etas-'+mmsid) != null),
+    hathi_pd: (document.getElementById('hathi_pd-'+mmsid) != null),
+    monograph: (document.getElementById('monograph-'+mmsid) != null)
+  };
+}
 
 $(document).ready(function() {
 
     // subclass BlacklightAlma
     function Franklin() {
         BlacklightAlma.call(this);
+    }
+
+    // Based on hackily-parsed DOM context, determine whether the Pickup@Penn link should be suppressed
+    function disable_pickup_at_penn(ctx) {
+      return ctx.monograph && (ctx.pickupable === false || ctx.hathi_etas /*|| ctx.hathi_pd*/);
     }
 
     function constructAeonLink(mmsid, holding) {
@@ -27,14 +42,15 @@ $(document).ready(function() {
     Franklin.prototype = Object.create(BlacklightAlma.prototype);
 
     Franklin.prototype.formatHolding = function (mms_id, holding) {
+        var ctx = get_request_context(mms_id);
         if (holding['inventory_type'] == 'physical') {
             var availability = "Unknown";
             if (holding['availability'] == 'check_holdings') {
                 availability = "See options";
             } else if (holding['availability'] == 'unavailable') {
-                availability = "See request options";
+                availability = "Unavailable";//"See request options";
             } else if (holding['availability'] == 'available') {
-                availability = "Available";
+                availability = disable_pickup_at_penn(ctx) ? "Restricted (COVID-19)" : "Available";
             }
             // TODO: pass in format to shelfLocatorLink() somehow
             return [availability, holding['location'], holding['call_number'], $.shelfLocatorLink(mms_id, holding, "TODO"), constructAeonLink(mms_id, holding)]
@@ -78,7 +94,8 @@ $(document).ready(function() {
     };
 
     Franklin.prototype.loadRequestOptionsAjax = function(mmsid) {
-        var url = "/alma/single_availability.json?mms_id=" + encodeURIComponent(mmsid);
+        var request_context = get_request_context(mmsid);
+        var url = "/alma/single_availability.json?mms_id=" + encodeURIComponent(mmsid) + "&request_context=" + encodeURIComponent(JSON.stringify(request_context));
 
         $('#requestOptions-' + mmsid).on('error.dt', function(e, settings, techNote, message) {
             $(this).dataTable().fnSettings().oLanguage.sEmptyTable = 'An error has occurred.';
@@ -89,7 +106,7 @@ $(document).ready(function() {
                 $.get(url, function(data) {
                     globaldata = $.extend({}, globaldata, data["metadata"]);
                     callback({"data": data["data"]});
-                    Franklin.prototype.loadRequestOptionListAjax(mmsid);
+                    Franklin.prototype.loadRequestOptionListAjax(mmsid, request_context);
                 });
             },
             "processing": true,
@@ -116,12 +133,11 @@ $(document).ready(function() {
                             var requests = globaldata[data[i][7]];
                             if(validRequestTypes.indexOf(requests[0]) != -1) {
                                 renderdata[mmsid].push(data[i][7]);
-// TODO: Uncomment when libraries reopen
-                                //data[i][5][0] = "<a target='_blank' href='/alma/request?mms_id=" + mmsid + "&holding_id=" + data[i][6] + "&item_pid=" + data[i][7] + "'>Request</a>";
-                                data[i][5][0] = "";
+                                // TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
+                                data[i][5][0] = disable_pickup_at_penn(request_context) ? "" : "<a target='_blank' href='/alma/request?mms_id=" + mmsid + "&holding_id=" + data[i][6] + "&item_pid=" + data[i][7] + "'>Pickup@Penn</a>";
                                 table.row(i).invalidate().draw();
                             }
-                        } 
+                        }
                     }
                 }
 
@@ -203,18 +219,38 @@ $(document).ready(function() {
         });
     };
 
-    Franklin.prototype.loadRequestOptionListAjax = function(mmsid) {
+    Franklin.prototype.loadRequestOptionListAjax = function(mmsid, request_context) {
+        request_context.pickupable = globaldata[mmsid]["pickupable"];
         $.ajax({
-            url: "/alma/request_options.json?mms_id="+mmsid,
+            url: "/alma/request_options.json?mms_id="+mmsid+"&request_context="+encodeURIComponent(JSON.stringify(request_context)),
             success: function(data, textStatus, jqXHR) {
                 var optionList = $('#requestOptionList-' + mmsid);
 
                 if(globaldata[mmsid]["facultyexpress"]) {
+                    registeredFacEx = false;
+                    openUrlTemplate = null;
                     for(i = 0; i < data.length; i++) {
                         if(data[i]['option_name'] == 'Interlibrary Loan') {
                             data[i]['option_name'] = 'FacultyEXPRESS';
+                            registeredFacEx = true;
                             break;
+                        } else if (!registeredFacEx && data[i]['option_name'] == 'Request Digital Delivery') {
+                            // always expect to have 'Request Digital Delivery' -- we'll grab the openUrl params from here if necessary
+                            openUrlTemplate = data[i]['option_url'];
                         }
+                    }
+                    if (!registeredFacEx && (!request_context.monograph || !request_context.hathi_etas)) {
+                        prefix = 'https://franklin.library.upenn.edu/redir/ill?requesttype=ScanDelivery';
+                        if (openUrlTemplate != null && openUrlTemplate.startsWith(prefix)) {
+                            appendOpenUrlParams = openUrlTemplate.slice(prefix.length);
+                        } else {
+                            appendOpenUrlParams = '';
+                        }
+                        data.push({
+                            option_name: 'FacultyEXPRESS',
+                            option_url: 'https://franklin.library.upenn.edu/forms/ill?requesttype=book' + appendOpenUrlParams,
+                            highlightable: true
+                        });
                     }
                 }
 
@@ -240,9 +276,8 @@ $(document).ready(function() {
                    containingdiv.appendTo(optionList);
                 });
                 $('#request-options-spinner-' + mmsid).remove();
-                console.log(data);
             }
-        });   
+        });
     };
 
     Franklin.prototype.loadRequestOptions = function() {
@@ -288,6 +323,7 @@ $(document).ready(function() {
                 "emptyTable": "No item data available"
             },
             "drawCallback": function(settings) {
+                var request_context = get_request_context(mmsid);
                 var table = $('#holdingItems-' + mmsid).DataTable();
                 var pageSize = table.settings()[0]['_iDisplayLength'];
                 var tableLen = table.data().length;
@@ -299,12 +335,11 @@ $(document).ready(function() {
                             var requests = globaldata[data[i][0]];
                             if(validRequestTypes.indexOf(requests[0]) != -1) {
                                 renderdata[mmsid].push(data[i][0]);
-// TODO: Uncomment when libraries reopen
-                                //data[i][5].push("<a target='_blank' href='/alma/request?mms_id=" + data[i][6] + "&holding_id=" + data[i][7] + "&item_pid=" + data[i][0] + "'>Request</a>");
-                                data[i][5].push("");
+                                // TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
+                                data[i][5].push(disable_pickup_at_penn(request_context) ? "" : "<a target='_blank' href='/alma/request?mms_id=" + data[i][6] + "&holding_id=" + data[i][7] + "&item_pid=" + data[i][0] + "'>Pickup@Penn</a>");
                                 table.row(i).invalidate().draw();
                             }
-                        } 
+                        }
                     }
                 }
 
@@ -348,11 +383,13 @@ $(document).ready(function() {
     ba.loadRequestOptions();
 });
 
-function loadItems(mms_id, holding_id, location_code) {
+function loadItems(mms_id, holding_id, location_code, pickupable) {
+    var request_context = get_request_context(mms_id);
+    request_context.pickupable = pickupable;
     renderdata[mms_id] = [];
     var holdingItemsTable = $('#holdingItems-' + mms_id).DataTable();
     holdingItemsTable.clear().draw();
-    holdingItemsTable.ajax.url('/alma/holding_items.json?mms_id=' + mms_id + "&holding_id=" + holding_id + "&current_location=" + location_code).load();
+    holdingItemsTable.ajax.url('/alma/holding_items.json?mms_id=' + mms_id + "&holding_id=" + holding_id + "&current_location=" + location_code + "&request_context=" + encodeURIComponent(JSON.stringify(request_context))).load();
     swapDataTables(mms_id);
 }
 

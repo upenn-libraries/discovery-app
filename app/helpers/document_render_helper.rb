@@ -51,38 +51,65 @@ module DocumentRenderHelper
     end
   end
 
+  @@HATHI_PD_TEXT = 'HathiTrust Digital Library Connect to full text'
   @@HATHI_TMP_TEXT = 'HathiTrust Digital Library Login for full text'
   @@HATHI_REPLACEMENT_TEXT = 'COVID-19 Special Access from HathiTrust'
   @@HATHI_INFO = ' — Full text access only for <a data-toggle="tooltip" title="details regarding HathiTrust ETAS access authorization" href="https://guides.library.upenn.edu/hathitrust">students, active faculty, and permanent staff</a>'
   @@HATHI_LOGIN_PREFIX = 'https://babel.hathitrust.org/Shibboleth.sso/Login?entityID=https://idp.pennkey.upenn.edu/idp/shibboleth&target=https%3A%2F%2Fbabel.hathitrust.org%2Fcgi%2Fping%2Fpong%3Ftarget%3D'
 
+  def detect_monograph(document)
+    return nil unless (alma_mms_id = document[:alma_mms_id]).presence
+    return nil unless ['a','m'].include?(document.to_marc.leader[7])
+    "<div id=\"monograph-#{alma_mms_id}\" display=\"none\"></div>".html_safe
+  end
+
   def render_online_resource_display_for_index_view(options)
     values = options[:value]
-    values.map do |value|
+    alma_mms_id = options[:document][:alma_mms_id]
+    hathi_pd = false
+    hathi_etas = false
+    ret = values.map do |value|
       JSON.parse(value).map do |link_struct|
         url = link_struct['linkurl']
         text = link_struct['linktext']
         append = ''
-        if text == @@HATHI_TMP_TEXT
+        if text == @@HATHI_PD_TEXT
+          hathi_pd = true
+        elsif text == @@HATHI_TMP_TEXT
+          hathi_etas = true
           text = @@HATHI_REPLACEMENT_TEXT
           url = @@HATHI_LOGIN_PREFIX + URI.encode_www_form_component(url)
           append = @@HATHI_INFO
         end
         %Q{<a href="#{url}">#{text}</a>#{append}}
       end.join('<br/>')
-    end.join('<br/>').html_safe
+    end.join('<br/>')
+    unless alma_mms_id.nil?
+      if hathi_pd
+        ret = ret.concat(hathi_tag_id('pd', alma_mms_id))
+      end
+      if hathi_etas
+        ret = ret.concat(hathi_tag_id('etas', alma_mms_id))
+      end
+    end
+    ret.html_safe
   end
 
   def render_online_display_for_show_view(options)
     values = options[:value]
-
-    values.map do |value|
+    alma_mms_id = options[:document][:alma_mms_id]
+    hathi_pd = false
+    hathi_etas = false
+    ret = values.map do |value|
       JSON.parse(value).map do |link_struct|
         url = link_struct['linkurl']
         text = link_struct['linktext']
         append = ''
         orig_url = url
-        if text == @@HATHI_TMP_TEXT
+        if text == @@HATHI_PD_TEXT
+          hathi_pd = true
+        elsif text == @@HATHI_TMP_TEXT
+          hathi_etas = true
           text = @@HATHI_REPLACEMENT_TEXT
           url = @@HATHI_LOGIN_PREFIX + URI.encode_www_form_component(url)
           append = @@HATHI_INFO
@@ -119,7 +146,20 @@ module DocumentRenderHelper
 
         html
       end.join
-    end.join.html_safe
+    end.join
+    unless alma_mms_id.nil?
+      if hathi_pd
+        ret = ret.concat(hathi_tag_id('pd', alma_mms_id))
+      end
+      if hathi_etas
+        ret = ret.concat(hathi_tag_id('etas', alma_mms_id))
+      end
+    end
+    ret.html_safe
+  end
+
+  def hathi_tag_id(type, id)
+    "<div id=\"hathi_#{type}-#{id}\" display=\"none\"></div>"
   end
 
   def render_web_link_display(options)
