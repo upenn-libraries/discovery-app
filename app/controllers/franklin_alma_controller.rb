@@ -246,7 +246,7 @@ class FranklinAlmaController < ApplicationController
           if userid == 'GUEST'
             holding['availability'] = 'Log in &amp; request below'
           else
-            if suppress_pickup_at_penn(ctx) || session['user_group'] == 'Faculty Express'
+            if suppress_pickup_at_penn(ctx) && session['user_group'] != 'Faculty Express'
               # we're temporarily disabling all request options for non facex
               holding['availability'] = 'Not on shelf'
             else
