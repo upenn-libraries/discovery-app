@@ -223,8 +223,7 @@ class FranklinAlmaController < ApplicationController
         holding_pickupable = holding['availability'] == 'available'
         pickupable = true if holding_pickupable
         links = []
-# TODO: Uncomment when libraries reopen
-        #links << "<a href='/redir/aeon?bibid=#{holding['mmsid']}&hldid=#{holding['holding_id']}'' target='_blank'>Request to view in reading room</a>" if holding['link_to_aeon']
+        links << "<a href='/redir/aeon?bibid=#{holding['mmsid']}&hldid=#{holding['holding_id']}'' target='_blank'>Request to view in reading room</a>" if holding['link_to_aeon'] unless (ctx['hathi_etas'] && ctx['monograph'])
         holding['availability'] = availability_status[holding['availability']] || 'Requestable'
 
         if has_holding_info
@@ -247,7 +246,7 @@ class FranklinAlmaController < ApplicationController
           if userid == 'GUEST'
             holding['availability'] = 'Log in &amp; request below'
           else
-            if suppress_pickup_at_penn(ctx) || session['user_group'] == 'Faculty Express'
+            if suppress_pickup_at_penn(ctx) && session['user_group'] != 'Faculty Express'
               # we're temporarily disabling all request options for non facex
               holding['availability'] = 'Not on shelf'
             else
