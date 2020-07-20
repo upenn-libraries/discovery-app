@@ -223,8 +223,7 @@ class FranklinAlmaController < ApplicationController
         holding_pickupable = holding['availability'] == 'available'
         pickupable = true if holding_pickupable
         links = []
-# TODO: Uncomment when libraries reopen
-        #links << "<a href='/redir/aeon?bibid=#{holding['mmsid']}&hldid=#{holding['holding_id']}'' target='_blank'>Request to view in reading room</a>" if holding['link_to_aeon']
+        links << "<a href='/redir/aeon?bibid=#{holding['mmsid']}&hldid=#{holding['holding_id']}'' target='_blank'>Request to view in reading room</a>" if holding['link_to_aeon'] unless (ctx['hathi_etas'] && ctx['monograph'])
         holding['availability'] = availability_status[holding['availability']] || 'Requestable'
 
         if has_holding_info
