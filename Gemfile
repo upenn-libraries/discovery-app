@@ -84,7 +84,7 @@ gem 'rsolr', '1.1.2'
 
 gem 'globalid', '0.3.7'
 
-gem 'devise', '~> 4.6.0'
+gem 'devise', '~> 4.7.1'
 
 gem 'devise-guests', '0.5.0'
 
