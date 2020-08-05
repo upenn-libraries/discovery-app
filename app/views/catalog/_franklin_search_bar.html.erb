@@ -43,7 +43,7 @@
 
     <li role="presentation" class="<%= active_tab_classes('databases') %>">
       <div class="franklin-tab">
-        <%= link_to 'Databases', databases_results_path %>
+        <%= link_to 'Databases', databases_results_path(params[:q]) %>
       </div>
     </li>
     <li role="presentation" class="<%= active_tab_classes('website') %>">
