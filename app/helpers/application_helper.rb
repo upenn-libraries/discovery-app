@@ -9,6 +9,13 @@ module ApplicationHelper
     end
   end
 
+  # Path for a BL catalog index page with Databases facet applied
+  # @return [String]
+  # @param [String] query param
+  def databases_results_path(query)
+    "catalog?utf8=✓&search_field=keyword&f%5Bformat_f%5D%5B%5D=Database+%26+Article+Index&q=#{url_encode(query)}"
+  end
+
   def databases_results_url(query)
     if !params.dig('f', 'format_f')&.include?('Database & Article Index')
       url = path_for_facet('format_f', 'Database & Article Index')

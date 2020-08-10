@@ -43,7 +43,7 @@
 
     <li role="presentation" class="<%= active_tab_classes('databases') %>">
       <div class="franklin-tab">
-        <%= render_tab_link('databases', "Databases", 'catalog?utf8=✓&search_field=keyword&f%5Bformat_f%5D%5B%5D=Database+%26+Article+Index&q=', databases_results_url(params[:q]), '#databases-main, #databases-search-navbar') %>
+        <%= link_to 'Databases', databases_results_path(params[:q]) %>
       </div>
     </li>
     <li role="presentation" class="<%= active_tab_classes('website') %>">
