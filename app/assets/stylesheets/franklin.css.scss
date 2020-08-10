@@ -380,6 +380,10 @@ bg color to fill document-metadata's bottom margin */
   display: none;
 }
 
+.libraries-results {
+  padding: 0px;
+}
+
 .view-and-filter {
   padding: 6px;
   background: #ececec;
@@ -613,7 +617,6 @@ h3.ongray {
   margin: 5px;
   padding: 0px;
   z-index: 10;
-  min-height: 250px;
 }
 
 .bento-box-highlight {
@@ -729,13 +732,21 @@ h3.ongray {
 /* end of hack */
 
 .expert-results {
+  position: fixed;
+  bottom: 5px;
+  right: 5px;
+  width: 220px;
+  min-height: auto;
   /*display: none;  /* TODO: remove when launching this feature */
   hr {
     border-bottom: 1px dashed #d2d2d2;
     margin: 0;
   }
+  .expert-subject {
+    margin-bottom: 0;
+  }
   .expert-profile {
-    padding: 10px;
+    padding: 8px;
     font-size: 12px;
     .upper-content {
     }
@@ -748,7 +759,7 @@ h3.ongray {
       width: 100px;
       height: 100px;
       float: left;
-      margin-right: 20px;
+      margin-right: 8px;
     }
     a.link-to-profile {
       font-size: 16px;
