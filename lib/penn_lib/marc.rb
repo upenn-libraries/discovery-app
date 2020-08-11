@@ -430,6 +430,15 @@ module PennLib
       end.compact
     end
 
+    def get_online_reserve_f(rec)
+      rec.fields('943').map do |field|
+        if field.any? { |sf| sf.code == '2' && sf.value == 'online_reserve' }
+          sf = field.find { |sf| sf.code == 'a' }
+          sf.nil? ? nil : sf.value
+        end
+      end.compact
+    end
+
     def get_subject_facet_values(rec, toplevel_only = false)
       rec.fields.find_all { |f| is_subject_field(f) }.map do |field|
         just_a = nil

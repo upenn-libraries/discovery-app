@@ -119,6 +119,7 @@ class CatalogController < ApplicationController
         author_creator_a
         author_880_a
         standardized_title_a
+        online_reserve_f
         edition
         conference_a
         series
@@ -154,6 +155,7 @@ class CatalogController < ApplicationController
         expand: 'true',
         'expand.field': 'cluster_id',
         'expand.q': '*:*',
+        fl: '*,online_reserve_f' # must explicitly specify '*,online_reserve_f' because online_reserve_f is docValues-only (not stored)
     }
 
     # solr field configuration for search results/index views
@@ -298,11 +300,11 @@ class CatalogController < ApplicationController
             'Other' => { :label => 'Other', :fq => "{!tag=azlist ex=azlist}title_xfacet:/[ -`{-~].*/"}
         }
     config.add_facet_field 'access_f', label: 'Access', collapse: false, solr_params: @@MINCOUNT, query: {
-        'Online' => { :label => 'Online', :fq => "{!join from=cluster_id to=cluster_id v='access_f:Online OR record_source_id:3'}"},
+        'Online' => { :label => 'Online', :fq => "{!bool should='{!join from=cluster_id to=cluster_id v=access_f:Online}' should='{!bool filter=\\'{!join from=cluster_id to=cluster_id v=record_source_id:3}\\' must_not=online_reserve_f:2020FALL}'}"},
         'At the library' => { :label => 'At the library', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"}
     }
     config.add_facet_field 'record_source_f', label: 'Record Source', collapse: false, solr_params: @@MINCOUNT, query: {
-        'HathiTrust' => { :label => 'HathiTrust', :fq => "{!join from=cluster_id to=cluster_id v='{!terms f=record_source_id v=2,3}'}"},
+        'HathiTrust' => { :label => 'HathiTrust', :fq => "{!bool should='{!join from=cluster_id to=cluster_id v=record_source_id:2}' should='{!bool filter=\\'{!join from=cluster_id to=cluster_id v=record_source_id:3}\\' must_not=online_reserve_f:2020FALL}'}"},
         'Penn' => { :label => 'Penn', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Penn\\'}'}"}
     }
     config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false, solr_params: @@MINCOUNT

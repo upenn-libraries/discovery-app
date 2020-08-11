@@ -166,6 +166,10 @@ class FranklinIndexer < BaseIndexer
       acc.concat(pennlibmarc.get_db_subcategories(rec))
     end
 
+    to_field "online_reserve_f" do |rec, acc|
+      acc.concat(pennlibmarc.get_online_reserve_f(rec))
+    end
+
     to_field 'subject_search' do |rec, acc|
       acc.concat(pennlibmarc.get_subject_search_values(rec))
     end

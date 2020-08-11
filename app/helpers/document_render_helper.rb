@@ -76,14 +76,15 @@ module DocumentRenderHelper
         if text == @@HATHI_PD_TEXT
           hathi_pd = true
         elsif text == @@HATHI_TMP_TEXT
+          next if options[:document][:online_reserve_f]&.include?('2020FALL')
           hathi_etas = true
           text = @@HATHI_REPLACEMENT_TEXT
           url = @@HATHI_LOGIN_PREFIX + URI.encode_www_form_component(url)
           append = @@HATHI_INFO
         end
         %Q{<a href="#{url}">#{text}</a>#{append}}
-      end.join('<br/>')
-    end.join('<br/>')
+      end.compact.join('<br/>').presence
+    end.compact.join('<br/>')
     unless alma_mms_id.nil?
       if hathi_pd
         ret = ret.concat(hathi_tag_id('pd', alma_mms_id))
@@ -109,6 +110,7 @@ module DocumentRenderHelper
         if text == @@HATHI_PD_TEXT
           hathi_pd = true
         elsif text == @@HATHI_TMP_TEXT
+          next if options[:document][:online_reserve_f]&.include?('2020FALL')
           hathi_etas = true
           text = @@HATHI_REPLACEMENT_TEXT
           url = @@HATHI_LOGIN_PREFIX + URI.encode_www_form_component(url)
