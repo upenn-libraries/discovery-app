@@ -608,7 +608,11 @@ class FranklinAlmaController < ApplicationController
 
   end
 
-  # TODO: move into blacklight_alma gem (availability.rb concern)
+  ##
+  # /availability takes mms_id value(s) and calls #get_availability on the
+  # PennLib::BlacklightAlma::Availability class. It then sorts the holdings
+  # based on comparisons that are dependent on whether the item is electronic
+  # or not
   def availability
     if params[:id_list].present?
       mms_ids = params[:id_list].split ','
@@ -641,6 +645,7 @@ class FranklinAlmaController < ApplicationController
   # @param [Hash] response_data
   # @return [TrueClass, FalseClass]
   def electronic_resource?(mms_id, response_data)
-    response_data.dig('availability', mms_id, 'holdings', 0, 'inventory_type') == 'electronic'
+    response_data.dig('availability', mms_id, 'holdings', 0, 'inventory_type') ==
+      'electronic'
   end
 end
