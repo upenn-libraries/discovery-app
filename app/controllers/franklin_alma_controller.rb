@@ -35,7 +35,7 @@ class FranklinAlmaController < ApplicationController
   @@bottomoptionslist['Suggest Fix / Enhance Record'] = 1
   @@bottomoptionslist['Place on Course Reserve'] = 2
 
-  def cmpOnlineServices(service_a, service_b)
+  def compare_online_services(service_a, service_b)
     collection_a = service_a['collection'] || ''
     interface_a = service_a['interface_name'] || ''
     collection_b = service_b['collection'] || ''
@@ -47,17 +47,24 @@ class FranklinAlmaController < ApplicationController
     score_b = -[@@toplist['collection'][collection_b] || 0, @@toplist['interface'][interface_b] || 0].max
     score_b = [@@bottomlist['collection'][collection_b] || 0, @@bottomlist['interface'][interface_b] || 0].max if score_b == 0
 
-    return (score_a == score_b ? collection_a <=> collection_b : score_a <=> score_b)
+    score_a == score_b ? collection_a <=> collection_b : score_a <=> score_b
   end
 
-  def cmpHoldingLocations(holding_a, holding_b)
+  # Compare two holding location codes for sorting an array
+  # This either sorts things in Offsite (LIBRA) storage first or last, TBD...
+  # TODO: move this to a concern or utility class? AlmaResponseComparators?
+  # @param [Hash] holding_a
+  # @param [Hash] holding_b
+  # @return [Fixnum]
+  def compare_library_code(holding_a, holding_b)
     lib_a = holding_a['library_code'] || ''
     lib_b = holding_b['library_code'] || ''
 
+    # FYI: LIBRA is the Libraries Annex, aka Offsite storage
     score_a = lib_a == 'Libra' ? 1 : 0
     score_b = lib_b == 'Libra' ? 1 : 0
 
-    return (score_a == score_b ? lib_a <=> lib_b : score_a <=> score_b)
+    score_a == score_b ? lib_a <=> lib_b : score_a <=> score_b
   end
 
   def cmpRequestOptions(option_a, option_b)
@@ -261,13 +268,13 @@ class FranklinAlmaController < ApplicationController
 
       policy = 'Please log in for loan and request information' if userid == 'GUEST'
       table_data = bib_data['availability'][mmsid]['holdings'].select { |h| h['inventory_type'] == 'physical' }
-                   .sort { |a,b| cmpHoldingLocations(a,b) }
+                   .sort { |a,b| compare_library_code(a, b) }
                    .each_with_index
                    .map { |h,i| [i, h['location'], h['availability'], (has_holding_info ? "" : "<span class='load-holding-details' data-mmsid='#{mmsid}' data-holdingid='#{h['holding_id']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/>") + "</span><span id='notes-#{h['holding_id']}'></span>", policy || h['due_date_policy'], h['links'], h['holding_id'], h['item_pid']] }
 
       if table_data.empty?
         table_data = bib_data['availability'][mmsid]['holdings'].select { |h| h['inventory_type'] == 'electronic' }
-                    .sort { |a,b| cmpOnlineServices(a,b) }
+                    .sort { |a,b| compare_online_services(a, b) }
                     .reject { |p| p['activation_status'] == 'Not Available' }
                     .each_with_index
                     .map { |p,i|
@@ -453,7 +460,7 @@ class FranklinAlmaController < ApplicationController
     results.each { |option|
       case option[:option_name]
       when 'Suggest Fix / Enhance Record'
-          option[:option_name] = "Report Cataloging Error"
+        option[:option_name] = "Report Cataloging Error"
       end
     }
 
@@ -604,35 +611,36 @@ class FranklinAlmaController < ApplicationController
   # TODO: move into blacklight_alma gem (availability.rb concern)
   def availability
     if params[:id_list].present?
-      api = alma_api_class.new()
-      id_list = params[:id_list].split(',');
-      response_data = api.get_availability(id_list)
-
-      if response_data.include?('availability')
-        if response_data.dig('availability', id_list.first, 'holdings', 0, 'inventory_type') == 'electronic'
-          response_data['availability'].keys.each { |mmsid|
-            response_data['availability'][mmsid]['holdings'].sort! do |a,b|
-              cmpOnlineServices(a,b)
-            end
-          }
-        else
-          response_data['availability'].keys.each { |mmsid|
-            response_data['availability'][mmsid]['holdings'].sort! do |a,b|
-              cmpHoldingLocations(a,b)
-            end
-          }
+      mms_ids = params[:id_list].split ','
+      response_data = alma_api_class.new.get_availability mms_ids
+      compare_method = if electronic_resource? mms_ids.first, response_data
+                         :compare_online_services
+                       else
+                         :compare_library_code
+                       end
+      response_data['availability'].keys.each do |mms_id|
+        response_data['availability'][mms_id]['holdings'].sort! do |a, b|
+          send compare_method, a, b
         end
       end
     else
-      response_data = {
-          'error' => 'No id_list parameter'
-      }
+      response_data = { error: 'No id_list parameter' }
     end
 
+    # TODO: does anything consume this xml endpoint? if not...
+    # render json: response_data
     respond_to do |format|
-      format.xml  { render :xml => response_data }
-      format.json { render :json => response_data }
+      format.xml  { render xml: response_data }
+      format.json { render json: response_data }
     end
   end
 
+  private
+
+  # @param [String] mms_id
+  # @param [Hash] response_data
+  # @return [TrueClass, FalseClass]
+  def electronic_resource?(mms_id, response_data)
+    response_data.dig('availability', mms_id, 'holdings', 0, 'inventory_type') == 'electronic'
+  end
 end
