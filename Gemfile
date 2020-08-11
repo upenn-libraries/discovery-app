@@ -51,6 +51,7 @@ end
 
 group :development, :test do
   gem 'byebug', platforms: :ruby
+  gem 'rspec-rails', '~> 3.9'
 end
 
 group :development do
