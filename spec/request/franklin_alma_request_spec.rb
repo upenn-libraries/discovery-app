@@ -70,9 +70,32 @@ RSpec.describe FranklinAlmaController, type: :request do
 
   end
   context 'single_availability' do
+    # TODO: there are so many remote requests here it will be difficul to
+    # mock them. VCR could be used...
+    it 'returns a Hash of data/metadata' do
+      request_context = JSON.generate({ pickupable: nil, hathi_etas: false, hathi_pd: false,
+                                      monograph: true })
+      get '/alma/single_availability', mms_id: '9977445699903681',
+                                       request_context: request_context,
+                                       format: :json
+      expect(response.status).to eq 200
+      parsed_response = JSON.parse(response.body)
+      expect(parsed_response).to be_a Hash
+      expect(parsed_response.keys).to include 'metadata', 'data'
+      expect(parsed_response['metadata']).to be_a Hash
+      expect(parsed_response['data']).to be_an Array
+    end
   end
   context 'holding_details' do
+    it 'is broken but still return 200' do
+      get '/alma/holding_details',
+          mms_id: '999763063503681',
+          holding_id: '22355842850003681',
+          format: :json
+      expect(response.status).to eq 200
+    end
   end
   context 'request_options' do
+
   end
 end

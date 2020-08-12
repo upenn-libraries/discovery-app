@@ -81,6 +81,11 @@ class FranklinAlmaController < ApplicationController
     PennLib::BlacklightAlma::AvailabilityApi
   end
 
+  ##
+  # requires params to include: mms_id, holding_id
+  # this must not be used anymore - the API request returns JSON and the code
+  # here tries to parse it as XML...so nothing good could come of this
+  # TODO: confirm that is is a defunct action
   def holding_details
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
@@ -88,34 +93,36 @@ class FranklinAlmaController < ApplicationController
     response_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id, :get, params)
 
     xml = Nokogiri(response_data.body)
-    holding_details = xml.xpath('//datafield[@tag="866"]/subfield[@code="a"]').map { |field|
-                        field.text
-                      }
-
-    note_details = xml.xpath('//datafield[@tag="852"]/subfield[@code="z"]').map { |field|
-                     field.text
-                   }
+    holding_details = xml.xpath('//datafield[@tag="866"]/subfield[@code="a"]').map do |field|
+      field.text
+    end
+    note_details = xml.xpath('//datafield[@tag="852"]/subfield[@code="z"]').map do |field|
+      field.text
+    end
     note_details.unshift('Public Notes:') unless note_details.empty?
-
-    supplemental_details = xml.xpath('//datafield[@tag="867"]/subfield[@code="a"]').map { |field|
-                             field.text
-                           }
+    supplemental_details = xml.xpath('//datafield[@tag="867"]/subfield[@code="a"]').map do |field|
+      field.text
+    end
     supplemental_details.unshift('Supplemental:') unless supplemental_details.empty?
-
-    index_details = xml.xpath('//datafield[@tag="868"]/subfield[@code="a"]').map { |field|
-                      field.text
-                    }
+    index_details = xml.xpath('//datafield[@tag="868"]/subfield[@code="a"]').map do |field|
+      field.text
+    end
     index_details.unshift('Indexes:') unless index_details.empty?
 
-    render :json => { "holding_details": holding_details.join("<br/>").html_safe, "notes": (note_details + supplemental_details + index_details).join("<br/>").html_safe }
-
+    render json: {
+      holding_details: holding_details.join("<br/>").html_safe,
+      notes: (note_details + supplemental_details + index_details).join("<br/>").html_safe
+    }
   end
 
+  # Get Portfolio details
+  # params should include: mms_id, portfolio_pid, collection_id
+  # params could include? coverage, public_note
   def portfolio_details
     portfolio_pid = params['portfolio_pid']
     collection_id = params['collection_id']
     api_key_param = "apikey=#{ENV['ALMA_API_KEY']}"
-    url_params = {:collection_id => collection_id}
+    url_params = { collection_id: collection_id }
     coverage = params['coverage']
 
     # we also get this from availability API. Opportunity for improvement?
@@ -126,20 +133,21 @@ class FranklinAlmaController < ApplicationController
     services_url = "https://api-na.hosted.exlibrisgroup.com/almaws/v1/electronic/e-collections/%{collection_id}/e-services?#{api_key_param}"
     portfolio_url = "https://api-na.hosted.exlibrisgroup.com/almaws/v1/electronic/e-collections/%{collection_id}/e-services/%{service_id}/portfolios/%{portfolio_id}?#{api_key_param}"
 
+    # API call(s)
     api_response = HTTParty.get(services_url % url_params, :headers => {'Accept' => 'application/json'})
     api_response['electronic_service'].each do |e|
       portfolio_response = HTTParty.get(portfolio_url % url_params.merge(:portfolio_id => portfolio_pid, :service_id => e['id']), :headers => {'Accept' => 'application/json'})
       public_note ||= portfolio_response['public_note'].presence
       authentication_note ||= portfolio_response['authentication_note'].presence
 
-      if(public_note.nil? || authentication_note.nil?)
+      if public_note.nil? || authentication_note.nil?
         service_response = HTTParty.get(e['link'] + "?#{api_key_param}", :headers => {'Accept' => 'application/json'})
         public_note ||= service_response['public_note'].presence
         authentication_note ||= service_response['authentication_note'].presence
       end
     end
 
-    if(public_note.nil? || authentication_note.nil?)
+    if public_note.nil? || authentication_note.nil?
       api_response = HTTParty.get(collection_url % url_params, :headers => {'Accept' => 'application/json'})
       public_note ||= api_response['public_note'].presence
       authentication_note ||= api_response['authentication_note'].presence
@@ -149,35 +157,47 @@ class FranklinAlmaController < ApplicationController
     public_note_content = public_note.nil? || public_note.empty? ? [] : ["Public Notes: ", public_note]
     authentication_note_content = authentication_note.nil? || authentication_note.empty? ? [] : ["Authentication Notes: ", authentication_note]
 
-    render :json => { "portfolio_details": coverage_content.join("<br/>").html_safe, "notes": (public_note_content + authentication_note_content).join("<br/>").html_safe }
+    render json: {
+      portfolio_details: coverage_content.join("<br/>").html_safe,
+      notes: (public_note_content + authentication_note_content).join("<br/>").html_safe
+    }
   end
 
+  # check if any holdings have more than one item by inspecting the holdings
+  # hash for the given mms_id
+  # @param [Hash] api_mms_data
+  # @param [String] mmsid
+  # @return [TrueClass, FalseClass]
   def has_holding_info?(api_mms_data, mmsid)
-    # check if any holdings have more than one item
-    has_holding_info = api_mms_data['availability'][mmsid]['holdings'].map(&:keys).reduce([], &:+).member?('holding_info') ||
-                       api_mms_data['availability'][mmsid]['holdings'].any? { |hld| hld['total_items'].to_i > 1 || hld['availability'] == 'check_holdings' }
+    api_mms_data['availability'][mmsid]['holdings'].map(&:keys).reduce([], &:+).member?('holding_info') ||
+      api_mms_data['availability'][mmsid]['holdings'].any? { |hld| hld['total_items'].to_i > 1 || hld['availability'] == 'check_holdings' }
   end
 
   def has_portfolio_info?(api_mms_data, mmsid)
-    has_portfolio_info = api_mms_data['availability'][mmsid]['holdings'].map(&:keys).reduce([], &:+).member?('portfolio_pid')
+    api_mms_data['availability'][mmsid]['holdings'].map(&:keys).reduce([], &:+).member?('portfolio_pid')
   end
 
+  ## What does this method do? It makes ~5 Alma API calls...
   def single_availability
-    availability_status = {'available' => 'Available',
-                           'check_holdings' => 'Requestable'}
-
-    api_instance = BlacklightAlma::BibsApi.instance
-    api = api_instance.ezwadl_api[0]
-
-    mmsid = params[:mms_id]
-    userid = session['id'].presence || 'GUEST'
-    bibapi = alma_api_class.new()
-    bib_data = bibapi.get_availability([mmsid])
+    # set default status info?
+    availability_status = { 'available' => 'Available',
+                            'check_holdings' => 'Requestable' }
     holding_data = nil
     holding_map = {}
     pickupable = false
-
     inventory_type = ''
+
+    # get API instances
+    api_instance = BlacklightAlma::BibsApi.instance # is this eqiv to #new?
+    api = api_instance.ezwadl_api[0]
+    bibapi = alma_api_class.new
+
+    # get params for API calls?
+    mmsid = params[:mms_id]
+    userid = session['id'].presence || 'GUEST'
+
+    # Get availability info for mmsid
+    bib_data = bibapi.get_availability([mmsid])
 
     # check if any holdings have more than one item
     has_holding_info = has_holding_info?(bib_data, mmsid)
@@ -190,7 +210,12 @@ class FranklinAlmaController < ApplicationController
     # Load holding information for monographs. Monographs do not have
     # a 'holding_info' value.
     unless has_holding_info
-      holding_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items, :get, :mms_id => mmsid, :holding_id => 'ALL', :expand => 'due_date_policy', :user_id => userid)
+      holding_data =
+        api_instance.request(
+          api.almaws_v1_bibs.mms_id_holdings_holding_id_items, :get,
+          mms_id: mmsid, holding_id: 'ALL', expand: 'due_date_policy',
+          user_id: userid
+        )
 
       [holding_data['items']['item']].flatten.reject(&:nil?).each do |item|
         holding_id = item['holding_data']['holding_id']
@@ -205,15 +230,17 @@ class FranklinAlmaController < ApplicationController
     # Check if URL for bib is on collection record
     if bib_data['availability'][mmsid]['holdings'].empty?
       inventory_type = 'electronic'
-      bib_collection_response = api_instance.request(api.almaws_v1_bibs.mms_id_e_collections, :get, :mms_id => mmsid)
-      table_data = [bib_collection_response.dig("electronic_collections", "electronic_collection")].flatten
+      # API call
+      bib_collection_response = api_instance.request(api.almaws_v1_bibs.mms_id_e_collections, :get, mms_id: mmsid)
+      table_data = [bib_collection_response.dig('electronic_collections', 'electronic_collection')].flatten
                    .reject(&:nil?)
-                   .each_with_index.map do |c,i|
-                     url = c.dig("link")
+                   .each_with_index.map do |c, i|
+                     url = c.dig('link')
 
                      next if url.nil?
 
-                     collection_response = HTTParty.get(url +"?apikey=#{ENV['ALMA_API_KEY']}", :headers => {'Accept' => 'application/json'})
+                     # API call...
+                     collection_response = HTTParty.get(url +"?apikey=#{ENV['ALMA_API_KEY']}", headers: {'Accept' => 'application/json'})
                      link = "<a target='_blank' href='#{collection_response['url_override'].presence || collection_response['url']}'>#{collection_response['public_name_override'].presence || collection_response['public_name']}</a>"
                      public_note = collection_response['public_note'].presence
                      authentication_note = collection_response['authentication_note'].presence
@@ -222,8 +249,7 @@ class FranklinAlmaController < ApplicationController
 
                      notes = ('<span>' + (public_note_content + authentication_note_content).join("<br/>") + '</span>').html_safe
                      [i, link, notes, '', '', '', '', '']
-                   end
-                   .reject(&:nil?)
+                   end.reject(&:nil?)
     else
       ctx = JSON.parse(params[:request_context])
       bib_data['availability'][mmsid]['holdings'].each do |holding|
@@ -267,35 +293,39 @@ class FranklinAlmaController < ApplicationController
       end
 
       policy = 'Please log in for loan and request information' if userid == 'GUEST'
+      # links to resource are generated here in the final #map
       table_data = bib_data['availability'][mmsid]['holdings'].select { |h| h['inventory_type'] == 'physical' }
-                   .sort { |a,b| compare_library_code(a, b) }
+                   .sort { |a, b| compare_library_code(a, b) }
                    .each_with_index
-                   .map { |h,i| [i, h['location'], h['availability'], (has_holding_info ? "" : "<span class='load-holding-details' data-mmsid='#{mmsid}' data-holdingid='#{h['holding_id']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/>") + "</span><span id='notes-#{h['holding_id']}'></span>", policy || h['due_date_policy'], h['links'], h['holding_id'], h['item_pid']] }
+                   .map { |h, i| [i, h['location'], h['availability'], (has_holding_info ? "" : "<span class='load-holding-details' data-mmsid='#{mmsid}' data-holdingid='#{h['holding_id']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/>") + "</span><span id='notes-#{h['holding_id']}'></span>", policy || h['due_date_policy'], h['links'], h['holding_id'], h['item_pid']] }
 
       if table_data.empty?
         table_data = bib_data['availability'][mmsid]['holdings'].select { |h| h['inventory_type'] == 'electronic' }
-                    .sort { |a,b| compare_online_services(a, b) }
+                    .sort { |a, b| compare_online_services(a, b) }
                     .reject { |p| p['activation_status'] == 'Not Available' }
                     .each_with_index
-                    .map { |p,i|
+                    .map do |p, i|
                       link = "<a target='_blank' href='https://upenn.alma.exlibrisgroup.com/view/uresolver/01UPENN_INST/openurl?Force_direct=true&portfolio_pid=#{p['portfolio_pid']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com&u.ignore_date_coverage=true'>#{p['collection']}</a>"
                       [i, link, p['availability'], "<span id='notes-#{p['portfolio_pid']}'></span>", '', '', '', '']
-                    }
+                    end
       end
     end
 
     metadata[mmsid][:inventory_type] = inventory_type
     metadata[mmsid][:pickupable] = pickupable
-    render :json => { "metadata": metadata, "data": table_data }
+    render json: { metadata: metadata, data: table_data }
   end
 
+  # check Alma Bibs API (pass params) and return a hash with user info (?)
+  # TODO: the name of this method is cornfusing
+  # @return [Hash]
   def check_requestable(has_holding_info = false)
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
+    # API call
     request_data = api_instance.request(api.almaws_v1_bibs.mms_id_requests, :get, params)
     result = {}
-    requestable = false
-
+    # dig returns an integer 0 and is compared with a string '0' so will always return true
     if request_data.dig('total_record_count') != '0'
       [request_data.dig('user_requests', 'user_request')].flatten.reject(&:nil?).each do |req|
         item_pid = req.dig('item_id').presence
@@ -304,15 +334,10 @@ class FranklinAlmaController < ApplicationController
         result[item_pid] << request_type
       end
     end
-
-    userid = session['id'].presence
     usergroup = session['user_group'].presence
     mmsid = params[:mms_id]
-
-    result[mmsid] = {:facultyexpress => usergroup == 'Faculty Express', :group => usergroup}
-
-    return result
-
+    result[mmsid] = { facultyexpress: usergroup == 'Faculty Express', group: usergroup }
+    result
   end
 
   def holding_items
