@@ -19,15 +19,6 @@ module ApplicationHelper
     }
   end
 
-  # Note: this method ignores the query param, as #path_for_facet uses the
-  # current params to generate the link
-  def databases_results_url(query)
-    if !params.dig('f', 'format_f')&.include?('Database & Article Index')
-      url = path_for_facet('format_f', 'Database & Article Index')
-    end
-    return url
-  end
-
   def google_site_search_results_url(query)
     return "https://www.library.upenn.edu/search/web-pages?q=#{query}"
   end
