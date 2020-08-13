@@ -13,9 +13,14 @@ module ApplicationHelper
   # @return [String]
   # @param [String] query param
   def databases_results_path(query)
-    "catalog?utf8=✓&search_field=keyword&f%5Bformat_f%5D%5B%5D=Database+%26+Article+Index&q=#{url_encode(query)}"
+    search_catalog_path params: {
+      q: query, utf8: '✓', search_field: 'keyword',
+      'f[format_f][]': 'Database & Article Index'
+    }
   end
 
+  # Note: this method ignores the query param, as #path_for_facet uses the
+  # current params to generate the link
   def databases_results_url(query)
     if !params.dig('f', 'format_f')&.include?('Database & Article Index')
       url = path_for_facet('format_f', 'Database & Article Index')
