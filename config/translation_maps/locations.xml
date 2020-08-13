@@ -1647,6 +1647,11 @@
   <library>LIBRA</library>
   <display>LIBRA - Circulation</display>
 </location>
+<location location_code="storcrstxt">
+  <specific_location>LIBRA - Course Text</specific_location>
+  <library>LIBRA</library>
+  <display>LIBRA - Course Text</display>
+</location>
 <location location_code="storfine">
   <specific_location>LIBRA Fisher Fine Arts</specific_location>
   <library>LIBRA</library>
