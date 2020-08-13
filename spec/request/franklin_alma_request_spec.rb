@@ -70,7 +70,7 @@ RSpec.describe FranklinAlmaController, type: :request do
 
   end
   context 'single_availability' do
-    # TODO: there are so many remote requests here it will be difficul to
+    # TODO: there are so many remote requests here it will be difficult to
     # mock them. VCR could be used...
     it 'returns a Hash of data/metadata' do
       request_context = JSON.generate({ pickupable: nil, hathi_etas: false, hathi_pd: false,
@@ -96,6 +96,17 @@ RSpec.describe FranklinAlmaController, type: :request do
     end
   end
   context 'request_options' do
-
+    it 'does something' do
+      request_context = JSON.generate({ pickupable: false, hathi_etas: false, hathi_pd: false,
+                                        monograph: true })
+      get '/alma/request_options',
+          mms_id: '9977445699903681',
+          request_context: request_context,
+          format: :json
+      parsed_response = JSON.parse(response.body)
+      expect(response.status).to eq 200
+      expect(parsed_response).to be_an Array
+      expect(parsed_response.length).to eq 0
+    end
   end
 end
