@@ -330,7 +330,7 @@ class CatalogController < ApplicationController
             'Other' => { :label => 'Other', :fq => "{!tag=azlist ex=azlist}title_xfacet:/[ -`{-~].*/"}
         }
     config.add_facet_field 'access_f', label: 'Access', collapse: false, solr_params: @@MINCOUNT, query: {
-        'Online' => { :label => 'Online', :fq => "{!join from=cluster_id to=cluster_id v='access_f:Online OR record_source_id:3'}"},
+        'Online' => { :label => 'Online', :fq => "{!join from=cluster_id to=cluster_id v=access_f:Online}"},
         'At the library' => { :label => 'At the library', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"}
     }
     config.add_facet_field 'cluster', label: 'Cluster Prioritize', collapse: false, single: :manual, solr_params: @@MINCOUNT, query: {
@@ -345,14 +345,14 @@ class CatalogController < ApplicationController
         'Dynamic' => { :label => 'Dynamic', :fq => '*:*'}
     }
     config.add_facet_field 'record_source_f', label: 'Record Source', collapse: false, solr_params: @@MINCOUNT, query: {
-        'Brown' => { :label => 'Brown', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Brown\\'}'}"},
-        'Columbia' => { :label => 'Columbia', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Columbia\\'}'}"},
-        'Cornell' => { :label => 'Cornell', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Cornell\\'}'}"},
-        'Duke' => { :label => 'Duke', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Duke\\'}'}"},
-        'Penn' => { :label => 'Penn', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Penn\\'}'}"},
-        'Princeton' => { :label => 'Princeton', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Princeton\\'}'}"},
-        'Stanford' => { :label => 'Stanford', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Stanford\\'}'}"},
-        'HathiTrust' => { :label => 'HathiTrust', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'HathiTrust\\'}'}"}
+        'Brown' => { :label => 'Brown', :fq => "{!join from=cluster_id to=cluster_id v=record_source_f:Brown}"},
+        'Columbia' => { :label => 'Columbia', :fq => "{!join from=cluster_id to=cluster_id v=record_source_f:Columbia}"},
+        'Cornell' => { :label => 'Cornell', :fq => "{!join from=cluster_id to=cluster_id v=record_source_f:Cornell}"},
+        'Duke' => { :label => 'Duke', :fq => "{!join from=cluster_id to=cluster_id v=record_source_f:Duke}"},
+        'Penn' => { :label => 'Penn', :fq => "{!join from=cluster_id to=cluster_id v=record_source_f:Penn}"},
+        'Princeton' => { :label => 'Princeton', :fq => "{!join from=cluster_id to=cluster_id v=record_source_f:Princeton}"},
+        'Stanford' => { :label => 'Stanford', :fq => "{!join from=cluster_id to=cluster_id v=record_source_f:Stanford}"},
+        'HathiTrust' => { :label => 'HathiTrust', :fq => "{!join from=cluster_id to=cluster_id v=record_source_f:HathiTrust}"}
     }
     config.add_facet_field 'record_source_exclusive', label: 'Record Source Exclusive', collapse: false, single: :manual, solr_params: @@MINCOUNT, query: {
         'Brown' => { :label => 'Brown', :fq => '{!term tag=rsx ex=rsx f=record_source_f v=Brown}'},
