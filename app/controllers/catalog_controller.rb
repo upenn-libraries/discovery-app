@@ -242,6 +242,7 @@ class CatalogController < ApplicationController
 
     post_sort = lambda { |items|
       items.sort { |a,b| b.hits <=> a.hits }
+    }
 
     local_only = lambda { |a, b, c|
       'Include Partner Libraries' != a.params.dig(:f, :cluster, 0)
