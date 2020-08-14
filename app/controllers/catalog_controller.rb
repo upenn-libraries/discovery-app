@@ -173,11 +173,7 @@ class CatalogController < ApplicationController
         'facet.mincount': 0,
         #      fq: '{!tag=cluster}{!collapse field=cluster_id nullPolicy=expand size=5000000 min=record_source_id}',
         # this approach needs expand.field=cluster_id
-<<<<<<< HEAD
         # MOVE TO FACET: fq: '{!bool tag=cluster must_not=$x1 must_not=$x2 must_not=$x3 must_not=$x4 must_not=$x5 must_not=$x6 must_not=$x7}',
-=======
-        fq: %q~{!tag=cluster}NOT ({!join from=cluster_id to=cluster_id v='record_source_f:"Penn"'} AND record_source_f:"HathiTrust") NOT record_source_id:3~,
->>>>>>> 4618572... temporarily add links to hathi records corresponding to local holdings
         expand: 'true',
         'expand.field': 'cluster_id',
         'expand.q': '*:*',
