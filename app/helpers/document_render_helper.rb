@@ -65,34 +65,15 @@ module DocumentRenderHelper
 
   def render_online_resource_display_for_index_view(options)
     values = options[:value]
-    alma_mms_id = options[:document][:alma_mms_id]
-    hathi_pd = false
-    hathi_etas = false
+    suppress_remote_links = 'Include Partner Libraries' != params.dig('f', 'cluster', 0)
     ret = values.map do |value|
       JSON.parse(value).map do |link_struct|
         url = link_struct['linkurl']
         text = link_struct['linktext']
-        append = ''
-        if text == @@HATHI_PD_TEXT
-          hathi_pd = true
-        elsif text == @@HATHI_TMP_TEXT
-          hathi_etas = true
-          text = @@HATHI_REPLACEMENT_TEXT
-          url = @@HATHI_LOGIN_PREFIX + URI.encode_www_form_component(url)
-          append = @@HATHI_INFO
-        end
-        %Q{<a href="#{url}">#{text}</a>#{append}}
-      end.join('<br/>')
-    end.join('<br/>')
-    unless alma_mms_id.nil?
-      if hathi_pd
-        ret = ret.concat(hathi_tag_id('pd', alma_mms_id))
-      end
-      if hathi_etas
-        ret = ret.concat(hathi_tag_id('etas', alma_mms_id))
-      end
-    end
-    ret.html_safe
+        (suppress_remote_links && text =~ /View record in .*\'s catalog/) ? nil : %Q{<a href="#{url}">#{text}</a>}
+      end.compact.join('<br/>')
+    end.reject { |item| item.blank? }.join('<br/>')
+    ret.blank? ? 'Has partner library holdings' : ret.html_safe
   end
 
   def render_online_display_for_show_view(options)

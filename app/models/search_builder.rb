@@ -71,8 +71,11 @@ class SearchBuilder < Blacklight::SearchBuilder
   @@record_sources = ['Brown', 'Chicago', 'Columbia', 'Cornell', 'Duke', 'Harvard', 'Penn', 'Princeton', 'Stanford', 'HathiTrust']
 
   def add_cluster_params(solr_parameters)
-    if 'Dynamic' == blacklight_params.dig(:f, :cluster, 0)
-      solr_parameters[:fq] << '{!collapse tag=cluster ex=cluster field=cluster_id nullPolicy=expand size=3000000}'
+#    if 'Dynamic' == blacklight_params.dig(:f, :cluster, 0)
+#      solr_parameters[:fq] << '{!collapse tag=cluster ex=cluster field=cluster_id nullPolicy=expand size=3000000}'
+#    end
+    if 'Include Partner Libraries' != blacklight_params.dig(:f, :cluster, 0)
+      solr_parameters[:fq] << '{!term tag=cluster ex=cluster f=record_source_f v=Penn}'
     end
     source_idx = 0
     loop do
