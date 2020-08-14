@@ -2,8 +2,8 @@
 class SearchBuilder < Blacklight::SearchBuilder
   include Blacklight::Solr::SearchBuilderBehavior
   include BlacklightAdvancedSearch::AdvancedSearchBuilder
-  self.default_processor_chain += [:add_advanced_search_to_solr, :override_sort_when_q_is_empty, :lowercase_expert_boolean_operators,
-      :add_left_anchored_title, :add_routing_hash]
+  self.default_processor_chain += [:add_advanced_search_to_solr, :override_sort_when_q_is_empty, :remove_specialists_without_q,
+      :lowercase_expert_boolean_operators, :add_left_anchored_title, :add_routing_hash]
   include BlacklightRangeLimit::RangeLimitBuilder
   include BlacklightSolrplugins::FacetFieldsQueryFilter
 
@@ -91,6 +91,15 @@ class SearchBuilder < Blacklight::SearchBuilder
         "_query_:\"{!field f='title_12_tl' v=$qq}\"^#{weight} OR "\
         '_query_:"' + solr_parameters[:q] + '"'
     solr_parameters[:q] = augmented_solr_q
+  end
+
+  # remove the subject specialists facet from the config to prevent error
+  def remove_specialists_without_q(solr_parameters)
+    if !blacklight_params[:q].present?
+      solr_parameters['json.facet'].delete_if do |facet_query|
+        facet_query.starts_with?('{subject_specialists')
+      end
+    end
   end
 
   # no q param (with or without facets) causes the default 'score' sort

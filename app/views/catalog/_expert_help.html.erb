@@ -1,19 +1,20 @@
-<div class="col-md-3 bento-box expert-results" id="bento-results-expert">
-  <h3>Expert help</h3>
-<% Blacklight::Solr::Response::SubjectSpecialists::Constants::SUBJECTS[subject.to_sym][0..0].each do |specialist| %>
-  <hr />
-  <div class="expert-profile">
-    <p><a href="https://www.library.upenn.edu/people/subject-specialists">See a list of all subject specialists.</a></p>
+<div class="panel panel-default facet_limit expert-results bento-box" id="bento-results-expert">
+  <div class="collapse-toggle panel-heading expert-box" data-toggle="collapse" data-target="#ExpertOptions">
+    <h3 class="panel-title facet-field-heading expert-heading">
+      <%= link_to "Expert help", "#", :"data-no-turbolink" => true %>
+    </h3>
+  </div>
+<% specialist = Blacklight::Solr::Response::SubjectSpecialists::Constants::SUBJECTS[subject.to_sym].sample %>
+  <div id="ExpertOptions" class="expert-profile collapse in">
+    <p ><a href="https://faq.library.upenn.edu/ask">Ask a librarian with LibChat.</a></p>
+    <!-- <p><a href="https://www.library.upenn.edu/people/subject-specialists">See a list of all subject specialists.</a></p> -->
     <%= image_tag specialist[:portrait], :alt => specialist[:display_name] %>
     <div class="upper-content">
-      <%= link_to specialist[:display_name], profile_url(specialist[:display_name]), :class => 'link-to-profile' %>
+      <%= link_to specialist[:display_name], subject_url(subject), :class => 'link-to-profile' %>
 
-        <% specialist[:subjects].each do |subject| %>
-        <p class="expert-subject"><%= subject %></p>
-        <% end %>
+        <p class="expert-p"><%= specialist[:subjects].join(', ') %></p>
 
-      <p><%= link_to specialist[:email], "mailto:#{specialist[:email]}" %></p>
+      <p class="expert-p"><%= link_to specialist[:email], "mailto:#{specialist[:email]}" %></p>
     </div>
   </div>
-<% end %>
 </div>
