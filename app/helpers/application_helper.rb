@@ -109,8 +109,8 @@ module ApplicationHelper
     "https://#{ ENV['ALMA_DELIVERY_DOMAIN'] }/discovery/account?vid=#{ ENV['ALMA_INSTITUTION_CODE'] }:Services&lang=en&section=overview"
   end
 
-  def profile_url(name)
-    "https://www.library.upenn.edu/people/staff/#{name.downcase.gsub(/\ +/, '-')}"
+  def subject_url(subject)
+    "https://www.library.upenn.edu/people/subject-specialists##{subject.capitalize.dasherize}"
   end
 
   def refworks_bookmarks_path(opts = {})

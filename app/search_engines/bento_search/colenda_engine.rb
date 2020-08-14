@@ -48,9 +48,9 @@ class BentoSearch::ColendaEngine
       item = BentoSearch::ResultItem.new
       item.title = entry['title_ssim'].first
       item.link = colenda_item_url(entry['id'])
-      item.authors = [entry['personal_name_sim'], entry['creator_sim'], entry['corporate_name_sim']].compact.flatten.join(', ')
-      item.format = entry['format_ssim']&.join(', ')
-      item.publisher = entry['publisher_ssim']&.join(', ')
+      #item.authors = [entry['personal_name_sim'], entry['creator_sim'], entry['corporate_name_sim']].compact.flatten.join(', ')
+      #item.format = entry['format_ssim']&.join(', ')
+      #item.publisher = entry['publisher_ssim']&.join(', ')
       item.custom_data['thumbnail'] = entry['thumbnail_url']
 
       results << item

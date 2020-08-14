@@ -716,7 +716,9 @@ h3.ongray {
 .colenda-thumbnail {
   text-align: center;
   img {
-    max-height: 100px;
+    height: 50px;
+    width: 95%;
+    object-fit: cover;
   }
 }
 
@@ -731,18 +733,46 @@ h3.ongray {
 
 /* end of hack */
 
+.panel-default > .panel-heading.expert-box {
+  color: white;
+  background-color: #337ab7;
+  border-color: #ddd;
+}
+.expert-box.panel-heading.collapse-toggle .panel-title:after {
+    font-family: 'Glyphicons Halflings';
+    content: "\e114";
+    float: right;
+    color: white;
+    font-size: 1.03em;
+    line-height: normal;
+}
+
+.expert-box.panel-heading.collapse-toggle.collapsed .panel-title:after {
+    font-family: 'Glyphicons Halflings';
+    content: "\e113";
+    float: right;
+    color: white;
+    font-size: 1.03em;
+    line-height: normal;
+}
+
+h3.expert-heading {
+  margin-top: 0;
+  padding: 0;
+}
+
 .expert-results {
   position: fixed;
-  bottom: 5px;
-  right: 5px;
-  width: 220px;
+  bottom: 0;
+  right: 0;
+  width: 235px;
   min-height: auto;
-  /*display: none;  /* TODO: remove when launching this feature */
+  margin: 0;
   hr {
     border-bottom: 1px dashed #d2d2d2;
     margin: 0;
   }
-  .expert-subject {
+  .expert-p {
     margin-bottom: 0;
   }
   .expert-profile {
