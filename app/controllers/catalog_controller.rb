@@ -81,6 +81,18 @@ class CatalogController < ApplicationController
     end
   end
 
+  def self.generate_cluster_fq(index, limit)
+    return '*:*' if limit < 1
+    ret = '{!bool tag=cluster ex=cluster'
+    i = 0
+    loop do
+      ret += " must_not=$x#{i}_#{index}"
+      break if i >= limit
+      i += 1
+    end
+    ret + '}'
+  end
+
   configure_blacklight do |config|
     # default advanced config values
     config.advanced_search ||= Blacklight::OpenStructWithHashAccess.new
@@ -139,28 +151,7 @@ class CatalogController < ApplicationController
         'facet.mincount': 0,
         #      fq: '{!tag=cluster}{!collapse field=cluster_id nullPolicy=expand size=5000000 min=record_source_id}',
         # this approach needs expand.field=cluster_id
-        fq: '{!bool tag=cluster must_not=$x1 must_not=$x2 must_not=$x3 must_not=$x4 must_not=$x5 must_not=$x6 must_not=$x7}',
-        x1: '{!bool filter=$j1 filter=$o1}',
-        x2: '{!bool filter=$j2 filter=$o2}',
-        x3: '{!bool filter=$j3 filter=$o3}',
-        x4: '{!bool filter=$j4 filter=$o4}',
-        x5: '{!bool filter=$j5 filter=$o5}',
-        x6: '{!bool filter=$j6 filter=$o6}',
-        x7: '{!bool filter=$j7 filter=$o7}',
-        j1: '{!join from=cluster_id to=cluster_id v=record_source_f:Brown}',
-        j2: '{!join from=cluster_id to=cluster_id v=record_source_f:Columbia}',
-        j3: '{!join from=cluster_id to=cluster_id v=record_source_f:Cornell}',
-        j4: '{!join from=cluster_id to=cluster_id v=record_source_f:Duke}',
-        j5: '{!join from=cluster_id to=cluster_id v=record_source_f:Penn}',
-        j6: '{!join from=cluster_id to=cluster_id v=record_source_f:Princeton}',
-        j7: '{!join from=cluster_id to=cluster_id v=record_source_f:Stanford}',
-        o1: 'record_source_f:(Columbia OR Cornell OR Duke OR Penn OR Princeton OR Stanford OR HathiTrust)',
-        o2: 'record_source_f:(Cornell OR Duke OR Penn OR Princeton OR Stanford OR HathiTrust)',
-        o3: 'record_source_f:(Duke OR Penn OR Princeton OR Stanford OR HathiTrust)',
-        o4: 'record_source_f:(Penn OR Princeton OR Stanford OR HathiTrust)',
-        o5: 'record_source_f:(Princeton OR Stanford OR HathiTrust)',
-        o6: 'record_source_f:(Stanford OR HathiTrust)',
-        o7: 'record_source_f:HathiTrust',
+        # MOVE TO FACET: fq: '{!bool tag=cluster must_not=$x1 must_not=$x2 must_not=$x3 must_not=$x4 must_not=$x5 must_not=$x6 must_not=$x7}',
         expand: 'true',
         'expand.field': 'cluster_id',
         'expand.q': '*:*',
@@ -342,6 +333,17 @@ class CatalogController < ApplicationController
         'Online' => { :label => 'Online', :fq => "{!join from=cluster_id to=cluster_id v='access_f:Online OR record_source_id:3'}"},
         'At the library' => { :label => 'At the library', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"}
     }
+    config.add_facet_field 'cluster', label: 'Cluster Prioritize', collapse: false, single: :manual, solr_params: @@MINCOUNT, query: {
+        'Brown' => { :label => 'Brown', :fq => generate_cluster_fq(0, 6)},
+        'Columbia' => { :label => 'Columbia', :fq => generate_cluster_fq(1, 6)},
+        'Cornell' => { :label => 'Cornell', :fq => generate_cluster_fq(2, 6)},
+        'Duke' => { :label => 'Duke', :fq => generate_cluster_fq(3, 6)},
+        'Penn' => { :label => 'Penn', :fq => generate_cluster_fq(4, 6)},
+        'Princeton' => { :label => 'Princeton', :fq => generate_cluster_fq(5, 6)},
+        'Stanford' => { :label => 'Stanford', :fq => generate_cluster_fq(6, 6)},
+        'HathiTrust' => { :label => 'HathiTrust', :fq => generate_cluster_fq(7, 6)},
+        'Dynamic' => { :label => 'Dynamic', :fq => '*:*'}
+    }
     config.add_facet_field 'record_source_f', label: 'Record Source', collapse: false, solr_params: @@MINCOUNT, query: {
         'Brown' => { :label => 'Brown', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Brown\\'}'}"},
         'Columbia' => { :label => 'Columbia', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Columbia\\'}'}"},
@@ -351,6 +353,16 @@ class CatalogController < ApplicationController
         'Princeton' => { :label => 'Princeton', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Princeton\\'}'}"},
         'Stanford' => { :label => 'Stanford', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Stanford\\'}'}"},
         'HathiTrust' => { :label => 'HathiTrust', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'HathiTrust\\'}'}"}
+    }
+    config.add_facet_field 'record_source_exclusive', label: 'Record Source Exclusive', collapse: false, single: :manual, solr_params: @@MINCOUNT, query: {
+        'Brown' => { :label => 'Brown', :fq => '{!term tag=rsx ex=rsx f=record_source_f v=Brown}'},
+        'Columbia' => { :label => 'Columbia', :fq => '{!term tag=rsx ex=rsx f=record_source_f v=Columbia}'},
+        'Cornell' => { :label => 'Cornell', :fq => '{!term tag=rsx ex=rsx f=record_source_f v=Cornell}'},
+        'Duke' => { :label => 'Duke', :fq => '{!term tag=rsx ex=rsx f=record_source_f v=Duke}'},
+        'Penn' => { :label => 'Penn', :fq => '{!term tag=rsx ex=rsx f=record_source_f v=Penn}'},
+        'Princeton' => { :label => 'Princeton', :fq => '{!term tag=rsx ex=rsx f=record_source_f v=Princeton}'},
+        'Stanford' => { :label => 'Stanford', :fq => '{!term tag=rsx ex=rsx f=record_source_f v=Stanford}'},
+        'HathiTrust' => { :label => 'HathiTrust', :fq => '{!term tag=rsx ex=rsx f=record_source_f v=HathiTrust}'},
     }
     config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false, solr_params: @@MINCOUNT, query: {
         'Book' => { :label => 'Book', :fq => "{!term f=format_f v='Book'}"},
