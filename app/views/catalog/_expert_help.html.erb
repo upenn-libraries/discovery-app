@@ -6,8 +6,6 @@
   </div>
 <% specialist = Blacklight::Solr::Response::SubjectSpecialists::Constants::SUBJECTS[subject.to_sym].sample %>
   <div id="ExpertOptions" class="expert-profile collapse in">
-    <p ><a href="https://faq.library.upenn.edu/ask">Ask a librarian with LibChat.</a></p>
-    <!-- <p><a href="https://www.library.upenn.edu/people/subject-specialists">See a list of all subject specialists.</a></p> -->
     <%= image_tag specialist[:portrait], :alt => specialist[:display_name] %>
     <div class="upper-content">
       <%= link_to specialist[:display_name], subject_url(subject), :class => 'link-to-profile' %>
@@ -16,5 +14,6 @@
 
       <p class="expert-p"><%= link_to specialist[:email], "mailto:#{specialist[:email]}" %></p>
     </div>
-  </div>
+    <hr class="hr-text" data-content="OR">
+    <div class="expert-chat-link" id="libchat_7cde980ad423479da2585a498007774e"></div><script src="https://faq.library.upenn.edu/load_chat.php?hash=7cde980ad423479da2585a498007774e"></script>  </div>
 </div>

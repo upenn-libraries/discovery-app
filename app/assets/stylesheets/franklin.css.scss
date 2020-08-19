@@ -761,6 +761,17 @@ h3.expert-heading {
   padding: 0;
 }
 
+.expert-chat-link {
+  margin: 0 0 5px;
+  text-align: center;
+}
+
+#libchat_7cde980ad423479da2585a498007774e button.libchat_online {
+  font-size: 12px;
+  padding: 1px 5px 3px;
+  height: 20px;  
+}
+
 .expert-results {
   position: fixed;
   bottom: 0;
@@ -768,10 +779,7 @@ h3.expert-heading {
   width: 235px;
   min-height: auto;
   margin: 0;
-  hr {
-    border-bottom: 1px dashed #d2d2d2;
-    margin: 0;
-  }
+
   .expert-p {
     margin-bottom: 0;
   }
@@ -807,6 +815,38 @@ h3.expert-heading {
         margin-left: -30px;
       }
     }
+  }
+}
+
+.hr-text {
+  line-height: 1em;
+  position: relative;
+  outline: 0;
+  border: 0;
+  color: black;
+  text-align: center;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  height: 1.5em;
+  opacity: .5;
+  &:before {
+    content: '';
+    background: linear-gradient(to right, transparent, #818078, transparent);
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 100%;
+    height: 1px;
+  }
+  &:after {
+    content: attr(data-content);
+    position: relative;
+    display: inline-block;
+    color: black;
+
+    padding: 0 .5em;
+    line-height: 1.5em;
+    background-color: #fcfcfa;
   }
 }
 
