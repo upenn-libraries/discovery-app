@@ -3,19 +3,15 @@
 @import 'base/colors.css.scss';
 @import 'base/mixins.css.scss';
 
-@media (min-width: 1200px) {
-  .col-md-3 {
-    width: 24%;
-  }
-}
 
 @media (min-width: 992px) and (max-width: 1199px) {
-  .col-md-3 {
-    width: 25%;
+  .bento-box.databases-results, .bento-box.colenda-results,
+  .bento-box.google-results {
+    width: auto;
   }
 
-  .bento-box {
-    width: 32%;
+  .bento-box, .libraries-results {
+    width: 32.5%;
   }
 
 }
@@ -717,9 +713,12 @@ h3.ongray {
   text-align: center;
   img {
     height: 50px;
-    width: 95%;
+    width: 90%;
     object-fit: cover;
   }
+}
+.colenda-help {
+  font-size: 13px;
 }
 
 /* hack */
@@ -769,7 +768,7 @@ h3.expert-heading {
 #libchat_7cde980ad423479da2585a498007774e button.libchat_online {
   font-size: 12px;
   padding: 1px 5px 3px;
-  height: 20px;  
+  height: 20px;
 }
 
 .expert-results {
@@ -790,7 +789,7 @@ h3.expert-heading {
     }
     .lower-content {
       clear: both;
-      padding-top: 10px;
+      padding-top: 3px;
     }
     img {
       @include rounded-corners;
@@ -864,7 +863,7 @@ h3.expert-heading {
 
 @media (min-width: 1200px) {
   .col-lg-4 {
-    width: 32.333333%;
+    width: 32.6%;
   }
 }
 
@@ -925,6 +924,11 @@ h3.expert-heading {
   .bento-box {
     min-width: 300px;
     margin-bottom: 20px;
+  }
+
+  .expert-results.bento-box {
+    min-width: auto;
+    margin-bottom: auto;
   }
 
 }

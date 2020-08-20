@@ -110,7 +110,17 @@ module ApplicationHelper
   end
 
   def subject_url(subject)
-    "https://www.library.upenn.edu/people/subject-specialists##{subject.capitalize.dasherize}"
+    "https://www.library.upenn.edu/people/subject-specialists##{subject.dasherize}"
+  end
+
+  def bolded_subject_list(subjects, match)
+    subjects.map do |s|
+      if match.downcase.gsub(/[^a-z]|amp/,'') == s.downcase.gsub(/[^a-z]/,'')
+        content_tag(:strong, s)
+      else
+        s
+      end
+    end
   end
 
   def refworks_bookmarks_path(opts = {})
