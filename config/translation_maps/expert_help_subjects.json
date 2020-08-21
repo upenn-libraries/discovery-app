@@ -19,7 +19,7 @@
         "Social impact"
       ],
       "display_name": "Cynthia Cronin-Kardon",
-      "portrait": "cynthia_cronin_kardon"
+      "portrait": "cynthia_cronin_kardon.jpg"
     }
   ],
   "african_studies": [
@@ -51,7 +51,7 @@
         "Urban studies"
       ],
       "display_name": "Lauris Olson",
-      "portrait": "lauris_olson"
+      "portrait": "lauris_olson.jpg"
     }
   ],
   "africana_studies": [
@@ -76,7 +76,7 @@
         "Philosophy, politics, & economics"
       ],
       "display_name": "Nick Okrent",
-      "portrait": "nick_okrent"
+      "portrait": "nick_okrent.jpg"
     }
   ],
   "anthropology": [
@@ -97,7 +97,7 @@
         "Archaeology"
       ],
       "display_name": "Deborah Stewart",
-      "portrait": "deborah_stewart"
+      "portrait": "deborah_stewart.jpg"
     }
   ],
   "archaeology": [
@@ -118,7 +118,7 @@
         "Archaeology"
       ],
       "display_name": "Deborah Stewart",
-      "portrait": "deborah_stewart"
+      "portrait": "deborah_stewart.jpg"
     }
   ],
   "architectural_history": [
@@ -143,7 +143,7 @@
         "Landscape architecture"
       ],
       "display_name": "Patricia Guardiola",
-      "portrait": "patricia_guardiola"
+      "portrait": "patricia_guardiola.jpg"
     },
     {
       "subject_specialty": "Architectural history",
@@ -166,7 +166,7 @@
         "Landscape architecture"
       ],
       "display_name": "Shannon Robinson",
-      "portrait": "shannon_robinson"
+      "portrait": "shannon_robinson.jpg"
     }
   ],
   "architecture_amp_city_planning": [
@@ -191,7 +191,7 @@
         "Landscape architecture"
       ],
       "display_name": "Patricia Guardiola",
-      "portrait": "patricia_guardiola"
+      "portrait": "patricia_guardiola.jpg"
     },
     {
       "subject_specialty": "Architectural history",
@@ -214,7 +214,7 @@
         "Landscape architecture"
       ],
       "display_name": "Shannon Robinson",
-      "portrait": "shannon_robinson"
+      "portrait": "shannon_robinson.jpg"
     }
   ],
   "art_amp_art_history": [
@@ -239,7 +239,7 @@
         "Landscape architecture"
       ],
       "display_name": "Patricia Guardiola",
-      "portrait": "patricia_guardiola"
+      "portrait": "patricia_guardiola.jpg"
     },
     {
       "subject_specialty": "Architectural history",
@@ -262,7 +262,7 @@
         "Landscape architecture"
       ],
       "display_name": "Shannon Robinson",
-      "portrait": "shannon_robinson"
+      "portrait": "shannon_robinson.jpg"
     }
   ],
   "asian_american_studies": [
@@ -287,7 +287,7 @@
         "Philosophy, politics, & economics"
       ],
       "display_name": "Nick Okrent",
-      "portrait": "nick_okrent"
+      "portrait": "nick_okrent.jpg"
     }
   ],
   "bioethics": [
@@ -308,7 +308,7 @@
         "Nursing"
       ],
       "display_name": "Richard James",
-      "portrait": "richard_james"
+      "portrait": "richard_james.jpg"
     },
     {
       "subject_specialty": "Bioethics",
@@ -327,7 +327,7 @@
         "Nursing"
       ],
       "display_name": "Sherry Morgan",
-      "portrait": "sherry_morgan"
+      "portrait": "sherry_morgan.jpg"
     }
   ],
   "bioinformatics": [
@@ -348,7 +348,7 @@
         "Biomedical graduate studies"
       ],
       "display_name": "Manuel de la Cruz Gutierrez",
-      "portrait": "manuel_de_la_cruz_gutierrez"
+      "portrait": "manuel_de_la_cruz_gutierrez.jpg"
     }
   ],
   "biology": [
@@ -372,7 +372,7 @@
         "Medicine"
       ],
       "display_name": "Melanie Cedrone",
-      "portrait": "melanie_cedrone"
+      "portrait": "melanie_cedrone.jpg"
     }
   ],
   "biomedical_graduate_studies": [
@@ -393,7 +393,7 @@
         "Biomedical graduate studies"
       ],
       "display_name": "Manuel de la Cruz Gutierrez",
-      "portrait": "manuel_de_la_cruz_gutierrez"
+      "portrait": "manuel_de_la_cruz_gutierrez.jpg"
     }
   ],
   "biomedical_research": [
@@ -417,7 +417,7 @@
         "Medicine"
       ],
       "display_name": "Melanie Cedrone",
-      "portrait": "melanie_cedrone"
+      "portrait": "melanie_cedrone.jpg"
     },
     {
       "subject_specialty": "Biomedical research",
@@ -437,7 +437,7 @@
         "Nursing"
       ],
       "display_name": "Maylene Qiu",
-      "portrait": "maylene_qiu"
+      "portrait": "maylene_qiu.jpg"
     }
   ],
   "business_economics_amp_public_policy": [
@@ -459,7 +459,7 @@
         "Statistics"
       ],
       "display_name": "Kevin Thomas",
-      "portrait": "kevin_thomas"
+      "portrait": "kevin_thomas.jpg"
     }
   ],
   "chemistry": [
@@ -479,7 +479,7 @@
         "Chemistry"
       ],
       "display_name": "Judith Currano",
-      "portrait": "judith_currano"
+      "portrait": "judith_currano.jpg"
     }
   ],
   "chinese_studies": [
@@ -500,7 +500,7 @@
         "Southeast Asian studies"
       ],
       "display_name": "Brian Vivier",
-      "portrait": "brian_vivier"
+      "portrait": "brian_vivier.jpg"
     }
   ],
   "cinema_amp_media_studies": [
@@ -522,7 +522,7 @@
         "Organizational dynamics"
       ],
       "display_name": "Charles Cobine",
-      "portrait": "charles_cobine"
+      "portrait": "charles_cobine.jpg"
     }
   ],
   "classical_studies": [
@@ -543,7 +543,7 @@
         "Russian & East European studies"
       ],
       "display_name": "Rebecca Stuhr",
-      "portrait": "rebecca_stuhr"
+      "portrait": "rebecca_stuhr.jpg"
     }
   ],
   "communication": [
@@ -563,7 +563,7 @@
         "Communication"
       ],
       "display_name": "Sharon Black",
-      "portrait": "sharon_black"
+      "portrait": "sharon_black.jpg"
     },
     {
       "subject_specialty": "African Studies",
@@ -593,7 +593,7 @@
         "Urban studies"
       ],
       "display_name": "Lauris Olson",
-      "portrait": "lauris_olson"
+      "portrait": "lauris_olson.jpg"
     }
   ],
   "comparative_literature": [
@@ -619,7 +619,7 @@
         "Spanish, Portuguese & Iberian studies"
       ],
       "display_name": "Joseph Holub",
-      "portrait": "joseph_holub"
+      "portrait": "joseph_holub.jpg"
     }
   ],
   "criminology": [
@@ -651,7 +651,7 @@
         "Urban studies"
       ],
       "display_name": "Lauris Olson",
-      "portrait": "lauris_olson"
+      "portrait": "lauris_olson.jpg"
     }
   ],
   "dental_medicine": [
@@ -671,7 +671,7 @@
         "Dental medicine"
       ],
       "display_name": "Laurel Graham",
-      "portrait": "laurel_graham"
+      "portrait": "laurel_graham.jpg"
     }
   ],
   "earth_amp_environmental_science": [
@@ -695,7 +695,7 @@
         "Medicine"
       ],
       "display_name": "Melanie Cedrone",
-      "portrait": "melanie_cedrone"
+      "portrait": "melanie_cedrone.jpg"
     }
   ],
   "economics": [
@@ -727,7 +727,7 @@
         "Urban studies"
       ],
       "display_name": "Lauris Olson",
-      "portrait": "lauris_olson"
+      "portrait": "lauris_olson.jpg"
     }
   ],
   "education": [
@@ -747,7 +747,7 @@
         "Education"
       ],
       "display_name": "Patty Lynn",
-      "portrait": "patty_lynn"
+      "portrait": "patty_lynn.jpg"
     }
   ],
   "engineering_amp_computer_science": [
@@ -767,7 +767,7 @@
         "Engineering & computer science"
       ],
       "display_name": "Amanpreet (Aman) Kaur",
-      "portrait": "amanpreet_aman_kaur"
+      "portrait": "amanpreet_aman_kaur.jpg"
     },
     {
       "subject_specialty": "Engineering & computer science",
@@ -785,7 +785,7 @@
         "Engineering & computer science"
       ],
       "display_name": "Douglas McGee",
-      "portrait": "douglas_mcgee"
+      "portrait": "douglas_mcgee.jpg"
     }
   ],
   "entrepreneurship": [
@@ -807,7 +807,7 @@
         "Marketing"
       ],
       "display_name": "Mia Wells",
-      "portrait": "mia_wells"
+      "portrait": "mia_wells.jpg"
     }
   ],
   "finance": [
@@ -829,7 +829,7 @@
         "Management"
       ],
       "display_name": "Marcella Barnhart",
-      "portrait": "marcella_barnhart"
+      "portrait": "marcella_barnhart.jpg"
     }
   ],
   "fine_arts": [
@@ -854,7 +854,7 @@
         "Landscape architecture"
       ],
       "display_name": "Patricia Guardiola",
-      "portrait": "patricia_guardiola"
+      "portrait": "patricia_guardiola.jpg"
     },
     {
       "subject_specialty": "Architectural history",
@@ -877,7 +877,7 @@
         "Landscape architecture"
       ],
       "display_name": "Shannon Robinson",
-      "portrait": "shannon_robinson"
+      "portrait": "shannon_robinson.jpg"
     }
   ],
   "folklore_amp_folklife": [
@@ -901,7 +901,7 @@
         "Religious studies"
       ],
       "display_name": "David Azzolina",
-      "portrait": "david_azzolina"
+      "portrait": "david_azzolina.jpg"
     }
   ],
   "french_language_amp_literature": [
@@ -927,7 +927,7 @@
         "Spanish, Portuguese & Iberian studies"
       ],
       "display_name": "Joseph Holub",
-      "portrait": "joseph_holub"
+      "portrait": "joseph_holub.jpg"
     }
   ],
   "gender_sexuality_amp_women039s_studies": [
@@ -951,7 +951,7 @@
         "Religious studies"
       ],
       "display_name": "David Azzolina",
-      "portrait": "david_azzolina"
+      "portrait": "david_azzolina.jpg"
     }
   ],
   "general_science": [
@@ -975,7 +975,7 @@
         "Medicine"
       ],
       "display_name": "Melanie Cedrone",
-      "portrait": "melanie_cedrone"
+      "portrait": "melanie_cedrone.jpg"
     }
   ],
   "geographic_information_systems": [
@@ -995,7 +995,7 @@
         "Geographic information systems"
       ],
       "display_name": "Girmaye Misgna",
-      "portrait": "girmaye_misgna"
+      "portrait": "girmaye_misgna.jpg"
     },
     {
       "subject_specialty": "African Studies",
@@ -1025,7 +1025,7 @@
         "Urban studies"
       ],
       "display_name": "Lauris Olson",
-      "portrait": "lauris_olson"
+      "portrait": "lauris_olson.jpg"
     }
   ],
   "germanic_languages_amp_literatures": [
@@ -1047,7 +1047,7 @@
         "Organizational dynamics"
       ],
       "display_name": "Charles Cobine",
-      "portrait": "charles_cobine"
+      "portrait": "charles_cobine.jpg"
     }
   ],
   "health_care_management": [
@@ -1069,7 +1069,7 @@
         "Management"
       ],
       "display_name": "Marcella Barnhart",
-      "portrait": "marcella_barnhart"
+      "portrait": "marcella_barnhart.jpg"
     }
   ],
   "historic_preservation": [
@@ -1094,7 +1094,7 @@
         "Landscape architecture"
       ],
       "display_name": "Patricia Guardiola",
-      "portrait": "patricia_guardiola"
+      "portrait": "patricia_guardiola.jpg"
     },
     {
       "subject_specialty": "Architectural history",
@@ -1117,7 +1117,7 @@
         "Landscape architecture"
       ],
       "display_name": "Shannon Robinson",
-      "portrait": "shannon_robinson"
+      "portrait": "shannon_robinson.jpg"
     }
   ],
   "history": [
@@ -1142,7 +1142,7 @@
         "Philosophy, politics, & economics"
       ],
       "display_name": "Nick Okrent",
-      "portrait": "nick_okrent"
+      "portrait": "nick_okrent.jpg"
     }
   ],
   "history_amp_sociology_of_science": [
@@ -1166,7 +1166,7 @@
         "Religious studies"
       ],
       "display_name": "David Azzolina",
-      "portrait": "david_azzolina"
+      "portrait": "david_azzolina.jpg"
     }
   ],
   "humanities_general": [
@@ -1191,7 +1191,7 @@
         "Philosophy, politics, & economics"
       ],
       "display_name": "Nick Okrent",
-      "portrait": "nick_okrent"
+      "portrait": "nick_okrent.jpg"
     }
   ],
   "international_business": [
@@ -1214,7 +1214,7 @@
         "Social impact"
       ],
       "display_name": "Cynthia Cronin-Kardon",
-      "portrait": "cynthia_cronin_kardon"
+      "portrait": "cynthia_cronin_kardon.jpg"
     }
   ],
   "international_relations": [
@@ -1240,7 +1240,7 @@
         "Spanish, Portuguese & Iberian studies"
       ],
       "display_name": "Joseph Holub",
-      "portrait": "joseph_holub"
+      "portrait": "joseph_holub.jpg"
     },
     {
       "subject_specialty": "African Studies",
@@ -1270,7 +1270,7 @@
         "Urban studies"
       ],
       "display_name": "Lauris Olson",
-      "portrait": "lauris_olson"
+      "portrait": "lauris_olson.jpg"
     }
   ],
   "italian_language_amp_literature": [
@@ -1296,7 +1296,7 @@
         "Spanish, Portuguese & Iberian studies"
       ],
       "display_name": "Joseph Holub",
-      "portrait": "joseph_holub"
+      "portrait": "joseph_holub.jpg"
     }
   ],
   "japanese_studies": [
@@ -1317,7 +1317,7 @@
         "Korean studies"
       ],
       "display_name": "Rebecca Mendelson",
-      "portrait": "rebecca_mendelson"
+      "portrait": "rebecca_mendelson.jpg"
     }
   ],
   "judaic_studies": [
@@ -1340,7 +1340,7 @@
         "Judaica special collections"
       ],
       "display_name": "Arthur Kiron",
-      "portrait": "arthur_kiron"
+      "portrait": "arthur_kiron.jpg"
     },
     {
       "subject_specialty": "Judaic studies",
@@ -1361,7 +1361,7 @@
         "Judaica special collections"
       ],
       "display_name": "Arthur Kiron",
-      "portrait": "arthur_kiron"
+      "portrait": "arthur_kiron.jpg"
     },
     {
       "subject_specialty": "Judaic studies",
@@ -1380,7 +1380,7 @@
         "Judaica special collections"
       ],
       "display_name": "Bruce Nielsen",
-      "portrait": "bruce_nielsen"
+      "portrait": "bruce_nielsen.jpg"
     }
   ],
   "judaica_special_collections": [
@@ -1403,7 +1403,7 @@
         "Judaica special collections"
       ],
       "display_name": "Arthur Kiron",
-      "portrait": "arthur_kiron"
+      "portrait": "arthur_kiron.jpg"
     },
     {
       "subject_specialty": "Judaic studies",
@@ -1424,7 +1424,7 @@
         "Judaica special collections"
       ],
       "display_name": "Arthur Kiron",
-      "portrait": "arthur_kiron"
+      "portrait": "arthur_kiron.jpg"
     },
     {
       "subject_specialty": "Judaic studies",
@@ -1443,7 +1443,7 @@
         "Judaica special collections"
       ],
       "display_name": "Bruce Nielsen",
-      "portrait": "bruce_nielsen"
+      "portrait": "bruce_nielsen.jpg"
     }
   ],
   "korean_studies": [
@@ -1464,7 +1464,7 @@
         "Korean studies"
       ],
       "display_name": "Rebecca Mendelson",
-      "portrait": "rebecca_mendelson"
+      "portrait": "rebecca_mendelson.jpg"
     }
   ],
   "landscape_architecture": [
@@ -1489,7 +1489,7 @@
         "Landscape architecture"
       ],
       "display_name": "Patricia Guardiola",
-      "portrait": "patricia_guardiola"
+      "portrait": "patricia_guardiola.jpg"
     },
     {
       "subject_specialty": "Architectural history",
@@ -1512,7 +1512,7 @@
         "Landscape architecture"
       ],
       "display_name": "Shannon Robinson",
-      "portrait": "shannon_robinson"
+      "portrait": "shannon_robinson.jpg"
     }
   ],
   "latin_american_studies": [
@@ -1538,7 +1538,7 @@
         "Spanish, Portuguese & Iberian studies"
       ],
       "display_name": "Joseph Holub",
-      "portrait": "joseph_holub"
+      "portrait": "joseph_holub.jpg"
     }
   ],
   "latino_studies": [
@@ -1564,7 +1564,7 @@
         "Spanish, Portuguese & Iberian studies"
       ],
       "display_name": "Joseph Holub",
-      "portrait": "joseph_holub"
+      "portrait": "joseph_holub.jpg"
     }
   ],
   "legal_studies_amp_business_ethics": [
@@ -1586,7 +1586,7 @@
         "Marketing"
       ],
       "display_name": "Mia Wells",
-      "portrait": "mia_wells"
+      "portrait": "mia_wells.jpg"
     }
   ],
   "linguistics": [
@@ -1618,7 +1618,7 @@
         "Urban studies"
       ],
       "display_name": "Lauris Olson",
-      "portrait": "lauris_olson"
+      "portrait": "lauris_olson.jpg"
     }
   ],
   "literature_in_english": [
@@ -1639,7 +1639,7 @@
         "Theatre arts"
       ],
       "display_name": "Mayelin Perez",
-      "portrait": "mayelin_perez"
+      "portrait": "mayelin_perez.jpg"
     }
   ],
   "management": [
@@ -1661,7 +1661,7 @@
         "Management"
       ],
       "display_name": "Marcella Barnhart",
-      "portrait": "marcella_barnhart"
+      "portrait": "marcella_barnhart.jpg"
     }
   ],
   "manuscript_studies": [
@@ -1683,7 +1683,7 @@
         "Rare books & printed materials"
       ],
       "display_name": "Arthur Fraas",
-      "portrait": "arthur_fraas"
+      "portrait": "arthur_fraas.jpg"
     },
     {
       "subject_specialty": "Manuscript studies",
@@ -1702,7 +1702,7 @@
         "Medieval studies"
       ],
       "display_name": "Nicholas Herman",
-      "portrait": "nicholas_herman"
+      "portrait": "nicholas_herman.jpg"
     },
     {
       "subject_specialty": "Manuscript studies",
@@ -1721,7 +1721,7 @@
         "Medieval manuscripts"
       ],
       "display_name": "Dot Porter",
-      "portrait": "dot_porter"
+      "portrait": "dot_porter.jpg"
     },
     {
       "subject_specialty": "Manuscript studies",
@@ -1740,7 +1740,7 @@
         "Medieval manuscripts"
       ],
       "display_name": "Lynn Ransom",
-      "portrait": "lynn_ransom"
+      "portrait": "lynn_ransom.jpg"
     }
   ],
   "marketing": [
@@ -1762,7 +1762,7 @@
         "Marketing"
       ],
       "display_name": "Mia Wells",
-      "portrait": "mia_wells"
+      "portrait": "mia_wells.jpg"
     }
   ],
   "mathematics": [
@@ -1783,7 +1783,7 @@
         "Physics & astronomy"
       ],
       "display_name": "Lauren Gala",
-      "portrait": "lauren_gala"
+      "portrait": "lauren_gala.jpg"
     }
   ],
   "medicine": [
@@ -1803,7 +1803,7 @@
         "Medicine"
       ],
       "display_name": "Frank Campbell",
-      "portrait": "frank_campbell"
+      "portrait": "frank_campbell.jpg"
     },
     {
       "subject_specialty": "Biology",
@@ -1825,7 +1825,7 @@
         "Medicine"
       ],
       "display_name": "Melanie Cedrone",
-      "portrait": "melanie_cedrone"
+      "portrait": "melanie_cedrone.jpg"
     },
     {
       "subject_specialty": "Biomedical research",
@@ -1845,7 +1845,7 @@
         "Nursing"
       ],
       "display_name": "Maylene Qiu",
-      "portrait": "maylene_qiu"
+      "portrait": "maylene_qiu.jpg"
     },
     {
       "subject_specialty": "Medicine",
@@ -1863,7 +1863,7 @@
         "Medicine"
       ],
       "display_name": "Carlos Rodriguez",
-      "portrait": "carlos_rodriguez"
+      "portrait": "carlos_rodriguez.jpg"
     }
   ],
   "medieval_manuscripts": [
@@ -1884,7 +1884,7 @@
         "Medieval manuscripts"
       ],
       "display_name": "Dot Porter",
-      "portrait": "dot_porter"
+      "portrait": "dot_porter.jpg"
     },
     {
       "subject_specialty": "Manuscript studies",
@@ -1903,7 +1903,7 @@
         "Medieval manuscripts"
       ],
       "display_name": "Lynn Ransom",
-      "portrait": "lynn_ransom"
+      "portrait": "lynn_ransom.jpg"
     }
   ],
   "medieval_studies": [
@@ -1924,7 +1924,7 @@
         "Medieval studies"
       ],
       "display_name": "Nicholas Herman",
-      "portrait": "nicholas_herman"
+      "portrait": "nicholas_herman.jpg"
     }
   ],
   "middle_eastern_studies": [
@@ -1944,7 +1944,7 @@
         "Middle Eastern studies"
       ],
       "display_name": "Heather Hughes",
-      "portrait": "heather_hughes"
+      "portrait": "heather_hughes.jpg"
     }
   ],
   "modern_manuscripts_amp_archives": [
@@ -1965,7 +1965,7 @@
         "Rare books & printed materials"
       ],
       "display_name": "Lynne Farrington",
-      "portrait": "lynne_farrington"
+      "portrait": "lynne_farrington.jpg"
     },
     {
       "subject_specialty": "Manuscript studies",
@@ -1985,7 +1985,7 @@
         "Rare books & printed materials"
       ],
       "display_name": "Arthur Fraas",
-      "portrait": "arthur_fraas"
+      "portrait": "arthur_fraas.jpg"
     },
     {
       "subject_specialty": "Modern manuscripts & archives",
@@ -2004,7 +2004,7 @@
         "Rare books & printed materials"
       ],
       "display_name": "David McKnight",
-      "portrait": "david_mcknight"
+      "portrait": "david_mcknight.jpg"
     }
   ],
   "music": [
@@ -2024,7 +2024,7 @@
         "Music"
       ],
       "display_name": "Liza Vick",
-      "portrait": "liza_vick"
+      "portrait": "liza_vick.jpg"
     }
   ],
   "nonprofit_leadership": [
@@ -2047,7 +2047,7 @@
         "Social work"
       ],
       "display_name": "Anne Larrivee",
-      "portrait": "anne_larrivee"
+      "portrait": "anne_larrivee.jpg"
     }
   ],
   "nursing": [
@@ -2068,7 +2068,7 @@
         "Nursing"
       ],
       "display_name": "Richard James",
-      "portrait": "richard_james"
+      "portrait": "richard_james.jpg"
     },
     {
       "subject_specialty": "Bioethics",
@@ -2087,7 +2087,7 @@
         "Nursing"
       ],
       "display_name": "Sherry Morgan",
-      "portrait": "sherry_morgan"
+      "portrait": "sherry_morgan.jpg"
     },
     {
       "subject_specialty": "Biomedical research",
@@ -2107,7 +2107,7 @@
         "Nursing"
       ],
       "display_name": "Maylene Qiu",
-      "portrait": "maylene_qiu"
+      "portrait": "maylene_qiu.jpg"
     }
   ],
   "operations_information_amp_decisions": [
@@ -2129,7 +2129,7 @@
         "Statistics"
       ],
       "display_name": "Kevin Thomas",
-      "portrait": "kevin_thomas"
+      "portrait": "kevin_thomas.jpg"
     }
   ],
   "organizational_dynamics": [
@@ -2151,7 +2151,7 @@
         "Organizational dynamics"
       ],
       "display_name": "Charles Cobine",
-      "portrait": "charles_cobine"
+      "portrait": "charles_cobine.jpg"
     }
   ],
   "philosophy": [
@@ -2176,7 +2176,7 @@
         "Philosophy, politics, & economics"
       ],
       "display_name": "Nick Okrent",
-      "portrait": "nick_okrent"
+      "portrait": "nick_okrent.jpg"
     }
   ],
   "philosophy_politics_amp_economics": [
@@ -2201,7 +2201,7 @@
         "Philosophy, politics, & economics"
       ],
       "display_name": "Nick Okrent",
-      "portrait": "nick_okrent"
+      "portrait": "nick_okrent.jpg"
     }
   ],
   "physics_amp_astronomy": [
@@ -2222,7 +2222,7 @@
         "Physics & astronomy"
       ],
       "display_name": "Lauren Gala",
-      "portrait": "lauren_gala"
+      "portrait": "lauren_gala.jpg"
     }
   ],
   "political_science": [
@@ -2246,7 +2246,7 @@
         "Religious studies"
       ],
       "display_name": "David Azzolina",
-      "portrait": "david_azzolina"
+      "portrait": "david_azzolina.jpg"
     },
     {
       "subject_specialty": "African Studies",
@@ -2276,7 +2276,7 @@
         "Urban studies"
       ],
       "display_name": "Lauris Olson",
-      "portrait": "lauris_olson"
+      "portrait": "lauris_olson.jpg"
     }
   ],
   "political_science_data": [
@@ -2308,7 +2308,7 @@
         "Urban studies"
       ],
       "display_name": "Lauris Olson",
-      "portrait": "lauris_olson"
+      "portrait": "lauris_olson.jpg"
     }
   ],
   "psychology": [
@@ -2331,7 +2331,7 @@
         "Social work"
       ],
       "display_name": "Anne Larrivee",
-      "portrait": "anne_larrivee"
+      "portrait": "anne_larrivee.jpg"
     }
   ],
   "rare_books_amp_printed_materials": [
@@ -2352,7 +2352,7 @@
         "Rare books & printed materials"
       ],
       "display_name": "Lynne Farrington",
-      "portrait": "lynne_farrington"
+      "portrait": "lynne_farrington.jpg"
     },
     {
       "subject_specialty": "Manuscript studies",
@@ -2372,7 +2372,7 @@
         "Rare books & printed materials"
       ],
       "display_name": "Arthur Fraas",
-      "portrait": "arthur_fraas"
+      "portrait": "arthur_fraas.jpg"
     },
     {
       "subject_specialty": "Modern manuscripts & archives",
@@ -2391,7 +2391,7 @@
         "Rare books & printed materials"
       ],
       "display_name": "David McKnight",
-      "portrait": "david_mcknight"
+      "portrait": "david_mcknight.jpg"
     },
     {
       "subject_specialty": "Rare books & printed materials",
@@ -2409,7 +2409,7 @@
         "Rare books & printed materials"
       ],
       "display_name": "John Pollack",
-      "portrait": "john_pollack"
+      "portrait": "john_pollack.jpg"
     }
   ],
   "real_estate": [
@@ -2432,7 +2432,7 @@
         "Social impact"
       ],
       "display_name": "Cynthia Cronin-Kardon",
-      "portrait": "cynthia_cronin_kardon"
+      "portrait": "cynthia_cronin_kardon.jpg"
     }
   ],
   "regional_science": [
@@ -2464,7 +2464,7 @@
         "Urban studies"
       ],
       "display_name": "Lauris Olson",
-      "portrait": "lauris_olson"
+      "portrait": "lauris_olson.jpg"
     }
   ],
   "religious_studies": [
@@ -2488,7 +2488,7 @@
         "Religious studies"
       ],
       "display_name": "David Azzolina",
-      "portrait": "david_azzolina"
+      "portrait": "david_azzolina.jpg"
     }
   ],
   "russian_amp_east_european_studies": [
@@ -2508,7 +2508,7 @@
         "Russian & East European studies"
       ],
       "display_name": "Dennis Hyde",
-      "portrait": "dennis_hyde"
+      "portrait": "dennis_hyde.jpg"
     },
     {
       "subject_specialty": "Classical studies",
@@ -2527,7 +2527,7 @@
         "Russian & East European studies"
       ],
       "display_name": "Rebecca Stuhr",
-      "portrait": "rebecca_stuhr"
+      "portrait": "rebecca_stuhr.jpg"
     }
   ],
   "scholarly_publishing": [
@@ -2547,7 +2547,7 @@
         "Scholarly publishing"
       ],
       "display_name": "Nicky Agate",
-      "portrait": "nicky_agate"
+      "portrait": "nicky_agate.jpg"
     },
     {
       "subject_specialty": "Scholarly publishing",
@@ -2565,7 +2565,7 @@
         "Scholarly publishing"
       ],
       "display_name": "Margaret Janz",
-      "portrait": "margaret_janz"
+      "portrait": "margaret_janz.jpg"
     }
   ],
   "social_impact": [
@@ -2588,7 +2588,7 @@
         "Social impact"
       ],
       "display_name": "Cynthia Cronin-Kardon",
-      "portrait": "cynthia_cronin_kardon"
+      "portrait": "cynthia_cronin_kardon.jpg"
     }
   ],
   "social_policy": [
@@ -2611,7 +2611,7 @@
         "Social work"
       ],
       "display_name": "Anne Larrivee",
-      "portrait": "anne_larrivee"
+      "portrait": "anne_larrivee.jpg"
     }
   ],
   "social_science_data": [
@@ -2643,7 +2643,7 @@
         "Urban studies"
       ],
       "display_name": "Lauris Olson",
-      "portrait": "lauris_olson"
+      "portrait": "lauris_olson.jpg"
     }
   ],
   "social_work": [
@@ -2666,7 +2666,7 @@
         "Social work"
       ],
       "display_name": "Anne Larrivee",
-      "portrait": "anne_larrivee"
+      "portrait": "anne_larrivee.jpg"
     }
   ],
   "sociology": [
@@ -2698,7 +2698,7 @@
         "Urban studies"
       ],
       "display_name": "Lauris Olson",
-      "portrait": "lauris_olson"
+      "portrait": "lauris_olson.jpg"
     }
   ],
   "south_asian_studies": [
@@ -2718,7 +2718,7 @@
         "South Asian Studies"
       ],
       "display_name": "Jef Pierce",
-      "portrait": "jef_pierce"
+      "portrait": "jef_pierce.jpg"
     }
   ],
   "southeast_asian_studies": [
@@ -2739,7 +2739,7 @@
         "Southeast Asian studies"
       ],
       "display_name": "Brian Vivier",
-      "portrait": "brian_vivier"
+      "portrait": "brian_vivier.jpg"
     }
   ],
   "spanish_portuguese_amp_iberian_studies": [
@@ -2765,7 +2765,7 @@
         "Spanish, Portuguese & Iberian studies"
       ],
       "display_name": "Joseph Holub",
-      "portrait": "joseph_holub"
+      "portrait": "joseph_holub.jpg"
     }
   ],
   "statistics": [
@@ -2787,7 +2787,7 @@
         "Statistics"
       ],
       "display_name": "Kevin Thomas",
-      "portrait": "kevin_thomas"
+      "portrait": "kevin_thomas.jpg"
     }
   ],
   "theatre_arts": [
@@ -2808,7 +2808,7 @@
         "Theatre arts"
       ],
       "display_name": "Mayelin Perez",
-      "portrait": "mayelin_perez"
+      "portrait": "mayelin_perez.jpg"
     }
   ],
   "urban_studies": [
@@ -2840,7 +2840,7 @@
         "Urban studies"
       ],
       "display_name": "Lauris Olson",
-      "portrait": "lauris_olson"
+      "portrait": "lauris_olson.jpg"
     }
   ],
   "veterinary_medicine": [
@@ -2860,7 +2860,7 @@
         "Veterinary medicine"
       ],
       "display_name": "Dee Crandall",
-      "portrait": "dee_crandall"
+      "portrait": "dee_crandall.jpg"
     },
     {
       "subject_specialty": "Veterinary medicine",
@@ -2878,7 +2878,7 @@
         "Veterinary medicine"
       ],
       "display_name": "Margy Lindem",
-      "portrait": "margy_lindem"
+      "portrait": "margy_lindem.jpg"
     }
   ]
 }
