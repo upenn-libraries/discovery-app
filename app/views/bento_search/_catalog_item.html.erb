@@ -1,0 +1,23 @@
+<%# this should receive an iterable _results_ and render an item entry for the bento %>
+<% results.each do |result| %>
+<div class="bento_item" data-unique-id="">
+  <h4 class="bento_item_title">
+    <%= link_to result['title'], solr_document_path(result['id']) %>
+  </h4>
+  <div class="bento_item_body">
+    <dl class="document-metadata dl-horizontal dl-invert">
+      <dd>
+      <span class="author">
+        <%= result['author_creator_a']&.first %>
+      </span>
+      </dd>
+      <dd>
+        <div class="availability-ajax-load" data-availability-ids="<%= result['id'].sub('FRANKLIN_','') %>"></div>
+      </dd>
+    </dl>
+  </div>
+</div>
+<% end %>
+<div class="view-all">
+  <%= link_to(("View all results #{image_tag('view_all_arrow.png', alt: 'View All Results')}").html_safe, search_catalog_path(q: params[:q] || params[:query], search_field: 'keyword')) %>
+</div>
