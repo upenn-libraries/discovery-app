@@ -50,10 +50,6 @@
     <%= content_tag :h1, application_name, class: 'sr-only application-heading' %>
 
     <%= render :partial=>'/flash_msg', layout: 'shared/flash_messages' %>
-    <aside id="feedback">
-      <div id="feedbackout" title="hide"></div>
-      <a id="feedbacklink" title="feedback" href="https://faq.library.upenn.edu/feedback"><span class="visually-hidden">Feedback</span></a>
-    </aside>
 
     <div class="row no-gutters">
       <%= yield %>

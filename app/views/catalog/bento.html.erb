@@ -3,7 +3,7 @@
 
   <div class="row bento-all">
 
-    <div class="col col-md-3 bento-box catalog-results" id="bento-results-catalog">
+    <div class="col col-md-4 col-lg-4 bento-box catalog-results" id="bento-results-catalog">
       <a name="catalog"></a>
       <div class="corner left-top hide"></div>
       <div class="corner right-top hide"></div>
@@ -20,7 +20,7 @@
       <% end %>
     </div>
 
-    <div class="col col-md-3 bento-box summon-results ezproxy-login-status" id="bento-results-summon">
+    <div class="col col-md-4 col-lg-4 bento-box summon-results ezproxy-login-status" id="bento-results-summon">
       <a name="articles"></a>
       <div class="corner left-top hide"></div>
       <div class="corner right-top hide"></div>
@@ -28,44 +28,53 @@
       <%= bento_search 'summon', :query => params[:q] || '', :per_page => 5, :load => :ajax_triggered %>
     </div>
 
-    <div class="col col-md-3 bento-box databases-results" id="bento-results-databases">
-      <a name="databases"></a>
-      <div class="corner left-top hide"></div>
-      <div class="corner right-top hide"></div>
-      <h3>Databases</h3>
-      <%= bento_search 'databases', :query => params[:q] || '', :per_page => 5, :load => :ajax_auto, :f_term => 'format_f', :f_value => 'Database & Article Index' %>
-    </div>
-
-    <%= render_expert_help(@response.aggregations["subject_specialists"]) %>
-
-    <div class="col col-md-3 bento-box google-results" id="bento-results-google">
-      <a name="website"></a>
-      <div class="corner left-top hide"></div>
-      <div class="corner right-top hide"></div>
-      <h3>Library website</h3>
-      <div class="view-and-filter text-right">
-        <%= link_to "View all results", google_site_search_results_url(params[:q] || params[:query]) %>
+    <div class="col col-md-4 col-lg-4 libraries-results" id="bento-results-libraries">
+      <div class="bento-box databases-results" id="bento-results-databases">
+        <a name="databases"></a>
+        <div class="corner left-top hide"></div>
+        <div class="corner right-top hide"></div>
+        <h3>Databases</h3>
+        <%= bento_search 'databases', :query => params[:q] || '', :load => :ajax_auto %>
       </div>
 
-      <script>
-          (function() {
-              var cx = '015171683814554281596:8nln-kjivsc';
-              var gcse = document.createElement('script');
-              gcse.type = 'text/javascript';
-              gcse.async = true;
-              gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
-              var s = document.getElementsByTagName('script')[0];
-              s.parentNode.insertBefore(gcse, s);
-          })();
-      </script>
-      <gcse:searchresults-only webSearchResultSetSize="5"></gcse:searchresults-only>
-
-      <div class="view-all">
-        <%= link_to(("View all results #{image_tag('view_all_arrow.png', :alt => '')}").html_safe, google_site_search_results_url(params[:q] || params[:query])) %>
+      <div class="bento-box colenda-results" id="bento-results-colenda">
+        <a name="colenda"></a>
+        <div class="corner left-top hide"></div>
+        <div class="corner right-top hide"></div>
+        <h3>Colenda <%=link_to("(What is Colenda?)", "https://colenda.library.upenn.edu/pages/about", class: "colenda-help") %></h3>
+        <%= bento_search 'colenda', :query => params[:q] || '', :load => :ajax_auto %>
       </div>
 
+      <%= render_expert_help(@response.aggregations["subject_specialists"]) %>
+
+      <div class="bento-box google-results" id="bento-results-google">
+        <a name="website"></a>
+        <div class="corner left-top hide"></div>
+        <div class="corner right-top hide"></div>
+        <h3>Library website</h3>
+        <div class="view-and-filter text-right">
+          <%= link_to "View all results", google_site_search_results_url(params[:q] || params[:query]) %>
+        </div>
+
+        <script>
+            (function() {
+                var cx = '015171683814554281596:8nln-kjivsc';
+                var gcse = document.createElement('script');
+                gcse.type = 'text/javascript';
+                gcse.async = true;
+                gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(gcse, s);
+            })();
+        </script>
+        <gcse:searchresults-only webSearchResultSetSize="5"></gcse:searchresults-only>
+
+        <div class="view-all">
+          <%= link_to(("View all results #{image_tag('view_all_arrow.png', :alt => '')}").html_safe, google_site_search_results_url(params[:q] || params[:query])) %>
+        </div>
+
+      </div>
     </div>
   </div>
 
 </div>
-

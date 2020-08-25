@@ -10,14 +10,14 @@
       r1 : "relatedness($combo,$back)"
     }
   },
-  africana : {
+  africana_studies : {
     type: query,
     q: "{!term f=marcrecord_xml v=africana}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
   },
-  african : {
+  african_studies : {
     type: query,
     q: "{!term f=subject_search v=africa}",
     facet: {
@@ -45,21 +45,21 @@
       r1 : "relatedness($combo,$back)"
     }
   },
-  architecture_city_planning : {
+  architecture_amp_city_planning : {
     type: query,
     q: "{!bool filter='{!term f=subject_search v=architecture}' filter='{!term f=subject_search v=planning}' filter='{!term f=subject_search v=city}'}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
   },
-  art_history : {
+  art_amp_art_history : {
     type: query,
     q: "{!prefix f=subject_f v=Art--History}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
   },
-  asian_american : {
+  asian_american_studies : {
     type: query,
     q: "{!field f=subject_search v='\"asian american\"'}",
     facet: {
@@ -87,7 +87,7 @@
       r1 : "relatedness($combo,$back)"
     }
   },
-  biomedical_grad : {
+  biomedical_graduate_studies : {
     type: query,
     q: "{!term f=subject_search v=biomedical}",
     facet: {
@@ -101,7 +101,7 @@
       r1 : "relatedness($combo,$back)"
     }
   },
-  business_economics_policy : {
+  business_economics_amp_public_policy : {
     type: query,
     q: "{!bool filter='{!term f=subject_search v=business}' filter='{!term f=subject_search v=public}' filter='{!term f=subject_search v=policy}'}",
     facet: {
@@ -115,21 +115,21 @@
       r1 : "relatedness($combo,$back)"
     }
   },
-  chinese : {
+  chinese_studies : {
     type: query,
     q: "{!terms f=subject_search v='china,chinese'}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
   },
-  cinema_media : {
+  cinema_amp_media_studies : {
     type: query,
     q: "{!bool should='{!term f=subject_search v=cinema}' should='{!term f=subject_search v=media}'}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
   },
-  classics : {
+  classical_studies : {
     type: query,
     q: "{!bool should='{!prefix f=subject_f v=Classical}' should='{!term f=language_f v=Latin}' should='{!term f=language_f v=\\'Greek, Ancient (to 1453)\\'}'}",
     facet: {
@@ -157,14 +157,14 @@
       r1 : "relatedness($combo,$back)"
     }
   },
-  dental : {
+  dental_medicine : {
     type: query,
     q: "{!prefix f=subject_f v='Dentistry'}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
   },
-  earth_environmental_science : {
+  earth_amp_environmental_science : {
     type: query,
     q: "{!bool should='{!prefix f=subject_f v=\\'Earth sciences\\'}' should='{!prefix f=subject_f v=\\'Environmental sciences\\'}'}",
     facet: {
@@ -185,7 +185,7 @@
       r1 : "relatedness($combo,$back)"
     }
   },
-  engineering_and_cs : {
+  engineering_amp_computer_science : {
     type: query,
     q: "{!bool should='{!term f=subject_search v=engineering}' should='{!prefix f=subject_f v=\\'Computer \\'}'}",
     facet: {
@@ -213,42 +213,42 @@
       r1 : "relatedness($combo,$back)"
     }
   },
-  folk : {
+  folklore_amp_folklife : {
     type: query,
     q: "{!bool should='{!prefix f=subject_f v=Folklore}' should='{!prefix f=subject_f v=Ethnology}'}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
   },
-  french : {
+  french_language_amp_literature : {
     type: query,
     q: "{!bool filter='{!term f=subject_search v=french}' should='{!term f=subject_search v=language}' should='{!term f=subject_search v=literature}'}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
   },
-  gender : {
+  gender_sexuality_amp_women039s_studies : {
     type: query,
     q: "{!bool should='{!term f=subject_search v=gender}' should='{!term f=subject_search v=sexuality}' should='{!prefix f=subject_f v=\\'Women\\\\\\'s studies\\'}'}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
   },
-  science : {
+  general_science : {
     type: query,
     q: "{!prefix f=subject_f v=Science}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
   },
-  gis : {
+  geographic_information_systems : {
     type: query,
     q: "{!prefix f=subject_f v='Geographic information systems'}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
   },
-  germanic : {
+  germanic_languages_amp_literatures : {
     type: query,
     q: "{!bool filter='{!prefix f=subject_search v=german}' should='{!prefix f=subject_search v=language}' should='{!term f=subject_search v=literature}'}",
     facet: {
@@ -276,14 +276,14 @@
       r1 : "relatedness($combo,$back)"
     }
   },
-  history_sociology_of_science : {
+  history_amp_sociology_of_science : {
     type: query,
     q: "{!bool should='{!edismax qf=subject_search pf=subject_search v=\\'\"sociology science\"~5\\'}' should='{!edismax qf=subject_search pf=subject_search v=\\'\"history science\"~5\\'}' must_not='{!term f=subject_search v=political}'}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
   },
-  humanities : {
+  humanities_general : {
     type: query,
     q: "{!terms f=subject_search v=anthropology,archaeology,classical,history,linguistics,language,law,politics,literature,philosophy,religion,art}",
     facet: {
@@ -304,14 +304,14 @@
       r1 : "relatedness($combo,$back)"
     }
   },
-  italian : {
+  italian_language_amp_literature : {
     type: query,
     q: "{!bool filter='{!term f=subject_search v=italian}' should='{!term f=subject_search v=language}' should='{!term f=subject_search v=literature}'}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
   },
-  japanese : {
+  japanese_studies : {
     type: query,
     q: "{!terms f=subject_search v=japan,japanese}",
     facet: {
@@ -325,42 +325,42 @@
       r1 : "relatedness($combo,$back)"
     }
   },
-  judaic : {
+  judaic_studies : {
     type: query,
     q: "{!terms f=subject_search v=jews,jewish}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
   },
-  korean : {
+  korean_studies : {
     type: query,
     q: "{!terms f=subject_search v=korea,korean}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
   },
-  lanscape_architecture : {
+  landscape_architecture : {
     type: query,
     q: "{!bool filter='{!term f=subject_search v=landscape}' filter='{!term f=subject_search v=architecture}'}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
   },
-  latin_america : {
+  latin_american_studies : {
     type: query,
     q: "{!prefix f=subject_f v='Latin America'}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
   },
-  latino : {
+  latino_studies : {
     type: query,
     q: "{!terms f=subject_search v=hispanic,latino}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
   },
-  legal_business_ethics : {
+  legal_studies_amp_business_ethics : {
     type: query,
     q: "{!bool should='{!terms f=subject_search v=legal,law,laws}' should='{!bool filter=\\'{!term f=subject_search v=business}\\' filter=\\'{!term f=subject_search v=ethics}\\'}'}",
     facet: {
@@ -388,7 +388,7 @@
       r1 : "relatedness($combo,$back)"
     }
   },
-  manuscripts : {
+  manuscript_studies : {
     type: query,
     q: "{!terms f=subject_search v=manuscript,manuscripts}",
     facet: {
@@ -402,7 +402,7 @@
       r1 : "relatedness($combo,$back)"
     }
   },
-  math : {
+  mathematics : {
     type: query,
     q: "{!term f=subject_search v=mathematics}",
     facet: {
@@ -430,14 +430,14 @@
       r1 : "relatedness($combo,$back)"
     }
   },
-  middle_east : {
+  middle_eastern_studies : {
     type: query,
     q: "{!prefix f=subject_f v='Middle East'}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
   },
-  modern_manuscripts_archives : {
+  modern_manuscripts_amp_archives : {
     type: query,
     q: "{!bool should='{!terms f=subject_search v=archive,archives}' should='{!bool filter=\\'{!term f=subject_search v=modern}\\' filter=\\'{!terms f=subject_search v=manuscript,manuscripts}\\'}'}",
     facet: {
@@ -465,7 +465,7 @@
       r1 : "relatedness($combo,$back)"
     }
   },
-  operations_decisions : {
+  operations_information_amp_decisions : {
     type: query,
     q: "{!bool should='{!prefix f=subject_f v=\\'Operations research\\'}' should='{!prefix f=subject_f v=\\'Decision making\\'}'}",
     facet: {
@@ -486,14 +486,14 @@
       r1 : "relatedness($combo,$back)"
     }
   },
-  philosophy_politics_economics : {
+  philosophy_politics_amp_economics : {
     type: query,
     q: "{!bool filter='{!term f=subject_search v=philosophy}' filter='{!terms f=subject_search v=politics,political,economic,economics}'}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
   },
-  physics_astronomy : {
+  physics_amp_astronomy : {
     type: query,
     q: "{!bool should='{!terms f=subject_search v=physics,astronomy}' should='{!prefix f=subject_f v=Astrophysic}'}",
     facet: {
@@ -521,7 +521,7 @@
       r1 : "relatedness($combo,$back)"
     }
   },
-  rare_books : {
+  rare_books_amp_printed_materials : {
     type: query,
     q: "{!bool should='{!bool must=\\'{!term f=library_f v=\\\\\\'Special Collections\\\\\\'}\\' must_not=\\'{!term f=format_f v=Manuscript}\\'}' should='{!prefix f=subject_f v=\\'Rare books\\'}'}",
     facet: {
@@ -549,9 +549,9 @@
       r1 : "relatedness($combo,$back)"
     }
   },
-  romance_languages : {
+  russian_amp_east_european_studies : {
     type: query,
-    q: "{!field f=subject_search v='\"romance languages\"'}",
+    q: "{!bool should='{!terms f=subject_search v=russia,soviet,slavic,yugoslavia,bosnia,croatia,serbia,ukraine,poland,hungary,czech,belarus}' should='{!terms f=lanuage_f v=Ukranian,Russian,Bosnian,Croatian,Serbian,Belarusian,Hungarian,Czech,Polish}'}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
@@ -598,28 +598,49 @@
       r1 : "relatedness($combo,$back)"
     }
   },
-  south_asian : {
+  south_asian_studies : {
     type: query,
     q: "{!bool should='{!complexphrase df=subject_search v=\\'\"south (asia asian)\"\\'}' should='{!terms f=subject_search v=afghanistan,bangladesh,bhutan,india,maldives,nepal,pakistan}' should='{!field f=subject_search v=\\'\"sri lanka\"\\'}'}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
   },
-  spanish_portuguese : {
+  southeast_asian_studies : {
+    type: query,
+    q: "{!bool should='{!complexphrase df=subject_search v=\\'\"southeast (asia asian)\"\\'}' should='{!terms f=subject_search v=cambodia,laos,myanmar,malaysia,thailand,vietnam,indonesia,philippines,singapore}'}'}",
+    facet: {
+      r1 : "relatedness($combo,$back)"
+    }
+  },
+  spanish_portuguese_amp_iberian_studies : {
     type: query,
     q: "{!bool should='{!terms f=subject_search v=spanish,spain,portuguese,portugal}' should='{!terms f=lanuage_f v=Spanish,Portuguese}'}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
   },
-  theater : {
+  statistics : {
+    type: query,
+    q: "{!term f=subject_search v=statistics}",
+    facet: {
+      r1 : "relatedness($combo,$back)"
+    }
+  },
+  theatre_arts : {
     type: query,
     q: "{!term f=subject_search v=theater}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
   },
-  veterinary : {
+  urban_studies : {
+    type: query,
+    q: "{!bool filter='{!prefix f=subject_f v=\\'City planning\\'}' filter='{!term f=subject_search v=urban}'}",
+    facet: {
+      r1 : "relatedness($combo,$back)"
+    }
+  },
+  veterinary_medicine : {
     type: query,
     q: "{!term f=subject_search v=veterinary}",
     facet: {

@@ -3,19 +3,15 @@
 @import 'base/colors.css.scss';
 @import 'base/mixins.css.scss';
 
-@media (min-width: 1200px) {
-  .col-md-3 {
-    width: 24%;
-  }
-}
 
 @media (min-width: 992px) and (max-width: 1199px) {
-  .col-md-3 {
-    width: 25%;
+  .bento-box.databases-results, .bento-box.colenda-results,
+  .bento-box.google-results {
+    width: auto;
   }
 
-  .bento-box {
-    width: 32%;
+  .bento-box, .libraries-results {
+    width: 32.5%;
   }
 
 }
@@ -380,6 +376,10 @@ bg color to fill document-metadata's bottom margin */
   display: none;
 }
 
+.libraries-results {
+  padding: 0px;
+}
+
 .view-and-filter {
   padding: 6px;
   background: #ececec;
@@ -613,7 +613,6 @@ h3.ongray {
   margin: 5px;
   padding: 0px;
   z-index: 10;
-  min-height: 250px;
 }
 
 .bento-box-highlight {
@@ -710,6 +709,18 @@ h3.ongray {
   }
 }
 
+.colenda-thumbnail {
+  text-align: center;
+  img {
+    height: 50px;
+    width: 90%;
+    object-fit: cover;
+  }
+}
+.colenda-help {
+  font-size: 13px;
+}
+
 /* hack */
 #bento-results-google .source-info {
   display: none;
@@ -721,26 +732,71 @@ h3.ongray {
 
 /* end of hack */
 
+.panel-default > .panel-heading.expert-box {
+  color: white;
+  background-color: #337ab7;
+  border-color: #ddd;
+}
+.expert-box.panel-heading.collapse-toggle .panel-title:after {
+    font-family: 'Glyphicons Halflings';
+    content: "\e114";
+    float: right;
+    color: white;
+    font-size: 1.03em;
+    line-height: normal;
+}
+
+.expert-box.panel-heading.collapse-toggle.collapsed .panel-title:after {
+    font-family: 'Glyphicons Halflings';
+    content: "\e113";
+    float: right;
+    color: white;
+    font-size: 1.03em;
+    line-height: normal;
+}
+
+h3.expert-heading {
+  margin-top: 0;
+  padding: 0;
+}
+
+.expert-chat-link {
+  margin: 0 0 5px;
+  text-align: center;
+}
+
+#libchat_7cde980ad423479da2585a498007774e button.libchat_online {
+  font-size: 12px;
+  padding: 1px 5px 3px;
+  height: 20px;
+}
+
 .expert-results {
-  display: none;  /* TODO: remove when launching this feature */
-  padding: 10px;
-  hr {
-    border-bottom: 1px dashed #d2d2d2;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 235px;
+  min-height: auto;
+  margin: 0;
+
+  .expert-p {
+    margin-bottom: 0;
   }
   .expert-profile {
+    padding: 8px;
     font-size: 12px;
     .upper-content {
     }
     .lower-content {
       clear: both;
-      padding-top: 10px;
+      padding-top: 3px;
     }
     img {
       @include rounded-corners;
       width: 100px;
       height: 100px;
       float: left;
-      margin-right: 20px;
+      margin-right: 8px;
     }
     a.link-to-profile {
       font-size: 16px;
@@ -761,23 +817,42 @@ h3.ongray {
   }
 }
 
+.hr-text {
+  line-height: 1em;
+  position: relative;
+  outline: 0;
+  border: 0;
+  color: black;
+  text-align: center;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  height: 1.5em;
+  opacity: .5;
+  &:before {
+    content: '';
+    background: linear-gradient(to right, transparent, #818078, transparent);
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 100%;
+    height: 1px;
+  }
+  &:after {
+    content: attr(data-content);
+    position: relative;
+    display: inline-block;
+    color: black;
+
+    padding: 0 .5em;
+    line-height: 1.5em;
+    background-color: #fcfcfa;
+  }
+}
+
 .databases-landing-content .heading {
   font-weight: bold;
   color: #900;
   font-size: 1.17em;
-}
-
-#feedback {
-  display: none;
-  background-image: asset-url('feedback.png');
-  background-repeat: no-repeat;
-  width: 77px;
-  height: 91px;
-  background-size: auto 89px;
-  position: absolute;
-  top: 16.0rem;
-  z-index: 1000;
-  right: 2.5rem;
 }
 
 .bento_item_body href {
@@ -786,39 +861,10 @@ h3.ongray {
   text-overflow: ellipsis;
 }
 
-@media (min-width: 768px) {
-  #feedback {
-    display: block;
-  }
-}
-
 @media (min-width: 1200px) {
-  #feedback {
-    top: 11.0rem;
-  }
   .col-lg-4 {
-    width: 32.333333%;
+    width: 32.6%;
   }
-
-}
-
-#feedbacklink {
-  cursor: pointer;
-  display: block;
-  height: 7.7rem;
-  width: 8.9rem;
-  position: absolute;
-  top: 0;
-}
-
-#feedbackout {
-  cursor: pointer;
-  display: block;
-  height: 1.6rem;
-  width: 1.6rem;
-  position: absolute;
-  right: 0;
-  top: 7.7rem;
 }
 
 .visually-hidden {
@@ -878,6 +924,11 @@ h3.ongray {
   .bento-box {
     min-width: 300px;
     margin-bottom: 20px;
+  }
+
+  .expert-results.bento-box {
+    min-width: auto;
+    margin-bottom: auto;
   }
 
 }
