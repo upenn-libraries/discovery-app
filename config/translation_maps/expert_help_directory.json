@@ -1,0 +1,961 @@
+{
+  "cynthia_cronin_kardon": {
+    "subject_specialty": "Accounting",
+    "subject_id": "175",
+    "user_id": "488",
+    "first_name": "Cynthia",
+    "last_name": "Cronin-Kardon",
+    "full_name": "Cynthia Cronin-Kardon",
+    "job_title": "Business Reference & Resource Development Librarian",
+    "email": "croninkc@wharton.upenn.edu",
+    "phone": "215-898-5927",
+    "office": "243.4 Van Pelt-Dietrich Library Center",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/images/staff/croninkc2-250.jpg?itok=l24AEokO",
+    "subjects": [
+      "Accounting",
+      "International business",
+      "Real estate",
+      "Social impact"
+    ],
+    "display_name": "Cynthia Cronin-Kardon",
+    "portrait": "cynthia_cronin_kardon.jpg"
+  },
+  "lauris_olson": {
+    "subject_specialty": "African Studies",
+    "subject_id": "165",
+    "user_id": "491",
+    "first_name": "Lauris",
+    "last_name": "Olson",
+    "full_name": "Lauris Olson",
+    "job_title": "Librarian & Coordinator, Social Sciences Collections",
+    "email": "olson@upenn.edu",
+    "phone": "215-898-0119",
+    "office": "203 Van Pelt-Dietrich Library Center",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2016-09/olson203.jpg?itok=tLnWCYIj",
+    "subjects": [
+      "African Studies",
+      "Communication",
+      "Criminology",
+      "Economics",
+      "Geographic information systems",
+      "International relations",
+      "Linguistics",
+      "Political science",
+      "Political science data",
+      "Regional science",
+      "Social science data",
+      "Sociology",
+      "Urban studies"
+    ],
+    "display_name": "Lauris Olson",
+    "portrait": "lauris_olson.jpg"
+  },
+  "nick_okrent": {
+    "subject_specialty": "Africana studies",
+    "subject_id": "211",
+    "user_id": "1752",
+    "first_name": "Nick",
+    "last_name": "Okrent",
+    "full_name": "Nick Okrent",
+    "job_title": "Coordinator and Librarian for Humanities Collections",
+    "email": "okrent@pobox.upenn.edu",
+    "phone": "215-573-2217",
+    "office": "204 Van Pelt-Dietrich Library Center",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2016-11/okrent125_0.jpg?itok=8aC6ND2H",
+    "subjects": [
+      "Africana studies",
+      "Asian American studies",
+      "History",
+      "Humanities (general)",
+      "Philosophy",
+      "Philosophy, politics, & economics"
+    ],
+    "display_name": "Nick Okrent",
+    "portrait": "nick_okrent.jpg"
+  },
+  "deborah_stewart": {
+    "subject_specialty": "Anthropology",
+    "subject_id": "243",
+    "user_id": "2226",
+    "first_name": "Deborah",
+    "last_name": "Stewart",
+    "full_name": "Deborah Stewart",
+    "job_title": "Head, Penn Museum Library",
+    "email": "browndeb@upenn.edu",
+    "phone": "215-898-4021",
+    "office": "Penn Museum, Academic Wing, 3rd Floor",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2016-12/browndeb125%402x.jpg?itok=YBudnxpH",
+    "subjects": [
+      "Anthropology",
+      "Archaeology"
+    ],
+    "display_name": "Deborah Stewart",
+    "portrait": "deborah_stewart.jpg"
+  },
+  "patricia_guardiola": {
+    "subject_specialty": "Architectural history",
+    "subject_id": "589",
+    "user_id": "1817",
+    "first_name": "Patricia",
+    "last_name": "Guardiola",
+    "full_name": "Patricia Guardiola",
+    "job_title": "Director, Fine Arts Library",
+    "email": "pguar@upenn.edu",
+    "phone": "215-573-4637",
+    "office": "115 Anne & Jerome Fisher Fine Arts",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/images/staff/pguar300.jpg?itok=kl57qE8L",
+    "subjects": [
+      "Architectural history",
+      "Architecture & city planning",
+      "Art & art history",
+      "Fine arts",
+      "Historic preservation",
+      "Landscape architecture"
+    ],
+    "display_name": "Patricia Guardiola",
+    "portrait": "patricia_guardiola.jpg"
+  },
+  "shannon_robinson": {
+    "subject_specialty": "Architectural history",
+    "subject_id": "589",
+    "user_id": "14174",
+    "first_name": "Shannon",
+    "last_name": "Robinson",
+    "full_name": "Shannon Robinson",
+    "job_title": "Assistant Director, Fisher Fine Arts Library",
+    "email": "smrob@upenn.edu",
+    "phone": "",
+    "office": "Anne & Jerome Fisher Fine Arts",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/images/staff/smrob500.jpg?itok=EYTBb-99",
+    "subjects": [
+      "Architectural history",
+      "Architecture & city planning",
+      "Art & art history",
+      "Fine arts",
+      "Historic preservation",
+      "Landscape architecture"
+    ],
+    "display_name": "Shannon Robinson",
+    "portrait": "shannon_robinson.jpg"
+  },
+  "richard_james": {
+    "subject_specialty": "Bioethics",
+    "subject_id": "201",
+    "user_id": "2050",
+    "first_name": "Richard",
+    "last_name": "James",
+    "full_name": "Richard James",
+    "job_title": "Nursing Liaison",
+    "email": "rjame@upenn.edu",
+    "phone": "215-746-4034",
+    "office": "Biomedical Library",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/images/staff/rjames2-250.jpg?itok=WsqCfxSa",
+    "subjects": [
+      "Bioethics",
+      "Nursing"
+    ],
+    "display_name": "Richard James",
+    "portrait": "richard_james.jpg"
+  },
+  "sherry_morgan": {
+    "subject_specialty": "Bioethics",
+    "subject_id": "201",
+    "user_id": "464",
+    "first_name": "Sherry",
+    "last_name": "Morgan",
+    "full_name": "Sherry Morgan",
+    "job_title": "Graduate & Clinical Research Liaison",
+    "email": "semorgan@upenn.edu",
+    "phone": "215-898-0855",
+    "office": "Biomedical Library",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2016-09/semorgan125.jpg?itok=1obFI8pn",
+    "subjects": [
+      "Bioethics",
+      "Nursing"
+    ],
+    "display_name": "Sherry Morgan",
+    "portrait": "sherry_morgan.jpg"
+  },
+  "manuel_de_la_cruz_gutierrez": {
+    "subject_specialty": "Bioinformatics",
+    "subject_id": "202",
+    "user_id": "1625",
+    "first_name": "Manuel",
+    "last_name": "de la Cruz Gutierrez",
+    "full_name": "Manuel de la Cruz Gutierrez",
+    "job_title": "Director of Data & Innovation Services at the Biomedical Library",
+    "email": "dmanuel@upenn.edu",
+    "phone": "215-746-2459",
+    "office": "Biomedical Library",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/images/staff/dmanuel250.jpg?itok=_huqujsQ",
+    "subjects": [
+      "Bioinformatics",
+      "Biomedical graduate studies"
+    ],
+    "display_name": "Manuel de la Cruz Gutierrez",
+    "portrait": "manuel_de_la_cruz_gutierrez.jpg"
+  },
+  "melanie_cedrone": {
+    "subject_specialty": "Biology",
+    "subject_id": "203",
+    "user_id": "1579",
+    "first_name": "Melanie",
+    "last_name": "Cedrone",
+    "full_name": "Melanie Cedrone",
+    "job_title": "Collections Librarian & Biology Liaison",
+    "email": "mcedrone@upenn.edu",
+    "phone": "215-898-1862",
+    "office": "Biomedical Library",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2016-11/mcedrone125.jpg?itok=zOFpbBT0",
+    "subjects": [
+      "Biology",
+      "Biomedical research",
+      "Earth & environmental science",
+      "General science",
+      "Medicine"
+    ],
+    "display_name": "Melanie Cedrone",
+    "portrait": "melanie_cedrone.jpg"
+  },
+  "maylene_qiu": {
+    "subject_specialty": "Biomedical research",
+    "subject_id": "584",
+    "user_id": "476",
+    "first_name": "Maylene",
+    "last_name": "Qiu",
+    "full_name": "Maylene Qiu",
+    "job_title": "Systematic Review Coordinator and Clinical Liaison Librarian",
+    "email": "qiuk@upenn.edu",
+    "phone": "2155733184",
+    "office": "Biomedical Library RM G19",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2016-09/qiuk125.jpg?itok=wXF__V4M",
+    "subjects": [
+      "Biomedical research",
+      "Medicine",
+      "Nursing"
+    ],
+    "display_name": "Maylene Qiu",
+    "portrait": "maylene_qiu.jpg"
+  },
+  "kevin_thomas": {
+    "subject_specialty": "Business economics & public policy",
+    "subject_id": "176",
+    "user_id": "13346",
+    "first_name": "Kevin",
+    "last_name": "Thomas",
+    "full_name": "Kevin Thomas",
+    "job_title": "Business & Data Analysis Librarian",
+    "email": "kevinat@wharton.upenn.edu",
+    "phone": "215-898-5929",
+    "office": "243.2 Van Pelt-Dietrich Library Center",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/images/staff/kevinat250.jpg?itok=2lno6maG",
+    "subjects": [
+      "Business economics & public policy",
+      "Operations, information, & decisions",
+      "Statistics"
+    ],
+    "display_name": "Kevin Thomas",
+    "portrait": "kevin_thomas.jpg"
+  },
+  "judith_currano": {
+    "subject_specialty": "Chemistry",
+    "subject_id": "194",
+    "user_id": "1624",
+    "first_name": "Judith",
+    "last_name": "Currano",
+    "full_name": "Judith Currano",
+    "job_title": "Head, Chemistry Library",
+    "email": "currano@pobox.upenn.edu",
+    "phone": "215-746-5886 and 215-898-2177",
+    "office": "Chemistry Laboratories, 1973 Wing",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2016-11/currano125.jpg?itok=NEvXYKwj",
+    "subjects": [
+      "Chemistry"
+    ],
+    "display_name": "Judith Currano",
+    "portrait": "judith_currano.jpg"
+  },
+  "brian_vivier": {
+    "subject_specialty": "Chinese studies",
+    "subject_id": "167",
+    "user_id": "1508",
+    "first_name": "Brian",
+    "last_name": "Vivier",
+    "full_name": "Brian Vivier",
+    "job_title": "Chinese Studies Librarian <br />Coordinator for Area Studies Collections",
+    "email": "vivier@upenn.edu",
+    "phone": "215-898-3412",
+    "office": "525 Van Pelt-Dietrich Library Center",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2016-11/vivier125.jpg?itok=KPc6GCUB",
+    "subjects": [
+      "Chinese studies",
+      "Southeast Asian studies"
+    ],
+    "display_name": "Brian Vivier",
+    "portrait": "brian_vivier.jpg"
+  },
+  "charles_cobine": {
+    "subject_specialty": "Cinema & media studies",
+    "subject_id": "215",
+    "user_id": "465",
+    "first_name": "Charles",
+    "last_name": "Cobine",
+    "full_name": "Charles Cobine",
+    "job_title": "Librarian for Germanic Languages & Literatures and Cinema Studies<br />Digital Outreach Librarian",
+    "email": "cobine@upenn.edu",
+    "phone": "215-746-5830",
+    "office": "131-11 Van Pelt-Dietrich Library Center",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2016-09/cobine125%402x.jpg?itok=sYWmeThw",
+    "subjects": [
+      "Cinema & media studies",
+      "Germanic languages & literatures",
+      "Organizational dynamics"
+    ],
+    "display_name": "Charles Cobine",
+    "portrait": "charles_cobine.jpg"
+  },
+  "rebecca_stuhr": {
+    "subject_specialty": "Classical studies",
+    "subject_id": "216",
+    "user_id": "1603",
+    "first_name": "Rebecca",
+    "last_name": "Stuhr",
+    "full_name": "Rebecca Stuhr",
+    "job_title": "Director, Academic Engagement",
+    "email": "stuhrreb@pobox.upenn.edu",
+    "phone": "215-898-5999",
+    "office": "218 Van Pelt-Dietrich Library Center",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/images/staff/stuhr250.jpg?itok=TDbIB_Sm",
+    "subjects": [
+      "Classical studies",
+      "Russian & East European studies"
+    ],
+    "display_name": "Rebecca Stuhr",
+    "portrait": "rebecca_stuhr.jpg"
+  },
+  "sharon_black": {
+    "subject_specialty": "Communication",
+    "subject_id": "592",
+    "user_id": "1519",
+    "first_name": "Sharon",
+    "last_name": "Black",
+    "full_name": "Sharon Black",
+    "job_title": "Head, Annenberg School for Communication Library",
+    "email": "sblack@asc.upenn.edu",
+    "phone": "215-898-6106",
+    "office": "Annenberg School for Communication Library",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2016-11/lsb125%402x.jpg?itok=rLb7O3d2",
+    "subjects": [
+      "Communication"
+    ],
+    "display_name": "Sharon Black",
+    "portrait": "sharon_black.jpg"
+  },
+  "joseph_holub": {
+    "subject_specialty": "Comparative literature",
+    "subject_id": "218",
+    "user_id": "2028",
+    "first_name": "Joseph",
+    "last_name": "Holub",
+    "full_name": "Joseph Holub",
+    "job_title": "Librarian for Latin American Studies & Romance Languages",
+    "email": "holub@upenn.edu",
+    "phone": "215-898-4325",
+    "office": "555  Van Pelt-Dietrich Library Center",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2016-11/holub125.jpg?itok=GvUie4Sa",
+    "subjects": [
+      "Comparative literature",
+      "French language & literature",
+      "International relations",
+      "Italian language & literature",
+      "Latin American studies",
+      "Latino studies",
+      "Spanish, Portuguese & Iberian studies"
+    ],
+    "display_name": "Joseph Holub",
+    "portrait": "joseph_holub.jpg"
+  },
+  "laurel_graham": {
+    "subject_specialty": "Dental medicine",
+    "subject_id": "206",
+    "user_id": "8846",
+    "first_name": "Laurel",
+    "last_name": "Graham",
+    "full_name": "Laurel Graham",
+    "job_title": "Head, Dental Library",
+    "email": "laurelg@upenn.edu",
+    "phone": "215-898-8978",
+    "office": "3rd floor, Evans Building",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/images/staff/laurelg-489.jpg?itok=U2MYPmuk",
+    "subjects": [
+      "Dental medicine"
+    ],
+    "display_name": "Laurel Graham",
+    "portrait": "laurel_graham.jpg"
+  },
+  "patty_lynn": {
+    "subject_specialty": "Education",
+    "subject_id": "248",
+    "user_id": "480",
+    "first_name": "Patty",
+    "last_name": "Lynn",
+    "full_name": "Patty Lynn",
+    "job_title": "Librarian for the Graduate School of Education<br />Education Bibliographer",
+    "email": "lynn@upenn.edu",
+    "phone": "215-898-1230",
+    "office": "211 Van Pelt Library, 2nd floor east side facing Walnut",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2016-11/lynn150.jpg?itok=weRAdxyQ",
+    "subjects": [
+      "Education"
+    ],
+    "display_name": "Patty Lynn",
+    "portrait": "patty_lynn.jpg"
+  },
+  "amanpreet_aman_kaur": {
+    "subject_specialty": "Engineering & computer science",
+    "subject_id": "799",
+    "user_id": "2070",
+    "first_name": "Amanpreet (Aman)",
+    "last_name": "Kaur",
+    "full_name": "Amanpreet (Aman) Kaur",
+    "job_title": "STEM Librarian",
+    "email": "amankaur@upenn.edu",
+    "phone": "215-746-0101",
+    "office": "Room G-21, Biomedical Library, Johnson Pavilion",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2017-10/amankaur200.jpg?itok=yXzxDGDt",
+    "subjects": [
+      "Engineering & computer science"
+    ],
+    "display_name": "Amanpreet (Aman) Kaur",
+    "portrait": "amanpreet_aman_kaur.jpg"
+  },
+  "douglas_mcgee": {
+    "subject_specialty": "Engineering & computer science",
+    "subject_id": "799",
+    "user_id": "473",
+    "first_name": "Douglas",
+    "last_name": "McGee",
+    "full_name": "Douglas McGee",
+    "job_title": "Assistant Director, Science, Technology, Engineering & Math Libraries<br />Engineering Librarian",
+    "email": "dmcgee@upenn.edu",
+    "phone": "215-898-8170",
+    "office": "Biomedical Library",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2016-09/dmcgee125.jpg?itok=aEpuD0O5",
+    "subjects": [
+      "Engineering & computer science"
+    ],
+    "display_name": "Douglas McGee",
+    "portrait": "douglas_mcgee.jpg"
+  },
+  "mia_wells": {
+    "subject_specialty": "Entrepreneurship",
+    "subject_id": "177",
+    "user_id": "478",
+    "first_name": "Mia",
+    "last_name": "Wells",
+    "full_name": "Mia Wells",
+    "job_title": "Assistant Director, Lippincott Library of the Wharton School",
+    "email": "kirstien@wharton.upenn.edu",
+    "phone": "215-898-5553",
+    "office": "256.2 Van Pelt-Dietrich Library Center",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/images/staff/wells250.jpg?itok=Y8CXLb4z",
+    "subjects": [
+      "Entrepreneurship",
+      "Legal studies & business ethics",
+      "Marketing"
+    ],
+    "display_name": "Mia Wells",
+    "portrait": "mia_wells.jpg"
+  },
+  "marcella_barnhart": {
+    "subject_specialty": "Finance",
+    "subject_id": "178",
+    "user_id": "481",
+    "first_name": "Marcella",
+    "last_name": "Barnhart",
+    "full_name": "Marcella Barnhart",
+    "job_title": "Director, Lippincott Library of the Wharton School",
+    "email": "bmarcell@wharton.upenn.edu",
+    "phone": "215-898-8755",
+    "office": "256.2 Van Pelt-Dietrich Library Center",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2018-04/bmarcell250.jpg?itok=VYj_Wvv7",
+    "subjects": [
+      "Finance",
+      "Health care management",
+      "Management"
+    ],
+    "display_name": "Marcella Barnhart",
+    "portrait": "marcella_barnhart.jpg"
+  },
+  "david_azzolina": {
+    "subject_specialty": "Folklore & folklife",
+    "subject_id": "221",
+    "user_id": "1481",
+    "first_name": "David",
+    "last_name": "Azzolina",
+    "full_name": "David Azzolina",
+    "job_title": "Collection Development and Academic Engagement Librarian",
+    "email": "azzolina@upenn.edu",
+    "phone": "215-898-5322",
+    "office": "208 Van Pelt-Dietrich Library Center",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2016-11/azzolina125.jpg?itok=zpoaunON",
+    "subjects": [
+      "Folklore & folklife",
+      "Gender, sexuality, & women's studies",
+      "History & sociology of science",
+      "Political science",
+      "Religious studies"
+    ],
+    "display_name": "David Azzolina",
+    "portrait": "david_azzolina.jpg"
+  },
+  "girmaye_misgna": {
+    "subject_specialty": "Geographic information systems",
+    "subject_id": "250",
+    "user_id": "6483",
+    "first_name": "Girmaye",
+    "last_name": "Misgna",
+    "full_name": "Girmaye Misgna",
+    "job_title": "Mapping & Geospatial Data Librarian",
+    "email": "gmisgna@upenn.edu",
+    "phone": "",
+    "office": "131-17 Van Pelt-Dietrich Library Center",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2017-09/gmisgna196.jpg?itok=ysUQR3op",
+    "subjects": [
+      "Geographic information systems"
+    ],
+    "display_name": "Girmaye Misgna",
+    "portrait": "girmaye_misgna.jpg"
+  },
+  "rebecca_mendelson": {
+    "subject_specialty": "Japanese studies",
+    "subject_id": "168",
+    "user_id": "14191",
+    "first_name": "Rebecca",
+    "last_name": "Mendelson",
+    "full_name": "Rebecca Mendelson",
+    "job_title": "Japanese Studies Librarian",
+    "email": "rmendel@upenn.edu",
+    "phone": "",
+    "office": "",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/images/staff/rmendel-350.jpg?itok=L-Bx4dBf",
+    "subjects": [
+      "Japanese studies",
+      "Korean studies"
+    ],
+    "display_name": "Rebecca Mendelson",
+    "portrait": "rebecca_mendelson.jpg"
+  },
+  "arthur_kiron": {
+    "subject_specialty": "Judaic studies",
+    "subject_id": "170",
+    "user_id": "444",
+    "first_name": "Arthur",
+    "last_name": "Kiron",
+    "full_name": "Arthur Kiron",
+    "job_title": "Schottenstein-Jesselson Curator of Judaica Collections",
+    "email": "kiron@pobox.upenn.edu",
+    "phone": "215-573-7431",
+    "office": "205 Van Pelt-Dietrich Library Center",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2016-08/kiron125_0.jpg?itok=oMyRgtYr",
+    "subjects": [
+      "Judaic studies",
+      "Judaic studies",
+      "Judaica special collections",
+      "Judaica special collections"
+    ],
+    "display_name": "Arthur Kiron",
+    "portrait": "arthur_kiron.jpg"
+  },
+  "bruce_nielsen": {
+    "subject_specialty": "Judaic studies",
+    "subject_id": "170",
+    "user_id": "1758",
+    "first_name": "Bruce",
+    "last_name": "Nielsen",
+    "full_name": "Bruce Nielsen",
+    "job_title": "Judaica Public Services Librarian & Archivist",
+    "email": "bnielsen@pobox.upenn.edu",
+    "phone": "215-746-1290",
+    "office": "203 Library at the Katz Center for Advanced Judaic Studies",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2016-11/bnielsen125.jpg?itok=68XECsNN",
+    "subjects": [
+      "Judaic studies",
+      "Judaica special collections"
+    ],
+    "display_name": "Bruce Nielsen",
+    "portrait": "bruce_nielsen.jpg"
+  },
+  "mayelin_perez": {
+    "subject_specialty": "Literature in English",
+    "subject_id": "219",
+    "user_id": "14185",
+    "first_name": "Mayelin",
+    "last_name": "Perez",
+    "full_name": "Mayelin Perez",
+    "job_title": "Librarian for Literatures in English & Theatre Arts",
+    "email": "mayelinp@upenn.edu",
+    "phone": "",
+    "office": "",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/images/staff/perez460.jpg?itok=B4dP53OB",
+    "subjects": [
+      "Literature in English",
+      "Theatre arts"
+    ],
+    "display_name": "Mayelin Perez",
+    "portrait": "mayelin_perez.jpg"
+  },
+  "arthur_fraas": {
+    "subject_specialty": "Manuscript studies",
+    "subject_id": "933",
+    "user_id": "1730",
+    "first_name": "Arthur",
+    "last_name": "Fraas",
+    "full_name": "Arthur Fraas",
+    "job_title": "Senior Curator, Special Collections<br />Acting Director, Kislak Operations",
+    "email": "fraas@pobox.upenn.edu",
+    "phone": "215-898-0605",
+    "office": "608 Van Pelt-Dietrich Library Center",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2016-11/fraas125.jpg?itok=NLv2mY7l",
+    "subjects": [
+      "Manuscript studies",
+      "Modern manuscripts & archives",
+      "Rare books & printed materials"
+    ],
+    "display_name": "Arthur Fraas",
+    "portrait": "arthur_fraas.jpg"
+  },
+  "nicholas_herman": {
+    "subject_specialty": "Manuscript studies",
+    "subject_id": "933",
+    "user_id": "2023",
+    "first_name": "Nicholas",
+    "last_name": "Herman",
+    "full_name": "Nicholas Herman",
+    "job_title": "Curator, SIMS Manuscripts",
+    "email": "hermanni@upenn.edu",
+    "phone": "215-898-7266",
+    "office": "608 Van Pelt-Dietrich Library Center",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2016-11/hermanni125.jpg?itok=DpEHfEgq",
+    "subjects": [
+      "Manuscript studies",
+      "Medieval studies"
+    ],
+    "display_name": "Nicholas Herman",
+    "portrait": "nicholas_herman.jpg"
+  },
+  "dot_porter": {
+    "subject_specialty": "Manuscript studies",
+    "subject_id": "933",
+    "user_id": "1710",
+    "first_name": "Dot",
+    "last_name": "Porter",
+    "full_name": "Dot Porter",
+    "job_title": "Curator of Digital Research Services",
+    "email": "dorp@upenn.edu",
+    "phone": "215-898-9742",
+    "office": "613 Van Pelt-Dietrich Library Center",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2016-11/dorp125%402x.jpg?itok=aawp2tNV",
+    "subjects": [
+      "Manuscript studies",
+      "Medieval manuscripts"
+    ],
+    "display_name": "Dot Porter",
+    "portrait": "dot_porter.jpg"
+  },
+  "lynn_ransom": {
+    "subject_specialty": "Manuscript studies",
+    "subject_id": "933",
+    "user_id": "1688",
+    "first_name": "Lynn",
+    "last_name": "Ransom",
+    "full_name": "Lynn Ransom",
+    "job_title": "Curator, SIMS Programs",
+    "email": "lransom@pobox.upenn.edu",
+    "phone": "215-898-7851",
+    "office": "611 Van Pelt-Dietrich Library Center",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2016-11/lransom62%402x.jpg?itok=z4DxHpF3",
+    "subjects": [
+      "Manuscript studies",
+      "Medieval manuscripts"
+    ],
+    "display_name": "Lynn Ransom",
+    "portrait": "lynn_ransom.jpg"
+  },
+  "lauren_gala": {
+    "subject_specialty": "Mathematics",
+    "subject_id": "198",
+    "user_id": "1747",
+    "first_name": "Lauren",
+    "last_name": "Gala",
+    "full_name": "Lauren Gala",
+    "job_title": "Science and Digital Initiatives Librarian<br />Head, Mathematics/Physics/Astronomy Library",
+    "email": "milaur@upenn.edu",
+    "phone": "215-746-0228",
+    "office": "Math/Physics/Astronomy Library",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2016-11/milaur125.jpg?itok=fQaEHZ62",
+    "subjects": [
+      "Mathematics",
+      "Physics & astronomy"
+    ],
+    "display_name": "Lauren Gala",
+    "portrait": "lauren_gala.jpg"
+  },
+  "frank_campbell": {
+    "subject_specialty": "Medicine",
+    "subject_id": "205",
+    "user_id": "1575",
+    "first_name": "Frank",
+    "last_name": "Campbell",
+    "full_name": "Frank Campbell",
+    "job_title": "Medical Education Liaison Librarian",
+    "email": "campbell@upenn.edu",
+    "phone": "215-898-9905",
+    "office": "Johnson Pavilion",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2016-11/campbell125.jpg?itok=EUyHGorZ",
+    "subjects": [
+      "Medicine"
+    ],
+    "display_name": "Frank Campbell",
+    "portrait": "frank_campbell.jpg"
+  },
+  "carlos_rodriguez": {
+    "subject_specialty": "Medicine",
+    "subject_id": "205",
+    "user_id": "1683",
+    "first_name": "Carlos",
+    "last_name": "Rodriguez",
+    "full_name": "Carlos Rodriguez",
+    "job_title": "Head, Patron Services (Biomedical Library)",
+    "email": "rodrigue@pobox.upenn.edu",
+    "phone": "215-898-9610",
+    "office": "Johnson Pavilion",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2016-11/rodrigue125.jpg?itok=b9cRwk4h",
+    "subjects": [
+      "Medicine"
+    ],
+    "display_name": "Carlos Rodriguez",
+    "portrait": "carlos_rodriguez.jpg"
+  },
+  "heather_hughes": {
+    "subject_specialty": "Middle Eastern studies",
+    "subject_id": "172",
+    "user_id": "14193",
+    "first_name": "Heather",
+    "last_name": "Hughes",
+    "full_name": "Heather Hughes",
+    "job_title": "Middle Eastern Studies Librarian",
+    "email": "hkhughes@upenn.edu",
+    "phone": "",
+    "office": "",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/images/staff/hughes500.jpg?itok=NpU5TxoP",
+    "subjects": [
+      "Middle Eastern studies"
+    ],
+    "display_name": "Heather Hughes",
+    "portrait": "heather_hughes.jpg"
+  },
+  "lynne_farrington": {
+    "subject_specialty": "Modern manuscripts & archives",
+    "subject_id": "240",
+    "user_id": "1727",
+    "first_name": "Lynne",
+    "last_name": "Farrington",
+    "full_name": "Lynne Farrington",
+    "job_title": "Senior Curator, Special Collections",
+    "email": "lynne@upenn.edu",
+    "phone": "215-746-5828",
+    "office": "614 Van Pelt-Dietrich Library Center",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2016-11/lynne125.jpg?itok=1XPG-tjo",
+    "subjects": [
+      "Modern manuscripts & archives",
+      "Rare books & printed materials"
+    ],
+    "display_name": "Lynne Farrington",
+    "portrait": "lynne_farrington.jpg"
+  },
+  "david_mcknight": {
+    "subject_specialty": "Modern manuscripts & archives",
+    "subject_id": "240",
+    "user_id": "1829",
+    "first_name": "David",
+    "last_name": "McKnight",
+    "full_name": "David McKnight",
+    "job_title": "Director, Rare Book & Manuscript Library",
+    "email": "dmcknigh@pobox.upenn.edu",
+    "phone": "215-746-5829",
+    "office": "615 Van Pelt-Dietrich Library Center",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2016-11/dmcknigh125.jpg?itok=AOLi31Ct",
+    "subjects": [
+      "Modern manuscripts & archives",
+      "Rare books & printed materials"
+    ],
+    "display_name": "David McKnight",
+    "portrait": "david_mcknight.jpg"
+  },
+  "liza_vick": {
+    "subject_specialty": "Music",
+    "subject_id": "230",
+    "user_id": "1515",
+    "first_name": "Liza",
+    "last_name": "Vick",
+    "full_name": "Liza Vick",
+    "job_title": "Head, Otto E. Albrecht Music Library & Eugene Ormandy Music & Media Center",
+    "email": "lizavick@upenn.edu",
+    "phone": "215-898-3450",
+    "office": "452.2 Van Pelt-Dietrich Library Center",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2018-01/lizavick250.jpg?itok=l0dKMMEt",
+    "subjects": [
+      "Music"
+    ],
+    "display_name": "Liza Vick",
+    "portrait": "liza_vick.jpg"
+  },
+  "anne_larrivee": {
+    "subject_specialty": "Nonprofit leadership",
+    "subject_id": "252",
+    "user_id": "5973",
+    "first_name": "Anne",
+    "last_name": "Larrivee",
+    "full_name": "Anne Larrivee",
+    "job_title": "Social Science Librarian <br />Collection Analyst",
+    "email": "larrivee@upenn.edu",
+    "phone": "215-746-0384",
+    "office": "219 Van Pelt-Dietrich Library Center",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2017-08/larrivee125.jpg?itok=YsLWMfvs",
+    "subjects": [
+      "Nonprofit leadership",
+      "Psychology",
+      "Social policy",
+      "Social work"
+    ],
+    "display_name": "Anne Larrivee",
+    "portrait": "anne_larrivee.jpg"
+  },
+  "john_pollack": {
+    "subject_specialty": "Rare books & printed materials",
+    "subject_id": "241",
+    "user_id": "1711",
+    "first_name": "John",
+    "last_name": "Pollack",
+    "full_name": "John Pollack",
+    "job_title": "Curator, Research Services (Kislak Center)",
+    "email": "jpollack@pobox.upenn.edu",
+    "phone": "215-746-5825",
+    "office": "610 Van Pelt-Dietrich Library Center",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2018-01/pollack-225.jpg?itok=cH_a8-wd",
+    "subjects": [
+      "Rare books & printed materials"
+    ],
+    "display_name": "John Pollack",
+    "portrait": "john_pollack.jpg"
+  },
+  "dennis_hyde": {
+    "subject_specialty": "Russian & East European studies",
+    "subject_id": "797",
+    "user_id": "2047",
+    "first_name": "Dennis",
+    "last_name": "Hyde",
+    "full_name": "Dennis Hyde",
+    "job_title": "Slavic Studies Librarian",
+    "email": "hyde@pobox.upenn.edu",
+    "phone": "215-898-6675",
+    "office": "1st floor west Van Pelt-Dietrich Library Center",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2016-11/hyde125.jpg?itok=RbidbsI6",
+    "subjects": [
+      "Russian & East European studies"
+    ],
+    "display_name": "Dennis Hyde",
+    "portrait": "dennis_hyde.jpg"
+  },
+  "nicky_agate": {
+    "subject_specialty": "Scholarly publishing",
+    "subject_id": "190",
+    "user_id": "14155",
+    "first_name": "Nicky",
+    "last_name": "Agate",
+    "full_name": "Nicky Agate",
+    "job_title": "Assistant University Librarian for Research Data & Digital Scholarship",
+    "email": "agate@upenn.edu",
+    "phone": "",
+    "office": "",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/images/staff/agate.jpg?itok=4DbYEjs2",
+    "subjects": [
+      "Scholarly publishing"
+    ],
+    "display_name": "Nicky Agate",
+    "portrait": "nicky_agate.jpg"
+  },
+  "margaret_janz": {
+    "subject_specialty": "Scholarly publishing",
+    "subject_id": "190",
+    "user_id": "489",
+    "first_name": "Margaret",
+    "last_name": "Janz",
+    "full_name": "Margaret Janz",
+    "job_title": "Scholarly Communications and Data Curation Librarian",
+    "email": "mjanz@upenn.edu",
+    "phone": "",
+    "office": "131-4 Van Pelt-Dietrich Library Center",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2016-09/mjanz125.jpg?itok=MWD2FASS",
+    "subjects": [
+      "Scholarly publishing"
+    ],
+    "display_name": "Margaret Janz",
+    "portrait": "margaret_janz.jpg"
+  },
+  "jef_pierce": {
+    "subject_specialty": "South Asian Studies",
+    "subject_id": "173",
+    "user_id": "10843",
+    "first_name": "Jef",
+    "last_name": "Pierce",
+    "full_name": "Jef Pierce",
+    "job_title": "South Asian Studies Librarian",
+    "email": "jfpierce@upenn.edu",
+    "phone": "215-898-7146",
+    "office": "555 Van Pelt-Dietrich Library Center",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/images/staff/jfpierce250.jpg?itok=91B8fNF0",
+    "subjects": [
+      "South Asian Studies"
+    ],
+    "display_name": "Jef Pierce",
+    "portrait": "jef_pierce.jpg"
+  },
+  "dee_crandall": {
+    "subject_specialty": "Veterinary medicine",
+    "subject_id": "209",
+    "user_id": "1622",
+    "first_name": "Dee",
+    "last_name": "Crandall",
+    "full_name": "Dee Crandall",
+    "job_title": "Assistant Veterinary Librarian",
+    "email": "dcrand@pobox.upenn.edu",
+    "phone": "610-925-6235",
+    "office": "Jean Austin duPont Veterinary Medicine Library",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2016-11/dcrand125.png?itok=BowamEtV",
+    "subjects": [
+      "Veterinary medicine"
+    ],
+    "display_name": "Dee Crandall",
+    "portrait": "dee_crandall.jpg"
+  },
+  "margy_lindem": {
+    "subject_specialty": "Veterinary medicine",
+    "subject_id": "209",
+    "user_id": "451",
+    "first_name": "Margy",
+    "last_name": "Lindem",
+    "full_name": "Margy Lindem",
+    "job_title": "Head, Veterinary Libraries",
+    "email": "mlindem@upenn.edu",
+    "phone": "215-898-8874",
+    "office": "Steven W. Atwood Veterinary Medicine Library",
+    "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2016-09/mlindem125.jpg?itok=BjBLEXLs",
+    "subjects": [
+      "Veterinary medicine"
+    ],
+    "display_name": "Margy Lindem",
+    "portrait": "margy_lindem.jpg"
+  }
+}

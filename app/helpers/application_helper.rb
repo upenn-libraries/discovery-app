@@ -23,6 +23,10 @@ module ApplicationHelper
     return "https://www.library.upenn.edu/search/web-pages?q=#{query}"
   end
 
+  def colenda_search_results_url(query)
+    return "https://colenda.library.upenn.edu/catalog?q=#{query}"
+  end
+
   def catalog_results_url(query)
     return search_catalog_path(q: query, search_field: 'keyword')
   end
@@ -65,6 +69,10 @@ module ApplicationHelper
       attrs = {
           'href': "http://www.library.upenn.edu/search/web-pages"
       }
+    elsif tab_id == 'colenda' && action_name == 'landing'
+      attrs = {
+          'href': "https://colenda.library.upenn.edu"
+      }
     else
       attrs = {
           'href': anchor,
@@ -101,8 +109,18 @@ module ApplicationHelper
     "https://#{ ENV['ALMA_DELIVERY_DOMAIN'] }/discovery/account?vid=#{ ENV['ALMA_INSTITUTION_CODE'] }:Services&lang=en&section=overview"
   end
 
-  def profile_url(name)
-    "https://www.library.upenn.edu/people/staff/#{name.downcase.gsub(/\ +/, '-')}"
+  def subject_url(subject)
+    "https://www.library.upenn.edu/people/subject-specialists##{subject.dasherize}"
+  end
+
+  def bolded_subject_list(subjects, match)
+    subjects.map do |s|
+      if match.downcase.gsub(/[^a-z]|amp/,'') == s.downcase.gsub(/[^a-z]/,'')
+        content_tag(:strong, s)
+      else
+        s
+      end
+    end
   end
 
   def refworks_bookmarks_path(opts = {})

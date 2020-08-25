@@ -27,3 +27,5 @@ local_dev_env
 .idea
 
 public/assets
+
+.byebug_history

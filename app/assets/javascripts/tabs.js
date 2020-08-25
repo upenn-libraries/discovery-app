@@ -5,10 +5,6 @@
  */
 $(document).ready(function() {
 
-    $("#feedbackout").click(function(){
-        $("#feedback").hide();
-    });
-
     $("a[role='tab']").bind('click', function(event) {
         window.history.pushState({},"", $(event.currentTarget).attr("href"));
     });
