@@ -277,6 +277,8 @@ class CatalogController < ApplicationController
 
     @@MINCOUNT = { 'facet.mincount' => 1 }
 
+    #TODO: :if/:else conditions appear to be evaluated only for display! Can we pre-evaluate to avoid adding costly
+    #TODO: facets to every Solr request??
     config.add_facet_field 'db_subcategory_f', label: 'Database Subject', if: lambda { |a,b,c| false }
     config.add_facet_field 'db_category_f', label: 'Database Subject', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy',
                            :json_facet => @@DATABASE_CATEGORY_TAXONOMY, :top_level_field => 'db_category_f', :facet_type => :database,
