@@ -5,7 +5,7 @@
     facet:{
   accounting : {
     type: query,
-    q: "{!term f=subject_search v=accounting}",
+    q: "{!bool filter='{!term f=subject_search v=accounting}' filter=$post_1928 }",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
@@ -82,7 +82,7 @@
   },
   biology : {
     type: query,
-    q: "{!term f=subject_search v=biology}",
+    q: "{!bool filter='{!term f=subject_search v=biology}' filter=$post_1928 }",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
@@ -110,7 +110,7 @@
   },
   chemistry : {
     type: query,
-    q: "{!term f=subject_search v=chemistry}",
+    q: "{!bool filter='{!term f=subject_search v=chemistry}' filter=$post_1928 }",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
@@ -138,7 +138,7 @@
   },
   communication : {
     type: query,
-    q: "{!term f=subject_search v=communication}",
+    q: "{!bool filter='{!term f=subject_search v=communication}' filter=$post_1928 }",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
@@ -152,14 +152,14 @@
   },
   criminology : {
     type: query,
-    q: "{!term f=subject_search v=criminology}",
+    q: "{!bool filter='{!term f=subject_search v=criminology}' filter=$post_1928 }",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
   },
   dental_medicine : {
     type: query,
-    q: "{!prefix f=subject_f v='Dentistry'}",
+    q: "{!bool filter='{!prefix f=subject_f v=Dentistry}' filter=$post_1928 }",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
@@ -180,7 +180,7 @@
   },
   education : {
     type: query,
-    q: "{!term f=subject_search v=education}",
+    q: "{!bool filter='{!term f=subject_search v=education}' must_not='{!term f=subject_f v=\\'Health education\\'}'}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
@@ -194,14 +194,14 @@
   },
   entrepreneurship : {
     type: query,
-    q: "{!term f=subject_search v=entrepreneurship}",
+    q: "{!bool filter='{!term f=subject_search v=entrepreneurship}' filter=$post_1928 }",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
   },
   finance : {
     type: query,
-    q: "{!term f=subject_search v=finance}",
+    q: "{!bool filter='{!term f=subject_search v=finance}' filter=$post_1928 }",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
@@ -236,7 +236,7 @@
   },
   general_science : {
     type: query,
-    q: "{!prefix f=subject_f v=Science}",
+    q: "{!bool filter='{!prefix f=subject_f v=Science}' filter=$post_1928 }",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
@@ -257,7 +257,7 @@
   },
   health_care_management : {
     type: query,
-    q: "{!bool filter='{!term f=subject_search v=health}' filter='{!term f=subject_search v=care}' should='{!term f=subject_search v=management}' should='{!term f=subject_search v=economics}'}",
+    q: "{!bool filter='{!term f=subject_search v=health}' filter='{!term f=subject_search v=care}' filter='{!terms f=subject_search v=management,economics}'}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
@@ -292,7 +292,7 @@
   },
   international_business : {
     type: query,
-    q: "{!bool filter='{!term f=subject_search v=international}' filter='{!term f=subject_search=business}'}",
+    q: "{!bool filter='{!term f=subject_search v=international}' filter='{!term f=subject_search=business}' filter=$post_1928}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
@@ -397,7 +397,7 @@
   },
   marketing : {
     type: query,
-    q: "{!term f=subject_search v=marketing}",
+    q: "{!bool filter='{!term f=subject_search v=marketing}' filter=$post_1928 }",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
@@ -411,21 +411,21 @@
   },
   medicine : {
     type: query,
-    q: "{!term f=subject_search v=medicine}",
+    q: "{!bool filter='{!term f=subject_search v=medicine}' filter=$post_1928 }",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
   },
   medieval_manuscripts : {
     type: query,
-    q: "{!bool filter='{!term f=subject_search v=medieval}' filter='{!terms f=subject_search v=manuscript,manuscripts}'}",
+    q: "{!bool filter='{!bool should=\\'{!term f=subject_search v=medieval}\\' should=\\'content_min_dtsort:[* TO 1600-01-01T00:00:00Z]\\'}' filter='{!terms f=subject_search v=manuscript,manuscripts}'}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
   },
   medieval_studies : {
     type: query,
-    q: "{!term f=subject_search v=medieval}",
+    q: "{!bool should='{!term f=subject_search v=medieval}' should='content_min_dtsort:[* TO 1600-01-01T00:00:00Z]'}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
@@ -439,14 +439,14 @@
   },
   modern_manuscripts_amp_archives : {
     type: query,
-    q: "{!bool should='{!terms f=subject_search v=archive,archives}' should='{!bool filter=\\'{!term f=subject_search v=modern}\\' filter=\\'{!terms f=subject_search v=manuscript,manuscripts}\\'}'}",
+    q: "{!bool should='{!term f=format_f v=Archive}' should='{!bool filter=\\'{!term f=subject_search v=modern}\\' should=\\'content_max_dtsort:[1601-01-01T00:00:00Z TO *]\\' filter=\\'{!terms f=subject_search v=manuscript,manuscripts}\\'}'}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
   },
   music : {
     type: query,
-    q: "{!term f=subject_search v=music}",
+    q: "{!bool should='{!term f=subject_search v=music}' should='{!terms f=format_f v=\\'Sound recording,Musical score\\'}'}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
@@ -509,7 +509,7 @@
   },
   political_science_data : {
     type: query,
-    q: "{!bool filter='{!prefix f=subject_f v=\\'Political science\\'}' filter='{!term f=subject_search v=data}'}",
+    q: "{!bool filter='{!prefix f=subject_search v=politic}' filter='{!term f=subject_search v=data}'}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
@@ -530,7 +530,7 @@
   },
   real_estate : {
     type: query,
-    q: "{!bool should='{!prefix f=subject_f v=\\'Real estate\\'}' should='{!prefix f=subject_f v=\\'Real property\\'}'}",
+    q: "{!bool should='{!prefix f=subject_f v=\\'Real estate\\'}' should='{!prefix f=subject_f v=\\'Real property\\'}' filter=$post_1928 }",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
@@ -621,7 +621,7 @@
   },
   statistics : {
     type: query,
-    q: "{!term f=subject_search v=statistics}",
+    q: "{!bool filter='{!term f=subject_search v=statistics}' filter=$post_1928 }",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
@@ -642,7 +642,7 @@
   },
   veterinary_medicine : {
     type: query,
-    q: "{!term f=subject_search v=veterinary}",
+    q: "{!bool filter='{!term f=subject_search v=veterinary}' filter=$post_1928 }",
     facet: {
       r1 : "relatedness($combo,$back)"
     }

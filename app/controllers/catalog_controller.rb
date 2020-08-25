@@ -104,6 +104,7 @@ class CatalogController < ApplicationController
         #cache: 'false',
         defType: 'perEndPosition_dense_shingle_graphSpans',
         combo: '{!filters param=$q param=$fq excludeTags=cluster}',
+        post_1928: 'content_max_dtsort:[1929-01-01T00:00:00Z TO *]',
         #combo: '{!bool must=$q filter=\'{!filters param=$fq v=*:*}\'}',
         #combo: '{!query v=$q}',
         back: '*:*',
