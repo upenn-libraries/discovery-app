@@ -7,17 +7,40 @@
   <div class="bento_item_body">
     <dl class="document-metadata dl-horizontal dl-invert">
       <dd>
-      <span class="author">
-        <%= result['author_creator_a']&.first %>
-      </span>
+        <span class="author">
+          <%= result['author_creator_a']&.first %>
+        </span>
       </dd>
       <dd>
-        <div class="availability-ajax-load" data-availability-ids="<%= result['id'].sub('FRANKLIN_','') %>"></div>
+        <span class="publisher">
+          <%= result['publication_a']&.first %>
+        </span>
+      </dd>
+      <dd>
+        <span class="format">
+          <%= result['format_a']&.first %>
+        </span>
+      </dd>
+      <% if result['electronic_holdings_json'].present? %>
+      <dd>
+        <div class="well">
+          <%= JSON.pretty_generate JSON.parse result['electronic_holdings_json'] %>
+        </div>
+      </dd>
+      <% end %>
+      <dd>
+        <div class="availability-ajax-load"
+             data-availability-ids="<%= result['id'].sub('FRANKLIN_','') %>">
+        </div>
       </dd>
     </dl>
   </div>
 </div>
 <% end %>
 <div class="view-all">
-  <%= link_to(("View all results #{image_tag('view_all_arrow.png', alt: 'View All Results')}").html_safe, search_catalog_path(q: params[:q] || params[:query], search_field: 'keyword')) %>
+  <%= link_to(
+        "View all results #{image_tag('view_all_arrow.png', alt: 'View All Results icon')}".html_safe,
+        search_catalog_path(q: params[:q] || params[:query], search_field: 'keyword')
+      )
+  %>
 </div>

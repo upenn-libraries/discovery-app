@@ -14,7 +14,7 @@
       <%# @response['response']['docs'] contains the docs here (25 max) %>
       <%# bento_search 'catalog', :query => params[:q] || '', :per_page => 5, :load => :ajax_auto %>
       <% if @response.dig('response', 'docs').any? %>
-        <%= render 'bento_search/catalog_item', results: @response['response']['docs'].slice(0, 5) %>
+        <%= render 'bento_search/catalog_item', results: @response['response']['docs'] %>
       <% else %>
         No results - try something more interesting
       <% end %>
