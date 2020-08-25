@@ -2,7 +2,7 @@
 class SearchBuilder < Blacklight::SearchBuilder
   include Blacklight::Solr::SearchBuilderBehavior
   include BlacklightAdvancedSearch::AdvancedSearchBuilder
-  self.default_processor_chain += [:add_advanced_search_to_solr, :override_sort_when_q_is_empty, :remove_specialists_without_q,
+  self.default_processor_chain += [:add_advanced_search_to_solr, :override_sort_when_q_is_empty, :handle_specialists_without_q,
       :lowercase_expert_boolean_operators, :add_left_anchored_title, :add_routing_hash]
   include BlacklightRangeLimit::RangeLimitBuilder
   include BlacklightSolrplugins::FacetFieldsQueryFilter
@@ -93,11 +93,16 @@ class SearchBuilder < Blacklight::SearchBuilder
     solr_parameters[:q] = augmented_solr_q
   end
 
-  # remove the subject specialists facet from the config to prevent error
-  def remove_specialists_without_q(solr_parameters)
+  def handle_specialists_without_q(solr_parameters)
     if !blacklight_params[:q].present?
-      solr_parameters['json.facet'].delete_if do |facet_query|
-        facet_query.starts_with?('{subject_specialists')
+      if blacklight_params[:f].present?
+        # we have user filters, so avoid NPE by ignoring q in combo domain
+        solr_parameters['combo'] = '{!filters param=$fq excludeTags=cluster}'
+      else
+        # no user input, so remove pointless relatedness calculations
+        solr_parameters['json.facet'].delete_if do |top_level_facet|
+          top_level_facet.starts_with?('{subject_specialists')
+        end
       end
     end
   end
