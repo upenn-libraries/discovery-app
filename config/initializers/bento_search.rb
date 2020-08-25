@@ -56,14 +56,23 @@ BentoSearch.register_engine('google_site_search') do |conf|
   end
 end
 
-BentoSearch.register_engine('catalog') do |conf|
-  conf.engine     = 'BentoSearch::CatalogEngine'
+BentoSearch.register_engine('colenda') do |conf|
+  conf.engine     = 'BentoSearch::ColendaEngine'
   conf.allow_routable_results = true
   conf.for_display do |display|
-    display[:ajax] = { 'wrapper_template' => 'layouts/catalog_ajax_results_wrapper' }
-    display[:no_results_partial] = 'catalog/zero_results_bento'
+    display[:ajax] = { 'wrapper_template' => 'layouts/colenda_ajax_results_wrapper' }
+    display[:no_results_partial] = 'layouts/hide_colenda_zero_results'
   end
 end
+
+# BentoSearch.register_engine('catalog') do |conf|
+#   conf.engine     = 'BentoSearch::CatalogEngine'
+#   conf.allow_routable_results = true
+#   conf.for_display do |display|
+#     display[:ajax] = { 'wrapper_template' => 'layouts/catalog_ajax_results_wrapper' }
+#     display[:no_results_partial] = 'catalog/zero_results_bento'
+#   end
+# end
 
 BentoSearch.register_engine('databases') do |conf|
   conf.engine     = 'BentoSearch::DatabasesEngine'
