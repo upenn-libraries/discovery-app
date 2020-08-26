@@ -250,7 +250,7 @@
   },
   germanic_languages_amp_literatures : {
     type: query,
-    q: "{!bool filter='{!prefix f=subject_search v=german}' should='{!prefix f=subject_search v=language}' should='{!term f=subject_search v=literature}'}",
+    q: "{!bool filter='{!prefix f=subject_search v=german}' filter='{!bool should=\\'{!prefix f=subject_search v=language}\\' should=\\'{!term f=subject_search v=literature}\\'}'}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
@@ -264,7 +264,7 @@
   },
   historic_preservation : {
     type: query,
-    q: "{!bool filter='{!term f=subject_search v=historic}' should='{!term f=subject_search v=preservation}' should='{!term f=subject_search v=conservation}' should='{!term f=subject_search v=restoration}'}",
+    q: "{!bool filter='{!term f=subject_search v=historic}' filter='{!bool should=\\'{!term f=subject_search v=preservation}\\' should=\\'{!term f=subject_search v=conservation}\\' should=\\'{!term f=subject_search v=restoration}\\'}'}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
@@ -306,7 +306,7 @@
   },
   italian_language_amp_literature : {
     type: query,
-    q: "{!bool filter='{!term f=subject_search v=italian}' should='{!term f=subject_search v=language}' should='{!term f=subject_search v=literature}'}",
+    q: "{!bool filter='{!term f=subject_search v=italian}' filter='{!bool should=\\'{!term f=subject_search v=language}\\' should=\\'{!term f=subject_search v=literature}\\'}'}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
@@ -376,7 +376,7 @@
   },
   literature_in_english : {
     type: query,
-    q: "{!bool should='{!term f=language_f v=English}' should='{!term f=subject_search v=english}' filter='{!term f=subject_search v=literature}'}",
+    q: "{!bool filter='{!bool should=\\'{!term f=language_f v=English}\\' should=\\'{!term f=subject_search v=english}\\'}' filter='{!term f=subject_search v=literature}'}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
@@ -439,7 +439,7 @@
   },
   modern_manuscripts_amp_archives : {
     type: query,
-    q: "{!bool should='{!term f=format_f v=Archive}' should='{!bool filter=\\'{!term f=subject_search v=modern}\\' should=\\'content_max_dtsort:[1601-01-01T00:00:00Z TO *]\\' filter=\\'{!terms f=subject_search v=manuscript,manuscripts}\\'}'}",
+    q: "{!bool filter='{!bool should=\\'{!term f=format_f v=Archive}\\' should=\\'{!terms f=subject_search v=manuscript,manuscripts}\\'}' filter='content_max_dtsort:[1601-01-01T00:00:00Z TO *]'}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
@@ -523,14 +523,14 @@
   },
   rare_books_amp_printed_materials : {
     type: query,
-    q: "{!bool should='{!bool must=\\'{!term f=library_f v=\\\\\\'Special Collections\\\\\\'}\\' must_not=\\'{!term f=format_f v=Manuscript}\\'}' should='{!prefix f=subject_f v=\\'Rare books\\'}'}",
+    q: "{!bool should='{!bool filter=\\'{!term f=library_f v=\\\\\\'Special Collections\\\\\\'}\\' must_not=\\'{!term f=format_f v=Manuscript}\\'}' should='{!prefix f=subject_f v=\\'Rare books\\'}'}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
   },
   real_estate : {
     type: query,
-    q: "{!bool should='{!prefix f=subject_f v=\\'Real estate\\'}' should='{!prefix f=subject_f v=\\'Real property\\'}' filter=$post_1928 }",
+    q: "{!bool filter='{!complexphrase df=subject_search v=\\'\"real (estate property)\"\\'}' filter=$post_1928 }",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
