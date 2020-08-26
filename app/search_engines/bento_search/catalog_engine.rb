@@ -112,6 +112,7 @@ class BentoSearch::CatalogEngine
     holdings_type = "print" if holdings.dig("availability",mms_id, "holdings",0, "inventory_type") == "physical"
 
     holdings_length = holdings.dig("availability",mms_id, "holdings")&.length || 0
+    # TODO: this could be misleading - "check holdings" might still include a legit holding
     number_of_print = holdings.dig("availability",mms_id,"holdings")&.select { |p| p['availability'] == 'available' }&.length || 0
     number_of_online = holdings.dig("availability",mms_id,"holdings")&.select { |p| p['activation_status']&.downcase == 'available' } &.length || 0
 

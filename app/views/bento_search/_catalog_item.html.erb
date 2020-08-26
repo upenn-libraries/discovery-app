@@ -20,19 +20,12 @@
         <span class="format">
           <%= result['format_a']&.first %>
         </span>
-      </dd>
-      <% if result['electronic_holdings_json'].present? %>
-      <dd>
-        <div class="well">
-          <%= JSON.pretty_generate JSON.parse result['electronic_holdings_json'] %>
-        </div>
-      </dd>
+      <% if result.print_holdings? %>
+      <dd><%= print_holding_info_for result %></dd>
       <% end %>
-      <dd>
-        <div class="availability-ajax-load"
-             data-availability-ids="<%= result['id'].sub('FRANKLIN_','') %>">
-        </div>
-      </dd>
+      <% if result.electronic_holdings? %>
+      <dd><%= online_holding_info_for result %></dd>
+      <% end %>
     </dl>
   </div>
 </div>

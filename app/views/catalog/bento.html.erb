@@ -11,10 +11,8 @@
       <div class="view-and-filter text-right">
         <%= link_to "View and filter #{number_with_delimiter(@response.total)} #{@response.total  != 1 ? 'results' : 'result'}", search_catalog_path(q: params[:q] || params[:query], search_field: 'keyword') %>
       </div>
-      <%# @response['response']['docs'] contains the docs here (25 max) %>
-      <%# bento_search 'catalog', :query => params[:q] || '', :per_page => 5, :load => :ajax_auto %>
-      <% if @response.dig('response', 'docs').any? %>
-        <%= render 'bento_search/catalog_item', results: @response['response']['docs'] %>
+      <% if @document_list.any? %>
+        <%= render 'bento_search/catalog_item', results: @document_list %>
       <% else %>
         No results - try something more interesting
       <% end %>
