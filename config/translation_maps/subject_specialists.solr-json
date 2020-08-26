@@ -124,7 +124,7 @@
   },
   cinema_amp_media_studies : {
     type: query,
-    q: "{!bool should='{!complexphrase df=subject_search v=\\'\"motion (picture pictures)\"\\'}' should='{!terms f=subject_search v=media,cinema}' should='{!term f=format_f v=Video}'}",
+    q: "{!bool should='{!complexphrase df=subject_search v=\\'\"motion (picture pictures)\"\\'}' should='{!terms f=subject_search v=media,cinema}'}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
