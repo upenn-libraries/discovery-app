@@ -320,14 +320,14 @@
   },
   judaica_special_collections : {
     type: query,
-    q: "{!bool filter='{!term f=library_f v=\\'Special Collections\\'}' filter='{!terms f=subject_search v=jews,jewish}'}",
+    q: "{!bool filter='{!term f=library_f v=\\'Special Collections\\'}' filter='{!terms f=subject_search v=judaism,jews,jewish}'}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }
   },
   judaic_studies : {
     type: query,
-    q: "{!terms f=subject_search v=jews,jewish}",
+    q: "{!bool filter='{!bool should=\\'{!terms f=subject_search v=judaism,jews}\\' should=\\'{!prefix f=subject_f v=Jewish}\\'}' filter=$culture_filter}",
     facet: {
       r1 : "relatedness($combo,$back)"
     }

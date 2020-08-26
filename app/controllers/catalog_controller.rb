@@ -105,6 +105,7 @@ class CatalogController < ApplicationController
         defType: 'perEndPosition_dense_shingle_graphSpans',
         combo: '{!filters param=$q param=$fq excludeTags=cluster}',
         post_1928: 'content_max_dtsort:[1929-01-01T00:00:00Z TO *]',
+        culture_filter: "{!bool should='{!terms f=subject_search v=literature,customs,religion,ethics,society,social,culture,cultural}' should='{!prefix f=subject_search v=art}'}",
         #combo: '{!bool must=$q filter=\'{!filters param=$fq v=*:*}\'}',
         #combo: '{!query v=$q}',
         back: '*:*',
