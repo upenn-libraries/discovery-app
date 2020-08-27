@@ -232,7 +232,8 @@ class CatalogController < ApplicationController
     }
 
     @@SUBJECT_SPECIALISTS = File.open("config/translation_maps/subject_specialists.solr-json", "rb").map do |line|
-      line.strip
+      comment_idx = line.index('#')
+      (comment_idx.nil? ? line : line.slice(0, comment_idx)).strip.presence
     end.compact.join
 
     @@DATABASE_CATEGORY_TAXONOMY = [
