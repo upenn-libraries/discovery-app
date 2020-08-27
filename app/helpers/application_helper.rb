@@ -223,4 +223,10 @@ module ApplicationHelper
     '/forms/resourcesharing'
   end
 
+  # Check for cookie indicating that the expert panel should be hidden
+  # @return [TrueClass, FalseClass]
+  def hide_expert_help_panel?
+    cookies[:franklin_hide_expert_help] == 'true'
+  end
+
 end

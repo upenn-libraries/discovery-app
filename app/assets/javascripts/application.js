@@ -30,3 +30,17 @@
 //= require 'bento_search/ajax_load'
 
 //= require_tree .
+
+$(document).ready(function() {
+    var $expert;
+    $expert = $('#ExpertOptions');
+    $expert.on('hide.bs.collapse', function() {
+        // set cookie
+        document.cookie = 'franklin_hide_expert_help=true'
+    });
+    $expert.on('show.bs.collapse', function() {
+        // unset cookie
+        document.cookie = 'franklin_hide_expert_help='
+    });
+
+});
