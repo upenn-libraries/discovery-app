@@ -792,6 +792,24 @@
     {
       "subject_specialty": "Entrepreneurship",
       "subject_id": "177",
+      "user_id": "14176",
+      "first_name": "Phebe",
+      "last_name": "Dickson",
+      "full_name": "Phebe Dickson",
+      "job_title": "Business & Research Support Services Librarian",
+      "email": "dicksonp@wharton.upenn.edu",
+      "phone": "",
+      "office": "Van Pelt-Dietrich Library Center",
+      "thumbnail": "/sites/default/files/styles/thumbnail/public/images/staff/dickson500.jpg?itok=edU7DATl",
+      "subjects": [
+        "Entrepreneurship"
+      ],
+      "display_name": "Phebe Dickson",
+      "portrait": "phebe_dickson.jpg"
+    },
+    {
+      "subject_specialty": "Entrepreneurship",
+      "subject_id": "177",
       "user_id": "478",
       "first_name": "Mia",
       "last_name": "Wells",
@@ -1669,9 +1687,9 @@
       "subject_specialty": "Manuscript studies",
       "subject_id": "933",
       "user_id": "1730",
-      "first_name": "Arthur",
+      "first_name": "Mitch",
       "last_name": "Fraas",
-      "full_name": "Arthur Fraas",
+      "full_name": "Mitch Fraas",
       "job_title": "Senior Curator, Special Collections<br />Acting Director, Kislak Operations",
       "email": "fraas@pobox.upenn.edu",
       "phone": "215-898-0605",
@@ -1682,8 +1700,8 @@
         "Modern manuscripts & archives",
         "Rare books & printed materials"
       ],
-      "display_name": "Arthur Fraas",
-      "portrait": "arthur_fraas.jpg"
+      "display_name": "Mitch Fraas",
+      "portrait": "mitch_fraas.jpg"
     },
     {
       "subject_specialty": "Manuscript studies",
@@ -1699,6 +1717,7 @@
       "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2016-11/hermanni125.jpg?itok=DpEHfEgq",
       "subjects": [
         "Manuscript studies",
+        "Medieval manuscripts",
         "Medieval studies"
       ],
       "display_name": "Nicholas Herman",
@@ -1870,6 +1889,26 @@
     {
       "subject_specialty": "Manuscript studies",
       "subject_id": "933",
+      "user_id": "2023",
+      "first_name": "Nicholas",
+      "last_name": "Herman",
+      "full_name": "Nicholas Herman",
+      "job_title": "Curator, SIMS Manuscripts",
+      "email": "hermanni@upenn.edu",
+      "phone": "215-898-7266",
+      "office": "608 Van Pelt-Dietrich Library Center",
+      "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2016-11/hermanni125.jpg?itok=DpEHfEgq",
+      "subjects": [
+        "Manuscript studies",
+        "Medieval manuscripts",
+        "Medieval studies"
+      ],
+      "display_name": "Nicholas Herman",
+      "portrait": "nicholas_herman.jpg"
+    },
+    {
+      "subject_specialty": "Manuscript studies",
+      "subject_id": "933",
       "user_id": "1710",
       "first_name": "Dot",
       "last_name": "Porter",
@@ -1921,6 +1960,7 @@
       "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2016-11/hermanni125.jpg?itok=DpEHfEgq",
       "subjects": [
         "Manuscript studies",
+        "Medieval manuscripts",
         "Medieval studies"
       ],
       "display_name": "Nicholas Herman",
@@ -1971,9 +2011,9 @@
       "subject_specialty": "Manuscript studies",
       "subject_id": "933",
       "user_id": "1730",
-      "first_name": "Arthur",
+      "first_name": "Mitch",
       "last_name": "Fraas",
-      "full_name": "Arthur Fraas",
+      "full_name": "Mitch Fraas",
       "job_title": "Senior Curator, Special Collections<br />Acting Director, Kislak Operations",
       "email": "fraas@pobox.upenn.edu",
       "phone": "215-898-0605",
@@ -1984,8 +2024,8 @@
         "Modern manuscripts & archives",
         "Rare books & printed materials"
       ],
-      "display_name": "Arthur Fraas",
-      "portrait": "arthur_fraas.jpg"
+      "display_name": "Mitch Fraas",
+      "portrait": "mitch_fraas.jpg"
     },
     {
       "subject_specialty": "Modern manuscripts & archives",
@@ -2005,6 +2045,25 @@
       ],
       "display_name": "David McKnight",
       "portrait": "david_mcknight.jpg"
+    },
+    {
+      "subject_specialty": "Modern manuscripts & archives",
+      "subject_id": "240",
+      "user_id": "1711",
+      "first_name": "John",
+      "last_name": "Pollack",
+      "full_name": "John Pollack",
+      "job_title": "Curator, Research Services (Kislak Center)",
+      "email": "jpollack@pobox.upenn.edu",
+      "phone": "215-746-5825",
+      "office": "610 Van Pelt-Dietrich Library Center",
+      "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2018-01/pollack-225.jpg?itok=cH_a8-wd",
+      "subjects": [
+        "Modern manuscripts & archives",
+        "Rare books & printed materials"
+      ],
+      "display_name": "John Pollack",
+      "portrait": "john_pollack.jpg"
     }
   ],
   "music": [
@@ -2358,9 +2417,9 @@
       "subject_specialty": "Manuscript studies",
       "subject_id": "933",
       "user_id": "1730",
-      "first_name": "Arthur",
+      "first_name": "Mitch",
       "last_name": "Fraas",
-      "full_name": "Arthur Fraas",
+      "full_name": "Mitch Fraas",
       "job_title": "Senior Curator, Special Collections<br />Acting Director, Kislak Operations",
       "email": "fraas@pobox.upenn.edu",
       "phone": "215-898-0605",
@@ -2371,8 +2430,8 @@
         "Modern manuscripts & archives",
         "Rare books & printed materials"
       ],
-      "display_name": "Arthur Fraas",
-      "portrait": "arthur_fraas.jpg"
+      "display_name": "Mitch Fraas",
+      "portrait": "mitch_fraas.jpg"
     },
     {
       "subject_specialty": "Modern manuscripts & archives",
@@ -2394,8 +2453,8 @@
       "portrait": "david_mcknight.jpg"
     },
     {
-      "subject_specialty": "Rare books & printed materials",
-      "subject_id": "241",
+      "subject_specialty": "Modern manuscripts & archives",
+      "subject_id": "240",
       "user_id": "1711",
       "first_name": "John",
       "last_name": "Pollack",
@@ -2406,6 +2465,7 @@
       "office": "610 Van Pelt-Dietrich Library Center",
       "thumbnail": "/sites/default/files/styles/thumbnail/public/pictures/2018-01/pollack-225.jpg?itok=cH_a8-wd",
       "subjects": [
+        "Modern manuscripts & archives",
         "Rare books & printed materials"
       ],
       "display_name": "John Pollack",
