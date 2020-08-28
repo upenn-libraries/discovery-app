@@ -231,6 +231,26 @@ class CatalogController < ApplicationController
       return false
     }
 
+    search_field_accept = lambda { |field_names, other_conditions = []|
+      return lambda { |a, b, c|
+        return false unless field_names.include?(a.params[:search_field])
+        other_conditions.each do |condition|
+          return false unless condition.call(a, b, c)
+        end
+        return true
+      }
+    }
+
+    search_field_reject = lambda { |field_names, other_conditions = []|
+      return lambda { |a, b, c|
+        return false if field_names.include?(a.params[:search_field])
+        other_conditions.each do |condition|
+          return false unless condition.call(a, b, c)
+        end
+        return true
+      }
+    }
+
     get_hits = lambda { |v|
       r1 = v[:r1]
       r1.nil? ? 0 : (r1[:relatedness].to_f * 100000).to_i
@@ -325,22 +345,29 @@ class CatalogController < ApplicationController
       '}',
     '}'].join
 
+    @@NO_FACET_SEARCH_FIELDS = ['subject_correlation']
+
+    standard_if = search_field_reject::(@@NO_FACET_SEARCH_FIELDS)
+
     #TODO: :if/:else conditions appear to be evaluated only for display! Can we pre-evaluate to avoid adding costly
     #TODO: facets to every Solr request??
     config.add_facet_field 'db_subcategory_f', label: 'Database Subject', if: lambda { |a,b,c| false }
     config.add_facet_field 'db_category_f', label: 'Database Subject', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy',
                            :json_facet => @@DATABASE_CATEGORY_TAXONOMY, :top_level_field => 'db_category_f', :facet_type => :database,
-                           :helper_method => :render_subcategories, :if => database_selected
+                           :helper_method => :render_subcategories, :if => search_field_reject::(@@NO_FACET_SEARCH_FIELDS, [database_selected])
 
-    config.add_facet_field 'db_type_f', label: 'Database Type', limit: -1, collapse: false, :if => database_selected,
+    config.add_facet_field 'db_type_f', label: 'Database Type', limit: -1, collapse: false,
+                           :if => search_field_reject::(@@NO_FACET_SEARCH_FIELDS, [database_selected]),
                            :facet_type => :database, solr_params: @@MINCOUNT
     config.add_facet_field 'subject_specialists', label: 'Subject Area Correlation', collapse: true, :partial => 'blacklight/hierarchy/facet_hierarchy',
         :json_facet => @@SUBJECT_SPECIALISTS, :top_level_field => 'subject_specialists', :get_hits => get_hits, :post_sort => post_sort,
         :if => actionable_filters
     config.add_facet_field 'subject_correlation', label: 'Subject Correlation', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy',
-        :json_facet => @@SUBJECT_CORRELATION, :top_level_field => 'subject_correlation', :if => actionable_filters
+        :json_facet => @@SUBJECT_CORRELATION, :top_level_field => 'subject_correlation',
+        :if => search_field_accept::(['subject_correlation'], [actionable_filters])
     config.add_facet_field 'azlist', label: 'A-Z List', collapse: false, single: :manual, :facet_type => :header,
-                           options: {:layout => 'horizontal_facet_list'}, solr_params: { 'facet.mincount' => 0 }, :if => database_selected, query: {
+                           options: {:layout => 'horizontal_facet_list'}, solr_params: { 'facet.mincount' => 0 },
+                           :if => search_field_reject::(@@NO_FACET_SEARCH_FIELDS, [database_selected]), query: {
             'A' => { :label => 'A', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='a'}"},
             'B' => { :label => 'B', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='b'}"},
             'C' => { :label => 'C', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='c'}"},
@@ -371,33 +398,34 @@ class CatalogController < ApplicationController
         }
     config.add_facet_field 'access_f', label: 'Access', collapse: false, solr_params: @@MINCOUNT, query: {
         'Online' => { :label => 'Online', :fq => "{!join from=cluster_id to=cluster_id v='access_f:Online OR record_source_id:3'}"},
-        'At the library' => { :label => 'At the library', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"}
-    }
+        'At the library' => { :label => 'At the library', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"},
+    }, :if => standard_if
     config.add_facet_field 'record_source_f', label: 'Record Source', collapse: false, solr_params: @@MINCOUNT, query: {
         'HathiTrust' => { :label => 'HathiTrust', :fq => "{!join from=cluster_id to=cluster_id v='{!terms f=record_source_id v=2,3}'}"},
-        'Penn' => { :label => 'Penn', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Penn\\'}'}"}
-    }
-    config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false, solr_params: @@MINCOUNT
-    config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z', collapse: false, solr_params: @@MINCOUNT
+        'Penn' => { :label => 'Penn', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Penn\\'}'}"},
+    }, :if => standard_if
+    config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false, solr_params: @@MINCOUNT, :if => standard_if
+    config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z', collapse: false, solr_params: @@MINCOUNT,
+        :if => standard_if
     #config.add_facet_field 'subject_taxonomy', label: 'Subject Taxonomy', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy', :json_facet => @@SUBJECT_TAXONOMY, :top_level_field => 'toplevel_subject_f', :helper_method => :render_subcategories
-    config.add_facet_field 'subject_f', label: 'Subject', limit: 5, index_range: 'A'..'Z', collapse: false, solr_params: @@MINCOUNT
-    config.add_facet_field 'language_f', label: 'Language', limit: 5, collapse: false, solr_params: @@MINCOUNT
-    config.add_facet_field 'library_f', label: 'Library', limit: 5, collapse: false, solr_params: @@MINCOUNT
-    config.add_facet_field 'specific_location_f', label: 'Specific location', limit: 5, solr_params: @@MINCOUNT
+    config.add_facet_field 'subject_f', label: 'Subject', limit: 5, index_range: 'A'..'Z', collapse: false, solr_params: @@MINCOUNT, :if => standard_if
+    config.add_facet_field 'language_f', label: 'Language', limit: 5, collapse: false, solr_params: @@MINCOUNT, :if => standard_if
+    config.add_facet_field 'library_f', label: 'Library', limit: 5, collapse: false, solr_params: @@MINCOUNT, :if => standard_if
+    config.add_facet_field 'specific_location_f', label: 'Specific location', limit: 5, solr_params: @@MINCOUNT, :if => standard_if
     config.add_facet_field 'recently_published', label: 'Recently published', collapse: false, solr_params: @@MINCOUNT, :query => {
         :last_5_years => { label: 'Last 5 years', fq: "pub_max_dtsort:[#{Date.current.year - 4}-01-01T00:00:00Z TO *]" },
         :last_10_years => { label: 'Last 10 years', fq: "pub_max_dtsort:[#{Date.current.year - 9}-01-01T00:00:00Z TO *]" },
         :last_15_years => { label: 'Last 15 years', fq: "pub_max_dtsort:[#{Date.current.year - 14}-01-01T00:00:00Z TO *]" },
-    }
-    config.add_facet_field 'publication_date_f', label: 'Publication date', limit: 5, solr_params: @@MINCOUNT
-    config.add_facet_field 'classification_f', label: 'Classification', limit: 5, collapse: false, solr_params: @@MINCOUNT
-    config.add_facet_field 'genre_f', label: 'Form/Genre', limit: 5, solr_params: @@MINCOUNT
+    }, :if => standard_if
+    config.add_facet_field 'publication_date_f', label: 'Publication date', limit: 5, solr_params: @@MINCOUNT, :if => standard_if
+    config.add_facet_field 'classification_f', label: 'Classification', limit: 5, collapse: false, solr_params: @@MINCOUNT, :if => standard_if
+    config.add_facet_field 'genre_f', label: 'Form/Genre', limit: 5, solr_params: @@MINCOUNT, :if => standard_if
     config.add_facet_field 'recently_added_f', label: 'Recently added', solr_params: @@MINCOUNT, :query => {
         :within_90_days => { label: 'Within 90 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (90 * SECONDS_PER_DAY) } TO *]" },
         :within_60_days => { label: 'Within 60 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (60 * SECONDS_PER_DAY) } TO *]" },
         :within_30_days => { label: 'Within 30 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (30 * SECONDS_PER_DAY) } TO *]" },
         :within_15_days => { label: 'Within 15 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (15 * SECONDS_PER_DAY) } TO *]" },
-    }
+    }, :if => standard_if
 
     #config.add_facet_field 'example_pivot_field', label: 'Pivot Field', :pivot => ['format_f', 'language_f']
     # config.add_facet_field 'example_query_facet_field', label: 'Publish Date', :query => {
@@ -409,15 +437,19 @@ class CatalogController < ApplicationController
     #                        include_in_advanced_search: false
 
     config.add_facet_field 'subject_xfacet2', label: 'Subject', limit: 20, show: false, solr_params: @@MINCOUNT,
-                           xfacet: true, xfacet_view_type: 'xbrowse', facet_for_filtering: 'subject_f'
+                           xfacet: true, xfacet_view_type: 'xbrowse', facet_for_filtering: 'subject_f',
+                           :if => search_field_accept::(['subject_xfacet2'])
     config.add_facet_field 'title_xfacet', label: 'Title', limit: 20, show: false, solr_params: @@MINCOUNT,
-                           xfacet: true, xfacet_view_type: 'rbrowse', xfacet_rbrowse_fields: %w(title author_creator_a standardized_title_a edition conference_a series contained_within_a publication_a format_a full_text_links_for_cluster_display availability)
+                           xfacet: true, xfacet_view_type: 'rbrowse', :if => search_field_accept::(['title_xfacet']),
+                           xfacet_rbrowse_fields: %w(title author_creator_a standardized_title_a edition conference_a series contained_within_a publication_a format_a full_text_links_for_cluster_display availability)
     #config.add_facet_field 'author_creator_xfacet', label: 'Author', limit: 20, show: false,
     #                       xfacet: true, xfacet_view_type: 'xbrowse', facet_for_filtering: 'author_creator_f'
     config.add_facet_field 'author_creator_xfacet2', label: 'Author', limit: 20, show: false, solr_params: @@MINCOUNT,
-                           xfacet: true, xfacet_view_type: 'xbrowse', facet_for_filtering: 'author_creator_f'
+                           xfacet: true, xfacet_view_type: 'xbrowse', facet_for_filtering: 'author_creator_f',
+                           :if => search_field_accept::(['author_creator_xfacet2'])
     config.add_facet_field 'call_number_xfacet', label: 'Call number', limit: 20, show: false, solr_params: @@MINCOUNT,
-                           xfacet: true, xfacet_view_type: 'rbrowse', xfacet_rbrowse_fields: %w(title author_creator_a standardized_title_a edition conference_a series contained_within_a publication_a format_a full_text_links_for_cluster_display availability)
+                           xfacet: true, xfacet_view_type: 'rbrowse', :if => search_field_accept::(['call_number_xfacet']),
+                           xfacet_rbrowse_fields: %w(title author_creator_a standardized_title_a edition conference_a series contained_within_a publication_a format_a full_text_links_for_cluster_display availability)
 
     # Have BL send all facet field names to Solr, which has been the default
     # previously. Simply remove these lines if you'd rather use Solr request
@@ -646,6 +678,16 @@ class CatalogController < ApplicationController
     config.add_search_field('subject_xfacet2') do |field|
       field.label = 'Subject Heading Browse'
       field.action = '/catalog/xbrowse/subject_xfacet2'
+      field.include_in_advanced_search = false
+    end
+
+    config.add_search_field('subject_correlation') do |field|
+      field.label = 'Subject Heading Correlation'
+      #field.action = '/catalog/correlation/subject_correlation'
+      field.solr_local_parameters = {
+          qf: 'subject_search title_1_search title_2_search author_creator_1_search author_creator_2_search',
+          pf: '' # domain only, no scoring, so pf doesn't matter
+      }
       field.include_in_advanced_search = false
     end
 
