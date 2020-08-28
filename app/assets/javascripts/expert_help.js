@@ -1,11 +1,12 @@
 $(document).ready(function() {
     var $expert;
-    var hide_help;
     $expert = $('#ExpertOptions');
-    hide_help = document.cookie.includes('franklin_hide_expert_help=true');
 
-    if (window.matchMedia("(min-width: 992px)").matches && !hide_help) {
+    if (window.matchMedia("(min-width: 992px)").matches &&
+        !document.cookie.includes('franklin_hide_expert_help=true')) {
       $expert.collapse('show');
+    } else {
+      $expert.collapse('hide');
     }
 
     $expert.on('hide.bs.collapse', function() {
