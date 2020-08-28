@@ -220,7 +220,7 @@ class CatalogController < ApplicationController
       return false if f.nil?
       # we return true if there is at least one non-ignorelisted filter
       return true if f.size > @@CORRELATION_IGNORELIST.size
-      f.keys.map(&:to_sym).each do |key|
+      f.symbolize_keys.keys.each do |key|
         return true unless @@CORRELATION_IGNORELIST.include?(key)
         ignorelisted_vals = @@CORRELATION_IGNORELIST[key]
         if !ignorelisted_vals.nil?
