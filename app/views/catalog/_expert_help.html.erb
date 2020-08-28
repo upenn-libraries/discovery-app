@@ -5,9 +5,12 @@
   <div id="ExpertOptions" class="expert-profile collapse" aria-expanded="<%= panel_expanded %>">
     <%= image_tag specialist[:portrait], alt: specialist[:display_name] %>
     <div class="upper-content">
-      <%= link_to specialist[:display_name], subject_url(subject), class: 'link-to-profile' %>
-      <p class="expert-p"><%= bolded_subject_list(specialist[:subjects], subject).to_sentence.html_safe %></p>
-      <p class="expert-p"><%= link_to specialist[:email], "mailto:#{specialist[:email]}" %></p>
+      <%= link_to specialist[:display_name], subject_url(subject), :class => 'link-to-profile' %>
+      <p class="expert-p"><%= bolded_subject_list(specialist[:subjects], subject).join(', ').html_safe %></p>
+      <p class="expert-p">
+        <%= mail_to specialist[:email], specialist[:email],
+                    body: "I was searching Franklin @ #{request.original_url}" %>
+      </p>
     </div>
     <div class="lower-content">
       <hr class="hr-text" data-content="OR">
