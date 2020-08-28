@@ -207,7 +207,7 @@ class CatalogController < ApplicationController
     # overhead to Solr request.
     # Keys below indicate filters that we should not attempt to use for purpose of cacluating
     # correlations -- either entirely (nil value) or for an array of certain filter values
-    @@CORRELATION_BLACKLIST = {
+    @@CORRELATION_IGNORELIST = {
       :access_f => nil,
       :record_source_f => nil,
       :format_f => ['Database & Article Index']
@@ -218,16 +218,16 @@ class CatalogController < ApplicationController
       return true if params[:q].present?
       f = params[:f]
       return false if f.nil?
-      # we return true if there is at least one non-blacklisted filter
-      return true if f.size > @@CORRELATION_BLACKLIST.size
+      # we return true if there is at least one non-ignorelisted filter
+      return true if f.size > @@CORRELATION_IGNORELIST.size
       f.keys.map(&:to_sym).each do |key|
-        return true unless @@CORRELATION_BLACKLIST.include?(key)
-        blacklisted_vals = @@CORRELATION_BLACKLIST[key]
-        if !blacklisted_vals.nil?
-          # then there exist some *non*-blacklisted vals that would make filters actionable
+        return true unless @@CORRELATION_IGNORELIST.include?(key)
+        ignorelisted_vals = @@CORRELATION_IGNORELIST[key]
+        if !ignorelisted_vals.nil?
+          # then there exist some *non*-ignorelisted vals that would make filters actionable
           # check for such vals here
         f[key].each do |val|
-            return true unless blacklisted_vals.include?(val)
+            return true unless ignorelisted_vals.include?(val)
           end
         end
       end
