@@ -1,16 +1,12 @@
 <% panel_expanded = hide_expert_help_panel? ? 'false' : 'true' %>
 <div class="panel panel-default facet_limit expert-results bento-box" id="bento-results-expert">
-  <div class="collapse-toggle panel-heading expert-box <%= panel_expanded ? '' : 'collapsed' %>" data-toggle="collapse" data-target="#ExpertOptions" aria-expanded="<%= panel_expanded %>">
-    <h3 class="panel-title facet-field-heading expert-heading">
-      <%= link_to "Expert help", "#", :"data-no-turbolink" => true %>
-    </h3>
-  </div>
-<% specialist = Blacklight::Solr::Response::SubjectSpecialists::Constants::SUBJECTS[subject.to_sym].sample %>
+  <%= render partial: 'expert_help_header', locals: { panel_expanded: panel_expanded } %>
+  <% specialist = Blacklight::Solr::Response::SubjectSpecialists::Constants::SUBJECTS[subject.to_sym].sample %>
   <div id="ExpertOptions" class="expert-profile collapse" aria-expanded="<%= panel_expanded %>">
-    <%= image_tag specialist[:portrait], :alt => specialist[:display_name] %>
+    <%= image_tag specialist[:portrait], alt: specialist[:display_name] %>
     <div class="upper-content">
-      <%= link_to specialist[:display_name], subject_url(subject), :class => 'link-to-profile' %>
-      <p class="expert-p"><%= bolded_subject_list(specialist[:subjects], subject).join(', ').html_safe %></p>
+      <%= link_to specialist[:display_name], subject_url(subject), class: 'link-to-profile' %>
+      <p class="expert-p"><%= bolded_subject_list(specialist[:subjects], subject).to_sentence.html_safe %></p>
       <p class="expert-p"><%= link_to specialist[:email], "mailto:#{specialist[:email]}" %></p>
     </div>
     <div class="lower-content">

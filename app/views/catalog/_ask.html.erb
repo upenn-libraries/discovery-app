@@ -1,10 +1,7 @@
+<% panel_expanded = hide_expert_help_panel? ? 'false' : 'true' %>
 <div class="panel panel-default facet_limit expert-results bento-box" id="bento-results-expert">
-  <div class="collapse-toggle panel-heading expert-box collapsed" data-toggle="collapse" data-target="#ExpertOptions">
-    <h3 class="panel-title facet-field-heading expert-heading">
-      <%= link_to "Expert help", "#", :"data-no-turbolink" => true %>
-    </h3>
-  </div>
-  <div id="ExpertOptions" class="expert-profile collapse">
+  <%= render partial: 'expert_help_header', locals: { panel_expanded: panel_expanded } %>
+  <div id="ExpertOptions" class="expert-profile collapse" aria-expanded="<%= panel_expanded %>">
     <div class="chatinfooter" id="libchat_e01c7dfc19ccf280f6594c20ee7fccc3">&nbsp;</div>
     <script type="text/javascript" src="https://v2.libanswers.com/load_chat.php?hash=e01c7dfc19ccf280f6594c20ee7fccc3"></script>
     <p><a href="https://www.library.upenn.edu/people/subject-specialists">See a list of all subject specialists.</a></p>

@@ -115,7 +115,7 @@ module ApplicationHelper
 
   def bolded_subject_list(subjects, match)
     subjects.map do |s|
-      if match.downcase.gsub(/[^a-z]|amp/,'') == s.downcase.gsub(/[^a-z]/,'')
+      if match.downcase.gsub(/[^a-z]|amp/, '') == s.downcase.gsub(/[^a-z]/, '')
         content_tag(:strong, s)
       else
         s
