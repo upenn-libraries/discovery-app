@@ -202,15 +202,34 @@ class CatalogController < ApplicationController
       a.params.dig(:f, :format_f)&.include?('Database & Article Index')
     }
 
+    # Some filters (e.g., subject_f) are capable of driving meaning correlations;
+    # others are not, and either generate spurious correlations, or at best pointlessly add extra
+    # overhead to Solr request.
+    # Keys below indicate filters that we should not attempt to use for purpose of cacluating
+    # correlations -- either entirely (nil value) or for an array of certain filter values
+    @@CORRELATION_BLACKLIST = {
+      :access_f => nil,
+      :record_source_f => nil,
+      :format_f => ['Database & Article Index']
+    }
+
     actionable_filters = lambda { |a, b, c|
       params = a.params
       return true if params[:q].present?
       f = params[:f]
       return false if f.nil?
-      blacklist = [:access_f, :record_source_f]
-      return true if f.size > blacklist.size
-      f.keys.each do |key|
-        return true unless blacklist.include?(key)
+      # we return true if there is at least one non-blacklisted filter
+      return true if f.size > @@CORRELATION_BLACKLIST.size
+      f.keys.map(&:to_sym).each do |key|
+        return true unless @@CORRELATION_BLACKLIST.include?(key)
+        blacklisted_vals = @@CORRELATION_BLACKLIST[key]
+        if !blacklisted_vals.nil?
+          # then there exist some *non*-blacklisted vals that would make filters actionable
+          # check for such vals here
+        f[key].each do |val|
+            return true unless blacklisted_vals.include?(val)
+          end
+        end
       end
       return false
     }
