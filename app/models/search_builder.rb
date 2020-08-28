@@ -8,11 +8,40 @@ class SearchBuilder < Blacklight::SearchBuilder
   include BlacklightSolrplugins::FacetFieldsQueryFilter
 
   ##
+  # NOTE: this is patterned off an analogous method in lib/blacklight/configuration/context.rb
+  # NOTE: It *may* be possible to access the original method from here, but I couldn't figure out how
+  # NOTE: In stock BL, these conditionals are only checked to determine whether to *render* the facets
+  # NOTE: We evaluate here to prevent making expensive facet requests that will just be ignored!
+  # Evaluate conditionals for a configuration with if/unless attributes
+  #
+  # @param [#if,#unless] config an object that responds to if/unless
+  # @return [Boolean]
+  def evaluate_if_unless_configuration(config, blacklight_params)
+    return config if config == true or config == false
+
+    params_context = Object.new
+    params_context.define_singleton_method(:params) do
+      blacklight_params
+    end
+
+    if_value = !config.respond_to?(:if) ||
+                    config.if.blank? || config.if == true ||
+                    config.if.call(params_context, nil, nil)
+
+    unless_value = !config.respond_to?(:unless) ||
+                    config.unless.blank? ||
+                    !config.unless.call(params_context, nil, nil)
+
+    if_value && unless_value
+  end
+
+  ##
   # Add appropriate Solr facetting directives in, including
   # taking account of our facet paging/'more'.  This is not
   # about solr 'fq', this is about solr facet.* params.
   def add_facetting_to_solr(solr_parameters)
     facet_fields_to_include_in_request.each do |field_name, facet|
+      next unless evaluate_if_unless_configuration(facet, blacklight_params)
       solr_parameters[:facet] ||= true
 
       if facet.json_facet
