@@ -202,6 +202,19 @@ class CatalogController < ApplicationController
       a.params.dig(:f, :format_f)&.include?('Database & Article Index')
     }
 
+    actionable_filters = lambda { |a, b, c|
+      params = a.params
+      return true if params[:q].present?
+      f = params[:f]
+      return false if f.nil?
+      blacklist = [:access_f, :record_source_f]
+      return true if f.size > blacklist.size
+      f.keys.each do |key|
+        return true unless blacklist.include?(key)
+      end
+      return false
+    }
+
     get_hits = lambda { |v|
       r1 = v[:r1]
       r1.nil? ? 0 : (r1[:relatedness].to_f * 100000).to_i
@@ -290,7 +303,8 @@ class CatalogController < ApplicationController
     config.add_facet_field 'db_type_f', label: 'Database Type', limit: -1, collapse: false, :if => database_selected,
                            :facet_type => :database, solr_params: @@MINCOUNT
     config.add_facet_field 'subject_specialists', label: 'Subject Area Correlation', collapse: true, :partial => 'blacklight/hierarchy/facet_hierarchy',
-        :json_facet => @@SUBJECT_SPECIALISTS, :top_level_field => 'subject_specialists', :get_hits => get_hits, :post_sort => post_sort
+        :json_facet => @@SUBJECT_SPECIALISTS, :top_level_field => 'subject_specialists', :get_hits => get_hits, :post_sort => post_sort,
+        :if => actionable_filters
     config.add_facet_field 'azlist', label: 'A-Z List', collapse: false, single: :manual, :facet_type => :header,
                            options: {:layout => 'horizontal_facet_list'}, solr_params: { 'facet.mincount' => 0 }, :if => database_selected, query: {
             'A' => { :label => 'A', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='a'}"},
