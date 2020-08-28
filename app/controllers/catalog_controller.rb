@@ -220,16 +220,11 @@ class CatalogController < ApplicationController
       return false if f.nil?
       # we return true if there is at least one non-ignorelisted filter
       return true if f.size > @@CORRELATION_IGNORELIST.size
-      f.symbolize_keys.keys.each do |key|
-        return true unless @@CORRELATION_IGNORELIST.include?(key)
-        ignorelisted_vals = @@CORRELATION_IGNORELIST[key]
-        if !ignorelisted_vals.nil?
-          # then there exist some *non*-ignorelisted vals that would make filters actionable
-          # check for such vals here
-        f[key].each do |val|
-            return true unless ignorelisted_vals.include?(val)
-          end
-        end
+      f.symbolize_keys.each do |facet_key, facet_values|
+        return true unless @@CORRELATION_IGNORELIST.include?(facet_key) # no vals are ignored for this key
+        ignorelisted_vals = @@CORRELATION_IGNORELIST[facet_key]
+        next unless ignorelisted_vals # all vals are ignored for this key
+        return true if (facet_values - ignorelisted_vals).present? # there is at least one non-ignored val
       end
       return false
     }
