@@ -103,12 +103,11 @@ class CatalogController < ApplicationController
     config.default_solr_params = {
         #cache: 'false',
         defType: 'perEndPosition_dense_shingle_graphSpans',
-        combo: '{!filters param=$q param=$fq excludeTags=cluster}',
+        combo: '{!filters param=$orig_q param=$fq param=\'{!v=elvl_rank_isort:0}\'}',
         post_1928: 'content_max_dtsort:[1929-01-01T00:00:00Z TO *]',
         culture_filter: "{!bool should='{!terms f=subject_search v=literature,customs,religion,ethics,society,social,culture,cultural}' should='{!prefix f=subject_search v=art}'}",
         #combo: '{!bool must=$q filter=\'{!filters param=$fq v=*:*}\'}',
         #combo: '{!query v=$q}',
-        back: '*:*',
         # this list is annoying to maintain, but this avoids hard-coding a field list
         # in the search request handler in solrconfig.xml
         fl: %w{
@@ -140,7 +139,10 @@ class CatalogController < ApplicationController
         'facet.mincount': 0,
         #      fq: '{!tag=cluster}{!collapse field=cluster_id nullPolicy=expand size=5000000 min=record_source_id}',
         # this approach needs expand.field=cluster_id
-        fq: %q~{!tag=cluster}NOT ({!join from=cluster_id to=cluster_id v='record_source_f:"Penn"'} AND record_source_f:"HathiTrust") NOT record_source_id:3~,
+        #cluster: %q~NOT ({!join from=cluster_id to=cluster_id v='record_source_f:"Penn"'} AND record_source_f:"HathiTrust") NOT record_source_id:3~,
+        cluster: '{!bool filter=*:* must_not=\'{!bool filter=\\\'{!join from=cluster_id to=cluster_id v=record_source_f:Penn}\\\' filter=record_source_f:HathiTrust}\' must_not=record_source_id:3}',
+        back: '{!filters param=$cluster param=\'{!v=elvl_rank_isort:0}\'}',
+        fq: '{!query tag=cluster v=$cluster}',
         expand: 'true',
         'expand.field': 'cluster_id',
         'expand.q': '*:*',
@@ -307,6 +309,22 @@ class CatalogController < ApplicationController
 
     @@MINCOUNT = { 'facet.mincount' => 1 }
 
+    @@SUBJECT_CORRELATION = ['{',
+      'subject_correlation:{',
+        'type:terms,',
+        'domain:{query:\'{!query v=$cluster}\'}',
+        'field:subject_f,',
+        'limit:25,',
+        'sort:{r1:desc},',
+        'facet:{',
+          'r1:{',
+            'type:func,',
+            'func:\'relatedness($combo,$back)\'',
+          '}',
+        '}',
+      '}',
+    '}'].join
+
     #TODO: :if/:else conditions appear to be evaluated only for display! Can we pre-evaluate to avoid adding costly
     #TODO: facets to every Solr request??
     config.add_facet_field 'db_subcategory_f', label: 'Database Subject', if: lambda { |a,b,c| false }
@@ -319,6 +337,8 @@ class CatalogController < ApplicationController
     config.add_facet_field 'subject_specialists', label: 'Subject Area Correlation', collapse: true, :partial => 'blacklight/hierarchy/facet_hierarchy',
         :json_facet => @@SUBJECT_SPECIALISTS, :top_level_field => 'subject_specialists', :get_hits => get_hits, :post_sort => post_sort,
         :if => actionable_filters
+    config.add_facet_field 'subject_correlation', label: 'Subject Correlation', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy',
+        :json_facet => @@SUBJECT_CORRELATION, :top_level_field => 'subject_correlation', :if => actionable_filters
     config.add_facet_field 'azlist', label: 'A-Z List', collapse: false, single: :manual, :facet_type => :header,
                            options: {:layout => 'horizontal_facet_list'}, solr_params: { 'facet.mincount' => 0 }, :if => database_selected, query: {
             'A' => { :label => 'A', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='a'}"},

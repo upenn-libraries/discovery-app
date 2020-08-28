@@ -99,9 +99,9 @@ class SearchBuilder < Blacklight::SearchBuilder
 
   def add_left_anchored_title(solr_parameters)
     qq = solr_parameters[:qq]
-    return if qq.nil? || !qq.present?
+    return unless qq.present?
     bq = blacklight_params[:q]
-    return if !bq.present?
+    return unless bq.present?
     search_field = blacklight_params[:search_field]
     return if search_field.present? && search_field != 'keyword'
     weight = '26'
@@ -119,6 +119,7 @@ class SearchBuilder < Blacklight::SearchBuilder
         "_query_:\"{!field f='title_11_tl' v=$qq}\"^#{weight} OR "\
         "_query_:\"{!field f='title_12_tl' v=$qq}\"^#{weight} OR "\
         '_query_:"' + solr_parameters[:q] + '"'
+    solr_parameters[:orig_q] = solr_parameters[:q]
     solr_parameters[:q] = augmented_solr_q
   end
 
@@ -126,7 +127,7 @@ class SearchBuilder < Blacklight::SearchBuilder
     if !blacklight_params[:q].present?
       if blacklight_params[:f].present?
         # we have user filters, so avoid NPE by ignoring q in combo domain
-        solr_parameters['combo'] = '{!filters param=$fq excludeTags=cluster}'
+        solr_parameters['combo'] = '{!filters param=elvl_rank_isort:0 param=$fq}'
       else
         # no user input, so remove pointless "combo" arg
         # if any facets have been mistakenly added that reference $combo, they
