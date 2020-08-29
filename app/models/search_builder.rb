@@ -131,7 +131,7 @@ class SearchBuilder < Blacklight::SearchBuilder
     if !blacklight_params[:q].present?
       if blacklight_params[:f].present?
         # we have user filters, so avoid NPE by ignoring q in combo domain
-        solr_parameters['combo'] = '{!filters param=\'{!v=elvl_rank_isort:0}\' param=$fq}'
+        solr_parameters['combo'] = '{!filters param=\'{!v=elvl_rank_isort:0}\' param=$fq param=\'{!v=record_source_id:1}\'}'
       else
         # no user input, so remove pointless "combo" arg
         # if any facets have been mistakenly added that reference $combo, they

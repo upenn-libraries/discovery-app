@@ -103,7 +103,7 @@ class CatalogController < ApplicationController
     config.default_solr_params = {
         #cache: 'false',
         defType: 'perEndPosition_dense_shingle_graphSpans',
-        combo: '{!filters param=$orig_q param=$fq param=\'{!v=elvl_rank_isort:0}\'}',
+        combo: '{!filters param=$orig_q param=$fq param=\'{!v=elvl_rank_isort:0}\' param=\'{!v=record_source_id:1}\'}',
         post_1928: 'content_max_dtsort:[1929-01-01T00:00:00Z TO *]',
         culture_filter: "{!bool should='{!terms f=subject_search v=literature,customs,religion,ethics,society,social,culture,cultural}' should='{!prefix f=subject_search v=art}'}",
         #combo: '{!bool must=$q filter=\'{!filters param=$fq v=*:*}\'}',
@@ -141,7 +141,7 @@ class CatalogController < ApplicationController
         # this approach needs expand.field=cluster_id
         #cluster: %q~NOT ({!join from=cluster_id to=cluster_id v='record_source_f:"Penn"'} AND record_source_f:"HathiTrust") NOT record_source_id:3~,
         cluster: '{!bool filter=*:* must_not=\'{!bool filter=\\\'{!join from=cluster_id to=cluster_id v=record_source_f:Penn}\\\' filter=record_source_f:HathiTrust}\' must_not=record_source_id:3}',
-        back: '{!filters param=$cluster param=\'{!v=elvl_rank_isort:0}\'}',
+        back: '{!filters param=$cluster param=\'{!v=elvl_rank_isort:0}\' param=\'{!v=record_source_id:1}\'}',
         fq: '{!query tag=cluster v=$cluster}',
         expand: 'true',
         'expand.field': 'cluster_id',
