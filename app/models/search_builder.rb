@@ -107,7 +107,7 @@ class SearchBuilder < Blacklight::SearchBuilder
     if search_field == 'subject_correlation'
       solr_parameters['rows'] = 0
       solr_parameters[:q] = '*:*' # domain will be further restricted by "cluster" query
-      solr_parameters['combo'] = '{!filters param=$orig_q param=$fq param=$correlation_domain}'
+      solr_parameters['combo'] = '{!filters param=$orig_q param=\'{!v=record_source_id:1}\'}'
       return
     end
     return if search_field.present? && search_field != 'keyword'
