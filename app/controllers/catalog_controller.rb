@@ -103,7 +103,7 @@ class CatalogController < ApplicationController
     config.default_solr_params = {
         #cache: 'false',
         defType: 'perEndPosition_dense_shingle_graphSpans',
-        combo: '{!filters param=$q param=$fq excludeTags=cluster}', #cluster tag is ignored for relatedness TODO
+        combo: '{!filters param=$q param=$fq param=$correlation_domain excludeTags=cluster}', # see note under $correlation_domain
         post_1928: 'content_max_dtsort:[1929-01-01T00:00:00Z TO *]',
         culture_filter: "{!bool should='{!terms f=subject_search v=literature,customs,religion,ethics,society,social,culture,cultural}' should='{!prefix f=subject_search v=art}'}",
         #combo: '{!bool must=$q filter=\'{!filters param=$fq v=*:*}\'}',
@@ -141,7 +141,14 @@ class CatalogController < ApplicationController
         # this approach needs expand.field=cluster_id
         #cluster: %q~NOT ({!join from=cluster_id to=cluster_id v='record_source_f:"Penn"'} AND record_source_f:"HathiTrust") NOT record_source_id:3~,
         cluster: '{!bool filter=*:* must_not=\'{!bool filter=\\\'{!join from=cluster_id to=cluster_id v=record_source_f:Penn}\\\' filter=record_source_f:HathiTrust}\' must_not=record_source_id:3}',
-        back: '{!bool should=record_source_id:1 should=record_source_id:2}',#'{!query v=$cluster}',
+        back: '{!query v=$correlation_domain}',
+        # NOTE: correlation domain is defined now to include as much information as possible (Penn and Hathi), of
+        # high quality (elvl_rank_isort:0). N.b., this does *not* include "cluster" query, and thus includes overlap
+        # which could artificially affect correlation scores; but the performance tradeoff is worth it, at least until
+        # granular caching of boolean queries can be made available in Solr. In correlation queries that include "fq",
+        # cluster tagged fq is excluded so that it may be included centrally (if/when called for) via this "correlation_domain"
+        # parameter
+        correlation_domain: '{!bool should=record_source_id:1 should=record_source_id:2 filter=elvl_rank_isort:0}',#'{!query v=$cluster}',
         fq: '{!query tag=cluster v=$cluster}',
         expand: 'true',
         'expand.field': 'cluster_id',
@@ -332,7 +339,7 @@ class CatalogController < ApplicationController
     @@SUBJECT_CORRELATION = ['{',
       'subject_correlation:{',
         'type:terms,',
-        'domain:{param:cluster},',
+        'domain:{query:\'{!query v=$cluster}\'},',
         'field:subject_f,',
         'limit:25,',
         'refine:true,',

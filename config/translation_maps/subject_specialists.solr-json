@@ -10,6 +10,7 @@
     # queries, where the real "work" happens. This allows them to be easily parsed, disabled,
     # etc. as a group.
     type: query,
+    domain: {query: '{!query v=$correlation_domain}'},
     q: '*:*',
     facet:{
   accounting : {
