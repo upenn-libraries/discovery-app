@@ -10,7 +10,7 @@ module BlacklightHelper
   end
 
   def render_expert_help(specialists)
-    specialists.present? && specialists.items.first.hits > 50000 ? (render partial: 'catalog/expert_help', locals: {subject: specialists.items.first.value}) : (render partial: 'catalog/ask')
+    specialists.present? && specialists.items.first.hits > 30000 ? (render partial: 'catalog/expert_help', locals: {subject: specialists.items.first.value}) : (render partial: 'catalog/ask')
   end
 
   # override so that we can insert separators
