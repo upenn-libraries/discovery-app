@@ -1,6 +1,6 @@
 <%# this should receive an iterable _results_ and render an item entry for the bento %>
-<% results.each do |result| %>
-<div class="bento_item" data-unique-id="">
+<% @document_list.each do |result| %>
+<div class="bento_item" data-unique-id="<%= result['id'] %>">
   <h4 class="bento_item_title">
     <%= link_to result['title'], solr_document_path(result['id']) %>
   </h4>
@@ -20,6 +20,7 @@
         <span class="format">
           <%= result['format_a']&.first %>
         </span>
+      </dd>
       <% if result.print_holdings? %>
       <dd><%= print_holding_info_for result %></dd>
       <% end %>

@@ -1,17 +1,17 @@
+# frozen_string_literal: true
 
 require 'penn_lib/marc'
 
-# frozen_string_literal: true
 class SolrDocument
 
   include Blacklight::Solr::Document
   include ExpandedDocs
 
-      # The following shows how to setup this blacklight document to display marc documents
+  # The following shows how to setup this blacklight document to display marc documents
   extension_parameters[:marc_source_field] = :marcrecord_text
   extension_parameters[:marc_format_type] = :marcxml
   use_extension( Blacklight::Solr::Document::Marc) do |document|
-    document.key?( :marcrecord_text  )
+    document.key?( :marcrecord_text )
   end
   
   field_semantics.merge!(    

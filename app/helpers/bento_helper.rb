@@ -5,9 +5,37 @@ module BentoHelper
   # @param [SolrDocument] document
   # @return [ActiveSupport::SafeBuffer]
   def print_holding_info_for(document)
+    # show library and call number if only one holding
     url = solr_document_path document.id
-    text = "#{document['hld_count_isort']} print #{'option'.pluralize(document['hld_count_isort'])}"
+    text = if document['hld_count_isort'] == 1
+             single_print_holding_text_for document
+           else
+             "#{document['hld_count_isort']} print #{'option'.pluralize(document['hld_count_isort'])}"
+           end
     link_to text, url
+  end
+
+  # Return an informative string with the call number and library location name
+  # @param [SolrDocument] document
+  def single_print_holding_text_for(document)
+    holding = JSON.parse(document['physical_holdings_json']).first
+    library_location = print_holding_location holding
+    if library_location
+      "Available - #{library_location} - #{holding['classification_part']} #{holding['item_part']}"
+    else
+      "Available - #{holding['classification_part']} #{holding['item_part']}"
+    end
+  end
+
+  # Return specific location from holdings_info
+  # @param [Hash] holdings_info
+  # @return [String, NilClass]
+  def print_holding_location(holdings_info)
+    return unless holdings_info
+
+    mapper = PennLib::CodeMappings.new('./config/translation_maps/')
+    xml_location_info = mapper.locations[holdings_info['location']]
+    xml_location_info&.dig('specific_location')
   end
 
   # Return a link for display as part of a catalog bento result with

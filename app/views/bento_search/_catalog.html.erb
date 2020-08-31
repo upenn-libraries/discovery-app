@@ -1,0 +1,12 @@
+<div class="col col-md-4 col-lg-4 bento-box catalog-results" id="bento-results-catalog">
+  <a name="catalog"></a>
+  <h3>Catalog</h3>
+  <div class="view-and-filter text-right">
+    <%= link_to "View and filter #{number_with_delimiter(@response.total)} #{@response.total  != 1 ? 'results' : 'result'}", search_catalog_path(q: params[:q] || params[:query], search_field: 'keyword') %>
+  </div>
+  <% if @document_list.any? %>
+    <%= render 'bento_search/catalog_item' %>
+  <% else %>
+    No results - try something more interesting
+  <% end %>
+</div>
