@@ -103,7 +103,7 @@ class CatalogController < ApplicationController
     config.default_solr_params = {
         #cache: 'false',
         defType: 'perEndPosition_dense_shingle_graphSpans',
-        combo: '{!filters param=$orig_q param=$fq param=\'{!v=elvl_rank_isort:0}\' param=\'{!v=record_source_id:1}\'}',
+        combo: '{!filters param=$orig_q param=$fq param=$correlation_domain}',
         post_1928: 'content_max_dtsort:[1929-01-01T00:00:00Z TO *]',
         culture_filter: "{!bool should='{!terms f=subject_search v=literature,customs,religion,ethics,society,social,culture,cultural}' should='{!prefix f=subject_search v=art}'}",
         #combo: '{!bool must=$q filter=\'{!filters param=$fq v=*:*}\'}',
@@ -141,7 +141,8 @@ class CatalogController < ApplicationController
         # this approach needs expand.field=cluster_id
         #cluster: %q~NOT ({!join from=cluster_id to=cluster_id v='record_source_f:"Penn"'} AND record_source_f:"HathiTrust") NOT record_source_id:3~,
         cluster: '{!bool filter=*:* must_not=\'{!bool filter=\\\'{!join from=cluster_id to=cluster_id v=record_source_f:Penn}\\\' filter=record_source_f:HathiTrust}\' must_not=record_source_id:3}',
-        back: '{!filters param=$cluster param=\'{!v=elvl_rank_isort:0}\' param=\'{!v=record_source_id:1}\'}',
+        back: '{!filters param=$cluster param=$correlation_domain}',
+        correlation_domain: '{!bool filter=elvl_rank_isort:0}',
         fq: '{!query tag=cluster v=$cluster}',
         expand: 'true',
         'expand.field': 'cluster_id',
@@ -332,7 +333,7 @@ class CatalogController < ApplicationController
     @@SUBJECT_CORRELATION = ['{',
       'subject_correlation:{',
         'type:terms,',
-        'domain:{query:\'{!query v=$cluster}\'}',
+        'domain:{param:cluster},',
         'field:subject_f,',
         'limit:25,',
         'sort:{r1:desc},',
@@ -685,7 +686,7 @@ class CatalogController < ApplicationController
       field.label = 'Subject Heading Correlation'
       #field.action = '/catalog/correlation/subject_correlation'
       field.solr_local_parameters = {
-          qf: 'subject_search title_1_search title_2_search author_creator_1_search author_creator_2_search',
+          qf: 'marcrecord_xml', # the most general text search we can get, to avoid spurious correlations
           pf: '' # domain only, no scoring, so pf doesn't matter
       }
       field.include_in_advanced_search = false

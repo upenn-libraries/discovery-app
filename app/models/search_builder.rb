@@ -106,6 +106,8 @@ class SearchBuilder < Blacklight::SearchBuilder
     search_field = blacklight_params[:search_field]
     if search_field == 'subject_correlation'
       solr_parameters['rows'] = 0
+      solr_parameters[:q] = '*:*' # domain will be further restricted by "cluster" query
+      solr_parameters['combo'] = '{!filters param=$orig_q param=$fq param=$correlation_domain}'
       return
     end
     return if search_field.present? && search_field != 'keyword'
@@ -128,6 +130,7 @@ class SearchBuilder < Blacklight::SearchBuilder
   end
 
   def modify_combo_param_with_absent_q(solr_parameters)
+    return if blacklight_params[:search_field] == 'subject_correlation'
     if !blacklight_params[:q].present?
       if blacklight_params[:f].present?
         # we have user filters, so avoid NPE by ignoring q in combo domain
@@ -169,6 +172,8 @@ class SearchBuilder < Blacklight::SearchBuilder
 	# privilege online holdings
         sort = "min(def(prt_count_isort,0),1) desc,#{sort}"
       end
+    elsif blacklight_params[:search_field] == 'subject_correlation'
+      sort = ''
     else
       sort = solr_parameters[:sort]
       sort = 'score desc' if !sort.present?
