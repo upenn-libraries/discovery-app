@@ -106,8 +106,8 @@ class SearchBuilder < Blacklight::SearchBuilder
     search_field = blacklight_params[:search_field]
     if search_field == 'subject_correlation'
       solr_parameters['rows'] = 0
-      solr_parameters[:q] = '*:*' # domain will be further restricted by "cluster" query
-      solr_parameters['combo'] = '{!filters param=$orig_q param=$fq excludeTags=cluster}'
+      solr_parameters[:q] = '*:*' # domain defined at facet level only
+      solr_parameters['combo'] = '{!filters param=$orig_q param=$fq excludeTags=cluster}' # ignore cluster for relatedness TODO
       return
     end
     return if search_field.present? && search_field != 'keyword'

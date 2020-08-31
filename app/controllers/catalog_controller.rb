@@ -103,7 +103,7 @@ class CatalogController < ApplicationController
     config.default_solr_params = {
         #cache: 'false',
         defType: 'perEndPosition_dense_shingle_graphSpans',
-        combo: '{!filters param=$orig_q param=$fq excludeTags=cluster}', # cluster should be captured in facet domain
+        combo: '{!filters param=$q param=$fq excludeTags=cluster}', #cluster tag is ignored for relatedness TODO
         post_1928: 'content_max_dtsort:[1929-01-01T00:00:00Z TO *]',
         culture_filter: "{!bool should='{!terms f=subject_search v=literature,customs,religion,ethics,society,social,culture,cultural}' should='{!prefix f=subject_search v=art}'}",
         #combo: '{!bool must=$q filter=\'{!filters param=$fq v=*:*}\'}',
@@ -141,7 +141,7 @@ class CatalogController < ApplicationController
         # this approach needs expand.field=cluster_id
         #cluster: %q~NOT ({!join from=cluster_id to=cluster_id v='record_source_f:"Penn"'} AND record_source_f:"HathiTrust") NOT record_source_id:3~,
         cluster: '{!bool filter=*:* must_not=\'{!bool filter=\\\'{!join from=cluster_id to=cluster_id v=record_source_f:Penn}\\\' filter=record_source_f:HathiTrust}\' must_not=record_source_id:3}',
-        back: '*:*',
+        back: '{!bool should=record_source_id:1 should=record_source_id:2}',#'{!query v=$cluster}',
         fq: '{!query tag=cluster v=$cluster}',
         expand: 'true',
         'expand.field': 'cluster_id',
@@ -332,7 +332,7 @@ class CatalogController < ApplicationController
     @@SUBJECT_CORRELATION = ['{',
       'subject_correlation:{',
         'type:terms,',
-        'domain:{query:\'{!query v=$cluster}\'},',
+        'domain:{param:cluster},',
         'field:subject_f,',
         'limit:25,',
         'refine:true,',
