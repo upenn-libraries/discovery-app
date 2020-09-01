@@ -1,6 +1,5 @@
 <div class="panel panel-default facet_limit expert-results bento-box" id="bento-results-expert">
   <%= render 'expert_help_header' %>
-  <% specialist = Blacklight::Solr::Response::SubjectSpecialists::Constants::SUBJECTS[subject.to_sym].sample %>
   <div id="ExpertOptions" class="expert-profile collapse">
     <%= image_tag specialist[:portrait], alt: specialist[:display_name] %>
     <div class="upper-content">

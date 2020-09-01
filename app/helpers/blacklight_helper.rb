@@ -10,7 +10,16 @@ module BlacklightHelper
   end
 
   def render_expert_help(specialists)
-    specialists.present? && specialists.items.first.hits > 50000 ? (render partial: 'catalog/expert_help', locals: {subject: specialists.items.first.value}) : (render partial: 'catalog/ask')
+    if specialists.present? && specialists.items.first.hits > 50000
+      subject = specialists.items.first.value
+      specialist_data = Rails.cache.fetch(:subject_specialist_data, expires_in: 24.hours) do
+        Blacklight::Solr::Response::SubjectSpecialists::Data.subjects
+      end
+      specialist = specialist_data[subject.to_sym].sample
+      render partial: 'catalog/expert_help', locals: { specialist: specialist, subject: subject }
+    else
+      render partial: 'catalog/ask'
+    end
   end
 
   # override so that we can insert separators
