@@ -7,6 +7,6 @@
   <% if @document_list.any? %>
     <%= render 'bento_search/catalog_item' %>
   <% else %>
-    No results - try something more interesting
+    <%= t('franklin.catalog_search.no_results') %>
   <% end %>
 </div>
