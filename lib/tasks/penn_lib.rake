@@ -145,9 +145,7 @@ namespace :pennlib do
         else
           specialty[:subjects] = [specialty["subject_specialty"]]
           specialty[:display_name] = specialty["full_name"]
-          specialty[:portrait] = "#{name}.jpg"
-          img_url = "https://www.library.upenn.edu#{specialty["thumbnail"].gsub('/styles/thumbnail/public', '')}"
-          File.open(Rails.root.join('app', 'assets', 'images', "#{name}.jpg"), 'wb') {|file| file.write(Faraday.get(img_url).body) }
+          specialty[:portrait] = "https://www.library.upenn.edu#{specialty["thumbnail"]}"
           specialists[name] = specialty
         end
       end
