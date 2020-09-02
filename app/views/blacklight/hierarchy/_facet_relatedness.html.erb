@@ -1,7 +1,6 @@
 <div class="well">These subjects are most strongly correlated to your search terms</div>
 <ul class="facet-values list-unstyled">
-  <% best_responses = sort_by_relatedness display_facet.items %>
-  <% best_responses.each do |item| %>
+  <% display_facet.items.slice(0, 5).each do |item| %>
     <li>
       <span class="facet-label">
         <%= link_to item.value, search_action_path(search_state.add_facet_params_and_redirect('subject_f', item.value)) %>

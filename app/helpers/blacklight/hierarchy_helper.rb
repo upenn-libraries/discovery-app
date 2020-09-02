@@ -46,9 +46,4 @@ module Blacklight::HierarchyHelper
               class: 'remove'
              )
   end
-
-  # @param [Array] items
-  def sort_by_relatedness(items)
-    items.sort_by(&:relatedness).slice(0, 5)
-  end
 end
