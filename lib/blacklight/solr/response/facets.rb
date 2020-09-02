@@ -14,6 +14,8 @@ module Blacklight::Solr::Response::Facets
       options[:value] = value if value
       options[:hits] = hits if hits
 
+      @relatedness = options[:relatedness]
+
       super(options)
     end
 
@@ -285,7 +287,14 @@ module Blacklight::Solr::Response::Facets
       construct_subfacet_field(subfacet_field, i, parent_fq.merge({ field_name => lst[:val] }), get_hits)
     end
 
-    Blacklight::Solr::Response::Facets::FacetItem.new(value: lst[:val], hits: get_hits.call(lst), field: field_name, items: items, fq: parent_fq)
+    Blacklight::Solr::Response::Facets::FacetItem.new(
+      value: lst[:val],
+      hits: get_hits.call(lst),
+      field: field_name,
+      items: items,
+      fq: parent_fq,
+      relatedness: lst.dig('r1', 'relatedness')
+    )
   end
 
 
