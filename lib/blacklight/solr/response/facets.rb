@@ -278,7 +278,7 @@ module Blacklight::Solr::Response::Facets
     subfacet_field = nil
     subfacets = nil
     lst.find do |key, value|
-      if key != 'val' && key != 'count' && key != 'r1'
+      if key != 'val' && key != 'count' && key != 'r1' && key != 'cluster_count'
         subfacet_field = key
         subfacets = value[:buckets] || value
       end

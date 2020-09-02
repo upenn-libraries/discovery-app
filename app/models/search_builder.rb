@@ -107,7 +107,7 @@ class SearchBuilder < Blacklight::SearchBuilder
     if search_field == 'subject_correlation'
       solr_parameters['rows'] = 0
       solr_parameters[:q] = 'fake_field:fake_value' # domain defined at facet level only
-      solr_parameters['combo'] = '{!filters param=$orig_q param=$fq param=$correlation_domain excludeTags=cluster}' # ignore cluster for relatedness TODO
+      solr_parameters['combo'] = '{!filters param=$orig_q param=$fq excludeTags=cluster,no_correlation}' # NOTE: $correlation_domain is applied within facets
       return
     end
     return if search_field.present? && search_field != 'keyword'
@@ -134,7 +134,7 @@ class SearchBuilder < Blacklight::SearchBuilder
     if !blacklight_params[:q].present?
       if blacklight_params[:f].present?
         # we have user filters, so avoid NPE by ignoring q in combo domain
-        solr_parameters['combo'] = '{!filters param=$fq param=$correlation_domain excludeTags=cluster}'
+        solr_parameters['combo'] = '{!filters param=$fq excludeTags=cluster,no_correlation}' # NOTE: $correlation_domain is applied within facets
       else
         # no user input, so remove pointless "combo" arg
         # if any facets have been mistakenly added that reference $combo, they

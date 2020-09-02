@@ -103,7 +103,7 @@ class CatalogController < ApplicationController
     config.default_solr_params = {
         #cache: 'false',
         defType: 'perEndPosition_dense_shingle_graphSpans',
-        combo: '{!filters param=$q param=$fq param=$correlation_domain excludeTags=cluster}', # see note under $correlation_domain
+        combo: '{!filters param=$q param=$fq excludeTags=cluster,no_correlation}', # NOTE: $correlation_domain is applied within facets
         post_1928: 'content_max_dtsort:[1929-01-01T00:00:00Z TO *]',
         culture_filter: "{!bool should='{!terms f=subject_search v=literature,customs,religion,ethics,society,social,culture,cultural}' should='{!prefix f=subject_search v=art}'}",
         #combo: '{!bool must=$q filter=\'{!filters param=$fq v=*:*}\'}',
@@ -142,13 +142,12 @@ class CatalogController < ApplicationController
         #cluster: %q~NOT ({!join from=cluster_id to=cluster_id v='record_source_f:"Penn"'} AND record_source_f:"HathiTrust") NOT record_source_id:3~,
         cluster: '{!bool filter=*:* must_not=\'{!bool filter=\\\'{!join from=cluster_id to=cluster_id v=record_source_f:Penn}\\\' filter=record_source_f:HathiTrust}\' must_not=record_source_id:3}',
         back: '{!query v=$correlation_domain}',
-        # NOTE: correlation domain is defined now to include as much information as possible (Penn and Hathi), of
-        # high quality (elvl_rank_isort:0). N.b., this does *not* include "cluster" query, and thus includes overlap
-        # which could artificially affect correlation scores; but the performance tradeoff is worth it, at least until
-        # granular caching of boolean queries can be made available in Solr. In correlation queries that include "fq",
-        # cluster tagged fq is excluded so that it may be included centrally (if/when called for) via this "correlation_domain"
-        # parameter
-        correlation_domain: '{!bool should=record_source_id:1 should=record_source_id:2 filter=elvl_rank_isort:0}',#'{!query v=$cluster}',
+        # NOTE: correlation_domain is separately defined from correlation_domain_refine so that the latter may be applied
+        # and selectively excluded (via excludeTags) for reporting counts over the full cluster domain, while calculating
+        # relatedness over a subset of that domain. This is not always necessary -- e.g., in the case where counts are not
+        # needed, such as for "expert help", which can use correlation_domain directly
+        correlation_domain: '{!bool filter=$cluster filter=$correlation_domain_refine}',
+        correlation_domain_refine: '{!bool filter=elvl_rank_isort:0}',
         fq: '{!query tag=cluster v=$cluster}',
         expand: 'true',
         'expand.field': 'cluster_id',
@@ -211,11 +210,14 @@ class CatalogController < ApplicationController
       a.params.dig(:f, :format_f)&.include?('Database & Article Index')
     }
 
-    # Some filters (e.g., subject_f) are capable of driving meaning correlations;
+    # Some filters (e.g., subject_f) are capable of driving meaningful correlations;
     # others are not, and either generate spurious correlations, or at best pointlessly add extra
     # overhead to Solr request.
     # Keys below indicate filters that we should not attempt to use for purpose of cacluating
     # correlations -- either entirely (nil value) or for an array of certain filter values
+    # TODO: in search_builder, tag corresponding fq's with `no_correlation` so that they may be
+    # excluded from calculation of foreground domains for the purpose of relatedness/correlation
+    # calculation.
     @@CORRELATION_IGNORELIST = {
       :access_f => nil,
       :record_source_f => nil,
@@ -339,7 +341,10 @@ class CatalogController < ApplicationController
     @@SUBJECT_CORRELATION = ['{',
       'subject_correlation:{',
         'type:terms,',
-        'domain:{query:\'{!query v=$cluster}\'},',
+        'domain:{',
+          'query:\'{!query v=$cluster}\',',
+          'filter:\'{!query tag=REFINE v=$correlation_domain_refine}\'',
+        '},',
         'field:subject_f,',
         'limit:25,',
         'refine:true,',
@@ -347,7 +352,13 @@ class CatalogController < ApplicationController
         'facet:{',
           'r1:{',
             'type:func,',
-            'func:\'relatedness($combo,$back)\'',
+            'func:\'relatedness($combo,$back)\',',
+            'min_popularity:0.000001',
+          '},',
+          'cluster_count:{',
+            'domain:{excludeTags:REFINE},',
+            'type:query,',
+            'q:\'*:*\'',
           '}',
         '}',
       '}',
@@ -376,9 +387,10 @@ class CatalogController < ApplicationController
                            collapse: false,
                            partial: 'blacklight/hierarchy/facet_relatedness',
                            json_facet: @@SUBJECT_CORRELATION,
-                           top_level_field: 'subject_correlation'
-                           # if: search_field_accept::(['subject_correlation'], [actionable_filters]
-
+                           top_level_field: 'subject_correlation',
+                           :get_hits => lambda {|v| v[:cluster_count][:count]},
+                           :if => actionable_filters
+                           #:if => search_field_accept::(['subject_correlation'], [actionable_filters])
 
     config.add_facet_field 'azlist', label: 'A-Z List', collapse: false, single: :manual, :facet_type => :header,
                            options: {:layout => 'horizontal_facet_list'}, solr_params: { 'facet.mincount' => 0 },
