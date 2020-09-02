@@ -370,9 +370,16 @@ class CatalogController < ApplicationController
     config.add_facet_field 'subject_specialists', label: 'Subject Area Correlation', collapse: true, :partial => 'blacklight/hierarchy/facet_hierarchy',
         :json_facet => @@SUBJECT_SPECIALISTS, :top_level_field => 'subject_specialists', :get_hits => get_hits, :post_sort => post_sort,
         :if => actionable_filters
-    config.add_facet_field 'subject_correlation', label: 'Subject Correlation', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy',
-        :json_facet => @@SUBJECT_CORRELATION, :top_level_field => 'subject_correlation',
-        :if => search_field_accept::(['subject_correlation'], [actionable_filters])
+
+    config.add_facet_field 'subject_correlation',
+                           label: 'Subject Correlation',
+                           collapse: false,
+                           partial: 'blacklight/hierarchy/facet_relatedness',
+                           json_facet: @@SUBJECT_CORRELATION,
+                           top_level_field: 'subject_correlation'
+                           # if: search_field_accept::(['subject_correlation'], [actionable_filters]
+
+
     config.add_facet_field 'azlist', label: 'A-Z List', collapse: false, single: :manual, :facet_type => :header,
                            options: {:layout => 'horizontal_facet_list'}, solr_params: { 'facet.mincount' => 0 },
                            :if => search_field_reject::(@@NO_FACET_SEARCH_FIELDS, [database_selected]), query: {
