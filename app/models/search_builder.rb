@@ -143,6 +143,7 @@ class SearchBuilder < Blacklight::SearchBuilder
   def override_sort_when_q_is_empty(solr_parameters)
     blacklight_sort = blacklight_params[:sort]
     if blacklight_params[:search_field] == 'subject_correlation'
+      solr_parameters[:presentation_domain] = '{!filters param=$fq excludeTags=cluster,no_correlation}'
       solr_parameters[:sort] = ''
       solr_parameters[:rows] = 0
       return

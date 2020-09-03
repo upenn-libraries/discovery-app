@@ -104,6 +104,7 @@ class CatalogController < ApplicationController
         #cache: 'false',
         defType: 'perEndPosition_dense_shingle_graphSpans',
         combo: '{!filters param=$q param=$fq excludeTags=cluster,no_correlation}', # NOTE: $correlation_domain is applied within facets
+        presentation_domain: '{!query v=$combo}', # default, overridden for first-class subject_correlation search_field
         post_1928: 'content_max_dtsort:[1929-01-01T00:00:00Z TO *]',
         culture_filter: "{!bool should='{!terms f=subject_search v=literature,customs,religion,ethics,society,social,culture,cultural}' should='{!prefix f=subject_search v=art}'}",
         #combo: '{!bool must=$q filter=\'{!filters param=$fq v=*:*}\'}',
@@ -371,7 +372,7 @@ class CatalogController < ApplicationController
           'fg_filtered_count:{', # count over logical base domain, filtered by q and fq
             'domain:{',
               'excludeTags:REFINE,',
-              'filter:\'{!query v=$combo}\',',
+              'filter:\'{!query v=$presentation_domain}\',',
             '},',
             'type:query,',
             'q:\'*:*\'',
@@ -445,28 +446,31 @@ class CatalogController < ApplicationController
             'Other' => { :label => 'Other', :fq => "{!tag=azlist ex=azlist}title_xfacet:/[ -`{-~].*/"}
         }
     config.add_facet_field 'access_f', label: 'Access', collapse: false, solr_params: @@MINCOUNT, query: {
-        'Online' => { :label => 'Online', :fq => "{!join from=cluster_id to=cluster_id v='access_f:Online OR record_source_id:3'}"},
-        'At the library' => { :label => 'At the library', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"},
+        'Online' => { :label => 'Online', :fq => "{!join ex=orig_q from=cluster_id to=cluster_id v='access_f:Online OR record_source_id:3'}"},
+        'At the library' => { :label => 'At the library', :fq => "{!join ex=orig_q from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"},
     }
     config.add_facet_field 'record_source_f', label: 'Record Source', collapse: false, solr_params: @@MINCOUNT, query: {
-        'HathiTrust' => { :label => 'HathiTrust', :fq => "{!join from=cluster_id to=cluster_id v='{!terms f=record_source_id v=2,3}'}"},
-        'Penn' => { :label => 'Penn', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Penn\\'}'}"},
+        'HathiTrust' => { :label => 'HathiTrust', :fq => "{!join ex=orig_q from=cluster_id to=cluster_id v='{!terms f=record_source_id v=2,3}'}"},
+        'Penn' => { :label => 'Penn', :fq => "{!join ex=orig_q from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Penn\\'}'}"},
     }
-    config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false, solr_params: @@MINCOUNT
-    config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z', collapse: false, solr_params: @@MINCOUNT
+    config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false, :ex => 'orig_q', solr_params: @@MINCOUNT
+    config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z', collapse: false,
+        :ex => 'orig_q', solr_params: @@MINCOUNT
     #config.add_facet_field 'subject_taxonomy', label: 'Subject Taxonomy', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy', :json_facet => @@SUBJECT_TAXONOMY, :top_level_field => 'toplevel_subject_f', :helper_method => :render_subcategories
-    config.add_facet_field 'subject_f', label: 'Subject', limit: 5, index_range: 'A'..'Z', collapse: false, solr_params: @@MINCOUNT
-    config.add_facet_field 'language_f', label: 'Language', limit: 5, collapse: false, solr_params: @@MINCOUNT
-    config.add_facet_field 'library_f', label: 'Library', limit: 5, collapse: false, solr_params: @@MINCOUNT
-    config.add_facet_field 'specific_location_f', label: 'Specific location', limit: 5, solr_params: @@MINCOUNT
-    config.add_facet_field 'recently_published', label: 'Recently published', collapse: false, solr_params: @@MINCOUNT, :query => {
+    config.add_facet_field 'subject_f', label: 'Subject', limit: 5, index_range: 'A'..'Z', collapse: false,
+        :ex => 'orig_q', solr_params: @@MINCOUNT
+    config.add_facet_field 'language_f', label: 'Language', limit: 5, collapse: false, :ex => 'orig_q', solr_params: @@MINCOUNT
+    config.add_facet_field 'library_f', label: 'Library', limit: 5, collapse: false, :ex => 'orig_q', solr_params: @@MINCOUNT
+    config.add_facet_field 'specific_location_f', label: 'Specific location', limit: 5, :ex => 'orig_q', solr_params: @@MINCOUNT
+    config.add_facet_field 'recently_published', label: 'Recently published', collapse: false, :ex => 'orig_q',
+        solr_params: @@MINCOUNT, :query => {
         :last_5_years => { label: 'Last 5 years', fq: "pub_max_dtsort:[#{Date.current.year - 4}-01-01T00:00:00Z TO *]" },
         :last_10_years => { label: 'Last 10 years', fq: "pub_max_dtsort:[#{Date.current.year - 9}-01-01T00:00:00Z TO *]" },
         :last_15_years => { label: 'Last 15 years', fq: "pub_max_dtsort:[#{Date.current.year - 14}-01-01T00:00:00Z TO *]" },
     }
-    config.add_facet_field 'publication_date_f', label: 'Publication date', limit: 5, solr_params: @@MINCOUNT
-    config.add_facet_field 'classification_f', label: 'Classification', limit: 5, collapse: false, solr_params: @@MINCOUNT
-    config.add_facet_field 'genre_f', label: 'Form/Genre', limit: 5, solr_params: @@MINCOUNT
+    config.add_facet_field 'publication_date_f', label: 'Publication date', limit: 5, :ex => 'orig_q', solr_params: @@MINCOUNT
+    config.add_facet_field 'classification_f', label: 'Classification', limit: 5, collapse: false, :ex => 'orig_q', solr_params: @@MINCOUNT
+    config.add_facet_field 'genre_f', label: 'Form/Genre', limit: 5, :ex => 'orig_q', solr_params: @@MINCOUNT
     config.add_facet_field 'recently_added_f', label: 'Recently added', solr_params: @@MINCOUNT, :query => {
         :within_90_days => { label: 'Within 90 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (90 * SECONDS_PER_DAY) } TO *]" },
         :within_60_days => { label: 'Within 60 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (60 * SECONDS_PER_DAY) } TO *]" },
@@ -732,6 +736,7 @@ class CatalogController < ApplicationController
       field.label = 'Subject Heading Correlation'
       #field.action = '/catalog/correlation/subject_correlation'
       field.solr_local_parameters = {
+          tag: 'orig_q',
           qf: 'marcrecord_xml', # the most general text search we can get, to avoid spurious correlations
           pf: '' # domain only, no scoring, so pf doesn't matter
       }
