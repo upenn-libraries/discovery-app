@@ -1,0 +1,14 @@
+<div class="well">These subjects are most strongly correlated to your search terms</div>
+<ul class="facet-values list-unstyled">
+  <% display_facet.items.slice(0, 5).each do |item| %>
+    <%# break if item.relatedness < 0.5 %>
+    <li>
+      <span class="facet-label">
+        <%= link_to item.value, search_action_path(search_state.add_facet_params_and_redirect('subject_f', item.value)) %>
+      </span>
+      <span class="facet-count">
+        <%= item.fg_filtered_count %>
+      </span>
+    </li>
+  <% end %>
+</ul>

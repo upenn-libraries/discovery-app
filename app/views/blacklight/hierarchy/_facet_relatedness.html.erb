@@ -1,3 +1,6 @@
+<% if params[:search_field] != 'subject_correlation' %>
+<%=  render partial: 'blacklight/hierarchy/facet_relatedness_sidebar', locals: { display_facet: display_facet } %>
+<% else %>
 <div class="well">These subjects are most strongly correlated to your search terms</div>
 <ul class="facet-values list-unstyled">
   <!--
@@ -24,3 +27,4 @@
     </li>
   <% end %>
 </ul>
+<% end %>
