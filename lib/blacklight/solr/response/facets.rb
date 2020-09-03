@@ -14,8 +14,6 @@ module Blacklight::Solr::Response::Facets
       options[:value] = value if value
       options[:hits] = hits if hits
 
-      @relatedness = options[:relatedness]
-
       super(options)
     end
 
