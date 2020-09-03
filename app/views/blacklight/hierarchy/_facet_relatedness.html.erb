@@ -1,12 +1,25 @@
 <div class="well">These subjects are most strongly correlated to your search terms</div>
 <ul class="facet-values list-unstyled">
-  <% display_facet.items.slice(0, 5).each do |item| %>
+  <!--
+    nocommit: during development, do not further restrict the size of the rendered list.
+    ultimately we may want to restrict this, either capped to an arbitrary size (though
+    this might better be done with facet "limit" arg), or setting a threshold relatedness,
+    below which items are not displayed to the user.
+  -->
+  <% display_facet.items.each do |item| %>
+    <%# break if item.relatedness < 0.5 %>
     <li>
       <span class="facet-label">
         <%= link_to item.value, search_action_path(search_state.add_facet_params_and_redirect('subject_f', item.value)) %>
       </span>
       <span class="facet-count">
-        <%= item.relatedness %>
+        <!--
+          nocommit: during development, dump all the info we have.
+          ultimately we'll want to decide which info is most useful to users,
+          and display only that (not ruling out the possibility of dispaying
+          multiple/all)
+        -->
+        <%= item.fg_filtered_count %>/<%= item.fg_all_count %> (<%= item.relatedness %>)
       </span>
     </li>
   <% end %>

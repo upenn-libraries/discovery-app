@@ -274,6 +274,11 @@ class CatalogController < ApplicationController
     }
 
     config.facet_types = {
+        :first_class => {
+            :priority => 3,
+            :sidebar => false,
+            :display => 'First class filters'
+        },
         :header => {
             :priority => 2,
             :sidebar => false,
@@ -346,17 +351,28 @@ class CatalogController < ApplicationController
           'filter:\'{!query tag=REFINE v=$correlation_domain_refine}\'',
         '},',
         'field:subject_f,',
+        #'mincount:2,', # consider terms with at least "mincount" in the correlation_domain
         'limit:25,',
         'refine:true,',
         'sort:{r1:desc},',
         'facet:{',
           'r1:{',
             'type:func,',
-            'func:\'relatedness($combo,$back)\',',
-            'min_popularity:0.000001',
+            #'min_popularity:0.0000004,', # 4 in 10 million
+            'func:\'relatedness($combo,$back)\'',
           '},',
-          'cluster_count:{',
-            'domain:{excludeTags:REFINE},',
+          'fg_all_count:{', # count over unfiltered logical base domain
+            'domain:{',
+              'excludeTags:REFINE',
+            '},',
+            'type:query,',
+            'q:\'*:*\'',
+          '},',
+          'fg_filtered_count:{', # count over logical base domain, filtered by q and fq
+            'domain:{',
+              'excludeTags:REFINE,',
+              'filter:\'{!query v=$combo}\',',
+            '},',
             'type:query,',
             'q:\'*:*\'',
           '}',
@@ -388,9 +404,16 @@ class CatalogController < ApplicationController
                            partial: 'blacklight/hierarchy/facet_relatedness',
                            json_facet: @@SUBJECT_CORRELATION,
                            top_level_field: 'subject_correlation',
-                           :get_hits => lambda {|v| v[:cluster_count][:count]},
+                           :facet_type => :first_class,
+                           # NOTE: "get_hits" here below is somewhat arbitrary, given that we may expect
+                           # to render with a custom partial that directly reads the specific values
+                           # we care about. The main role it plays here is to ensure that the vestigial
+                           # "hits" attribute is populated with something meaningful. Sensible choices
+                           # here would include:
+                           #"  fg_all_count" (term count over unfiltered base domain)
+                           #"  fg_filtered_count" (term count over base domain filtered by q and fq)
+                           :get_hits => lambda {|v| v[:fg_all_count][:count]},
                            :if => actionable_filters
-                           #:if => search_field_accept::(['subject_correlation'], [actionable_filters])
 
     config.add_facet_field 'azlist', label: 'A-Z List', collapse: false, single: :manual, :facet_type => :header,
                            options: {:layout => 'horizontal_facet_list'}, solr_params: { 'facet.mincount' => 0 },

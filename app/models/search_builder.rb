@@ -102,14 +102,7 @@ class SearchBuilder < Blacklight::SearchBuilder
     return unless qq.present?
     bq = blacklight_params[:q]
     return unless bq.present?
-    solr_parameters[:orig_q] = solr_parameters[:q]
     search_field = blacklight_params[:search_field]
-    if search_field == 'subject_correlation'
-      solr_parameters['rows'] = 0
-      solr_parameters[:q] = 'fake_field:fake_value' # domain defined at facet level only
-      solr_parameters['combo'] = '{!filters param=$orig_q param=$fq excludeTags=cluster,no_correlation}' # NOTE: $correlation_domain is applied within facets
-      return
-    end
     return if search_field.present? && search_field != 'keyword'
     weight = '26'
     augmented_solr_q = '{!maxscore}'\
@@ -130,7 +123,6 @@ class SearchBuilder < Blacklight::SearchBuilder
   end
 
   def modify_combo_param_with_absent_q(solr_parameters)
-    return if blacklight_params[:search_field] == 'subject_correlation'
     if !blacklight_params[:q].present?
       if blacklight_params[:f].present?
         # we have user filters, so avoid NPE by ignoring q in combo domain
@@ -150,6 +142,11 @@ class SearchBuilder < Blacklight::SearchBuilder
   # a sort, we sort by id to provide stable deterministic ordering.
   def override_sort_when_q_is_empty(solr_parameters)
     blacklight_sort = blacklight_params[:sort]
+    if blacklight_params[:search_field] == 'subject_correlation'
+      solr_parameters[:sort] = ''
+      solr_parameters[:rows] = 0
+      return
+    end
     return if blacklight_sort.present? && blacklight_sort != 'score desc'
     access_f = blacklight_params.dig(:f, :access_f)
     if !blacklight_params[:q].present?
@@ -172,8 +169,6 @@ class SearchBuilder < Blacklight::SearchBuilder
 	# privilege online holdings
         sort = "min(def(prt_count_isort,0),1) desc,#{sort}"
       end
-    elsif blacklight_params[:search_field] == 'subject_correlation'
-      sort = ''
     else
       sort = solr_parameters[:sort]
       sort = 'score desc' if !sort.present?

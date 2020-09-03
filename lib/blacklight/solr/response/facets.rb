@@ -276,7 +276,8 @@ module Blacklight::Solr::Response::Facets
     subfacet_field = nil
     subfacets = nil
     lst.find do |key, value|
-      if key != 'val' && key != 'count' && key != 'r1' && key != 'cluster_count'
+      # nocommit: TODO: more rational, general way of doing this (and clarify what's actually going on!)
+      if key != 'val' && key != 'count' && key != 'r1' && key != 'fg_all_count' && key != 'fg_filtered_count'
         subfacet_field = key
         subfacets = value[:buckets] || value
       end
@@ -291,7 +292,12 @@ module Blacklight::Solr::Response::Facets
       field: field_name,
       items: items,
       fq: parent_fq,
-      relatedness: lst.dig('r1', 'relatedness')
+      # nocommit: TODO: is there a more general way to do below? Maybe even just directly/naively put
+      # all args into a hash, forcing consumers to directly use the structure of the json facet response?
+      # making FacetItem naive in this way might be more appropriate.
+      relatedness: lst.dig('r1', 'relatedness'),
+      fg_all_count: lst.dig('fg_all_count', 'count'),
+      fg_filtered_count: lst.dig('fg_filtered_count', 'count')
     )
   end
 
