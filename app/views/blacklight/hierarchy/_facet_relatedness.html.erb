@@ -22,7 +22,11 @@
           and display only that (not ruling out the possibility of dispaying
           multiple/all)
         -->
-        <%= item.fg_filtered_count %>/<%= item.fg_all_count %> (<%= item.relatedness %>)
+        <% if item.fg_filtered_count == item.fg_all_count %>
+        <%=  "#{item.fg_filtered_count} (#{item.relatedness})" %>
+        <% else %>
+        <%=  "#{item.fg_filtered_count}/#{item.fg_all_count} (#{item.relatedness})" %>
+        <% end %>
       </span>
     </li>
   <% end %>

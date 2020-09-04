@@ -359,7 +359,7 @@ class CatalogController < ApplicationController
         'facet:{',
           'r1:{',
             'type:func,',
-            #'min_popularity:0.0000004,', # 4 in 10 million
+            'min_popularity:0.0000004,', # 4 in 10 million
             'func:\'relatedness($combo,$back)\'',
           '},',
           'fg_all_count:{', # count over unfiltered logical base domain
