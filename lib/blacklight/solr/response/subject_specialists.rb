@@ -12,7 +12,8 @@ module Blacklight::Solr::Response::SubjectSpecialists
         specialty = specialty.map { |k, value| [k, CGI.unescapeHTML(value)] }.to_h
         name = specialty["full_name"].parameterize.underscore
 
-        if subjects[subject_key]
+        subject[subject_key] = [] unless subjects[subject_key]
+        subject[subject_key] << name
           subjects[subject_key] << name
         else
           subjects[subject_key] = [name]
