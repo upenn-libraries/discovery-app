@@ -352,14 +352,17 @@ class CatalogController < ApplicationController
           'filter:\'{!query tag=REFINE v=$correlation_domain_refine}\'',
         '},',
         'field:subject_f,',
-        #'mincount:2,', # consider terms with at least "mincount" in the correlation_domain
+        # NOTE: mincount and min_pop are essentially interchangeable here, as long as
+        # $back == $correlation_domain. mincount is more efficient because it pre-filters,
+        # and it's also easier to explain/understand intuitively.
+        'mincount:2,', # consider terms with at least "mincount" in the correlation_domain
         'limit:25,',
         'refine:true,',
         'sort:{r1:desc},',
         'facet:{',
           'r1:{',
             'type:func,',
-            'min_popularity:0.0000004,', # 4 in 10 million
+            #'min_popularity:0.0000004,', # 4 in 10 million; prefer mincount (see above)
             'func:\'relatedness($combo,$back)\'',
           '},',
           'fg_all_count:{', # count over unfiltered logical base domain
