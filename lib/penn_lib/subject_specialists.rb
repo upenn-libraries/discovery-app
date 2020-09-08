@@ -1,6 +1,8 @@
-module Blacklight::Solr::Response::SubjectSpecialists
-  class Data
-    def self.subjects
+module PennLib
+  # methods to facilitate retrieval of subject specialist data from PennLib Drupal
+  module SubjectSpecialists
+    # return hash of subjects for use in display of subject specialist info
+    def subjects
       specialists = ActiveSupport::HashWithIndifferentAccess.new
       subjects = ActiveSupport::HashWithIndifferentAccess.new
       specialists_url = 'https://www.library.upenn.edu/rest/views/subject-specialists?_format=json'
@@ -8,7 +10,7 @@ module Blacklight::Solr::Response::SubjectSpecialists
       live_specialists_data.each do |specialty|
         # nasty way to make the subject hash key match Drupal anchor tag ids
         subject_key = specialty['subject_specialty'].gsub(/[&#;]/, '')
-                                                    .parameterize.underscore
+                          .parameterize.underscore
         specialty = specialty.transform_values { |v| CGI.unescapeHTML v }
         name = specialty['full_name'].parameterize.underscore
         subjects[subject_key] = [] unless subjects[subject_key]
