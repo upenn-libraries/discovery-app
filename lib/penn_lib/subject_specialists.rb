@@ -3,7 +3,7 @@ module PennLib
   # Drupal site
   module SubjectSpecialists
     DRUPAL_SPECIALISTS_URL =
-      'https://www.zzlibrary.upenn.edu/rest/views/subject-specialists?_format=json'.freeze
+      'https://www.library.upenn.edu/rest/views/subject-specialists?_format=json'.freeze
     CACHE_KEY = :subject_specialist_data
 
     class << self
