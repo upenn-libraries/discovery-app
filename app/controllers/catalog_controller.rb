@@ -81,38 +81,6 @@ class CatalogController < ApplicationController
     end
   end
 
-  def self.generate_cluster_fq(index, limit, elvl = false)
-    return '*:*' if limit < 1
-    ret = '{!bool tag=cluster ex=cluster'
-    if elvl
-      i = 0
-      loop do
-        ret += " must_not=$y#{i}_#{index}"
-        break if i >= limit
-        i += 1
-      end
-      i = 0
-      loop do
-        ret += " must_not=$z#{i}_#{index}"
-        break if i >= limit
-        i += 1
-      end
-    else
-      i = 0
-      loop do
-        if index < i
-          exclude_filter_label = "x#{i}"
-        else
-          exclude_filter_label = "x#{i}_#{index}"
-        end
-        ret += " must_not=$#{exclude_filter_label}"
-        break if i >= limit
-        i += 1
-      end
-    end
-    ret + '}'
-  end
-
   configure_blacklight do |config|
     # default advanced config values
     config.advanced_search ||= Blacklight::OpenStructWithHashAccess.new
@@ -166,7 +134,6 @@ class CatalogController < ApplicationController
         'facet.mincount': 0,
         #      fq: '{!tag=cluster}{!collapse field=cluster_id nullPolicy=expand size=5000000 min=record_source_id}',
         # this approach needs expand.field=cluster_id
-        # MOVE TO FACET: fq: '{!bool tag=cluster must_not=$x1 must_not=$x2 must_not=$x3 must_not=$x4 must_not=$x5 must_not=$x6 must_not=$x7}',
         expand: 'true',
         'expand.field': 'cluster_id',
         'expand.q': '*:*',
@@ -334,16 +301,16 @@ class CatalogController < ApplicationController
 #        'At the library' => { :label => 'At the library', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"}
 #    }
     config.add_facet_field 'cluster', label: 'Prioritize your institution', collapse: false, single: :manual, solr_params: @@MINCOUNT, query: {
-        'Brown' => { :label => 'Brown', :fq => generate_cluster_fq(0, 8)},
-        'Chicago' => { :label => 'Chicago', :fq => generate_cluster_fq(1, 8)},
-        'Columbia' => { :label => 'Columbia', :fq => generate_cluster_fq(2, 8)},
-        'Cornell' => { :label => 'Cornell', :fq => generate_cluster_fq(3, 8)},
-        'Duke' => { :label => 'Duke', :fq => generate_cluster_fq(4, 8)},
-        'Harvard' => { :label => 'Harvard', :fq => generate_cluster_fq(5, 8)},
-        'Penn' => { :label => 'Penn', :fq => generate_cluster_fq(6, 8)},
-        'Princeton' => { :label => 'Princeton', :fq => generate_cluster_fq(7, 8)},
-        'Stanford' => { :label => 'Stanford', :fq => generate_cluster_fq(8, 8)},
-        'HathiTrust' => { :label => 'HathiTrust', :fq => generate_cluster_fq(9, 8)},
+        'Brown' => { :label => 'Brown', :fq => '{!tieredDomainDedupe tag=cluster ex=cluster f=record_source_f joinField=cluster_id v=Brown,Chicago,Columbia,Cornell,Duke,Harvard,Penn,Princeton,Stanford,HathiTrust}'},
+        'Chicago' => { :label => 'Chicago', :fq => '{!tieredDomainDedupe tag=cluster ex=cluster f=record_source_f joinField=cluster_id v=Chicago,Brown,Columbia,Cornell,Duke,Harvard,Penn,Princeton,Stanford,HathiTrust}'},
+        'Columbia' => { :label => 'Columbia', :fq => '{!tieredDomainDedupe tag=cluster ex=cluster f=record_source_f joinField=cluster_id v=Columbia,Brown,Chicago,Cornell,Duke,Harvard,Penn,Princeton,Stanford,HathiTrust}'},
+        'Cornell' => { :label => 'Cornell', :fq => '{!tieredDomainDedupe tag=cluster ex=cluster f=record_source_f joinField=cluster_id v=Cornell,Brown,Chicago,Columbia,Duke,Harvard,Penn,Princeton,Stanford,HathiTrust}'},
+        'Duke' => { :label => 'Duke', :fq => '{!tieredDomainDedupe tag=cluster ex=cluster f=record_source_f joinField=cluster_id v=Duke,Brown,Chicago,Columbia,Cornell,Harvard,Penn,Princeton,Stanford,HathiTrust}'},
+        'Harvard' => { :label => 'Harvard', :fq => '{!tieredDomainDedupe tag=cluster ex=cluster f=record_source_f joinField=cluster_id v=Harvard,Brown,Chicago,Columbia,Cornell,Duke,Penn,Princeton,Stanford,HathiTrust}'},
+        'Penn' => { :label => 'Penn', :fq => '{!tieredDomainDedupe tag=cluster ex=cluster f=record_source_f joinField=cluster_id v=Penn,Brown,Chicago,Columbia,Cornell,Duke,Harvard,Princeton,Stanford,HathiTrust}'},
+        'Princeton' => { :label => 'Princeton', :fq => '{!tieredDomainDedupe tag=cluster ex=cluster f=record_source_f joinField=cluster_id v=Princeton,Brown,Chicago,Columbia,Cornell,Duke,Harvard,Penn,Stanford,HathiTrust}'},
+        'Stanford' => { :label => 'Stanford', :fq => '{!tieredDomainDedupe tag=cluster ex=cluster f=record_source_f joinField=cluster_id v=Stanford,Brown,Chicago,Columbia,Cornell,Duke,Harvard,Penn,Princeton,HathiTrust}'},
+        'HathiTrust' => { :label => 'HathiTrust', :fq => '{!tieredDomainDedupe tag=cluster ex=cluster f=record_source_f joinField=cluster_id v=HathiTrust,Brown,Chicago,Columbia,Cornell,Duke,Harvard,Penn,Princeton,Stanford}'},
 #        'Brown-e' => { :label => 'Brown-e', :fq => generate_cluster_fq(0, 6, true)},
 #        'Columbia-e' => { :label => 'Columbia-e', :fq => generate_cluster_fq(1, 6, true)},
 #        'Cornell-e' => { :label => 'Cornell-e', :fq => generate_cluster_fq(2, 6, true)},
