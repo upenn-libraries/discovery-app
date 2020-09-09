@@ -83,38 +83,6 @@ class CatalogController < ApplicationController
     end
   end
 
-  def self.generate_cluster_fq(index, limit, elvl = false)
-    return '*:*' if limit < 1
-    ret = '{!bool tag=cluster ex=cluster'
-    if elvl
-      i = 0
-      loop do
-        ret += " must_not=$y#{i}_#{index}"
-        break if i >= limit
-        i += 1
-      end
-      i = 0
-      loop do
-        ret += " must_not=$z#{i}_#{index}"
-        break if i >= limit
-        i += 1
-      end
-    else
-      i = 0
-      loop do
-        if index < i
-          exclude_filter_label = "x#{i}"
-        else
-          exclude_filter_label = "x#{i}_#{index}"
-        end
-        ret += " must_not=$#{exclude_filter_label}"
-        break if i >= limit
-        i += 1
-      end
-    end
-    ret + '}'
-  end
-
   configure_blacklight do |config|
     # default advanced config values
     config.advanced_search ||= Blacklight::OpenStructWithHashAccess.new
@@ -168,7 +136,6 @@ class CatalogController < ApplicationController
         'facet.mincount': 0,
         #      fq: '{!tag=cluster}{!collapse field=cluster_id nullPolicy=expand size=5000000 min=record_source_id}',
         # this approach needs expand.field=cluster_id
-        # MOVE TO FACET: fq: '{!bool tag=cluster must_not=$x1 must_not=$x2 must_not=$x3 must_not=$x4 must_not=$x5 must_not=$x6 must_not=$x7}',
         expand: 'true',
         'expand.field': 'cluster_id',
         'expand.q': '*:*',
@@ -300,7 +267,7 @@ class CatalogController < ApplicationController
 
     config.add_facet_field 'cluster', label: 'Search domain', collapse: false, single: :manual, solr_params: @@MINCOUNT, query: {
         #'Penn' => { :label => 'Penn', :fq => '{!term tag=cluster ex=cluster f=record_source_f v=Penn}'},
-        'Include Partner Libraries' => { :label => 'Include Partner Libraries', :fq => generate_cluster_fq(6, 8)}
+        'Include Partner Libraries' => { :label => 'Include Partner Libraries', :fq => '{!tieredDomainDedupe tag=cluster ex=cluster f=record_source_f joinField=cluster_id v=Penn,Brown,Chicago,Columbia,Cornell,Duke,Harvard,Princeton,Stanford,HathiTrust}'}
     }
     config.add_facet_field 'db_subcategory_f', label: 'Database Subject', if: lambda { |a,b,c| false }
     config.add_facet_field 'db_category_f', label: 'Database Subject', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy',
