@@ -10,16 +10,25 @@ module BlacklightHelper
   end
 
   def render_expert_help(specialists)
-    specialists.present? && specialists.items.first.hits > 50000 ? (render partial: 'catalog/expert_help', locals: {subject: specialists.items.first.value}) : (render partial: 'catalog/ask')
+    if specialists.present? && specialists.items.first.hits > 50000
+      subject = specialists.items.first.value
+      specialist_data = PennLib::SubjectSpecialists.data
+    end
+    if specialist_data
+      specialist = specialist_data[subject.to_sym].sample
+      render partial: 'catalog/expert_help', locals: { specialist: specialist, subject: subject }
+    else
+      render partial: 'catalog/ask'
+    end
   end
 
   # override so that we can insert separators
-    def search_fields
+  def search_fields
     super.map do |option|
       field_def = blacklight_config.search_fields[option[1]]
       separator = (field_def && field_def.separator_beneath) ?
-          [ '--------', '--------', { disabled: 'true', class: 'hidden-xs' } ] : nil
-      [ option, separator].compact
+        [ '--------', '--------', { disabled: 'true', class: 'hidden-xs' } ] : nil
+      [option, separator].compact
     end.flatten(1)
   end
 

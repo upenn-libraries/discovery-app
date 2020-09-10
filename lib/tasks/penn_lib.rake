@@ -120,46 +120,6 @@ namespace :pennlib do
 
   end
 
-  namespace :subject_specialists do
-    desc 'pulls the current list of subject specialists and their photos from Drupal'
-    task :update => :environment do |t, args|
-      specialists = ActiveSupport::HashWithIndifferentAccess.new
-      subjects = ActiveSupport::HashWithIndifferentAccess.new
-      specialists_url = 'https://www.library.upenn.edu/rest/views/subject-specialists?_format=json'
-      live_specialists_data = JSON.parse(Faraday.get(specialists_url).body)
-      live_specialists_data.each do |specialty|
-        # nasty way to make the subject hash key match Drupal anchor tag ids
-        subject_key = specialty["subject_specialty"].gsub(/[&#;]/,"").parameterize.underscore
-
-        specialty = specialty.map { |k, value| [k, CGI.unescapeHTML(value)] }.to_h
-        name = specialty["full_name"].parameterize.underscore
-
-        if subjects[subject_key]
-          subjects[subject_key] << name
-        else
-          subjects[subject_key] = [name]
-        end
-
-        if specialists[name]
-          specialists[name][:subjects] << specialty["subject_specialty"]
-        else
-          specialty[:subjects] = [specialty["subject_specialty"]]
-          specialty[:display_name] = specialty["full_name"]
-          specialty[:portrait] = "#{name}.jpg"
-          img_url = "https://www.library.upenn.edu#{specialty["thumbnail"].gsub('/styles/thumbnail/public', '')}"
-          File.open(Rails.root.join('app', 'assets', 'images', "#{name}.jpg"), 'wb') {|file| file.write(Faraday.get(img_url).body) }
-          specialists[name] = specialty
-        end
-      end
-
-      subjects.each do |subject, staff|
-        subjects[subject] = staff.map{ |name| specialists[name] }
-      end
-      File.write(Rails.root.join('config', 'translation_maps', 'expert_help_directory.json'), JSON.pretty_generate(specialists))
-      File.write(Rails.root.join('config', 'translation_maps', 'expert_help_subjects.json'), JSON.pretty_generate(subjects))
-    end
-  end
-
   namespace :oai do
 
     desc 'Parse IDs from OAI file and delete them from Solr index'
