@@ -68,8 +68,6 @@ class SearchBuilder < Blacklight::SearchBuilder
     super(params_copy)
   end
 
-  @@record_sources = ['Brown', 'Chicago', 'Columbia', 'Cornell', 'Duke', 'Harvard', 'Penn', 'Princeton', 'Stanford', 'HathiTrust']
-
   def add_cluster_params(solr_parameters)
     if 'Include Partner Libraries' != blacklight_params.dig(:f, :cluster, 0)
       solr_parameters[:fq] << '{!term tag=cluster ex=cluster f=record_source_f v=Penn}'
