@@ -248,7 +248,7 @@ module Blacklight::Solr::Response::Facets
       facet_config = blacklight_config.facet_fields[facet_config_name]
       field_name = facet_config[:top_level_field]
       get_hits = facet_config[:get_hits] || @@DEFAULT_GET_HITS
-      buckets = value[:buckets] || value.each_with_object([]) do |(k, v), arr|
+      buckets = value[:buckets] || value.dig(:correlation, :buckets) || value.each_with_object([]) do |(k, v), arr|
         if k != 'count'
           v[:val] = k
           arr << v
