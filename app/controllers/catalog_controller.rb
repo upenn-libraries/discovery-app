@@ -350,20 +350,20 @@ class CatalogController < ApplicationController
         'domain:{',
           'query:\'{!query v=$cluster}\'',
         '},',
-        'q:\'{!query tag=REFINE v=$correlation_domain_refine}\',',
+        'q:\'{!query tag=REFINE v=$correlation_domain}\',',
         'facet:{',
           'correlation:{',
             'type:terms,',
             'field:subject_f,',
             # NOTE: mincount pre-filters vals that could not possibly match min_pop
-            'mincount:3,', # consider terms with at least "mincount" in the correlation_domain
+            'mincount:3,', # guarantee fgSize >= 3
             'limit:25,',
             'refine:true,',
             'sort:{r1:desc},',
             'facet:{',
               'r1:{',
                 'type:func,',
-                'min_popularity:0.0000004,', # 4 in 10 million; prefer mincount (see above)
+                'min_popularity:0.0000002,', # lower bound n/bgSize to guarantee fgCount>=n (here, n==2)
                 'func:\'relatedness($combo,$back)\'',
               '},',
               'fg_all_count:{', # count over unfiltered logical base domain

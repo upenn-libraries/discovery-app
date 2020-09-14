@@ -11,7 +11,7 @@
     # etc. as a group.
     type: query,
     domain: {query: '{!query v=$correlation_domain}'},
-    q: '*:*',
+    q: '{!query v=$correlation_domain}', # specify here as well as in domain; fgSet only respects fcontext.parent.filter!
     facet:{
   accounting : {
     type: query,
