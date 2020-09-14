@@ -115,3 +115,5 @@ gem 'blacklight-ris', :git => 'https://github.com/upenn-libraries/blacklight-ris
 gem 'oga'
 
 gem 'httparty'
+
+gem 'honeybadger'
