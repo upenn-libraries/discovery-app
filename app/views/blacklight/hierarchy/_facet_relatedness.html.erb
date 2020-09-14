@@ -10,7 +10,7 @@
     below which items are not displayed to the user.
   -->
   <% display_facet.items.each do |item| %>
-    <%# break if item.relatedness < 0.5 %>
+    <% break unless item.relatedness > -Float::INFINITY %>
     <li>
       <span class="facet-label">
         <%= link_to item.value, search_action_path(search_state.add_facet_params_and_redirect('subject_f', item.value)) %>
