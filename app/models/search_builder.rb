@@ -2,10 +2,38 @@
 class SearchBuilder < Blacklight::SearchBuilder
   include Blacklight::Solr::SearchBuilderBehavior
   include BlacklightAdvancedSearch::AdvancedSearchBuilder
-  self.default_processor_chain += [:add_advanced_search_to_solr, :override_sort_when_q_is_empty, :handle_specialists_without_q,
+  self.default_processor_chain += [:add_advanced_search_to_solr, :override_sort_when_q_is_empty, :modify_combo_param_with_absent_q,
       :lowercase_expert_boolean_operators, :add_left_anchored_title, :add_routing_hash]
   include BlacklightRangeLimit::RangeLimitBuilder
   include BlacklightSolrplugins::FacetFieldsQueryFilter
+
+  ##
+  # NOTE: this is patterned off an analogous method in lib/blacklight/configuration/context.rb
+  # NOTE: It *may* be possible to access the original method from here, but I couldn't figure out how
+  # NOTE: In stock BL, these conditionals are only checked to determine whether to *render* the facets
+  # NOTE: We evaluate here to prevent making expensive facet requests that will just be ignored!
+  # Evaluate conditionals for a configuration with if/unless attributes
+  #
+  # @param [#if,#unless] config an object that responds to if/unless
+  # @return [Boolean]
+  def evaluate_if_unless_configuration(config, blacklight_params)
+    return config if config == true or config == false
+
+    params_context = Object.new
+    params_context.define_singleton_method(:params) do
+      blacklight_params
+    end
+
+    if_value = !config.respond_to?(:if) ||
+                    config.if.blank? || config.if == true ||
+                    config.if.call(params_context, nil, nil)
+
+    unless_value = !config.respond_to?(:unless) ||
+                    config.unless.blank? ||
+                    !config.unless.call(params_context, nil, nil)
+
+    if_value && unless_value
+  end
 
   ##
   # Add appropriate Solr facetting directives in, including
@@ -13,6 +41,7 @@ class SearchBuilder < Blacklight::SearchBuilder
   # about solr 'fq', this is about solr facet.* params.
   def add_facetting_to_solr(solr_parameters)
     facet_fields_to_include_in_request.each do |field_name, facet|
+      next unless evaluate_if_unless_configuration(facet, blacklight_params)
       solr_parameters[:facet] ||= true
 
       if facet.json_facet
@@ -93,16 +122,16 @@ class SearchBuilder < Blacklight::SearchBuilder
     solr_parameters[:q] = augmented_solr_q
   end
 
-  def handle_specialists_without_q(solr_parameters)
+  def modify_combo_param_with_absent_q(solr_parameters)
     if !blacklight_params[:q].present?
       if blacklight_params[:f].present?
         # we have user filters, so avoid NPE by ignoring q in combo domain
         solr_parameters['combo'] = '{!filters param=$fq excludeTags=cluster}'
       else
-        # no user input, so remove pointless relatedness calculations
-        solr_parameters['json.facet'].delete_if do |top_level_facet|
-          top_level_facet.starts_with?('{subject_specialists')
-        end
+        # no user input, so remove pointless "combo" arg
+        # if any facets have been mistakenly added that reference $combo, they
+        # will fail
+        solr_parameters.delete('combo')
       end
     end
   end

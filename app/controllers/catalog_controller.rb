@@ -202,6 +202,33 @@ class CatalogController < ApplicationController
       a.params.dig(:f, :format_f)&.include?('Database & Article Index')
     }
 
+    # Some filters (e.g., subject_f) are capable of driving meaning correlations;
+    # others are not, and either generate spurious correlations, or at best pointlessly add extra
+    # overhead to Solr request.
+    # Keys below indicate filters that we should not attempt to use for purpose of cacluating
+    # correlations -- either entirely (nil value) or for an array of certain filter values
+    @@CORRELATION_IGNORELIST = {
+      :access_f => nil,
+      :record_source_f => nil,
+      :format_f => ['Database & Article Index']
+    }
+
+    actionable_filters = lambda { |a, b, c|
+      params = a.params
+      return true if params[:q].present?
+      f = params[:f]
+      return false if f.nil?
+      # we return true if there is at least one non-ignorelisted filter
+      return true if f.size > @@CORRELATION_IGNORELIST.size
+      f.symbolize_keys.each do |facet_key, facet_values|
+        return true unless @@CORRELATION_IGNORELIST.include?(facet_key) # no vals are ignored for this key
+        ignorelisted_vals = @@CORRELATION_IGNORELIST[facet_key]
+        next unless ignorelisted_vals # all vals are ignored for this key
+        return true if (facet_values - ignorelisted_vals).present? # there is at least one non-ignored val
+      end
+      return false
+    }
+
     get_hits = lambda { |v|
       r1 = v[:r1]
       r1.nil? ? 0 : (r1[:relatedness].to_f * 100000).to_i
@@ -290,7 +317,8 @@ class CatalogController < ApplicationController
     config.add_facet_field 'db_type_f', label: 'Database Type', limit: -1, collapse: false, :if => database_selected,
                            :facet_type => :database, solr_params: @@MINCOUNT
     config.add_facet_field 'subject_specialists', label: 'Subject Area Correlation', collapse: true, :partial => 'blacklight/hierarchy/facet_hierarchy',
-        :json_facet => @@SUBJECT_SPECIALISTS, :top_level_field => 'subject_specialists', :get_hits => get_hits, :post_sort => post_sort
+        :json_facet => @@SUBJECT_SPECIALISTS, :top_level_field => 'subject_specialists', :get_hits => get_hits, :post_sort => post_sort,
+        :if => actionable_filters
     config.add_facet_field 'azlist', label: 'A-Z List', collapse: false, single: :manual, :facet_type => :header,
                            options: {:layout => 'horizontal_facet_list'}, solr_params: { 'facet.mincount' => 0 }, :if => database_selected, query: {
             'A' => { :label => 'A', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='a'}"},
