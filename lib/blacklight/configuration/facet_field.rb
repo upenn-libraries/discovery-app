@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 module Blacklight
   class Configuration::FacetField < Blacklight::Configuration::Field
-    def normalize! blacklight_config = nil
+    def normalize! blacklight_config = nil #EXTRACT:candidate Xlib/blacklight/configuration/facet_field.rb
       self.query.stringify_keys! if self.query
 
       self.collapse = true if self.collapse.nil?

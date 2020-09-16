@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 module FacetsHelper
+  #EXTRACT:candidate Xapp/helpers/blacklight/facets_helper_behavior.rb
   include Blacklight::FacetsHelperBehavior
 
   def get_display_facet_types

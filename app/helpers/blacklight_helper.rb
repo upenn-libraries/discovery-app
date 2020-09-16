@@ -5,7 +5,7 @@ module BlacklightHelper
 
   # override Blacklight to replace the default bar (containing simple search form)
   # with our fancy tabbed search bar
-  def render_search_bar
+  def render_search_bar #EXTRACT:wholesale Xapp/helpers/blacklight/blacklight_helper_behavior.rb
     render partial: 'catalog/franklin_search_bar'
   end
 
@@ -23,7 +23,7 @@ module BlacklightHelper
   end
 
   # override so that we can insert separators
-  def search_fields
+  def search_fields #EXTRACT:super Xapp/helpers/blacklight/configuration_helper_behavior.rb
     super.map do |option|
       field_def = blacklight_config.search_fields[option[1]]
       separator = (field_def && field_def.separator_beneath) ?

@@ -1,3 +1,4 @@
+#EXTRACT:candidate probably want to push this upstream?
 
 # Mixin for CatalogController that extends search/retrieval
 # methods to populate the SolrDocuments with their expanded documents

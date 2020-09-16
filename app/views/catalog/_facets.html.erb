@@ -1,4 +1,5 @@
 <% # main container for facets/limits menu -%>
+<!-- #EXTRACT:candidate Xapp/views/catalog/_facets.html.erb -->
 <%= render_expert_help(@response.aggregations["subject_specialists"]) %>
 <% if has_facet_values? %>
 <div id="facets" class="facets sidenav">

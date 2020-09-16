@@ -4,6 +4,7 @@ module Blacklight
   # They are only dependent on `blacklight_config` and `@response`
   #
   module Facet
+    #EXTRACT:TODO This module is unmodified except for facet_field_names! Probably should rather inherit class and selectively override?
     delegate :facet_configuration_for_field, to: :blacklight_config
 
     def facet_paginator(field_config, response_data)
@@ -20,7 +21,7 @@ module Blacklight
       fields.map { |field| facet_by_field_name(field) }.compact
     end
 
-    def facet_field_names(facet_type = :all)
+    def facet_field_names(facet_type = :all) #EXTRACT:candidate Xapp/controllers/concerns/blacklight/facet.rb
       field_configs = blacklight_config.facet_fields.values
       field_configs = field_configs.select {|fc| fc[:facet_type] == facet_type } unless facet_type == :all
       field_configs.map(&:field)

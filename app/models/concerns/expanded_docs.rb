@@ -1,3 +1,4 @@
+#EXTRACT:candidate probably want to push this upstream?
 
 # mixin for SolrDocument to support storing the associated
 # expanded documents from Solr response

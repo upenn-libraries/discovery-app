@@ -1,0 +1,35 @@
+		blacklight_helper.rb ./app/helpers/blacklight_helper.rb #wholesale,super
+		blacklight.html.erb ./app/views/layouts/blacklight.html.erb #candidate
+		blacklight_url_helper.rb ./app/helpers/blacklight_url_helper.rb #wholesale
+		catalog_controller.rb ./app/controllers/catalog_controller.rb #wholesale,super
+	catalog_controller.rb ./lib/generators/blacklight/templates/catalog_controller.rb #none
+		catalog_helper.rb ./app/helpers/catalog_helper.rb #candidate
+		facet_field.rb ./lib/blacklight/configuration/facet_field.rb #candidate
+		facet.rb ./app/controllers/concerns/blacklight/facet.rb #candidate
+		facets_helper.rb ./app/helpers/facets_helper.rb #candidate
+		_facets.html.erb ./app/views/catalog/_facets.html.erb #candidate
+		facets.rb ./lib/blacklight/solr/response/facets.rb #candidate
+		_flash_messages.html.erb ./app/views/shared/_flash_messages.html.erb #candidate
+		_footer.html.erb ./app/views/shared/_footer.html.erb #candidate
+		_header_navbar.html.erb ./app/views/shared/_header_navbar.html.erb #candidate
+		_home_text.html.erb ./app/views/catalog/_home_text.html.erb #candidate (but probably not)
+		_index_default.html.erb ./app/views/catalog/_index_default.html.erb #candidate (but maybe not?)
+		index.html.erb ./app/views/bookmarks/index.html.erb #candidate
+	index_presenter.rb ./app/presenters/blacklight/index_presenter.rb #candidate
+index_presenter.rb ./app/presenters/penn_lib/index_presenter.rb #candidate
+		_paginator.html.erb ./app/views/kaminari/blacklight/_paginator.html.erb #candidate
+		saved_searches_controller.rb ./app/controllers/saved_searches_controller.rb #candidate
+search_builder.rb ./app/models/search_builder.rb #candidate,super
+	search_builder.rb ./lib/blacklight/search_builder.rb #candidate,super
+		_search_form.html.erb ./app/views/catalog/_search_form.html.erb #candidate
+		_search_header.html.erb ./app/views/catalog/_search_header.html.erb #candidate
+		search_history_controller.rb ./app/controllers/search_history_controller.rb #candidate (but probably not?)
+		_search_results.html.erb ./app/views/catalog/_search_results.html.erb #candidate
+		_show_default.html.erb ./app/views/catalog/_show_default.html.erb #candidate (but probably not?)
+	show_presenter.rb ./app/presenters/blacklight/show_presenter.rb #wholesale
+show_presenter.rb ./app/presenters/penn_lib/show_presenter.rb #wholesale
+		solr_document.rb ./app/models/solr_document.rb #none (only added locally-relevant methods)
+	user.rb ./app/models/concerns/blacklight/user.rb #none (generic module add-ons, no BL assumptions about concrete classes)
+user.rb ./app/models/user.rb #none (strictly local by design? see above)
+		_user_util_links.html.erb ./app/views/_user_util_links.html.erb #candidate (but probably not?)
+		_zero_results.html.erb ./app/views/catalog/_zero_results.html.erb #candidate (but probably not?)

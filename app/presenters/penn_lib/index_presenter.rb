@@ -2,7 +2,7 @@
 module PennLib
   class IndexPresenter < Blacklight::IndexPresenter
 
-    def label(field_or_string_or_proc, opts = { :support_html => true })
+    def label(field_or_string_or_proc, opts = { :support_html => true }) #EXTRACT:candidate Xapp/presenters/blacklight/index_presenter.rb
       # unlike ShowPresenter, IndexPresenters don't have a #heading method;
       # BL simply calls #label with the 'title_field' value from config.
       # So we intercept that here. This is ugly, but I can't figure out

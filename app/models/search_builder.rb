@@ -16,7 +16,7 @@ class SearchBuilder < Blacklight::SearchBuilder
   #
   # @param [#if,#unless] config an object that responds to if/unless
   # @return [Boolean]
-  def evaluate_if_unless_configuration(config, blacklight_params)
+  def evaluate_if_unless_configuration(config, blacklight_params) #EXTRACT:candidate new; push upstream
     return config if config == true or config == false
 
     params_context = Object.new
@@ -39,7 +39,7 @@ class SearchBuilder < Blacklight::SearchBuilder
   # Add appropriate Solr facetting directives in, including
   # taking account of our facet paging/'more'.  This is not
   # about solr 'fq', this is about solr facet.* params.
-  def add_facetting_to_solr(solr_parameters)
+  def add_facetting_to_solr(solr_parameters) #EXTRACT:candidate Xlib/blacklight/solr/search_builder_behavior.rb
     facet_fields_to_include_in_request.each do |field_name, facet|
       next unless evaluate_if_unless_configuration(facet, blacklight_params)
       solr_parameters[:facet] ||= true
@@ -75,7 +75,7 @@ class SearchBuilder < Blacklight::SearchBuilder
 
   # override #with to massage params before this SearchBuilder
   # stores and works with them
-  def with(blacklight_params = {})
+  def with(blacklight_params = {}) #EXTRACT:super Xlib/blacklight/search_builder.rb
     params_copy = blacklight_params.dup
     blacklight_params.delete(:routingHash)
     if params_copy[:q].present?

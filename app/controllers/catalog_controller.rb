@@ -42,7 +42,7 @@ class CatalogController < ApplicationController
     is_unprotected_url? ? request.original_url : root_url
   end
 
-  def search_results(user_params)
+  def search_results(user_params) #EXTRACT:super Xapp/controllers/concerns/blacklight/search_helper.rb
     sid = session&.id
     if !sid.nil? && sid.length >= 8
       routingHash = [sid[-8..-1]].pack("H*").unpack("l>")[0]
@@ -822,7 +822,7 @@ class CatalogController < ApplicationController
     doc && doc.respond_to?(:export_formats) && doc.export_formats.keys.include?(:refworks_marc_txt)
   end
 
-  def render_saved_searches?
+  def render_saved_searches? #EXTRACT:wholesale Xapp/controllers/concerns/blacklight/controller.rb
     # don't ever show saved searches link to the user
     false
   end

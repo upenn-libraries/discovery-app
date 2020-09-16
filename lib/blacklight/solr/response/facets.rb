@@ -2,6 +2,7 @@
 require 'ostruct'
 
 module Blacklight::Solr::Response::Facets
+  #EXTRACT:candidate Xlib/blacklight/solr/response/facets.rb (JSON facet handling)
   # represents a facet value; which is a field value and its hit count
   class FacetItem < OpenStruct
     def initialize *args
