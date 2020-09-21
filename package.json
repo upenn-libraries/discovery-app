@@ -2,8 +2,8 @@
     "name": "discovery",
     "description": "top-level package file for rails-browserify to use",
     "dependencies": {
-        "browserify": "~16.5.2",
-        "browserify-incremental": "~3.1.1",
+        "browserify": "13.3.0",
+        "browserify-incremental": "3.1.1",
         "ezproxy-login-status": "./jslib/ezproxy-login-status"
     },
     "license": "MIT",
