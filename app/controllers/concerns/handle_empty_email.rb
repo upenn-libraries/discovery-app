@@ -8,7 +8,7 @@ module HandleEmptyEmail
 
   # override of method in Blacklight::Catalog
   def email_action(documents)
-    return unless documents.any?
+    return unless documents.any? && email_is_legit(params[:to])
 
     begin
       retries ||= 0
@@ -31,4 +31,10 @@ module HandleEmptyEmail
     super(documents)
   end
 
+  # Check if email address matches RegEx
+  # @param [String] email
+  # @return [Fixnum, nil]
+  def email_is_legit(email)
+    email =~ URI::MailTo::EMAIL_REGEXP
+  end
 end
