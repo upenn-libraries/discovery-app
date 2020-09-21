@@ -13,7 +13,7 @@ module Blacklight::Solr::Response::Facets
 
       options[:value] = value if value
       options[:hits] = hits if hits
-      
+
       super(options)
     end
 
@@ -25,7 +25,7 @@ module Blacklight::Solr::Response::Facets
       table.as_json(props)
     end
   end
-  
+
   # represents a facet; which is a field and its values
   class FacetField
     attr_reader :name, :items
@@ -58,14 +58,14 @@ module Blacklight::Solr::Response::Facets
     def count?
       sort == 'count'
     end
-    
+
     private
 
     # Per https://wiki.apache.org/solr/SimpleFacetParameters#facet.limit
     def solr_default_limit
       100
     end
-    
+
     # Per https://wiki.apache.org/solr/SimpleFacetParameters#facet.sort
     def solr_default_sort
       if limit > 0
@@ -74,7 +74,7 @@ module Blacklight::Solr::Response::Facets
         'index'
       end
     end
-    
+
     # Per https://wiki.apache.org/solr/SimpleFacetParameters#facet.offset
     def solr_default_offset
       0
@@ -86,7 +86,7 @@ module Blacklight::Solr::Response::Facets
   end
 
   ##
-  # Get all the Solr facet data (fields, queries, pivots) as a hash keyed by 
+  # Get all the Solr facet data (fields, queries, pivots) as a hash keyed by
   # both the Solr field name and/or by the blacklight field name
   def aggregations
     @aggregations ||= {}.merge(facet_field_aggregations).merge(facet_query_aggregations).merge(facet_pivot_aggregations).merge(facet_json_aggregations)
@@ -114,7 +114,7 @@ module Blacklight::Solr::Response::Facets
   def facet_queries
     @facet_queries ||= facet_counts['facet_queries'] || {}
   end
-  
+
   # Returns all of the facet queries
   def facet_pivot
     @facet_pivot ||= facet_counts['facet_pivot'] || {}
@@ -128,7 +128,7 @@ module Blacklight::Solr::Response::Facets
   private
 
   ##
-  # Convert Solr responses of various json.nl flavors to 
+  # Convert Solr responses of various json.nl flavors to
   def list_as_hash solr_list
     # map
     if solr_list.values.first.is_a? Hash
@@ -212,7 +212,7 @@ module Blacklight::Solr::Response::Facets
   end
 
   ##
-  # Convert Solr's facet_pivot response into 
+  # Convert Solr's facet_pivot response into
   # a hash of Blacklight::Solr::Response::Facet::FacetField objects
   def facet_pivot_aggregations
     facet_pivot.each_with_object({}) do |(field_name, values), hash|
@@ -228,7 +228,7 @@ module Blacklight::Solr::Response::Facets
       end
     end
   end
-  
+
   ##
   # Recursively parse the pivot facet response to build up the full pivot tree
   def construct_pivot_field lst, parent_fq = {}
@@ -238,9 +238,9 @@ module Blacklight::Solr::Response::Facets
 
     Blacklight::Solr::Response::Facets::FacetItem.new(value: lst[:value], hits: lst[:count], field: lst[:field], items: items, fq: parent_fq)
   end
-  
+
   ##
-  # Convert Solr's facet_pivot response into 
+  # Convert Solr's facet_pivot response into
   # a hash of Blacklight::Solr::Response::Facet::FacetField objects
   def facet_json_aggregations
     return {} unless blacklight_config
@@ -267,7 +267,7 @@ module Blacklight::Solr::Response::Facets
       end
     end
   end
-  
+
   @@DEFAULT_GET_HITS = lambda { |v| v[:count] }
 
   ##
@@ -287,6 +287,6 @@ module Blacklight::Solr::Response::Facets
 
     Blacklight::Solr::Response::Facets::FacetItem.new(value: lst[:val], hits: get_hits.call(lst), field: field_name, items: items, fq: parent_fq)
   end
-  
-  
+
+
 end # end Facets

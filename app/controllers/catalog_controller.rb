@@ -70,7 +70,7 @@ class CatalogController < ApplicationController
   PAGINATION_THRESHOLD=250
   before_action only: :index do
     if params[:page] && params[:page].to_i > PAGINATION_THRESHOLD
-      flash[:error] = "You have paginated too deep into the result set. Please contact us using the feedback form if you have a need to view results past page #{PAGINATION_THRESHOLD}."
+      flash[:error] = "You have paginated too deep into the result set. Please contact us if you have a need to view results past page #{PAGINATION_THRESHOLD}."
       redirect_to root_path
     end
   end
@@ -78,7 +78,7 @@ class CatalogController < ApplicationController
   FACET_PAGINATION_THRESHOLD=50
   before_action only: :facet do
     if params['facet.page'] && params['facet.page'].to_i > FACET_PAGINATION_THRESHOLD
-      flash[:error] = "You have paginated too deep into facets. Please contact us using the feedback form if you have a need to view facets past page #{FACET_PAGINATION_THRESHOLD}."
+      flash[:error] = "You have paginated too deep into facets. Please contact us if you have a need to view facets past page #{FACET_PAGINATION_THRESHOLD}."
       redirect_to root_path
     end
   end
@@ -105,6 +105,12 @@ class CatalogController < ApplicationController
     config.default_solr_params = {
         #cache: 'false',
         defType: 'perEndPosition_dense_shingle_graphSpans',
+        combo: '{!filters param=$q param=$fq excludeTags=cluster}',
+        post_1928: 'content_max_dtsort:[1929-01-01T00:00:00Z TO *]',
+        culture_filter: "{!bool should='{!terms f=subject_search v=literature,customs,religion,ethics,society,social,culture,cultural}' should='{!prefix f=subject_search v=art}'}",
+        #combo: '{!bool must=$q filter=\'{!filters param=$fq v=*:*}\'}',
+        #combo: '{!query v=$q}',
+        back: '*:*',
         # this list is annoying to maintain, but this avoids hard-coding a field list
         # in the search request handler in solrconfig.xml
         fl: %w{
@@ -201,6 +207,42 @@ class CatalogController < ApplicationController
       'Include Partner Libraries' != a.params.dig(:f, :cluster, 0)
     }
 
+    # Some filters (e.g., subject_f) are capable of driving meaning correlations;
+    # others are not, and either generate spurious correlations, or at best pointlessly add extra
+    # overhead to Solr request.
+    # Keys below indicate filters that we should not attempt to use for purpose of cacluating
+    # correlations -- either entirely (nil value) or for an array of certain filter values
+    @@CORRELATION_IGNORELIST = {
+      :access_f => nil,
+      :record_source_f => nil,
+      :format_f => ['Database & Article Index']
+    }
+
+    actionable_filters = lambda { |a, b, c|
+      params = a.params
+      return true if params[:q].present?
+      f = params[:f]
+      return false if f.nil?
+      # we return true if there is at least one non-ignorelisted filter
+      return true if f.size > @@CORRELATION_IGNORELIST.size
+      f.symbolize_keys.each do |facet_key, facet_values|
+        return true unless @@CORRELATION_IGNORELIST.include?(facet_key) # no vals are ignored for this key
+        ignorelisted_vals = @@CORRELATION_IGNORELIST[facet_key]
+        next unless ignorelisted_vals # all vals are ignored for this key
+        return true if (facet_values - ignorelisted_vals).present? # there is at least one non-ignored val
+      end
+      return false
+    }
+
+    get_hits = lambda { |v|
+      r1 = v[:r1]
+      r1.nil? ? 0 : (r1[:relatedness].to_f * 100000).to_i
+    }
+
+    post_sort = lambda { |items|
+      items.sort { |a,b| b.hits <=> a.hits }
+    }
+
     config.induce_sort = lambda { |blacklight_params|
       return 'title_nssort asc' if blacklight_params.dig(:f, :format_f)&.include?('Database & Article Index')
     }
@@ -220,6 +262,11 @@ class CatalogController < ApplicationController
             :display => 'Database filters'
         }
     }
+
+    @@SUBJECT_SPECIALISTS = File.open("config/translation_maps/subject_specialists.solr-json", "rb").map do |line|
+      comment_idx = line.index('#')
+      (comment_idx.nil? ? line : line.slice(0, comment_idx)).strip.presence
+    end.compact.join
 
     @@DATABASE_CATEGORY_TAXONOMY = [
         '{',
@@ -276,6 +323,9 @@ class CatalogController < ApplicationController
 
     config.add_facet_field 'db_type_f', label: 'Database Type', limit: -1, collapse: false, :if => database_selected,
                            :facet_type => :database, solr_params: @@MINCOUNT
+    config.add_facet_field 'subject_specialists', label: 'Subject Area Correlation', collapse: true, :partial => 'blacklight/hierarchy/facet_hierarchy',
+        :json_facet => @@SUBJECT_SPECIALISTS, :top_level_field => 'subject_specialists', :get_hits => get_hits, :post_sort => post_sort,
+        :if => actionable_filters
     config.add_facet_field 'azlist', label: 'A-Z List', collapse: false, single: :manual, :facet_type => :header,
                            options: {:layout => 'horizontal_facet_list'}, solr_params: { 'facet.mincount' => 0 }, :if => database_selected, query: {
             'A' => { :label => 'A', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='a'}"},
@@ -307,7 +357,7 @@ class CatalogController < ApplicationController
             'Other' => { :label => 'Other', :fq => "{!tag=azlist ex=azlist}title_xfacet:/[ -`{-~].*/"}
         }
     config.add_facet_field 'access_f', label: 'Access', collapse: false, solr_params: @@MINCOUNT, :if => local_only, query: {
-        'Online' => { :label => 'Online', :fq => "{!join from=cluster_id to=cluster_id v=access_f:Online}"},
+        'Online' => { :label => 'Online', :fq => "{!join from=cluster_id to=cluster_id v='access_f:Online OR record_source_id:3'}"},
         'At the library' => { :label => 'At the library', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"}
     }
     config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false, solr_params: @@MINCOUNT, :if => local_only, query: {
@@ -338,6 +388,11 @@ class CatalogController < ApplicationController
     config.add_facet_field 'language_f', label: 'Language', limit: 5, collapse: false, solr_params: @@MINCOUNT
     config.add_facet_field 'library_f', label: 'Library', limit: 5, collapse: false, :if => local_only, solr_params: @@MINCOUNT
     config.add_facet_field 'specific_location_f', label: 'Specific location', limit: 5, :if => local_only, solr_params: @@MINCOUNT
+    config.add_facet_field 'recently_published', label: 'Recently published', collapse: false, solr_params: @@MINCOUNT, :query => {
+        :last_5_years => { label: 'Last 5 years', fq: "pub_max_dtsort:[#{Date.current.year - 4}-01-01T00:00:00Z TO *]" },
+        :last_10_years => { label: 'Last 10 years', fq: "pub_max_dtsort:[#{Date.current.year - 9}-01-01T00:00:00Z TO *]" },
+        :last_15_years => { label: 'Last 15 years', fq: "pub_max_dtsort:[#{Date.current.year - 14}-01-01T00:00:00Z TO *]" },
+    }
     config.add_facet_field 'publication_date_f', label: 'Publication date', limit: 5, collapse: false, solr_params: @@MINCOUNT
     config.add_facet_field 'classification_f', label: 'Classification', limit: 5, collapse: false, :if => local_only, solr_params: @@MINCOUNT
     config.add_facet_field 'genre_f', label: 'Form/Genre', limit: 5, solr_params: @@MINCOUNT

@@ -74,8 +74,13 @@ class BentoSearch::CatalogEngine
 
       summary = Hash.from_xml(Nokogiri::XML(entry['summary']).to_xml)
 
-      list_terms = summary['dl']['dt'].respond_to?(:each) ? summary['dl']['dt'] : [summary['dl']['dt']]
-      list_definitions = summary['dl']['dd'].respond_to?(:each) ? summary['dl']['dd'] : [summary['dl']['dd']]
+      if summary.nil? || !summary['dl']
+        list_terms = []
+        list_definitions = [];
+      else
+        list_terms = summary['dl']['dt'].respond_to?(:each) ? summary['dl']['dt'] : [summary['dl']['dt']]
+        list_definitions = summary['dl']['dd'].respond_to?(:each) ? summary['dl']['dd'] : [summary['dl']['dd']]
+      end
       
       list_terms.each_with_index do |term, index|
         case term.downcase[0..term.length-2]

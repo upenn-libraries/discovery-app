@@ -90,16 +90,6 @@ class SolrDocument
     @pennlibmarc ||= PennLib::Marc.new(@code_mappings)
   end
 
-  def publication_display
-    @publication_display ||= begin
-      values = pennlibmarc.get_publication_display(to_marc)
-      if pennlibmarc.has_264_with_a_or_b(to_marc)
-        values.concat(fetch('publication_a'))
-      end
-      values
-    end
-  end
-
   def format_display
     @format_display ||= [ fetch('format_a') ] + pennlibmarc.get_format_display(to_marc)
   end

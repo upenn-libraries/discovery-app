@@ -5,9 +5,10 @@ Installation:
 
 - Checkout this repo.
 
-- Make sure you have ruby 2.3.1 installed. It's recommended that you
+- Make sure you have ruby 2.3.3 installed. It's recommended that you
   use [rbenv](https://github.com/rbenv/rbenv), but it may be
   quicker/easier to get running with [rvm](https://rvm.io/).
+  - You may have issues installing Ruby 2.3.3 in recent Linux distributions due to an OpenSSL version incompatibility. See [this guide](https://www.garron.me/en/linux/install-ruby-2-3-3-ubuntu.html) for help.
 
 - Run `bundle install` to install all gem dependencies.
 

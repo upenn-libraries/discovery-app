@@ -1,3 +1,4 @@
+require 'json'
 
 #class FranklinAlmaController < BlacklightAlma::AlmaController
 class FranklinAlmaController < ApplicationController
@@ -167,6 +168,7 @@ class FranklinAlmaController < ApplicationController
     bib_data = bibapi.get_availability([mmsid])
     holding_data = nil
     holding_map = {}
+    pickupable = false
 
     inventory_type = ''
 
@@ -182,7 +184,7 @@ class FranklinAlmaController < ApplicationController
     # a 'holding_info' value.
     unless has_holding_info
       holding_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items, :get, :mms_id => mmsid, :holding_id => 'ALL', :expand => 'due_date_policy', :user_id => userid)
-      
+
       [holding_data['items']['item']].flatten.reject(&:nil?).each do |item|
         holding_id = item['holding_data']['holding_id']
         item_pid = item['item_data']['pid']
@@ -216,14 +218,17 @@ class FranklinAlmaController < ApplicationController
                    end
                    .reject(&:nil?)
     else
+      ctx = JSON.parse(params[:request_context])
       bib_data['availability'][mmsid]['holdings'].each do |holding|
+        holding_pickupable = holding['availability'] == 'available'
+        pickupable = true if holding_pickupable
         links = []
-        links << "<a href='/redir/aeon?bibid=#{holding['mmsid']}&hldid=#{holding['holding_id']}'' target='_blank'>Request to view in reading room</a>" if holding['link_to_aeon']
+        links << "<a href='/redir/aeon?bibid=#{holding['mmsid']}&hldid=#{holding['holding_id']}'' target='_blank'>Request to view in reading room</a>" if holding['link_to_aeon'] unless (ctx['hathi_etas'] && ctx['monograph'])
         holding['availability'] = availability_status[holding['availability']] || 'Requestable'
 
         if has_holding_info
           inventory_type = 'physical'
-          holding['location'] = %Q[<a href="javascript:loadItems('#{mmsid}', '#{holding['holding_id'].presence || 'ALL'}', '#{holding['location_code']}')">#{holding['location']} &gt;</a><br /><span class="call-number">#{holding['call_number']}</span>]
+          holding['location'] = %Q[<a href="javascript:loadItems('#{mmsid}', '#{holding['holding_id'].presence || 'ALL'}', '#{holding['location_code']}', '#{holding_pickupable}')">#{holding['location']} &gt;</a><br /><span class="call-number">#{holding['call_number']}</span>]
           holding['availability'] = "<span class='load-holding-details' data-mmsid='#{mmsid}' data-holdingid='#{holding['holding_id']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/></span>"
         elsif has_portfolio_info
           inventory_type = 'electronic'
@@ -241,8 +246,16 @@ class FranklinAlmaController < ApplicationController
           if userid == 'GUEST'
             holding['availability'] = 'Log in &amp; request below'
           else
-            holding['availability'] = 'Not on shelf; <a class="request-option-link">request below</a>'
+            if suppress_pickup_at_penn(ctx) && session['user_group'] != 'Faculty Express'
+              # we're temporarily disabling all request options for non facex
+              holding['availability'] = 'Not on shelf'
+            else
+              # for non-request-suppressed items and FacEx users, still present the usual link
+              holding['availability'] = 'Not on shelf; <a class="request-option-link">request below</a>'
+            end
           end
+        elsif holding['availability'] == 'Available' && suppress_pickup_at_penn(ctx)
+          holding['availability'] = 'Restricted (COVID-19)'
         end
       end
 
@@ -265,7 +278,8 @@ class FranklinAlmaController < ApplicationController
     end
 
     metadata[mmsid][:inventory_type] = inventory_type
-    render :json => {"metadata": metadata, "data": table_data}
+    metadata[mmsid][:pickupable] = pickupable
+    render :json => { "metadata": metadata, "data": table_data }
   end
 
   def check_requestable(has_holding_info = false)
@@ -322,18 +336,18 @@ class FranklinAlmaController < ApplicationController
     while options[:offset] + options[:limit] < response_data['total_record_count']
       options[:offset] += options[:limit]
       response_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items, :get, params.merge(options))
-      
+
       table_data += response_data['item'].map { |item|
         data = item['item_data']
         unless(policies.has_key?(data['policy']['value']) || data['base_status']['desc'] != "Item in place" || userid.nil?)
           policies[data['policy']['value']] = nil
           pids_to_check << [data['pid'], data['policy']['value']]
         end
-        [data['policy']['value'], data['pid'], data['description'], due_date_policy || data['due_date_policy'], data['base_status']['desc'], data['barcode'], [], params['mms_id'], params['holding_id']]
+        [data['policy']['value'], data['pid'], data['description'], data['base_status']['desc'], data['barcode'], due_date_policy || data['due_date_policy'], [], params['mms_id'], params['holding_id']]
       }
     end
 
-    pids_to_check.each{ |pid, policy| 
+    pids_to_check.each{ |pid, policy|
       options = {:user_id => userid, :item_pid => pid}
       response_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items_item_pid_request_options, :get, params.merge(options))
       not_requestable = true
@@ -345,19 +359,28 @@ class FranklinAlmaController < ApplicationController
       end
       policies[policy] = "/alma/request/?mms_id=%{mms_id}&holding_id=%{holding_id}&item_pid=%{item_pid}" unless not_requestable
     }
-
+    suppress = suppress_pickup_at_penn(JSON.parse(params['request_context']))
     table_data.each { |item|
       policy = item.shift()
       request_url = (policies[policy] || '') % params.merge({:item_pid => item[0]})
-      item[5] << "<a target='_blank' href='#{request_url}'>Request</a>" unless (request_url.empty? || item[2] != 'Item in place')
+      # TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
+      item[5] << (suppress ? "" : "<a target='_blank' href='#{request_url}'>Pickup@Penn</a>") unless (request_url.empty? || item[2] != 'Item in place')
     }
 
     render :json => {"data": table_data}
   end
 
+  def suppress_pickup_at_penn(ctx)
+    return false unless ctx['monograph']
+    return true unless ctx['pickupable'] != false
+    return true if ctx['hathi_etas'] #|| ctx['hathi_pd']
+    return false
+  end
+
   def request_options
     userid = session['id'].presence || nil
     usergroup = session['user_group'].presence
+    ctx = JSON.parse(params['request_context'])
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
     options = {:user_id => userid, :consider_dlr => true}
@@ -373,13 +396,13 @@ class FranklinAlmaController < ApplicationController
         case option['type']['value']
         when 'HOLD'
           {
-            :option_name => 'Request',
+            :option_name => 'Pickup@Penn',
             #:option_url => option['request_url'],
             :option_url => "/alma/request?mms_id=#{params['mms_id']}",
             :avail_for_physical => true,
             :avail_for_electronic => true,
             :highlightable => true
-          }
+          } unless suppress_pickup_at_penn(ctx) # TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
         when 'GES'
           option_url = option['request_url']
           if option_url.index('?')
@@ -421,7 +444,7 @@ class FranklinAlmaController < ApplicationController
       .uniq # Required due to request options API bug returning duplicate options
       .sort { |a,b| cmpRequestOptions(a,b) }
     # TODO: Remove when GES is updated in Alma & request option API is fixed (again)
-    results.reject! { |option| 
+    results.reject! { |option|
       ['Send Penn Libraries a question','Books By Mail'].member?(option[:option_name]) || (option[:option_name] == 'FacultyEXPRESS' && usergroup != 'Faculty Express')
     }
 
@@ -430,7 +453,7 @@ class FranklinAlmaController < ApplicationController
     results.each { |option|
       case option[:option_name]
       when 'Suggest Fix / Enhance Record'
-          option[:option_name] = "Report Error"
+          option[:option_name] = "Report Cataloging Error"
       end
     }
 
@@ -438,8 +461,9 @@ class FranklinAlmaController < ApplicationController
                      :option_name => "Books By Mail",
                      :option_url => "https://franklin.library.upenn.edu/redir/booksbymail?bibid=#{params['mms_id']}",
                      :avail_for_physical => true,
-                     :avail_for_electronic => false
-                   }) if ['Athenaeum Member','Faculty','Faculty Express','Grad Student','Library Staff'].member?(session['user_group'])
+                     :avail_for_electronic => false,
+                     :highlightable => true
+                   }) if ['Athenaeum Member','Faculty','Faculty Express','Grad Student','Undergraduate Student','Staff','Associate','Retired Library Staff','Library Staff'].member?(session['user_group']) && !suppress_pickup_at_penn(ctx) # suppress for bbm is same as for Pickup@Penn
 
     render :json => results
   end
@@ -452,7 +476,7 @@ class FranklinAlmaController < ApplicationController
 
     response_data = api_instance.request(api.almaws_v1_bibs.mms_id_request_options, :get, params.merge(options))
 
-    return (response_data['request_option'] || []).map { |option| 
+    return (response_data['request_option'] || []).map { |option|
       option['type']['value']
     }.member?('HOLD')
   end
@@ -465,7 +489,7 @@ class FranklinAlmaController < ApplicationController
 
     response_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items_item_pid_request_options, :get, params.merge(options))
 
-    return (response_data['request_option'] || []).map { |option| 
+    return (response_data['request_option'] || []).map { |option|
       option['type']['value']
     }.member?('HOLD')
   end
@@ -478,7 +502,7 @@ class FranklinAlmaController < ApplicationController
       render 'catalog/bad_request'
       return
     end
-    
+
     if params['item_pid'].present?
       render 'catalog/bad_request' unless request_item?
     else
@@ -503,20 +527,21 @@ class FranklinAlmaController < ApplicationController
                          #.reject { |k,v| exclude_libs.member?(k) }
                         #)
 
-    libraries = { "Annenberg Library" => "AnnenLib",
-                  "Athenaeum Library" => "AthLib",
-                  "Biomedical Library" => "BiomLib",
-                  "Chemistry Library" => "ChemLib",
-                  "Dental Medicine Library" => "DentalLib",
-                  "Fisher Fine Arts Library" => "FisherFAL",
-                  "Library at the Katz Center" => "KatzLib",
-                  "Math/Physics/Astronomy Library" => "MPALib",
-                  "Museum Library" => "MuseumLib",
-                  "Ormandy Music and Media Center" => "MusicLib",
-                  "Pennsylvania Hospital Library" => "PAHospLib",
-                  "Van Pelt Library" => "VanPeltLib",
-                  "Veterinary Library - New Bolton Center" => "VetNBLib",
-                  "Veterinary Library - Penn Campus" => "VetPennLib"
+    # Uncomment these as more libraries open up as delivery options
+    libraries = { #"Annenberg Library" => "AnnenLib",
+                  #"Athenaeum Library" => "AthLib",
+                  #"Biomedical Library" => "BiomLib",
+                  #"Chemistry Library" => "ChemLib",
+                  #"Dental Medicine Library" => "DentalLib",
+                  #"Fisher Fine Arts Library" => "FisherFAL",
+                  #"Library at the Katz Center" => "KatzLib",
+                  #"Math/Physics/Astronomy Library" => "MPALib",
+                  #"Museum Library" => "MuseumLib",
+                  #"Ormandy Music and Media Center" => "MusicLib",
+                  #"Pennsylvania Hospital Library" => "PAHospLib",
+                  "Van Pelt Library" => "VanPeltLib"
+                  #"Veterinary Library - New Bolton Center" => "VetNBLib",
+                  #"Veterinary Library - Penn Campus" => "VetPennLib"
                 }
 
     if params['item_pid'].present?
@@ -538,7 +563,7 @@ class FranklinAlmaController < ApplicationController
       render 'catalog/bad_request'
       return
     end
-    
+
     if params['item_pid'].present?
       render 'catalog/bad_request' unless request_item?
     else

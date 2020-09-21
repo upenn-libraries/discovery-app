@@ -4,7 +4,17 @@ var validRequestTypes = ["CentralCAT","MAINT-EC","CHI CAT","CatMet","HEB CAT",
                          "Jap-KorCAT","MUSIC CAT","MidEastCat","SASIA CAT",
                          "SCPC CAT","SLAV CAT","BindRepair","MAINT-enh",
                          "MAINT-otf","MAINT-tr"];
-$.fn.dataTable.ext.errMode = 'none';          
+$.fn.dataTable.ext.errMode = 'none';
+
+// Hackily parses relevant context out of the DOM for the specified mmsid
+function get_request_context(mmsid) {
+  return {
+    pickupable: null,
+    hathi_etas: (document.getElementById('hathi_etas-'+mmsid) != null),
+    hathi_pd: (document.getElementById('hathi_pd-'+mmsid) != null),
+    monograph: (document.getElementById('monograph-'+mmsid) != null)
+  };
+}
 
 $(document).ready(function() {
 
@@ -13,7 +23,16 @@ $(document).ready(function() {
         BlacklightAlma.call(this);
     }
 
-    function constructAeonLink(mmsid, holding) {
+    // Based on hackily-parsed DOM context, determine whether the Pickup@Penn link should be suppressed
+    function disable_pickup_at_penn(ctx) {
+      return ctx.monograph && (ctx.pickupable === false || ctx.hathi_etas /*|| ctx.hathi_pd*/);
+    }
+
+    function constructAeonLink(mmsid, holding, ctx) {
+        if (ctx.hathi_etas && ctx.monograph) {
+          return null;
+        }
+
         if(holding['link_to_aeon']) {
           return '<a href="/redir/aeon?bibid=' + mmsid + '&hldid=' + holding['holding_id'] + '" target="_blank">Request to view</a>';
         }
@@ -24,17 +43,24 @@ $(document).ready(function() {
     Franklin.prototype = Object.create(BlacklightAlma.prototype);
 
     Franklin.prototype.formatHolding = function (mms_id, holding) {
+        var ctx = get_request_context(mms_id);
         if (holding['inventory_type'] == 'physical') {
             var availability = "Unknown";
             if (holding['availability'] == 'check_holdings') {
                 availability = "See options";
             } else if (holding['availability'] == 'unavailable') {
-                availability = "See request options";
+                // pre-COVID-19 always mapped to "See request options";
+                if (holding['link_to_aeon']) {
+                    // Aeon materials show as "unavailable", but not in the sense of being unviewable.
+                    availability = (ctx.hathi_etas && ctx.monograph) ? "Restricted (COVID-19)" : "See request options";
+                } else {
+                    availability = "Unavailable";
+                }
             } else if (holding['availability'] == 'available') {
-                availability = "Available";
+                availability = disable_pickup_at_penn(ctx) ? "Restricted (COVID-19)" : "Available";
             }
             // TODO: pass in format to shelfLocatorLink() somehow
-            return [availability, holding['location'], holding['call_number'], $.shelfLocatorLink(mms_id, holding, "TODO"), constructAeonLink(mms_id, holding)]
+            return [availability, holding['location'], holding['call_number'], $.shelfLocatorLink(mms_id, holding, "TODO"), constructAeonLink(mms_id, holding, ctx)]
                 .filter(function (item) {
                     return item != null && item.length > 0;
                 }).join(". ");
@@ -43,7 +69,7 @@ $(document).ready(function() {
             if (holding['activation_status'] == 'Available') {
                 var url = null;
                 if (holding['portfolio_pid']) {
-                    url = "https://<%= ENV['ALMA_DELIVERY_DOMAIN'] %>/view/uresolver/<%= ENV['ALMA_INSTITUTION_CODE'] %>/openurl?Force_direct=true&portfolio_pid=" +
+                    url = "https://<%= ENV['ALMA_DELIVERY_DOMAIN'] %>/view/uresolver/<%= ENV['ALMA_INSTITUTION_CODE'] %>/openurl?Force_direct=true&test_access=true&&portfolio_pid=" +
                         holding['portfolio_pid'] + "&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com&u.ignore_date_coverage=true"
                 }
 
@@ -75,7 +101,8 @@ $(document).ready(function() {
     };
 
     Franklin.prototype.loadRequestOptionsAjax = function(mmsid) {
-        var url = "/alma/single_availability.json?mms_id=" + encodeURIComponent(mmsid);
+        var request_context = get_request_context(mmsid);
+        var url = "/alma/single_availability.json?mms_id=" + encodeURIComponent(mmsid) + "&request_context=" + encodeURIComponent(JSON.stringify(request_context));
 
         $('#requestOptions-' + mmsid).on('error.dt', function(e, settings, techNote, message) {
             $(this).dataTable().fnSettings().oLanguage.sEmptyTable = 'An error has occurred.';
@@ -86,7 +113,7 @@ $(document).ready(function() {
                 $.get(url, function(data) {
                     globaldata = $.extend({}, globaldata, data["metadata"]);
                     callback({"data": data["data"]});
-                    Franklin.prototype.loadRequestOptionListAjax(mmsid);
+                    Franklin.prototype.loadRequestOptionListAjax(mmsid, request_context);
                 });
             },
             "processing": true,
@@ -113,10 +140,11 @@ $(document).ready(function() {
                             var requests = globaldata[data[i][7]];
                             if(validRequestTypes.indexOf(requests[0]) != -1) {
                                 renderdata[mmsid].push(data[i][7]);
-                                data[i][5][0] = "<a target='_blank' href='/alma/request?mms_id=" + mmsid + "&holding_id=" + data[i][6] + "&item_pid=" + data[i][7] + "'>Request</a>";
+                                // TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
+                                data[i][5][0] = disable_pickup_at_penn(request_context) ? "" : "<a target='_blank' href='/alma/request?mms_id=" + mmsid + "&holding_id=" + data[i][6] + "&item_pid=" + data[i][7] + "'>Pickup@Penn</a>";
                                 table.row(i).invalidate().draw();
                             }
-                        } 
+                        }
                     }
                 }
 
@@ -198,18 +226,59 @@ $(document).ready(function() {
         });
     };
 
-    Franklin.prototype.loadRequestOptionListAjax = function(mmsid) {
+    Franklin.prototype.loadRequestOptionListAjax = function(mmsid, request_context) {
+        request_context.pickupable = globaldata[mmsid]["pickupable"];
         $.ajax({
-            url: "/alma/request_options.json?mms_id="+mmsid,
+            url: "/alma/request_options.json?mms_id="+mmsid+"&request_context="+encodeURIComponent(JSON.stringify(request_context)),
             success: function(data, textStatus, jqXHR) {
                 var optionList = $('#requestOptionList-' + mmsid);
 
-                if(globaldata[mmsid]["facultyexpress"]) {
-                    for(i = 0; i < data.length; i++) {
-                        if(data[i]['option_name'] == 'Interlibrary Loan') {
-                            data[i]['option_name'] = 'FacultyEXPRESS';
+                var openUrlTemplate = null; // grab openUrl params from here if necessary
+                var registeredFacEx = globaldata[mmsid]['facultyexpress'] ? false : null; // null if not applicable
+                var booksByMailOption = null;
+                for(var i = 0; i < data.length && (openUrlTemplate === null || booksByMailOption === null || registeredFacEx === false); i++) {
+                    var requestOption = data[i];
+                    switch (requestOption['option_name']) {
+                        case 'Interlibrary Loan':
+                            openUrlTemplate = requestOption['option_url'];
+                            if (registeredFacEx === false) { // careful! must distinguish from "falsey" null
+                                requestOption['option_name'] = 'FacultyEXPRESS';
+                                registeredFacEx = true;
+                            }
                             break;
-                        }
+                        case 'Request Digital Delivery':
+                            if (openUrlTemplate === null) {
+                                // provisionally grab openUrl from here, but prefer from ILL if present for consistency
+                                openUrlTemplate = requestOption['option_url'];
+                            }
+                            break;
+                        case 'Books By Mail':
+                            booksByMailOption = requestOption;
+                            break;
+                    }
+                }
+                if ((registeredFacEx === false || booksByMailOption != null) && (!request_context.monograph || !request_context.hathi_etas)) {
+                    // assume first querystring param is 'requesttype=[...]' -- subsequent options (preceded by '&') should be openUrl params
+                    var startOpenUrlParams = openUrlTemplate === null ? -1 : openUrlTemplate.indexOf('&');
+                    if (startOpenUrlParams < 0) {
+                        appendOpenUrlParams = '';
+                    } else {
+                        appendOpenUrlParams = openUrlTemplate.slice(startOpenUrlParams);
+                    }
+                    if (registeredFacEx === false) {
+                        data.push({
+                            option_name: 'FacultyEXPRESS',
+                            option_url: 'https://franklin.library.upenn.edu/forms/ill?requesttype=book' + appendOpenUrlParams,
+                            highlightable: true
+                        });
+                    }
+                    if (booksByMailOption != null) {
+                        // NOTE: we're conjuring an ILL link that would normally be generated by Alma, but is not now (COVID-19) because
+                        // ILL-proper is disabled. Despite appearances, 80% confident that requesttype should always be "book" (e.g., even
+                        // for "journals"), because "book" differentiates from things like reprographic requests, _not_ actually based on
+                        // bibliographic material type. 'deliverytype=bbm' is handled in the ill form (franklinforms) to prepend "BBM " to
+                        // otherwise-normal ILL requests (saving staff manually doing so); such ILL requests are then handled as BBM requests.
+                        booksByMailOption['option_url'] = 'https://franklin.library.upenn.edu/forms/ill?requesttype=book&deliverytype=bbm' + appendOpenUrlParams;
                     }
                 }
 
@@ -246,9 +315,8 @@ $(document).ready(function() {
                    containingdiv.appendTo(optionList);
                 });
                 $('#request-options-spinner-' + mmsid).remove();
-                console.log(data);
             }
-        });   
+        });
     };
 
     Franklin.prototype.loadRequestOptions = function() {
@@ -294,6 +362,7 @@ $(document).ready(function() {
                 "emptyTable": "No item data available"
             },
             "drawCallback": function(settings) {
+                var request_context = get_request_context(mmsid);
                 var table = $('#holdingItems-' + mmsid).DataTable();
                 var pageSize = table.settings()[0]['_iDisplayLength'];
                 var tableLen = table.data().length;
@@ -305,10 +374,11 @@ $(document).ready(function() {
                             var requests = globaldata[data[i][0]];
                             if(validRequestTypes.indexOf(requests[0]) != -1) {
                                 renderdata[mmsid].push(data[i][0]);
-                                data[i][5].push("<a target='_blank' href='/alma/request?mms_id=" + data[i][6] + "&holding_id=" + data[i][7] + "&item_pid=" + data[i][0] + "'>Request</a>");
+                                // TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
+                                data[i][5].push(disable_pickup_at_penn(request_context) ? "" : "<a target='_blank' href='/alma/request?mms_id=" + data[i][6] + "&holding_id=" + data[i][7] + "&item_pid=" + data[i][0] + "'>Pickup@Penn</a>");
                                 table.row(i).invalidate().draw();
                             }
-                        } 
+                        }
                     }
                 }
 
@@ -352,11 +422,13 @@ $(document).ready(function() {
     ba.loadRequestOptions();
 });
 
-function loadItems(mms_id, holding_id, location_code) {
+function loadItems(mms_id, holding_id, location_code, pickupable) {
+    var request_context = get_request_context(mms_id);
+    request_context.pickupable = pickupable;
     renderdata[mms_id] = [];
     var holdingItemsTable = $('#holdingItems-' + mms_id).DataTable();
     holdingItemsTable.clear().draw();
-    holdingItemsTable.ajax.url('/alma/holding_items.json?mms_id=' + mms_id + "&holding_id=" + holding_id + "&current_location=" + location_code).load();
+    holdingItemsTable.ajax.url('/alma/holding_items.json?mms_id=' + mms_id + "&holding_id=" + holding_id + "&current_location=" + location_code + "&request_context=" + encodeURIComponent(JSON.stringify(request_context))).load();
     swapDataTables(mms_id);
 }
 

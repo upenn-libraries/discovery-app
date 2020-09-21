@@ -9,15 +9,22 @@ module ApplicationHelper
     end
   end
 
-  def databases_results_url(query)
-    if !params.dig('f', 'format_f')&.include?('Database & Article Index')
-      url = path_for_facet('format_f', 'Database & Article Index')
-    end
-    return url
+  # Path for a BL catalog index page with Databases facet applied
+  # @return [String]
+  # @param [String] query param
+  def databases_results_path(query)
+    search_catalog_path params: {
+      q: query, utf8: '✓', search_field: 'keyword',
+      'f[format_f][]': 'Database & Article Index'
+    }
   end
 
   def google_site_search_results_url(query)
     return "https://www.library.upenn.edu/search/web-pages?q=#{query}"
+  end
+
+  def colenda_search_results_url(query)
+    return "https://colenda.library.upenn.edu/catalog?q=#{query}"
   end
 
   def catalog_results_url(query)
@@ -62,6 +69,10 @@ module ApplicationHelper
       attrs = {
           'href': "http://www.library.upenn.edu/search/web-pages"
       }
+    elsif tab_id == 'colenda' && action_name == 'landing'
+      attrs = {
+          'href': "https://colenda.library.upenn.edu"
+      }
     else
       attrs = {
           'href': anchor,
@@ -98,8 +109,18 @@ module ApplicationHelper
     "https://#{ ENV['ALMA_DELIVERY_DOMAIN'] }/discovery/account?vid=#{ ENV['ALMA_INSTITUTION_CODE'] }:Services&lang=en&section=overview"
   end
 
-  def profile_url(name)
-    "https://www.library.upenn.edu/people/staff/#{name.downcase.gsub(/\ +/, '-')}"
+  def subject_url(subject)
+    "https://www.library.upenn.edu/people/subject-specialists##{subject.dasherize}"
+  end
+
+  def bolded_subject_list(subjects, match)
+    subjects.map do |s|
+      if match.downcase.gsub(/[^a-z]|amp/, '') == s.downcase.gsub(/[^a-z]/, '')
+        content_tag(:strong, s)
+      else
+        s
+      end
+    end
   end
 
   def refworks_bookmarks_path(opts = {})
@@ -201,5 +222,4 @@ module ApplicationHelper
   def resourcesharing_path
     '/forms/resourcesharing'
   end
-
 end

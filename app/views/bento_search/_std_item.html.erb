@@ -11,6 +11,10 @@
       <div class="bento_item_body">
         <dl class="document-metadata dl-horizontal dl-invert">
 
+          <% if item.custom_data['thumbnail'].present? %>
+            <dd class="colenda-thumbnail"><%= link_to(image_tag(item.custom_data['thumbnail']), item.link) %></dd>
+          <% end %>
+
           <% if item.authors.present? %>
             <dd><%= item.render_authors_list %></dd>
           <% end %>
