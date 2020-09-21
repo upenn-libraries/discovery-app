@@ -35,7 +35,7 @@ gem 'tzinfo-data', '1.2017.2'
 
 gem "solr_wrapper", '0.18.1'
 
-gem 'browserify-rails', '4.0.0'
+gem 'browserify-rails'
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails', '4.3.1'
