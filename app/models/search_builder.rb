@@ -4,7 +4,6 @@ class SearchBuilder < Blacklight::SearchBuilder
   include BlacklightAdvancedSearch::AdvancedSearchBuilder
   self.default_processor_chain += [:add_advanced_search_to_solr, :override_sort_when_q_is_empty, :modify_combo_param_with_absent_q,
       :lowercase_expert_boolean_operators, :add_left_anchored_title, :add_routing_hash, :add_cluster_params]
-  include BlacklightRangeLimit::RangeLimitBuilder
   include BlacklightSolrplugins::FacetFieldsQueryFilter
 
   ##

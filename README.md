@@ -113,11 +113,6 @@ you can do so like this:
 ./index_and_deletions.sh /var/solr_input_data/alma_prod_sandbox/oai/allTitles/2017_04_10_00_00 allTitles
 ```
 
-# JRuby and Traject
-
-See the `jruby-traject.md` file for details on how to use JRuby with
-Traject, which is currently broken.
-
 # Docker
 
 There is a `build_docker_image.sh` script you can use to build docker
