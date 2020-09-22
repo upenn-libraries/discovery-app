@@ -20,6 +20,6 @@ h4 {
 }
 
 @font-face {
-  font-family: "Gentium Book Basic";
-  src: url(/assets/GenBkBasR.ttf) format("truetype");
+  font-family: 'Gentium Book Basic';
+  src: font_path('GenBkBasR.ttf') format('truetype');
 }
