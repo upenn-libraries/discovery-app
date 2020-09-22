@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-  concern :range_searchable, BlacklightRangeLimit::Routes::RangeSearchable.new
   concern :exportable, Blacklight::Routes::Exportable.new
 
   # redirects for legacy DLA Franklin links
@@ -36,7 +35,6 @@ Rails.application.routes.draw do
 
   resource :catalog, only: [:index], as: 'catalog', path: '/catalog', controller: 'catalog' do
     concerns :searchable
-    concerns :range_searchable
   end
 
   # override devise's sessions controller w/ our own
