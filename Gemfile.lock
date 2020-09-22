@@ -160,6 +160,8 @@ GEM
     ezwadl (0.0.1)
       httparty (~> 0.14)
       nokogiri (~> 1.6)
+    faraday (1.0.1)
+      multipart-post (>= 1.2, < 3)
     ffi (1.13.1)
     font-awesome-rails (4.7.0.5)
       railties (>= 3.2, < 6.1)
@@ -216,6 +218,7 @@ GEM
     minitest (5.14.2)
     multi_json (1.15.0)
     multi_xml (0.6.0)
+    multipart-post (2.1.1)
     mysql2 (0.4.10)
     nokogiri (1.10.10)
       mini_portile2 (~> 2.4.0)
@@ -349,6 +352,7 @@ DEPENDENCIES
   devise (~> 4.6.0)
   devise-guests (= 0.5.0)
   dotenv-rails
+  faraday
   font-awesome-rails
   honeybadger
   httparty

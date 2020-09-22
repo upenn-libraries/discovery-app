@@ -13,7 +13,9 @@ gem 'browserify-rails'
 gem 'coffee-rails', '4.2.1'
 gem 'devise', '~> 4.6.0'
 gem 'devise-guests', '0.5.0'
+gem 'faraday'
 gem 'font-awesome-rails'
+gem 'honeybadger'
 gem 'httparty'
 gem 'jbuilder', '2.6.0'
 gem 'jquery-rails', '4.3.1'
@@ -40,5 +42,3 @@ end
 group :development, :test do
   gem 'byebug', platforms: :ruby
 end
-
-gem 'honeybadger'
