@@ -15,11 +15,9 @@ module HandleEmptyEmail
       super(documents)
     rescue Net::ReadTimeout => e
       sleep 3
-      if (retries += 1) < 2
-        retry
-      else
-        Honeybadger.notify e
-      end
+      raise e if (retries += 1) > 2
+
+      retry
     end
   end
 
