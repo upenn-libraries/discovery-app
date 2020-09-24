@@ -11,7 +11,7 @@ gem 'blacklight_alma', git: 'https://github.com/upenn-libraries/blacklight_alma.
 gem 'blacklight_solrplugins', git: 'https://github.com/upenn-libraries/blacklight_solrplugins.git'
 gem 'browserify-rails'
 gem 'coffee-rails', '4.2.1'
-gem 'devise', '~> 4.6.0'
+gem 'devise', '~> 4'
 gem 'devise-guests', '0.5.0'
 gem 'faraday'
 gem 'font-awesome-rails'
