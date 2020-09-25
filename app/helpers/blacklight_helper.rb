@@ -16,11 +16,13 @@ module BlacklightHelper
     end
     subject = specialists.items.first.value
     specialist_data = PennLib::SubjectSpecialists.data
-    relevant_specialists = specialist_data[subject.to_sym]
+    relevant_specialists = specialist_data[subject.to_sym].sample
     if relevant_specialists.any?
       render partial: 'catalog/expert_help',
              locals: { specialist: relevant_specialists.sample, subject: subject }
     else
+      # No relevant specialist could be determined - we need to know about this
+      Honeybadger.notify "No specialist could be determined for #{subject}"
       render partial: 'catalog/ask'
     end
   end
