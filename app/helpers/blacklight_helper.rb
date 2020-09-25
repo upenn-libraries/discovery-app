@@ -10,13 +10,16 @@ module BlacklightHelper
   end
 
   def render_expert_help(specialists)
-    if specialists.present? && specialists.items.first.hits > 50000
-      subject = specialists.items.first.value
-      specialist_data = PennLib::SubjectSpecialists.data
+    if specialists.blank? || specialists.items.first.hits < 50_000
+      render partial: 'catalog/ask'
+      return
     end
-    if specialist_data
-      specialist = specialist_data[subject.to_sym].sample
-      render partial: 'catalog/expert_help', locals: { specialist: specialist, subject: subject }
+    subject = specialists.items.first.value
+    specialist_data = PennLib::SubjectSpecialists.data
+    relevant_specialists = specialist_data[subject.to_sym]
+    if relevant_specialists.any?
+      render partial: 'catalog/expert_help',
+             locals: { specialist: relevant_specialists.sample, subject: subject }
     else
       render partial: 'catalog/ask'
     end
