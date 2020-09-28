@@ -16,8 +16,8 @@ module BlacklightHelper
     end
     subject = specialists.items.first.value
     specialist_data = PennLib::SubjectSpecialists.data
-    relevant_specialists = specialist_data[subject.to_sym]&.sample
-    if relevant_specialists&.any?
+    relevant_specialists = specialist_data[subject.to_sym]
+    if relevant_specialists.present?
       render partial: 'catalog/expert_help',
              locals: { specialist: relevant_specialists.sample, subject: subject }
     else
