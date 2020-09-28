@@ -463,7 +463,7 @@ class FranklinAlmaController < ApplicationController
                      :avail_for_physical => true,
                      :avail_for_electronic => false,
                      :highlightable => true
-                   }) if ['Athenaeum Member','Faculty','Faculty Express','Grad Student','Undergraduate Student','Staff','Associate','Retired Library Staff','Library Staff'].member?(session['user_group']) && !suppress_pickup_at_penn(ctx) # suppress for bbm is same as for Pickup@Penn
+                   }) if ['Associate','Athenaeum Staff','Faculty','Faculty Express','Faculty Spouse','Grad Student','Library Staff','Medical Center Staff','Retired Library Staff','Staff','Undergraduate Student'].member?(session['user_group']) && !suppress_pickup_at_penn(ctx) # suppress for bbm is same as for Pickup@Penn
 
     render :json => results
   end

@@ -32,7 +32,7 @@ module Blacklight
 
     config.action_mailer.delivery_method = :smtp
     config.action_mailer.smtp_settings = {
-      address: 'mailrelay.library.upenn.int',
+      address: 'mailrelay.library.upenn.int'
     }
     config.action_mailer.default_options = { from: 'no-reply@upenn.edu' }
 
