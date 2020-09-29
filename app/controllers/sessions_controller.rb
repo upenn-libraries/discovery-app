@@ -11,7 +11,7 @@ class SessionsController < Devise::SessionsController
   end
 
   def set_session_user_details(id)
-    if id
+    if id && id != 'GUEST'
       api_instance = BlacklightAlma::UsersApi.instance
       api = api_instance.ezwadl_api[0]
       url = api.almaws_v1_users.user_id.uri_template({ user_id: id}).chomp("/")
@@ -57,9 +57,14 @@ class SessionsController < Devise::SessionsController
     # adjust this to be deliberately lower.
     session['hard_expiration'] = Time.now.to_i + (10 * 60 * 60)
 
-    remote_user_header = request.headers['HTTP_REMOTE_USER'] || 'none@upenn.edu'
+    remote_user_header = request.headers['HTTP_REMOTE_USER']
 
-    pennkey_username = remote_user_header.split('@').first
+    pennkey_username = if remote_user_header
+                         remote_user_header.split('@').first
+                       else
+                         ENV['DEVELOPMENT_USERNAME'] || 'GUEST'
+                       end
+
     set_session_user_details(pennkey_username)
     set_session_userid(pennkey_username)
   end
