@@ -108,7 +108,7 @@ class FranklinAlmaController < ApplicationController
     portfolio_pid = params['portfolio_pid']
     collection_id = params['collection_id']
     api_key_param = "apikey=#{ENV['ALMA_API_KEY']}"
-    url_params = {:collection_id => collection_id}
+    url_params = { collection_id: collection_id }
     coverage = params['coverage']
 
     # we also get this from availability API. Opportunity for improvement?
@@ -119,7 +119,10 @@ class FranklinAlmaController < ApplicationController
     services_url = "https://api-na.hosted.exlibrisgroup.com/almaws/v1/electronic/e-collections/%{collection_id}/e-services?#{api_key_param}"
     portfolio_url = "https://api-na.hosted.exlibrisgroup.com/almaws/v1/electronic/e-collections/%{collection_id}/e-services/%{service_id}/portfolios/%{portfolio_id}?#{api_key_param}"
 
-    api_response = HTTParty.get(services_url % url_params, :headers => {'Accept' => 'application/json'})
+    api_response = HTTParty.get(
+      services_url % url_params,
+      headers: { 'Accept' => 'application/json' }
+    )
     api_response['electronic_service'].each do |e|
       portfolio_response = HTTParty.get(portfolio_url % url_params.merge(:portfolio_id => portfolio_pid, :service_id => e['id']), :headers => {'Accept' => 'application/json'})
       public_note ||= portfolio_response['public_note'].presence
@@ -163,7 +166,7 @@ class FranklinAlmaController < ApplicationController
     api = api_instance.ezwadl_api[0]
 
     mmsid = params[:mms_id]
-    userid = session['id'].presence || 'GUEST'
+    userid = session['id'] || 'GUEST'
     bibapi = alma_api_class.new()
     bib_data = bibapi.get_availability([mmsid])
     holding_data = nil
@@ -183,7 +186,11 @@ class FranklinAlmaController < ApplicationController
     # Load holding information for monographs. Monographs do not have
     # a 'holding_info' value.
     unless has_holding_info
-      holding_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items, :get, :mms_id => mmsid, :holding_id => 'ALL', :expand => 'due_date_policy', :user_id => userid)
+      holding_data = api_instance.request(
+        api.almaws_v1_bibs.mms_id_holdings_holding_id_items,
+        :get,
+        mms_id: mmsid, holding_id: 'ALL', expand: 'due_date_policy', user_id: userid
+      )
 
       [holding_data['items']['item']].flatten.reject(&:nil?).each do |item|
         holding_id = item['holding_data']['holding_id']
@@ -232,7 +239,13 @@ class FranklinAlmaController < ApplicationController
           holding['availability'] = "<span class='load-holding-details' data-mmsid='#{mmsid}' data-holdingid='#{holding['holding_id']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/></span>"
         elsif has_portfolio_info
           inventory_type = 'electronic'
-          holding['availability'] = "<span class='load-portfolio-details' data-mmsid='#{mmsid}' data-portfoliopid='#{holding['portfolio_pid']}' data-collectionid='#{holding['collection_id']}' data-coverage='#{holding['coverage_statement']}' data-publicnote='#{holding['public_note']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/></span>"
+          holding['availability'] = if holding['collection_id']
+                                      "<span class='load-portfolio-details' data-mmsid='#{mmsid}' data-portfoliopid='#{holding['portfolio_pid']}' data-collectionid='#{holding['collection_id']}' data-coverage='#{holding['coverage_statement']}' data-publicnote='#{holding['public_note']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/></span>"
+                                    else
+                                      Honeybadger.notify("Couldn't generate proper data attributes for portfolio (no collection_id)",
+                                                         context: { mms_id: mmsid, holding: holding })
+                                      'Sorry, there was a problem determining availability.'
+                                    end
         else
           inventory_type = 'physical'
           holding['location'] = %Q[#{holding['location']}<br /><span class="call-number">#{holding['call_number']}</span>]
