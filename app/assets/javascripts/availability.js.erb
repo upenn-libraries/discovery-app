@@ -295,12 +295,13 @@ $(document).ready(function() {
                 data.forEach(function(element) {
                     var containingdiv = $('<div class="request-option-wrapper"></div>');
                     var highlightable = element['highlightable'] ? ' highlightable' : ''
-                    var button = $('<button>').attr({
-                                     class: 'btn btn-basic btn-request-option' + highlightable,
+                    var link = $('<a>').attr({
+                                     class: 'btn btn-default btn-request-option' + highlightable,
                                      text: element['option_name'],
-                                     onclick: "window.open('" + element["option_url"] + "', '_blank')"
+                                     href: element["option_url"],
+                                     target: '_blank'
                                  }).text(element['option_name']);
-                   button.appendTo(containingdiv);
+                   link.appendTo(containingdiv);
                    containingdiv.appendTo(optionList);
                 });
                 $('#request-options-spinner-' + mmsid).remove();
