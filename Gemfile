@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 # required and confirmed in use
 # TODO: switch back to official gem when PR #36 is accepted and makes it into a release
-gem 'bento_search', git: 'https://github.com/magibney/bento_search', branch: 'search_controller_engine_params' #'1.7'
+gem 'bento_search', git: 'https://github.com/upenn-libraries/bento_search', branch: 'search_controller_engine_params' #'1.7'
 gem 'blacklight', '6.8.0', git: 'https://github.com/magibney/blacklight.git', branch: 'v6.8.0-solr7-qq-feedFormat'
 gem 'blacklight-marc', '6.2.0'
 gem 'blacklight-ris', git: 'https://github.com/upenn-libraries/blacklight-ris.git'
