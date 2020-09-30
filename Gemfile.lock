@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/magibney/bento_search
-  revision: af7c055b8ee0eed24c7fcf02e4fdab33b3e67bbe
+  revision: 3f45d1c286ae19146aa51dc7b54b5a5a6b7c3dd0
   branch: search_controller_engine_params
   specs:
     bento_search (1.8.0)

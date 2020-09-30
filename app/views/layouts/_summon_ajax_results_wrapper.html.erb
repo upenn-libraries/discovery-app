@@ -1,3 +1,6 @@
+<% if results.error %>
+  <%= results.error[:end_user_message] || 'Error processing remote request' %>
+<% else %>
 <div class="view-and-filter text-right">
 <%= link_to "View and filter #{number_with_delimiter(results.total_items)} #{results.total_items != 1 ? 'results' : 'result'}", summon_url(params[:q] || params[:query]) %>
 </div>
@@ -14,3 +17,4 @@
 
 <div class="corner left-bottom hide"></div>
 <div class="corner right-bottom hide"></div>
+<% end %>
