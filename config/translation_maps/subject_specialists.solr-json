@@ -595,13 +595,13 @@
       r1 : "relatedness($combo,$back)"
     }
   },
-  scholarly_publishing : {
-    type: query,
-    q: "{!bool filter='{!term f=subject_search v=scholarly}' filter='{!term f=subject_search v=publishing}'}",
-    facet: {
-      r1 : "relatedness($combo,$back)"
-    }
-  },
+#  scholarly_publishing : {
+#    type: query,
+#    q: "{!bool filter='{!term f=subject_search v=scholarly}' filter='{!term f=subject_search v=publishing}'}",
+#    facet: {
+#      r1 : "relatedness($combo,$back)"
+#    }
+#  },
   social_impact : {
     type: query,
     q: "{!bool filter='{!term f=subject_search v=social}' filter='{!terms f=subject_search v=economic,political,business,policy}'}",
