@@ -264,10 +264,6 @@ class CatalogController < ApplicationController
       r1.nil? ? 0 : (r1[:relatedness].to_f * 100000).to_i
     }
 
-    post_sort = lambda { |items|
-      items.sort { |a,b| b.hits <=> a.hits }
-    }
-
     config.induce_sort = lambda { |blacklight_params|
       return 'title_nssort asc' if blacklight_params.dig(:f, :format_f)&.include?('Database & Article Index')
     }
@@ -293,111 +289,104 @@ class CatalogController < ApplicationController
         }
     }
 
-    @@SUBJECT_SPECIALISTS = File.open("config/translation_maps/subject_specialists.solr-json", "rb").map do |line|
-      comment_idx = line.index('#')
-      (comment_idx.nil? ? line : line.slice(0, comment_idx)).strip.presence
-    end.compact.join
+    @@DATABASE_CATEGORY_TAXONOMY = {
+      db_category_f: {
+        type: 'terms',
+        field: 'db_category_f',
+        mincount: 1,
+        limit: -1,
+        sort: 'index',
+        facet: {
+          db_subcategory_f: {
+            type: 'terms',
+            prefix: '$parent--',
+            field: 'db_subcategory_f',
+            mincount: 1,
+            limit: -1,
+            sort: 'index'
+          }
+        }
+      }
+    }
 
-    @@DATABASE_CATEGORY_TAXONOMY = [
-        '{',
-        'db_category_f:{',
-        'type: terms,',
-        'field: db_category_f,',
-        'mincount: 1,',
-        'limit: -1,',
-        'sort: index,',
-        'facet:{',
-        'db_subcategory_f: {',
-        'type : terms,',
-        'prefix : $parent--,',
-        'field: db_subcategory_f,',
-        'mincount: 1,',
-        'limit: -1,',
-        'sort: index',
-        '}',
-        '}',
-        '}',
-        '}'].join
-
-    @@SUBJECT_TAXONOMY = [
-        '{',
-        'subject_taxonomy: {',
-        'type: terms,',
-        'field: toplevel_subject_f,',
-        'top_level_term: "term()",',
-        'facet: {',
-        'identity: {',
-        'type: query,',
-        'q: "{!term f=subject_f v=$top_level_term}"',
-        '},',
-        'subject_f: {',
-        'type: terms,',
-        'prefix: $top_level_term--,',
-        'field: subject_f,',
-        'limit: 5',
-        '}',
-        '}',
-        '}',
-        '}'].join
+    @@SUBJECT_TAXONOMY = {
+      subject_taxonomy: {
+        type: 'terms',
+        field: 'toplevel_subject_f',
+        top_level_term: 'term()',
+        facet: {
+          identity: {
+            type: 'query',
+            q: '{!term f=subject_f v=$top_level_term}',
+          },
+          subject_f: {
+            type: 'terms',
+            prefix: '$top_level_term--',
+            field: 'subject_f',
+            limit: 5
+          }
+        }
+      }
+    }
 
     @@MINCOUNT = { 'facet.mincount' => 1 }
 
-    @@SUBJECT_CORRELATION = ['{',
-      'subject_correlation:{',
-        'type:query,',
-        'domain:{',
-          'query:\'{!query v=$cluster}\'',
-        '},',
-        'q:\'{!query tag=REFINE v=$correlation_domain}\',',
-        'facet:{',
-          'correlation:{',
-            'type:terms,',
-            'field:subject_f,',
+    @@SUBJECT_CORRELATION = {
+      subject_correlation: {
+        type: 'query',
+        domain: {
+          query: '{!query v=$cluster}'
+        },
+        q: '{!query tag=REFINE v=$correlation_domain}',
+        facet: {
+          correlation:{
+            type: 'terms',
+            field: 'subject_f',
             # NOTE: mincount pre-filters vals that could not possibly match min_pop
-            'mincount:3,', # guarantee fgSize >= 3
-            'limit:25,',
-            'refine:true,',
-            'sort:{r1:desc},',
-            'facet:{',
-              'r1:{',
-                'type:func,',
-                'min_popularity:0.0000002,', # lower bound n/bgSize to guarantee fgCount>=n (here, n==2)
-                'func:\'relatedness($combo,$back)\'',
-              '},',
-              'fg_all_count:{', # count over unfiltered logical base domain
-                'domain:{',
-                  'excludeTags:REFINE',
-                '},',
-                'type:query,',
-                'q:\'*:*\'',
-              '},',
-              'fg_filtered_count:{', # count over logical base domain, filtered by q and fq
-                'domain:{',
-                  'excludeTags:REFINE,',
-                  'filter:\'{!query v=$presentation_domain}\',',
-                '},',
-                'type:query,',
-                'q:\'*:*\'',
-              '}',
-            '}',
-          '}',
-        '}',
-      '}',
-    '}'].join
+            mincount: 3, # guarantee fgSize >= 3
+            limit: 25,
+            refine: true,
+            sort: {r1: 'desc'},
+            facet: {
+              r1: {
+                type: 'func',
+                min_popularity: 0.0000002, # lower bound n/bgSize to guarantee fgCount>=n (here, n==2)
+                func: 'relatedness($combo,$back)'
+              },
+              fg_all_count: { # count over unfiltered logical base domain
+                domain: {
+                  excludeTags: 'REFINE'
+                },
+                type: 'query',
+                q: '*:*'
+              },
+              fg_filtered_count: { # count over logical base domain, filtered by q and fq
+                domain: {
+                  excludeTags: 'REFINE',
+                  filter: '{!query v=$presentation_domain}',
+                },
+                type: 'query',
+                q: '*:*'
+              }
+            }
+          }
+        }
+      }
+    }
 
     @@NO_FACET_SEARCH_FIELDS = ['subject_correlation']
 
     config.add_facet_field 'db_subcategory_f', label: 'Database Subject', if: lambda { |a,b,c| false }
     config.add_facet_field 'db_category_f', label: 'Database Subject', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy',
-                           :json_facet => @@DATABASE_CATEGORY_TAXONOMY, :top_level_field => 'db_category_f', :facet_type => :database,
+                           :json_facet => @@DATABASE_CATEGORY_TAXONOMY, :sub_hierarchy => [:db_subcategory_f], :facet_type => :database,
                            :helper_method => :render_subcategories, :if => database_selected
 
     config.add_facet_field 'db_type_f', label: 'Database Type', limit: -1, collapse: false,
                            :if => database_selected,
                            :facet_type => :database, solr_params: @@MINCOUNT
-    config.add_facet_field 'subject_specialists', label: 'Subject Area Correlation', collapse: true, :partial => 'blacklight/hierarchy/facet_hierarchy',
-        :json_facet => @@SUBJECT_SPECIALISTS, :top_level_field => 'subject_specialists', :get_hits => get_hits, :post_sort => post_sort,
-        :if => actionable_filters
+    # NOTE: set facet_type=nil below, to bypass normal facet display
+    config.add_facet_field 'subject_specialists', label: 'Subject Area Correlation', collapse: true, :facet_type => nil,
+        :json_facet => PennLib::SubjectSpecialists::QUERIES, :if => actionable_filters
 
     config.add_facet_field 'subject_correlation',
                            label: 'Subject Correlation',

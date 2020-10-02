@@ -240,66 +240,74 @@ module Blacklight::Solr::Response::Facets
   end
 
   ##
-  # Convert Solr's facet_pivot response into
+  # Convert Solr's facet ("JSON Facet") response into
   # a hash of Blacklight::Solr::Response::Facet::FacetField objects
   def facet_json_aggregations
     return {} unless blacklight_config
-    facet_json.each_with_object({}) do |(facet_config_name, value), hash|
-      facet_config = blacklight_config.facet_fields[facet_config_name]
-      field_name = facet_config[:top_level_field]
-      get_hits = facet_config[:get_hits] || @@DEFAULT_GET_HITS
-      buckets = value[:buckets] || value.dig(:correlation, :buckets) || value.each_with_object([]) do |(k, v), arr|
-        if k != 'count'
-          v[:val] = k
-          arr << v
-        end
-      end
-      items = buckets.map do |lst|
-        construct_subfacet_field(field_name, lst, {}, get_hits)
-      end
-      post_sort = facet_config[:post_sort]
-      if !post_sort.nil?
-        items = post_sort.call(items)
-      end
+    facet_json.each_with_object({}) do |(key, value), hash|
+      facet_config = blacklight_config.facet_fields[key]
+      json_facet = facet_config[:json_facet]
+      items = subfacet(key, json_facet[key.to_sym], value)
+
+      # facet queries return only a single FacetItem (because they are inherently
+      # singletons). However, it seems likely that FacetField may assume that
+      # its `items` attribute is an array; so at the top level we make sure such
+      # assumptions will remain valid
+      items = [items] if items.is_a?(FacetItem)
+
       # alias all the possible blacklight config names..
-      blacklight_config.facet_fields.select { |k,v| v.json_facet and k == facet_config_name }.each do |key, _|
+      blacklight_config.facet_fields.select { |k,v| v.json_facet and k == key }.each do |key, _|
         hash[key] = Blacklight::Solr::Response::Facets::FacetField.new key, items
       end
     end
   end
 
-  @@DEFAULT_GET_HITS = lambda { |v| v[:count] }
-
   ##
-  # Recursively parse the pivot facet response to build up the full pivot tree
-  def construct_subfacet_field field_name, lst, parent_fq = {}, get_hits = @@DEFAULT_GET_HITS
-    subfacet_field = nil
-    subfacets = nil
-    lst.find do |key, value|
-      # nocommit: TODO: more rational, general way of doing this (and clarify what's actually going on!)
-      if key != 'val' && key != 'count' && key != 'r1' && key != 'fg_all_count' && key != 'fg_filtered_count'
-        subfacet_field = key
-        subfacets = value[:buckets] || value
+  # Parses subs (subfacets and stats) from the configured request. Stats are
+  # added directly to the returned hash; subfacets are recursively parsed
+  # The `hash` arg allows to pass in args that are associated with the "parent"
+  # facet -- this provides consumers the ability to treat the returned "subs"
+  # hash as directly analogous to the raw JSON Facet response (bypassing
+  # the need to interact with the Blacklight "FacetItem" abstraction).
+  def subs(req, rsp, hash)
+    req[:facet]&.each_with_object(hash) do |(k,v), hash|
+      subrsp = rsp[k]
+      if v.is_a?(String) || v[:type] == 'func'
+        hash[k] = subrsp
+      else
+        hash[k] = subfacet(k, v, subrsp)
       end
     end
-    items = Array(subfacets).map do |i|
-      construct_subfacet_field(subfacet_field, i, parent_fq.merge({ field_name => lst[:val] }), get_hits)
-    end
-
-    Blacklight::Solr::Response::Facets::FacetItem.new(
-      value: lst[:val],
-      hits: get_hits.call(lst),
-      field: field_name,
-      items: items,
-      fq: parent_fq,
-      # nocommit: TODO: is there a more general way to do below? Maybe even just directly/naively put
-      # all args into a hash, forcing consumers to directly use the structure of the json facet response?
-      # making FacetItem naive in this way might be more appropriate.
-      relatedness: lst.dig('r1', 'relatedness'),
-      fg_all_count: lst.dig('fg_all_count', 'count'),
-      fg_filtered_count: lst.dig('fg_filtered_count', 'count')
-    )
   end
 
+  ##
+  # Parses a facet (at any level); recurses if necessary to parse stats and
+  # subfacets
+  def subfacet(key, req, rsp)
+    case req[:type]
+      when 'query'
+        count = rsp[:count]
+        return Blacklight::Solr::Response::Facets::FacetItem.new(value: key, hits: count, label: key, subs: subs(req, rsp, {count: count}))
+      when 'terms'
+        # most info/stats/facets are at the level of the individual term
+        # here we ignore top-level "count", but TODO: perhaps in some contexts it could be relevant?
+        # count = rsp['count']
+        field_name = req[:field]
+        parent_fq = nil #nocommit: should populate parent_fq to be meaningful?
+        return rsp['buckets'].map do |bucket|
+          val = bucket[:val]
+          count = bucket[:count]
+          Blacklight::Solr::Response::Facets::FacetItem.new(
+            value: val,
+            hits: count,
+            field: field_name,
+            fq: parent_fq,
+            subs: subs(req, bucket, {val: val, count: count})
+          )
+        end
+      else
+        raise StandardError, "unsupported facet type: #{req[:type]}" # range, heatmap
+    end
+  end
 
 end # end Facets

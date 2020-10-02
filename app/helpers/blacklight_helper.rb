@@ -10,15 +10,21 @@ module BlacklightHelper
   end
 
   def render_expert_help(specialists)
-    if specialists.blank? || specialists.items.first.hits < 30_000
+    return unless specialists
+    specialists = specialists.items[0].subs.each_with_object([]) do |(k, v), arr|
+      if k != :count && v.subs[:r1]
+        arr << v
+      end
+    end.sort! { |a,b| b.subs[:r1][:relatedness] <=> a.subs[:r1][:relatedness] }
+    if specialists.blank? || specialists.first.subs[:r1][:relatedness] < 0.3
       return render partial: 'catalog/ask'
     end
-    subject = specialists.items.first.value
+    subject = specialists.first.value
     specialist_data = PennLib::SubjectSpecialists.data
-    relevant_specialists = specialist_data[subject.to_sym]
+    relevant_specialists = specialist_data[subject]
     if relevant_specialists.present?
       render partial: 'catalog/expert_help',
-             locals: { specialist: relevant_specialists.sample, subject: subject }
+             locals: { specialist: relevant_specialists.sample, subject: subject.to_s }
     else
       # No relevant specialist could be determined - we need to know about this
       Honeybadger.notify "No specialist could be determined for #{subject}"
