@@ -1,0 +1,22 @@
+<fieldType class="solr.BinaryField" name="binary"/>
+
+<fieldType class="solr.BoolField" name="boolean" sortMissingLast="true"/>
+
+<fieldType class="solr.DatePointField" name="date" sortMissingLast="true" omitNorms="true" docValues="true"/>
+<fieldType class="solr.DateRangeField" name="date_range" omitNorms="true"/>
+
+<fieldType class="solr.DoublePointField" name="double" omitNorms="true"/>
+<fieldType class="solr.FloatPointField" name="float" omitNorms="true"/>
+<fieldType class="solr.IntPointField" name="int" sortMissingLast="true" omitNorms="true" docValues="true"/>
+<fieldType class="solr.LongPointField" name="long" sortMissingLast="true" omitNorms="true" docValues="true"/>
+
+
+<fieldType class="solr.StrField" name="string" stored="false" indexed="false" multiValued="false" docValues="true"/>
+<fieldType class="solr.StrField" name="facet"  stored="false" indexed="true" multiValued="true" docValues="true"/>
+
+<fieldType class="solr.StrField" name="ignored" stored="false" indexed="false" multiValued="true"/>
+
+<fieldType name="location_rpt" class="solr.SpatialRecursivePrefixTreeFieldType"
+     geo="true" distErrPct="0.025" maxDistErr="0.000009" distanceUnits="degrees" />
+
+<fieldType name="point" class="solr.PointType" dimension="2" subFieldSuffix="_d"/>
