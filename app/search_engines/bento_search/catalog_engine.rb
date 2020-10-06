@@ -64,8 +64,14 @@ class BentoSearch::CatalogEngine
       holdings = JSON.parse(holdings_response.body)
 
       # TODO: Get a hidden reference to this value into the atom payload so it is referencable from the summary variable
-      if Oga.parse_html(entry['summary']).at_xpath('//a/@href').present?
-        online_resource[Oga.parse_html(entry['summary']).at_xpath('//a/@href').text] = Oga.parse_html(entry['summary']).at_xpath('//a/text()').text.strip
+      parsed_summary = Oga.parse_html(entry['summary'])
+      link = parsed_summary.at_xpath('//a')
+      if link
+        # If a link exists, we are not opinionated about what it must be. e.g., if href.nil? || href=='', we just pass
+        # it along. The exception is that we generate placeholder link text if none is present, to ensure that any
+        # links generated downstream will be visible/clickable.
+        href = link.attribute('href').to_s
+        online_resource[href] = link.text.strip.presence || '[no link text]'
       end
 
       holdings_string = mms_id.downcase.start_with?("hathi") ? '' : determine_holdings_status(holdings, mms_id, online_resource)
