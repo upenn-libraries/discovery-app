@@ -9,13 +9,9 @@ module BlacklightHelper
     render partial: 'catalog/franklin_search_bar'
   end
 
-  def render_expert_help(specialists)
-    return unless specialists
-    specialists = specialists.items[0].subs.each_with_object([]) do |(k, v), arr|
-      if k != :count && v.subs[:r1]
-        arr << v
-      end
-    end.sort! { |a,b| b.subs[:r1][:relatedness] <=> a.subs[:r1][:relatedness] }
+  def render_expert_help(specialists_facet_field)
+    return unless specialists_facet_field
+    specialists = extract_and_sort_by_relatedness(specialists_facet_field)
     if specialists.blank? || specialists.first.subs[:r1][:relatedness] < 0.3
       return render partial: 'catalog/ask'
     end
@@ -30,6 +26,18 @@ module BlacklightHelper
       Honeybadger.notify "No specialist could be determined for #{subject}"
       render partial: 'catalog/ask'
     end
+  end
+
+  # digs down past the top-level domain-restricting facet query, to the relevant
+  # facet items, screens out values where relatedness is nil or not applicable,
+  # and sorts by associated relatedness. Returns an array of facet
+  # items, sorted by relatedness
+  def extract_and_sort_by_relatedness(specialists_facet_field)
+    specialists_facet_field.items[0].subs.each_with_object([]) do |(k, v), arr|
+      if k != :count && v.subs[:r1]
+        arr << v
+      end
+    end.sort! { |a,b| b.subs[:r1][:relatedness] <=> a.subs[:r1][:relatedness] }
   end
 
   # override so that we can insert separators
