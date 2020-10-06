@@ -21,11 +21,11 @@
           <%= result['format_a']&.first %>
         </span>
       </dd>
+      <% if online_holding_info = online_holding_info_for(result) %>
+      <dd><%= online_holding_info %></dd>
+      <% end %>
       <% if result.print_holdings? %>
       <dd><%= print_holding_info_for result %></dd>
-      <% end %>
-      <% if result.electronic_holdings? %>
-      <dd><%= online_holding_info_for result %></dd>
       <% end %>
     </dl>
   </div>

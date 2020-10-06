@@ -51,20 +51,51 @@ module BentoHelper
   # @param [SolrDocument] document
   # @return [ActiveSupport::SafeBuffer]
   def online_holding_info_for(document)
-    if document['prt_count_isort'] == 1 && document['full_text_link_text_a']
-      fulltext_link_for document
+    online_links_arr = dedupe_hathi(document.full_text_links_for_cluster_display)
+    per_se_links_count = document['full_text_link_text_a']&.size || 0
+    # online holdings are not necessarily represented in 'full_text_link_text_a'
+    # where legit holding has no link, below prevents Hathi holdings from masking the presence of "real" online holding
+    links_count = (document['prt_count_isort'] || 0) + (per_se_links_count < online_links_arr.size ? online_links_arr.size - per_se_links_count : 0)
+    if links_count == 1 && online_links_arr.size == 1
+      fulltext_link_for online_links_arr.first
+    elsif document['prt_count_isort'].nil?
+      nil # this is primarily a physical item
     else
       url = solr_document_path document.id
-      text = "#{document['prt_count_isort']} online #{'option'.pluralize(document['prt_count_isort'])}"
+      text = "#{links_count} online #{'option'.pluralize(links_count)}"
       link_to text, url
     end
+  end
+
+  @@HATHI_PD_TEXT = 'HathiTrust Digital Library Connect to full text'
+  @@HATHI_TMP_TEXT = 'HathiTrust Digital Library Login for full text'
+  @@HATHI_REPLACEMENT_TEXT = 'COVID-19 Special Access from HathiTrust'
+  @@HATHI_LOGIN_PREFIX = 'https://babel.hathitrust.org/Shibboleth.sso/Login?entityID=https://idp.pennkey.upenn.edu/idp/shibboleth&target=https%3A%2F%2Fbabel.hathitrust.org%2Fcgi%2Fping%2Fpong%3Ftarget%3D'
+
+  def dedupe_hathi(online_links_arr)
+    acc = { arr: [] }
+    online_links_arr.each_with_object(acc) do |v, acc|
+      e = JSON.parse(v).first
+      case e['linktext']
+      when @@HATHI_PD_TEXT
+        acc[:pd] = e
+      when @@HATHI_TMP_TEXT
+        e['linktext'] = @@HATHI_REPLACEMENT_TEXT
+        e['linkurl'] = @@HATHI_LOGIN_PREFIX + URI.encode_www_form_component(e['linkurl'])
+        acc[:etas] = e
+      else
+        acc[:arr] << e
+      end
+    end
+    hathi = (acc[:etas] || acc[:pd])
+    acc[:arr] << hathi if hathi
+    acc[:arr]
   end
 
   # Return a link to full text
   # @param [SolrDocument] document
   # @return [ActiveSupport::SafeBuffer]
-  def fulltext_link_for(document)
-    link_info = JSON.parse(document['full_text_link_text_a'].first)&.first
+  def fulltext_link_for(link_info)
     link_to link_info['linktext'], link_info['linkurl']
   end
 end
