@@ -772,7 +772,7 @@ class CatalogController < ApplicationController
     @page_title = t('franklin.landing_page_title')
     # only facets are needed, so set rows=0; we do need to grab these provisionally
     # because switching landing tabs happens by content hash, without network request
-    params[:per_page] = 0
+    # params[:per_page] = 0 #TODO: prevent this from being sticky!
     index
   end
 
