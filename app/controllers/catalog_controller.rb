@@ -217,11 +217,11 @@ class CatalogController < ApplicationController
     # TODO: in search_builder, tag corresponding fq's with `no_correlation` so that they may be
     # excluded from calculation of foreground domains for the purpose of relatedness/correlation
     # calculation.
-    @@CORRELATION_IGNORELIST = {
+    CORRELATION_IGNORELIST = {
       :access_f => nil,
       :record_source_f => nil,
       :format_f => ['Database & Article Index']
-    }
+    }.freeze
 
     actionable_filters = lambda { |a, b, c|
       params = a.params
@@ -229,10 +229,10 @@ class CatalogController < ApplicationController
       f = params[:f]
       return false if f.nil?
       # we return true if there is at least one non-ignorelisted filter
-      return true if f.size > @@CORRELATION_IGNORELIST.size
+      return true if f.size > CORRELATION_IGNORELIST.size
       f.symbolize_keys.each do |facet_key, facet_values|
-        return true unless @@CORRELATION_IGNORELIST.include?(facet_key) # no vals are ignored for this key
-        ignorelisted_vals = @@CORRELATION_IGNORELIST[facet_key]
+        return true unless CORRELATION_IGNORELIST.include?(facet_key) # no vals are ignored for this key
+        ignorelisted_vals = CORRELATION_IGNORELIST[facet_key]
         next unless ignorelisted_vals # all vals are ignored for this key
         return true if (facet_values - ignorelisted_vals).present? # there is at least one non-ignored val
       end
@@ -264,10 +264,6 @@ class CatalogController < ApplicationController
       r1.nil? ? 0 : (r1[:relatedness].to_f * 100000).to_i
     }
 
-    post_sort = lambda { |items|
-      items.sort { |a,b| b.hits <=> a.hits }
-    }
-
     config.induce_sort = lambda { |blacklight_params|
       return 'title_nssort asc' if blacklight_params.dig(:f, :format_f)&.include?('Database & Article Index')
     }
@@ -293,117 +289,110 @@ class CatalogController < ApplicationController
         }
     }
 
-    @@SUBJECT_SPECIALISTS = File.open("config/translation_maps/subject_specialists.solr-json", "rb").map do |line|
-      comment_idx = line.index('#')
-      (comment_idx.nil? ? line : line.slice(0, comment_idx)).strip.presence
-    end.compact.join
+    DATABASE_CATEGORY_TAXONOMY = {
+      db_category_f: {
+        type: 'terms',
+        field: 'db_category_f',
+        mincount: 1,
+        limit: -1,
+        sort: 'index',
+        facet: {
+          db_subcategory_f: {
+            type: 'terms',
+            prefix: '$parent--',
+            field: 'db_subcategory_f',
+            mincount: 1,
+            limit: -1,
+            sort: 'index'
+          }
+        }
+      }
+    }.freeze
 
-    @@DATABASE_CATEGORY_TAXONOMY = [
-        '{',
-        'db_category_f:{',
-        'type: terms,',
-        'field: db_category_f,',
-        'mincount: 1,',
-        'limit: -1,',
-        'sort: index,',
-        'facet:{',
-        'db_subcategory_f: {',
-        'type : terms,',
-        'prefix : $parent--,',
-        'field: db_subcategory_f,',
-        'mincount: 1,',
-        'limit: -1,',
-        'sort: index',
-        '}',
-        '}',
-        '}',
-        '}'].join
+    SUBJECT_TAXONOMY = {
+      subject_taxonomy: {
+        type: 'terms',
+        field: 'toplevel_subject_f',
+        top_level_term: 'term()',
+        facet: {
+          identity: {
+            type: 'query',
+            q: '{!term f=subject_f v=$top_level_term}',
+          },
+          subject_f: {
+            type: 'terms',
+            prefix: '$top_level_term--',
+            field: 'subject_f',
+            limit: 5
+          }
+        }
+      }
+    }.freeze
 
-    @@SUBJECT_TAXONOMY = [
-        '{',
-        'subject_taxonomy: {',
-        'type: terms,',
-        'field: toplevel_subject_f,',
-        'top_level_term: "term()",',
-        'facet: {',
-        'identity: {',
-        'type: query,',
-        'q: "{!term f=subject_f v=$top_level_term}"',
-        '},',
-        'subject_f: {',
-        'type: terms,',
-        'prefix: $top_level_term--,',
-        'field: subject_f,',
-        'limit: 5',
-        '}',
-        '}',
-        '}',
-        '}'].join
+    MINCOUNT = { 'facet.mincount' => 1 }.freeze
 
-    @@MINCOUNT = { 'facet.mincount' => 1 }
-
-    @@SUBJECT_CORRELATION = ['{',
-      'subject_correlation:{',
-        'type:query,',
-        'domain:{',
-          'query:\'{!query v=$cluster}\'',
-        '},',
-        'q:\'{!query tag=REFINE v=$correlation_domain}\',',
-        'facet:{',
-          'correlation:{',
-            'type:terms,',
-            'field:subject_f,',
+    SUBJECT_CORRELATION = {
+      subject_correlation: {
+        type: 'query',
+        domain: {
+          query: '{!query v=$cluster}'
+        },
+        q: '{!query tag=REFINE v=$correlation_domain}',
+        facet: {
+          correlation:{
+            type: 'terms',
+            field: 'subject_f',
             # NOTE: mincount pre-filters vals that could not possibly match min_pop
-            'mincount:3,', # guarantee fgSize >= 3
-            'limit:25,',
-            'refine:true,',
-            'sort:{r1:desc},',
-            'facet:{',
-              'r1:{',
-                'type:func,',
-                'min_popularity:0.0000002,', # lower bound n/bgSize to guarantee fgCount>=n (here, n==2)
-                'func:\'relatedness($combo,$back)\'',
-              '},',
-              'fg_all_count:{', # count over unfiltered logical base domain
-                'domain:{',
-                  'excludeTags:REFINE',
-                '},',
-                'type:query,',
-                'q:\'*:*\'',
-              '},',
-              'fg_filtered_count:{', # count over logical base domain, filtered by q and fq
-                'domain:{',
-                  'excludeTags:REFINE,',
-                  'filter:\'{!query v=$presentation_domain}\',',
-                '},',
-                'type:query,',
-                'q:\'*:*\'',
-              '}',
-            '}',
-          '}',
-        '}',
-      '}',
-    '}'].join
+            mincount: 3, # guarantee fgSize >= 3
+            limit: 25,
+            refine: true,
+            sort: {r1: 'desc'},
+            facet: {
+              r1: {
+                type: 'func',
+                min_popularity: 0.0000002, # lower bound n/bgSize to guarantee fgCount>=n (here, n==2)
+                func: 'relatedness($combo,$back)'
+              },
+              fg_all_count: { # count over unfiltered logical base domain
+                domain: {
+                  excludeTags: 'REFINE'
+                },
+                type: 'query',
+                q: '*:*'
+              },
+              fg_filtered_count: { # count over logical base domain, filtered by q and fq
+                domain: {
+                  excludeTags: 'REFINE',
+                  filter: '{!query v=$presentation_domain}',
+                },
+                type: 'query',
+                q: '*:*'
+              }
+            }
+          }
+        }
+      }
+    }.freeze
 
-    @@NO_FACET_SEARCH_FIELDS = ['subject_correlation']
+    NO_FACET_SEARCH_FIELDS = ['subject_correlation'].freeze
 
     config.add_facet_field 'db_subcategory_f', label: 'Database Subject', if: lambda { |a,b,c| false }
     config.add_facet_field 'db_category_f', label: 'Database Subject', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy',
-                           :json_facet => @@DATABASE_CATEGORY_TAXONOMY, :top_level_field => 'db_category_f', :facet_type => :database,
+                           :json_facet => DATABASE_CATEGORY_TAXONOMY, :sub_hierarchy => [:db_subcategory_f], :facet_type => :database,
                            :helper_method => :render_subcategories, :if => database_selected
 
     config.add_facet_field 'db_type_f', label: 'Database Type', limit: -1, collapse: false,
                            :if => database_selected,
-                           :facet_type => :database, solr_params: @@MINCOUNT
-    config.add_facet_field 'subject_specialists', label: 'Subject Area Correlation', collapse: true, :partial => 'blacklight/hierarchy/facet_hierarchy',
-        :json_facet => @@SUBJECT_SPECIALISTS, :top_level_field => 'subject_specialists', :get_hits => get_hits, :post_sort => post_sort,
-        :if => actionable_filters
+                           :facet_type => :database, solr_params: MINCOUNT
+    # NOTE: set facet_type=nil below, to bypass normal facet display
+    config.add_facet_field 'subject_specialists', label: 'Subject Area Correlation', collapse: true, :facet_type => nil,
+        :json_facet => PennLib::SubjectSpecialists::QUERIES, :if => actionable_filters
 
     config.add_facet_field 'subject_correlation',
                            label: 'Subject Correlation',
                            collapse: false,
                            partial: 'blacklight/hierarchy/facet_relatedness',
-                           json_facet: @@SUBJECT_CORRELATION,
+                           json_facet: SUBJECT_CORRELATION,
                            top_level_field: 'subject_correlation',
                            :facet_type => lambda { |params|
                              params[:search_field] == 'subject_correlation' ? :first_class : :default
@@ -449,33 +438,33 @@ class CatalogController < ApplicationController
             'Z' => { :label => 'Z', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='z'}"},
             'Other' => { :label => 'Other', :fq => "{!tag=azlist ex=azlist}title_xfacet:/[ -`{-~].*/"}
         }
-    config.add_facet_field 'access_f', label: 'Access', collapse: false, solr_params: @@MINCOUNT, query: {
+    config.add_facet_field 'access_f', label: 'Access', collapse: false, solr_params: MINCOUNT, query: {
         'Online' => { :label => 'Online', :fq => "{!join ex=orig_q from=cluster_id to=cluster_id v='access_f:Online OR record_source_id:3'}"},
         'At the library' => { :label => 'At the library', :fq => "{!join ex=orig_q from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"},
     }
-    config.add_facet_field 'record_source_f', label: 'Record Source', collapse: false, solr_params: @@MINCOUNT, query: {
+    config.add_facet_field 'record_source_f', label: 'Record Source', collapse: false, solr_params: MINCOUNT, query: {
         'HathiTrust' => { :label => 'HathiTrust', :fq => "{!join ex=orig_q from=cluster_id to=cluster_id v='{!terms f=record_source_id v=2,3}'}"},
         'Penn' => { :label => 'Penn', :fq => "{!join ex=orig_q from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Penn\\'}'}"},
     }
-    config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false, :ex => 'orig_q', solr_params: @@MINCOUNT
+    config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false, :ex => 'orig_q', solr_params: MINCOUNT
     config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z', collapse: false,
-        :ex => 'orig_q', solr_params: @@MINCOUNT
-    #config.add_facet_field 'subject_taxonomy', label: 'Subject Taxonomy', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy', :json_facet => @@SUBJECT_TAXONOMY, :top_level_field => 'toplevel_subject_f', :helper_method => :render_subcategories
+        :ex => 'orig_q', solr_params: MINCOUNT
+    #config.add_facet_field 'subject_taxonomy', label: 'Subject Taxonomy', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy', :json_facet => SUBJECT_TAXONOMY, :top_level_field => 'toplevel_subject_f', :helper_method => :render_subcategories
     config.add_facet_field 'subject_f', label: 'Subject', limit: 5, index_range: 'A'..'Z', collapse: false,
-        :ex => 'orig_q', solr_params: @@MINCOUNT
-    config.add_facet_field 'language_f', label: 'Language', limit: 5, collapse: false, :ex => 'orig_q', solr_params: @@MINCOUNT
-    config.add_facet_field 'library_f', label: 'Library', limit: 5, collapse: false, :ex => 'orig_q', solr_params: @@MINCOUNT
-    config.add_facet_field 'specific_location_f', label: 'Specific location', limit: 5, :ex => 'orig_q', solr_params: @@MINCOUNT
+        :ex => 'orig_q', solr_params: MINCOUNT
+    config.add_facet_field 'language_f', label: 'Language', limit: 5, collapse: false, :ex => 'orig_q', solr_params: MINCOUNT
+    config.add_facet_field 'library_f', label: 'Library', limit: 5, collapse: false, :ex => 'orig_q', solr_params: MINCOUNT
+    config.add_facet_field 'specific_location_f', label: 'Specific location', limit: 5, :ex => 'orig_q', solr_params: MINCOUNT
     config.add_facet_field 'recently_published', label: 'Recently published', collapse: false, :ex => 'orig_q',
-        solr_params: @@MINCOUNT, :query => {
+        solr_params: MINCOUNT, :query => {
         :last_5_years => { label: 'Last 5 years', fq: "pub_max_dtsort:[#{Date.current.year - 4}-01-01T00:00:00Z TO *]" },
         :last_10_years => { label: 'Last 10 years', fq: "pub_max_dtsort:[#{Date.current.year - 9}-01-01T00:00:00Z TO *]" },
         :last_15_years => { label: 'Last 15 years', fq: "pub_max_dtsort:[#{Date.current.year - 14}-01-01T00:00:00Z TO *]" },
     }
-    config.add_facet_field 'publication_date_f', label: 'Publication date', limit: 5, :ex => 'orig_q', solr_params: @@MINCOUNT
-    config.add_facet_field 'classification_f', label: 'Classification', limit: 5, collapse: false, :ex => 'orig_q', solr_params: @@MINCOUNT
-    config.add_facet_field 'genre_f', label: 'Form/Genre', limit: 5, :ex => 'orig_q', solr_params: @@MINCOUNT
-    config.add_facet_field 'recently_added_f', label: 'Recently added', solr_params: @@MINCOUNT, :query => {
+    config.add_facet_field 'publication_date_f', label: 'Publication date', limit: 5, :ex => 'orig_q', solr_params: MINCOUNT
+    config.add_facet_field 'classification_f', label: 'Classification', limit: 5, collapse: false, :ex => 'orig_q', solr_params: MINCOUNT
+    config.add_facet_field 'genre_f', label: 'Form/Genre', limit: 5, :ex => 'orig_q', solr_params: MINCOUNT
+    config.add_facet_field 'recently_added_f', label: 'Recently added', solr_params: MINCOUNT, :query => {
         :within_90_days => { label: 'Within 90 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (90 * SECONDS_PER_DAY) } TO *]" },
         :within_60_days => { label: 'Within 60 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (60 * SECONDS_PER_DAY) } TO *]" },
         :within_30_days => { label: 'Within 30 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (30 * SECONDS_PER_DAY) } TO *]" },
@@ -491,18 +480,18 @@ class CatalogController < ApplicationController
     # config.add_facet_field 'pub_date_isort', label: 'Publication Year', range: true, collapse: false,
     #                        include_in_advanced_search: false
 
-    config.add_facet_field 'subject_xfacet2', label: 'Subject', limit: 20, show: false, solr_params: @@MINCOUNT,
+    config.add_facet_field 'subject_xfacet2', label: 'Subject', limit: 20, show: false, solr_params: MINCOUNT,
                            xfacet: true, xfacet_view_type: 'xbrowse', facet_for_filtering: 'subject_f',
                            :if => search_field_accept::(['subject_xfacet2'])
-    config.add_facet_field 'title_xfacet', label: 'Title', limit: 20, show: false, solr_params: @@MINCOUNT,
+    config.add_facet_field 'title_xfacet', label: 'Title', limit: 20, show: false, solr_params: MINCOUNT,
                            xfacet: true, xfacet_view_type: 'rbrowse', :if => search_field_accept::(['title_xfacet']),
                            xfacet_rbrowse_fields: %w(title author_creator_a standardized_title_a edition conference_a series contained_within_a publication_a format_a full_text_links_for_cluster_display availability)
     #config.add_facet_field 'author_creator_xfacet', label: 'Author', limit: 20, show: false,
     #                       xfacet: true, xfacet_view_type: 'xbrowse', facet_for_filtering: 'author_creator_f'
-    config.add_facet_field 'author_creator_xfacet2', label: 'Author', limit: 20, show: false, solr_params: @@MINCOUNT,
+    config.add_facet_field 'author_creator_xfacet2', label: 'Author', limit: 20, show: false, solr_params: MINCOUNT,
                            xfacet: true, xfacet_view_type: 'xbrowse', facet_for_filtering: 'author_creator_f',
                            :if => search_field_accept::(['author_creator_xfacet2'])
-    config.add_facet_field 'call_number_xfacet', label: 'Call number', limit: 20, show: false, solr_params: @@MINCOUNT,
+    config.add_facet_field 'call_number_xfacet', label: 'Call number', limit: 20, show: false, solr_params: MINCOUNT,
                            xfacet: true, xfacet_view_type: 'rbrowse', :if => search_field_accept::(['call_number_xfacet']),
                            xfacet_rbrowse_fields: %w(title author_creator_a standardized_title_a edition conference_a series contained_within_a publication_a format_a full_text_links_for_cluster_display availability)
 

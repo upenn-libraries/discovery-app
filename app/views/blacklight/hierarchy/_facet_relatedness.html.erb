@@ -9,8 +9,9 @@
     this might better be done with facet "limit" arg), or setting a threshold relatedness,
     below which items are not displayed to the user.
   -->
-  <% display_facet.items.each do |item| %>
-    <% break unless item.relatedness > -Float::INFINITY %>
+  <% display_facet.items[0].subs[:correlation].each do |item| %>
+    <% subs = item.subs %>
+    <% break unless subs[:r1][:relatedness] > -Float::INFINITY %>
     <li>
       <span class="facet-label">
         <%= link_to item.value, search_action_path(search_state.add_facet_params_and_redirect('subject_f', item.value)) %>
@@ -22,10 +23,10 @@
           and display only that (not ruling out the possibility of dispaying
           multiple/all)
         -->
-        <% if item.fg_filtered_count == item.fg_all_count %>
-        <%=  "#{item.fg_filtered_count} (#{item.relatedness})" %>
+        <% if subs[:fg_filtered_count].hits == subs[:fg_all_count].hits %>
+        <%=  "#{subs[:fg_filtered_count].hits} (#{subs[:r1][:relatedness]})" %>
         <% else %>
-        <%=  "#{item.fg_filtered_count}/#{item.fg_all_count} (#{item.relatedness})" %>
+        <%=  "#{subs[:fg_filtered_count].hits}/#{subs[:fg_all_count].hits} (#{subs[:r1][:relatedness]})" %>
         <% end %>
       </span>
     </li>

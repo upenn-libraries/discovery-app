@@ -45,7 +45,7 @@ class SearchBuilder < Blacklight::SearchBuilder
 
       if facet.json_facet
         json_facet = (solr_parameters[:'json.facet'] ||= [])
-        json_facet << facet.json_facet
+        json_facet << facet.json_facet.to_json
         next
       end
 
