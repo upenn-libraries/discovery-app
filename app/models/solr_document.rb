@@ -181,11 +181,6 @@ class SolrDocument
   end
 
   # @return [TrueClass, FalseClass]
-  def electronic_holdings?
-    self['prt_count_isort']&.positive?
-  end
-  
-  # @return [TrueClass, FalseClass]
   def print_holdings?
     self['hld_count_isort']&.positive?
   end

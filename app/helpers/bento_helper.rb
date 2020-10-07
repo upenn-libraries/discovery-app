@@ -67,21 +67,21 @@ module BentoHelper
     end
   end
 
-  @@HATHI_PD_TEXT = 'HathiTrust Digital Library Connect to full text'
-  @@HATHI_TMP_TEXT = 'HathiTrust Digital Library Login for full text'
-  @@HATHI_REPLACEMENT_TEXT = 'COVID-19 Special Access from HathiTrust'
-  @@HATHI_LOGIN_PREFIX = 'https://babel.hathitrust.org/Shibboleth.sso/Login?entityID=https://idp.pennkey.upenn.edu/idp/shibboleth&target=https%3A%2F%2Fbabel.hathitrust.org%2Fcgi%2Fping%2Fpong%3Ftarget%3D'
+  HATHI_PD_TEXT = 'HathiTrust Digital Library Connect to full text'
+  HATHI_TMP_TEXT = 'HathiTrust Digital Library Login for full text'
+  HATHI_REPLACEMENT_TEXT = 'COVID-19 Special Access from HathiTrust'
+  HATHI_LOGIN_PREFIX = 'https://babel.hathitrust.org/Shibboleth.sso/Login?entityID=https://idp.pennkey.upenn.edu/idp/shibboleth&target=https%3A%2F%2Fbabel.hathitrust.org%2Fcgi%2Fping%2Fpong%3Ftarget%3D'
 
   def dedupe_hathi(online_links_arr)
     acc = { arr: [] }
     online_links_arr.each_with_object(acc) do |v, acc|
       e = JSON.parse(v).first
       case e['linktext']
-      when @@HATHI_PD_TEXT
+      when HATHI_PD_TEXT
         acc[:pd] = e
-      when @@HATHI_TMP_TEXT
-        e['linktext'] = @@HATHI_REPLACEMENT_TEXT
-        e['linkurl'] = @@HATHI_LOGIN_PREFIX + URI.encode_www_form_component(e['linkurl'])
+      when HATHI_TMP_TEXT
+        e['linktext'] = HATHI_REPLACEMENT_TEXT
+        e['linkurl'] = HATHI_LOGIN_PREFIX + URI.encode_www_form_component(e['linkurl'])
         acc[:etas] = e
       else
         acc[:arr] << e
