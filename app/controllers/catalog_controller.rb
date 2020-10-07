@@ -834,6 +834,9 @@ class CatalogController < ApplicationController
   # certain BL view partials used on landing page won't resolve correctly.
   def landing
     @page_title = t('franklin.landing_page_title')
+    # only facets are needed, so set rows=0; we do need to grab these provisionally
+    # because switching landing tabs happens by content hash, without network request
+    params[:per_page] = 0
     index
   end
 
