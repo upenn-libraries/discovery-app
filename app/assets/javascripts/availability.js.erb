@@ -234,10 +234,15 @@ $(document).ready(function() {
                 var optionList = $('#requestOptionList-' + mmsid);
 
                 var openUrlTemplate = null; // grab openUrl params from here if necessary
+                var templateFromILL = false; // determine whether we keep looking for ILL, as the "ideal" source of the OpenURL template
                 var booksByMailOption = null;
-                for(var i = 0; i < data.length && (openUrlTemplate === null || booksByMailOption === null); i++) {
+                for(var i = 0; i < data.length && (openUrlTemplate === null || booksByMailOption === null || !templateFromILL); i++) {
                     var requestOption = data[i];
                     switch (requestOption['option_name']) {
+                        case 'Interlibrary Loan':
+                            openUrlTemplate = requestOption['option_url'];
+                            templateFromILL = true;
+                            break;
                         case 'Request Digital Delivery':
                             if (openUrlTemplate === null) {
                                 // provisionally grab openUrl from here, but prefer from ILL if present for consistency
