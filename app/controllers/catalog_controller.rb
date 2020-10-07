@@ -259,11 +259,6 @@ class CatalogController < ApplicationController
       }
     }
 
-    get_hits = lambda { |v|
-      r1 = v[:r1]
-      r1.nil? ? 0 : (r1[:relatedness].to_f * 100000).to_i
-    }
-
     config.induce_sort = lambda { |blacklight_params|
       return 'title_nssort asc' if blacklight_params.dig(:f, :format_f)&.include?('Database & Article Index')
     }
@@ -393,18 +388,9 @@ class CatalogController < ApplicationController
                            collapse: false,
                            partial: 'blacklight/hierarchy/facet_relatedness',
                            json_facet: SUBJECT_CORRELATION,
-                           top_level_field: 'subject_correlation',
                            :facet_type => lambda { |params|
                              params[:search_field] == 'subject_correlation' ? :first_class : :default
                            },
-                           # NOTE: "get_hits" here below is somewhat arbitrary, given that we may expect
-                           # to render with a custom partial that directly reads the specific values
-                           # we care about. The main role it plays here is to ensure that the vestigial
-                           # "hits" attribute is populated with something meaningful. Sensible choices
-                           # here would include:
-                           #"  fg_all_count" (term count over unfiltered base domain)
-                           #"  fg_filtered_count" (term count over base domain filtered by q and fq)
-                           :get_hits => lambda {|v| v[:fg_all_count][:count]},
                            :if => actionable_filters
 
     config.add_facet_field 'azlist', label: 'A-Z List', collapse: false, single: :manual, :facet_type => :header,
@@ -449,7 +435,7 @@ class CatalogController < ApplicationController
     config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false, :ex => 'orig_q', solr_params: MINCOUNT
     config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z', collapse: false,
         :ex => 'orig_q', solr_params: MINCOUNT
-    #config.add_facet_field 'subject_taxonomy', label: 'Subject Taxonomy', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy', :json_facet => SUBJECT_TAXONOMY, :top_level_field => 'toplevel_subject_f', :helper_method => :render_subcategories
+    #config.add_facet_field 'subject_taxonomy', label: 'Subject Taxonomy', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy', :json_facet => SUBJECT_TAXONOM, :helper_method => :render_subcategories
     config.add_facet_field 'subject_f', label: 'Subject', limit: 5, index_range: 'A'..'Z', collapse: false,
         :ex => 'orig_q', solr_params: MINCOUNT
     config.add_facet_field 'language_f', label: 'Language', limit: 5, collapse: false, :ex => 'orig_q', solr_params: MINCOUNT
