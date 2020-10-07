@@ -63,9 +63,16 @@ class CatalogController < ApplicationController
     end
   end
 
-  PAGINATION_THRESHOLD=250
+  PAGINATION_THRESHOLD=1000 # effective "record depth" beyond which pagination is not supported
   before_action only: :index do
-    if params[:page] && params[:page].to_i > PAGINATION_THRESHOLD
+    per_page = (params[:per_page] || params[:rows])&.to_i || blacklight_config.default_per_page
+    if (per_page > blacklight_config.max_per_page)
+      # somebody's hacking the url; they're not going to get more than MAX_PER_PAGE records anyway, so give them an error.
+      # if it's a real person, they can resubmit the request and get what they would have gotten anyway; but don't jump through
+      # hoops to return records to what's most likely an overly-curious crawler
+      flash[:error] = "Request exceeds maximum number of records per page: #{blacklight_config.max_per_page}."
+      redirect_to root_path
+    elsif ((params[:page]&.to_i || 1) * per_page) > PAGINATION_THRESHOLD
       flash[:error] = "You have paginated too deep into the result set. Please contact us if you have a need to view results past page #{PAGINATION_THRESHOLD}."
       redirect_to root_path
     end
