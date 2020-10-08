@@ -83,6 +83,8 @@ class CatalogController < ApplicationController
         bound_with_ids_a
         marcrecord_text
         recently_added_isort
+        hld_count_isort
+        prt_count_isort
       }.join(','),
         'facet.threads': 2,
         'facet.mincount': 0,
@@ -766,6 +768,7 @@ class CatalogController < ApplicationController
 
   # extend 'index' so we can override views
   def bento
+    params[:per_page] = 5
     index
   end
 
