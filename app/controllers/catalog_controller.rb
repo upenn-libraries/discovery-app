@@ -4,80 +4,30 @@ require 'uri'
 # frozen_string_literal: true
 class CatalogController < ApplicationController
   include ReplaceInvalidBytes
-
   include BlacklightAdvancedSearch::Controller
-
   include Blacklight::Catalog
   include Blacklight::Marc::Catalog
   include Blacklight::Ris::Catalog
-
   include BlacklightSolrplugins::XBrowse
-
   include HandleInvalidAdvancedSearch
-
   include AssociateExpandedDocs
-
   include HandleEmptyEmail
 
+  # expire session if needed
   before_action :expire_session
 
-  SECONDS_PER_DAY = 86400
+  # screen for illegit sort params
+  before_action :block_invalid_sort_params, only: :index
 
-  def has_shib_session?
-    session[:alma_sso_user].present?
-  end
+  # establish an effective "record depth" beyond which pagination is not supported
+  PAGINATION_THRESHOLD = 1000
+  before_action :limit_pagination, only: :index
 
-  def shib_session_valid?
-    session[:alma_sso_user] == request.headers['HTTP_REMOTE_USER']
-  end
+  # and also for facets
+  FACET_PAGINATION_THRESHOLD = 50
+  before_action :limit_facet_pagination, only: :facet
 
-  # should return true if page isn't protected behind Shib
-  def is_unprotected_url?
-    true
-  end
-
-  def expire_shib_session_return_url
-    is_unprotected_url? ? request.original_url : root_url
-  end
-
-  def search_results(user_params)
-    sid = session&.id
-    if !sid.nil? && sid.length >= 8
-      routingHash = [sid[-8..-1]].pack("H*").unpack("l>")[0]
-      # mod 12 to support even distribution for replication
-      # factors 1,2,3,4; that should be sufficient for all
-      # practical cases.
-      user_params[:routingHash] = routingHash % 12
-    end
-    super
-  end
-
-  # manually expire the session if user has exceeded 'hard expiration' or if
-  # shib session has become inactive
-  def expire_session
-    invalid_shib = has_shib_session? && !shib_session_valid?
-    if (session[:hard_expiration] && session[:hard_expiration] < Time.now.to_i) || invalid_shib
-      reset_session
-      url = invalid_shib ? "/Shibboleth.sso/Logout?return=#{URI.encode(expire_shib_session_return_url)}" : expire_shib_session_return_url
-      redirect_to url, alert: 'Your session has expired, please log in again'
-    end
-  end
-
-  PAGINATION_THRESHOLD=250
-  before_action only: :index do
-    if params[:page] && params[:page].to_i > PAGINATION_THRESHOLD
-      flash[:error] = "You have paginated too deep into the result set. Please contact us if you have a need to view results past page #{PAGINATION_THRESHOLD}."
-      redirect_to root_path
-    end
-  end
-
-  FACET_PAGINATION_THRESHOLD=50
-  before_action only: :facet do
-    if params['facet.page'] && params['facet.page'].to_i > FACET_PAGINATION_THRESHOLD
-      flash[:error] = "You have paginated too deep into facets. Please contact us if you have a need to view facets past page #{FACET_PAGINATION_THRESHOLD}."
-      redirect_to root_path
-    end
-  end
+  SECONDS_PER_DAY = 86_400
 
   configure_blacklight do |config|
     # default advanced config values
@@ -133,6 +83,8 @@ class CatalogController < ApplicationController
         bound_with_ids_a
         marcrecord_text
         recently_added_isort
+        hld_count_isort
+        prt_count_isort
       }.join(','),
         'facet.threads': 2,
         'facet.mincount': 0,
@@ -909,19 +861,9 @@ class CatalogController < ApplicationController
     config.navbar.partials.delete(:search_history)
   end
 
-  # override from Blacklight::Marc::Catalog so that action appears on bookmarks page
-  def render_refworks_action? config, options = {}
-    doc = options[:document] || (options[:document_list] || []).first
-    doc && doc.respond_to?(:export_formats) && doc.export_formats.keys.include?(:refworks_marc_txt)
-  end
-
-  def render_saved_searches?
-    # don't ever show saved searches link to the user
-    false
-  end
-
   # extend 'index' so we can override views
   def bento
+    params[:per_page] = 5
     index
   end
 
@@ -929,7 +871,108 @@ class CatalogController < ApplicationController
   # certain BL view partials used on landing page won't resolve correctly.
   def landing
     @page_title = t('franklin.landing_page_title')
+    # only facets are needed, so set rows=0; we do need to grab these provisionally
+    # because switching landing tabs happens by content hash, without network request
+    # params[:per_page] = 0 #TODO: prevent this from being sticky!
     index
+  end
+
+  # override
+  def search_results(user_params)
+    sid = session&.id
+    if !sid.nil? && sid.length >= 8
+      routingHash = [sid[-8..-1]].pack("H*").unpack("l>")[0]
+      # mod 12 to support even distribution for replication
+      # factors 1,2,3,4; that should be sufficient for all
+      # practical cases.
+      user_params[:routingHash] = routingHash % 12
+    end
+    super
+  end
+
+  private
+
+  def has_shib_session?
+    session[:alma_sso_user].present?
+  end
+
+  def shib_session_valid?
+    session[:alma_sso_user] == request.headers['HTTP_REMOTE_USER']
+  end
+
+  # should return true if page isn't protected behind Shib
+  def is_unprotected_url?
+    true
+  end
+
+  def expire_shib_session_return_url
+    is_unprotected_url? ? request.original_url : root_url
+  end
+
+  # manually expire the session if user has exceeded 'hard expiration' or if
+  # shib session has become inactive
+  def expire_session
+    invalid_shib = has_shib_session? && !shib_session_valid?
+    if (session[:hard_expiration] && session[:hard_expiration] < Time.now.to_i) || invalid_shib
+      reset_session
+      url = invalid_shib ? "/Shibboleth.sso/Logout?return=#{URI.encode(expire_shib_session_return_url)}" : expire_shib_session_return_url
+      redirect_to url, alert: 'Your session has expired, please log in again'
+    end
+  end
+
+  def limit_facet_pagination
+    if params['facet.page'] && params['facet.page'].to_i > FACET_PAGINATION_THRESHOLD
+      flash[:error] = "You have paginated too deep into facets. Please contact us if you need to view facets past page #{FACET_PAGINATION_THRESHOLD}."
+      redirect_to root_path
+    end
+  end
+
+  def limit_pagination
+    per_page = (params[:per_page] || params[:rows])&.to_i || blacklight_config.default_per_page
+    if per_page > blacklight_config.max_per_page
+      # somebody's hacking the url; they're not going to get more than MAX_PER_PAGE records anyway, so give them an error.
+      # if it's a real person, they can resubmit the request and get what they would have gotten anyway; but don't jump through
+      # hoops to return records to what's most likely an overly-curious crawler
+      flash[:error] = "Request exceeds maximum number of records per page: #{blacklight_config.max_per_page}."
+      redirect_to root_path
+    elsif ((params[:page]&.to_i || 1) * per_page) > PAGINATION_THRESHOLD
+      flash[:error] = "You have paginated too deep into the result set. Please contact us if you need to view results past record #{PAGINATION_THRESHOLD}."
+      redirect_to root_path
+    end
+  end
+
+  ALIAS_SORT_FIELD = {
+    # For now we will continue to transparently support links that might plausibly have been legit at
+    # some point, by internally aliasing to the current field name. The right way to do this is
+    # probably via 301 redirect to bridge a onetime migration to a more stable naming abstraction
+    'title_ssort asc' => 'title_nssort asc',
+    'title_ssort desc' => 'title_nssort desc',
+    'author_creator_ssort asc' => 'author_creator_nssort asc',
+    'author_creator_ssort desc' => 'author_creator_nssort desc',
+    'publication_date_ssort asc, title_ssort asc' => 'publication_date_ssort asc, title_nssort asc',
+    'publication_date_ssort desc, title_ssort asc' => 'publication_date_ssort desc, title_nssort asc'
+  }
+
+  def block_invalid_sort_params
+    sort_val = params[:sort]
+    return unless sort_val
+    if aliased_sort_val = ALIAS_SORT_FIELD[sort_val]
+      params[:sort] = aliased_sort_val
+    elsif !blacklight_config.sort_fields.has_key?(sort_val)
+      flash[:error] = "Requested illegal sort val: #{sort_val}"
+      redirect_to root_path
+    end
+  end
+
+  # override from Blacklight::Marc::Catalog so that action appears on bookmarks page
+  def render_refworks_action?(config, options = {})
+    doc = options[:document] || (options[:document_list] || []).first
+    doc && doc.respond_to?(:export_formats) && doc.export_formats.keys.include?(:refworks_marc_txt)
+  end
+
+  def render_saved_searches?
+    # don't ever show saved searches link to the user
+    false
   end
 
 end
