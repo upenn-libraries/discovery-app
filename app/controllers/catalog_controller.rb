@@ -843,9 +843,24 @@ class CatalogController < ApplicationController
     end
   end
 
+  ALIAS_SORT_FIELD = {
+    # For now we will continue to transparently support links that might plausibly have been legit at
+    # some point, by internally aliasing to the current field name. The right way to do this is
+    # probably via 301 redirect to bridge a onetime migration to a more stable naming abstraction
+    'title_ssort asc' => 'title_nssort asc',
+    'title_ssort desc' => 'title_nssort desc',
+    'author_creator_ssort asc' => 'author_creator_nssort asc',
+    'author_creator_ssort desc' => 'author_creator_nssort desc',
+    'publication_date_ssort asc, title_ssort asc' => 'publication_date_ssort asc, title_nssort asc',
+    'publication_date_ssort desc, title_ssort asc' => 'publication_date_ssort desc, title_nssort asc'
+  }
+
   def block_invalid_sort_params
     sort_val = params[:sort]
-    if sort_val && !blacklight_config.sort_fields.has_key?(sort_val)
+    return unless sort_val
+    if aliased_sort_val = ALIAS_SORT_FIELD[sort_val]
+      params[:sort] = aliased_sort_val
+    elsif !blacklight_config.sort_fields.has_key?(sort_val)
       flash[:error] = "Requested illegal sort val: #{sort_val}"
       redirect_to root_path
     end
