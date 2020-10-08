@@ -16,6 +16,9 @@ class CatalogController < ApplicationController
   # expire session if needed
   before_action :expire_session
 
+  # screen for illegit sort params
+  before_action :block_invalid_sort_params, only: :index
+
   # establish an effective "record depth" beyond which pagination is not supported
   PAGINATION_THRESHOLD = 1000
   before_action :limit_pagination, only: :index
@@ -836,6 +839,14 @@ class CatalogController < ApplicationController
       redirect_to root_path
     elsif ((params[:page]&.to_i || 1) * per_page) > PAGINATION_THRESHOLD
       flash[:error] = "You have paginated too deep into the result set. Please contact us if you need to view results past record #{PAGINATION_THRESHOLD}."
+      redirect_to root_path
+    end
+  end
+
+  def block_invalid_sort_params
+    sort_val = params[:sort]
+    if sort_val && !blacklight_config.sort_fields.has_key?(sort_val)
+      flash[:error] = "Requested illegal sort val: #{sort_val}"
       redirect_to root_path
     end
   end
