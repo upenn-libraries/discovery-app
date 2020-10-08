@@ -13,6 +13,8 @@ class CatalogController < ApplicationController
   include AssociateExpandedDocs
   include HandleEmptyEmail
 
+  ENABLE_SUBJECT_CORRELATION = ENV['ENABLE_SUBJECT_CORRELATION']&.downcase == 'true'
+
   # expire session if needed
   before_action :expire_session
 
@@ -343,7 +345,7 @@ class CatalogController < ApplicationController
                            :facet_type => lambda { |params|
                              params[:search_field] == 'subject_correlation' ? :first_class : :default
                            },
-                           :if => actionable_filters
+                           :if => actionable_filters if ENABLE_SUBJECT_CORRELATION
 
     config.add_facet_field 'azlist', label: 'A-Z List', collapse: false, single: :manual, :facet_type => :header,
                            options: {:layout => 'horizontal_facet_list'}, solr_params: { 'facet.mincount' => 0 },
@@ -672,7 +674,7 @@ class CatalogController < ApplicationController
           pf: '' # domain only, no scoring, so pf doesn't matter
       }
       field.include_in_advanced_search = false
-    end
+    end if ENABLE_SUBJECT_CORRELATION
 
     config.add_search_field('subject_search') do |field|
       field.label = 'Subject Heading Keyword'
