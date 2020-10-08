@@ -1,0 +1,24 @@
+<div class="bento-box google-results" id="bento-results-google">
+  <a name="website"></a>
+  <div class="corner left-top hide"></div>
+  <div class="corner right-top hide"></div>
+  <h3>Library website</h3>
+  <div class="view-and-filter text-right">
+    <%= link_to "View all results", google_site_search_results_url(params[:q]) %>
+  </div>
+  <script>
+      (function() {
+          var cx = '015171683814554281596:8nln-kjivsc';
+          var gcse = document.createElement('script');
+          gcse.type = 'text/javascript';
+          gcse.async = true;
+          gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+          var s = document.getElementsByTagName('script')[0];
+          s.parentNode.insertBefore(gcse, s);
+      })();
+  </script>
+  <gcse:searchresults-only webSearchResultSetSize="5"></gcse:searchresults-only>
+  <div class="view-all">
+    <%= link_to(("View all results #{image_tag('view_all_arrow.png')}").html_safe, google_site_search_results_url(params[:q] || params[:query])) %>
+  </div>
+</div>

@@ -1,4 +1,3 @@
-<%# this should receive an iterable _results_ and render an item entry for the bento %>
 <% @document_list.each do |result| %>
 <div class="bento_item" data-unique-id="<%= result['id'] %>">
   <h4 class="bento_item_title">
@@ -31,10 +30,3 @@
   </div>
 </div>
 <% end %>
-<div class="view-all">
-  <%= link_to(
-        "View all results #{image_tag('view_all_arrow.png', alt: 'View All Results icon')}".html_safe,
-        search_catalog_path(q: params[:q] || params[:query], search_field: 'keyword')
-      )
-  %>
-</div>
