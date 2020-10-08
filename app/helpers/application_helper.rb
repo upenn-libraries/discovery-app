@@ -1,5 +1,13 @@
 module ApplicationHelper
 
+  # Returns value of query param, preferring 'q' over 'query' and returning
+  # an empty string if neither are present. mostly this is to please
+  # bento_search view helper, which raises an exception with a nil param
+  # @return [String]
+  def query_param_value
+    params[:q] || params[:query] || ''
+  end
+
   def summon_url(query, proxy = false)
     url = "http://upenn.summon.serialssolutions.com/#!/search?q=#{url_encode(query)}"
     if proxy

@@ -3,5 +3,5 @@
   <div class="corner left-top hide"></div>
   <div class="corner right-top hide"></div>
   <h3>Colenda <%=link_to("(What is Colenda?)", "https://colenda.library.upenn.edu/pages/about", class: "colenda-help") %></h3>
-  <%= bento_search 'colenda', query: params[:q] || params[:query], load: :ajax_auto %>
+  <%= bento_search 'colenda', query: query_param_value, load: :ajax_auto %>
 </div>

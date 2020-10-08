@@ -3,5 +3,5 @@
   <div class="corner left-top hide"></div>
   <div class="corner right-top hide"></div>
   <h3>Articles+</h3>
-  <%= bento_search 'summon', query: params[:q] || params[:query], per_page: 5, load: :ajax_triggered %>
+  <%= bento_search 'summon', query: query_param_value, per_page: 5, load: :ajax_triggered %>
 </div>
