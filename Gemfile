@@ -41,4 +41,5 @@ end
 
 group :development, :test do
   gem 'byebug', platforms: :ruby
+  gem 'rspec-rails'
 end

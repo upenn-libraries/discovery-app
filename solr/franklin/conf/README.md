@@ -9,7 +9,7 @@ Do this from the project root directory:
 docker run -d -p 9983:8983 --name franklin_solr -v $PWD/solr/conf:/opt/solr/server/solr/configsets quay.io/upennlibraries/upenn_solr:7.7.0 /opt/solr/bin/solr start -c -f -m 2g -p 8983
 ```
 
-You can then reach the Solr UI at [`localhost:9983`](localhost:9983)
+You can then reach the Solr UI at [localhost:9983](http://localhost:9983)
 
 ## Create solr collection(s)
 
@@ -30,4 +30,5 @@ docker exec -it franklin_solr bash -c 'bin/solr create_collection -c franklin-de
 ## Misc
 
 To stop the container: `docker stop franklin_solr`
+
 To delete the container: `docker rm franklin_solr`
