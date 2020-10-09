@@ -40,6 +40,7 @@ class SearchBuilder < Blacklight::SearchBuilder
   # about solr 'fq', this is about solr facet.* params.
   def add_facetting_to_solr(solr_parameters)
     facet_fields_to_include_in_request.each do |field_name, facet|
+      next if blacklight_params[:action] == 'facet' && blacklight_params[:id] != field_name
       next unless evaluate_if_unless_configuration(facet, blacklight_params)
       solr_parameters[:facet] ||= true
 
