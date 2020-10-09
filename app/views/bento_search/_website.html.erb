@@ -4,7 +4,7 @@
   <div class="corner right-top hide"></div>
   <h3>Library website</h3>
   <div class="view-and-filter text-right">
-    <%= link_to "View all results", google_site_search_results_url(params[:q]) %>
+    <%= link_to "View all results", google_site_search_results_url(query_param_value) %>
   </div>
   <script>
       (function() {
@@ -19,6 +19,6 @@
   </script>
   <gcse:searchresults-only webSearchResultSetSize="5"></gcse:searchresults-only>
   <div class="view-all">
-    <%= link_to(("View all results #{image_tag('view_all_arrow.png')}").html_safe, google_site_search_results_url(params[:q] || params[:query])) %>
+    <%= link_to(("View all results #{image_tag('view_all_arrow.png')}").html_safe, google_site_search_results_url(query_param_value)) %>
   </div>
 </div>
