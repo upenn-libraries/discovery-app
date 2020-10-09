@@ -141,7 +141,11 @@ class SearchBuilder < Blacklight::SearchBuilder
   # a sort, we sort by id to provide stable deterministic ordering.
   def override_sort_when_q_is_empty(solr_parameters)
     blacklight_sort = blacklight_params[:sort]
-    if blacklight_params[:search_field] == 'subject_correlation'
+    if blacklight_params[:q].nil? && blacklight_params[:f].nil? && blacklight_params[:search_field].blank?
+      # these are conditions under which no actual record results are displayed; so set rows=0
+      solr_parameters[:sort] = ''
+      solr_parameters[:rows] = 0
+    elsif blacklight_params[:search_field] == 'subject_correlation'
       solr_parameters[:presentation_domain] = '{!filters param=$fq excludeTags=cluster,no_correlation}'
       solr_parameters[:sort] = ''
       solr_parameters[:rows] = 0
