@@ -1,1 +1,0 @@
-bin/solr create_core -c franklin_test -d franklin

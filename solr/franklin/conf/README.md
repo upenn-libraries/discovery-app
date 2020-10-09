@@ -1,17 +1,33 @@
 # Solr configuration for running specs
 
-Create and run container image:
+TODO: merge this documentation with main README 
 
-```
-docker run -d -p 8983:8983 -v /home/mk/Projects/discovery-app/solr/conf:/opt/solr/server/solr/configsets quay.io/upennlibraries/upenn_solr:7.7.0 /opt/solr/bin/solr start -f -m 2g -p 8983
-```
+## Create and run container image:
 
-Create solr core
-
+Do this from the project root directory:
 ```
-docker exec -it {container_name} bash "bin/solr create_core -c franklin_test -d franklin"
+docker run -d -p 9983:8983 --name franklin_solr -v $(PWD)/solr/conf:/opt/solr/server/solr/configsets quay.io/upennlibraries/upenn_solr:7.7.0 /opt/solr/bin/solr start -c -f -m 2g -p 8983
 ```
 
-No dice.
+You can then reach the Solr UI at [`localhost:9983`](localhost:9983)
 
-Run `create_core.sh` from `docker exec`? Nope. Permission denied is likely.
+## Create solr collection(s)
+
+### For `test` environment
+
+```
+docker exec -it franklin_solr bash -c 'bin/solr create_collection -c franklin-test -d franklin'
+```
+
+### For `development` environment, if you like
+
+```
+docker exec -it franklin_solr bash -c 'bin/solr create_collection -c franklin-dev -d franklin'
+```
+
+## Load some sample data
+
+## Misc
+
+To stop the container: `docker stop franklin_solr`
+To delete the container: `docker rm franklin_solr`
