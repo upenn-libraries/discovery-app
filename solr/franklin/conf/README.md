@@ -6,7 +6,7 @@ TODO: merge this documentation with main README
 
 Do this from the project root directory:
 ```
-docker run -d -p 9983:8983 --name franklin_solr -v $(PWD)/solr/conf:/opt/solr/server/solr/configsets quay.io/upennlibraries/upenn_solr:7.7.0 /opt/solr/bin/solr start -c -f -m 2g -p 8983
+docker run -d -p 9983:8983 --name franklin_solr -v $PWD/solr/conf:/opt/solr/server/solr/configsets quay.io/upennlibraries/upenn_solr:7.7.0 /opt/solr/bin/solr start -c -f -m 2g -p 8983
 ```
 
 You can then reach the Solr UI at [`localhost:9983`](localhost:9983)
