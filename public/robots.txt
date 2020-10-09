@@ -2,4 +2,8 @@
 #
 User-agent: *
 Crawl-delay: 10
+Disallow: /catalog.atom
+Disallow: /catalog.rss
+Disallow: /catalog/*/email
+Disallow: /catalog/*/marc_view
 # Disallow: /
