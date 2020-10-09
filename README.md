@@ -140,3 +140,15 @@ docker run --rm --name=gitleaks -v $PWD:/code quay.io/upennlibraries/gitleaks:v1
 ```
 
 Any leaks will be logged to `stdout`. You can add the `--redact` flag if you do not want to log the offending secrets.
+
+# Running Tests
+
+DL Chrome @ `https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Linux_x64/737173/`
+
+Extract to `PATH_OF_YOUR_CHOOSING`
+
+Precompile assets for `test` (why???): `RAILS_ENV=test bundle exec rake assets:precompile`
+
+Run suite: `RAILS_ENV=test rspec`
+
+The usual ENV variables need to be set, for now

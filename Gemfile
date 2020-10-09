@@ -43,3 +43,8 @@ group :development, :test do
   gem 'byebug', platforms: :ruby
   gem 'rspec-rails'
 end
+
+group :test do
+  gem 'capybara'
+  gem 'cuprite'
+end
