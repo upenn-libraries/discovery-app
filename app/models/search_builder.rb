@@ -126,6 +126,9 @@ class SearchBuilder < Blacklight::SearchBuilder
     if !blacklight_params[:q].present?
       if blacklight_params[:f].present?
         # we have user filters, so avoid NPE by ignoring q in combo domain
+        # below replicates the default `combo` param, but without `q`. the `no_correlation`
+        # tag convention allows filters to be tagged for exclusion so they do not restrict
+        # the domains used to determine correlation.
         solr_parameters['combo'] = '{!filters param=$fq excludeTags=cluster,no_correlation}' # NOTE: $correlation_domain is applied within facets
       else
         # no user input, so remove pointless "combo" arg
@@ -146,6 +149,7 @@ class SearchBuilder < Blacklight::SearchBuilder
       # these are conditions under which no actual record results are displayed; so set rows=0
       solr_parameters[:sort] = ''
       solr_parameters[:rows] = 0
+      return
     elsif blacklight_params[:search_field] == 'subject_correlation'
       solr_parameters[:presentation_domain] = '{!filters param=$fq excludeTags=cluster,no_correlation}'
       solr_parameters[:sort] = ''

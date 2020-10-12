@@ -9,10 +9,12 @@ module BlacklightHelper
     render partial: 'catalog/franklin_search_bar'
   end
 
+  EXPERT_HELP_CORRELATION_THRESHOLD = 0.3
+
   def render_expert_help(specialists_facet_field)
     return render partial: 'catalog/ask' unless specialists_facet_field
     specialists = extract_and_sort_by_relatedness(specialists_facet_field)
-    if specialists.blank? || specialists.first.subs[:r1][:relatedness] < 0.3
+    if specialists.blank? || specialists.first.subs[:r1][:relatedness] < EXPERT_HELP_CORRELATION_THRESHOLD
       return render partial: 'catalog/ask'
     end
     subject = specialists.first.value
