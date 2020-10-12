@@ -164,6 +164,7 @@ class CatalogController < ApplicationController
     }
 
     actionable_filters = lambda { |a, b, c|
+      return false
       params = a.params
       return true if params[:q].present?
       f = params[:f]
