@@ -2,7 +2,7 @@
 class SearchBuilder < Blacklight::SearchBuilder
   include Blacklight::Solr::SearchBuilderBehavior
   include BlacklightAdvancedSearch::AdvancedSearchBuilder
-  self.default_processor_chain += [:add_advanced_search_to_solr, :override_sort_when_q_is_empty, :modify_combo_param_with_absent_q,
+  self.default_processor_chain += [:add_advanced_search_to_solr, :manipulate_sort_and_rows_params, :modify_combo_param_with_absent_q,
       :lowercase_expert_boolean_operators, :add_left_anchored_title, :add_routing_hash]
   include BlacklightSolrplugins::FacetFieldsQueryFilter
 
@@ -139,11 +139,12 @@ class SearchBuilder < Blacklight::SearchBuilder
     end
   end
 
-  # no q param (with or without facets) causes the default 'score' sort
-  # to return results in a different random order each time b/c there's
-  # no scoring to apply. if there's no q and user hasn't explicitly chosen
-  # a sort, we sort by id to provide stable deterministic ordering.
-  def override_sort_when_q_is_empty(solr_parameters)
+  # `sort` and `rows` params may want changes (for logic, predictability, or
+  # performance) under certain conditions. This method bundles all such changes
+  # together because they all operate on the same params, and thus cannot easily
+  # be functionally/independently applied without actually making things *more*
+  # confusing.
+  def manipulate_sort_and_rows_params(solr_parameters)
     blacklight_sort = blacklight_params[:sort]
     if blacklight_params[:q].nil? && blacklight_params[:f].nil? && blacklight_params[:search_field].blank?
       # these are conditions under which no actual record results are displayed; so set rows=0
@@ -159,6 +160,10 @@ class SearchBuilder < Blacklight::SearchBuilder
     return if blacklight_sort.present? && blacklight_sort != 'score desc'
     access_f = blacklight_params.dig(:f, :access_f)
     if !blacklight_params[:q].present?
+      # no q param (with or without facets) causes the default 'score' sort
+      # to return results in a different random order each time b/c there's
+      # no scoring to apply. if there's no q and user hasn't explicitly chosen
+      # a sort, we sort by id to provide stable deterministic ordering.
       if blacklight_config.induce_sort
         induced_sort = blacklight_config.induce_sort.call(blacklight_params)
         if induced_sort
