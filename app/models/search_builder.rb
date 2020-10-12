@@ -146,8 +146,11 @@ class SearchBuilder < Blacklight::SearchBuilder
   # confusing.
   def manipulate_sort_and_rows_params(solr_parameters)
     blacklight_sort = blacklight_params[:sort]
-    if blacklight_params[:q].nil? && blacklight_params[:f].nil? && blacklight_params[:search_field].blank?
+    if blacklight_params[:action] == 'bento'
+      # rows should never be 0; skip next conditional clauses
+    elsif blacklight_params[:q].nil? && blacklight_params[:f].nil? && blacklight_params[:search_field].blank?
       # these are conditions under which no actual record results are displayed; so set rows=0
+      # `:landing` action should also be caught by this block
       solr_parameters[:sort] = ''
       solr_parameters[:rows] = 0
       return
