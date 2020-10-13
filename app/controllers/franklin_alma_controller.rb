@@ -206,7 +206,7 @@ class FranklinAlmaController < ApplicationController
 
                      next if url.nil?
 
-                     collection_response = HTTParty.get(url +"?apikey=#{ENV['ALMA_API_KEY']}", :headers => {'Accept' => 'application/json'})
+                     collection_response = HTTParty.get(url + "?apikey=#{ENV['ALMA_API_KEY']}", :headers => {'Accept' => 'application/json'})
                      link = "<a target='_blank' href='#{collection_response['url_override'].presence || collection_response['url']}'>#{collection_response['public_name_override'].presence || collection_response['public_name']}</a>"
                      public_note = collection_response['public_note'].presence
                      authentication_note = collection_response['authentication_note'].presence
@@ -298,11 +298,10 @@ class FranklinAlmaController < ApplicationController
       end
     end
 
-    userid = session['id'].presence
     usergroup = session['user_group'].presence
     mmsid = params[:mms_id]
 
-    result[mmsid] = {:facultyexpress => usergroup == 'Faculty Express', :group => usergroup}
+    result[mmsid] = { facultyexpress: usergroup == 'Faculty Express', group: usergroup}
 
     return result
 
@@ -378,12 +377,12 @@ class FranklinAlmaController < ApplicationController
   end
 
   def request_options
-    userid = session['id'].presence || nil
+    userid = session['id'].presence
     usergroup = session['user_group'].presence
     ctx = JSON.parse(params['request_context'])
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
-    options = {:user_id => userid, :consider_dlr => true}
+    options = { user_id: userid, consider_dlr: true }
     response_data = api_instance.request(api.almaws_v1_bibs.mms_id_request_options, :get, params.merge(options))
     results = response_data['request_option'].map { |option|
       request_url = option['request_url']
@@ -485,7 +484,7 @@ class FranklinAlmaController < ApplicationController
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
     userid = session['id'].presence || 'GUEST'
-    options = {:user_id => userid, :format => 'json'}
+    options = { user_id: userid, format: 'json' }
 
     response_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items_item_pid_request_options, :get, params.merge(options))
 
@@ -510,8 +509,6 @@ class FranklinAlmaController < ApplicationController
     end
 
     return if performed?
-
-    userid = session['id'].presence || 'GUEST'
 
     # The block below pulls libraries dynamically but the list of valid pickup locations shouldn't
     # change, so I've created a hard-coded list to use below to save an API call and reduce load time.
