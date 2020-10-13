@@ -20,9 +20,14 @@ module Blacklight
       fields.map { |field| facet_by_field_name(field) }.compact
     end
 
-    def facet_field_names(facet_type = :all)
+    def facet_field_names(requested_facet_type = :default)
+      requested_facet_type ||= :default
       field_configs = blacklight_config.facet_fields.values
-      field_configs = field_configs.select {|fc| fc[:facet_type] == facet_type } unless facet_type == :all
+      field_configs = field_configs.select {|fc|
+        configured_facet_type = fc[:facet_type] || :default
+        configured_facet_type = configured_facet_type.call(params) if configured_facet_type.respond_to?(:lambda?)
+        configured_facet_type == requested_facet_type
+      }
       field_configs.map(&:field)
     end
 

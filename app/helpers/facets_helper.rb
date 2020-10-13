@@ -9,6 +9,7 @@ module FacetsHelper
       display_facet = agg[facet_config.field]
       next if display_facet.nil? || display_facet.items.empty? || !should_render_field?(facet_config, display_facet)
       facet_type = facet_config[:facet_type] || :default
+      facet_type = facet_type.call(params) if facet_type.respond_to?(:lambda?)
       if fields_for_facet_type = hash[facet_type]
         facet_configs = fields_for_facet_type[:facet_configs]
       else
@@ -48,7 +49,6 @@ module FacetsHelper
   # @return [String] 
   def render_facet_limit(display_facet, options = {})
     facet_config = facet_configuration_for_field(display_facet.name)
-    return if options[:facet_type] != facet_config[:facet_type]
     return unless should_render_facet?(display_facet)
     options = options.dup
     options[:partial] ||= facet_partial_name(display_facet)
