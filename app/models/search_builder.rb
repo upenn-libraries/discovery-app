@@ -39,6 +39,10 @@ class SearchBuilder < Blacklight::SearchBuilder
   # taking account of our facet paging/'more'.  This is not
   # about solr 'fq', this is about solr facet.* params.
   def add_facetting_to_solr(solr_parameters)
+    # NOTE: `facet=false` is a Solr concept; although this param is ignored in stock BL as a
+    # BL param, it's useful to support this at the BL level; esp. because I think `facet=false`
+    # in Solr does not disable "JSON Facet API" faceting!
+    return if blacklight_params[:facet] == false # default true, so distinguish from falsey `nil`
     facet_fields_to_include_in_request.each do |field_name, facet|
       next if blacklight_params[:action] == 'facet' && blacklight_params[:id] != field_name
       next unless evaluate_if_unless_configuration(facet, blacklight_params)

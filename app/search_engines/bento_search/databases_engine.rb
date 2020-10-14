@@ -34,7 +34,7 @@ class BentoSearch::DatabasesEngine
     bl_results = search_results(
       q: args[:query],
       per_page: 5,
-      fact: false,
+      facet: false,
       search_field: 'keyword',
       f: { 'format_f': ['Database & Article Index'] }
     )
