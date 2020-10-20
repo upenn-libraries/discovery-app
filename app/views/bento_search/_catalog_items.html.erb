@@ -1,0 +1,32 @@
+<% @document_list.each do |result| %>
+<div class="bento_item" data-unique-id="<%= result['id'] %>">
+  <h4 class="bento_item_title">
+    <%= link_to result['title'], solr_document_path(result['id']) %>
+  </h4>
+  <div class="bento_item_body">
+    <dl class="document-metadata dl-horizontal dl-invert">
+      <dd>
+        <span class="author">
+          <%= result['author_creator_a']&.first %>
+        </span>
+      </dd>
+      <dd>
+        <span class="publisher">
+          <%= result['publication_a']&.first %>
+        </span>
+      </dd>
+      <dd>
+        <span class="format">
+          <%= result['format_a']&.first %>
+        </span>
+      </dd>
+      <% if online_holding_info = online_holding_info_for(result) %>
+      <dd><%= online_holding_info %></dd>
+      <% end %>
+      <% if result.print_holdings? %>
+      <dd><%= print_holding_info_for result %></dd>
+      <% end %>
+    </dl>
+  </div>
+</div>
+<% end %>

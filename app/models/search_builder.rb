@@ -2,7 +2,7 @@
 class SearchBuilder < Blacklight::SearchBuilder
   include Blacklight::Solr::SearchBuilderBehavior
   include BlacklightAdvancedSearch::AdvancedSearchBuilder
-  self.default_processor_chain += [:add_advanced_search_to_solr, :override_sort_when_q_is_empty, :modify_combo_param_with_absent_q,
+  self.default_processor_chain += [:add_advanced_search_to_solr, :manipulate_sort_and_rows_params, :modify_combo_param_with_absent_q,
       :lowercase_expert_boolean_operators, :add_left_anchored_title, :add_routing_hash]
   include BlacklightSolrplugins::FacetFieldsQueryFilter
 
@@ -40,12 +40,13 @@ class SearchBuilder < Blacklight::SearchBuilder
   # about solr 'fq', this is about solr facet.* params.
   def add_facetting_to_solr(solr_parameters)
     facet_fields_to_include_in_request.each do |field_name, facet|
+      next if blacklight_params[:action] == 'facet' && blacklight_params[:id] != field_name
       next unless evaluate_if_unless_configuration(facet, blacklight_params)
       solr_parameters[:facet] ||= true
 
       if facet.json_facet
         json_facet = (solr_parameters[:'json.facet'] ||= [])
-        json_facet << facet.json_facet
+        json_facet << facet.json_facet.to_json
         next
       end
 
@@ -98,9 +99,9 @@ class SearchBuilder < Blacklight::SearchBuilder
 
   def add_left_anchored_title(solr_parameters)
     qq = solr_parameters[:qq]
-    return if qq.nil? || !qq.present?
+    return unless qq.present?
     bq = blacklight_params[:q]
-    return if !bq.present?
+    return unless bq.present?
     search_field = blacklight_params[:search_field]
     return if search_field.present? && search_field != 'keyword'
     weight = '26'
@@ -125,7 +126,10 @@ class SearchBuilder < Blacklight::SearchBuilder
     if !blacklight_params[:q].present?
       if blacklight_params[:f].present?
         # we have user filters, so avoid NPE by ignoring q in combo domain
-        solr_parameters['combo'] = '{!filters param=$fq excludeTags=cluster}'
+        # below replicates the default `combo` param, but without `q`. the `no_correlation`
+        # tag convention allows filters to be tagged for exclusion so they do not restrict
+        # the domains used to determine correlation.
+        solr_parameters['combo'] = '{!filters param=$fq excludeTags=cluster,no_correlation}' # NOTE: $correlation_domain is applied within facets
       else
         # no user input, so remove pointless "combo" arg
         # if any facets have been mistakenly added that reference $combo, they
@@ -135,15 +139,34 @@ class SearchBuilder < Blacklight::SearchBuilder
     end
   end
 
-  # no q param (with or without facets) causes the default 'score' sort
-  # to return results in a different random order each time b/c there's
-  # no scoring to apply. if there's no q and user hasn't explicitly chosen
-  # a sort, we sort by id to provide stable deterministic ordering.
-  def override_sort_when_q_is_empty(solr_parameters)
+  # `sort` and `rows` params may want changes (for logic, predictability, or
+  # performance) under certain conditions. This method bundles all such changes
+  # together because they all operate on the same params, and thus cannot easily
+  # be functionally/independently applied without actually making things *more*
+  # confusing.
+  def manipulate_sort_and_rows_params(solr_parameters)
     blacklight_sort = blacklight_params[:sort]
+    if blacklight_params[:action] == 'bento'
+      # rows should never be 0; skip next conditional clauses
+    elsif blacklight_params[:q].nil? && blacklight_params[:f].nil? && blacklight_params[:search_field].blank?
+      # these are conditions under which no actual record results are displayed; so set rows=0
+      # `:landing` action should also be caught by this block
+      solr_parameters[:sort] = ''
+      solr_parameters[:rows] = 0
+      return
+    elsif blacklight_params[:search_field] == 'subject_correlation'
+      solr_parameters[:presentation_domain] = '{!filters param=$fq excludeTags=cluster,no_correlation}'
+      solr_parameters[:sort] = ''
+      solr_parameters[:rows] = 0
+      return
+    end
     return if blacklight_sort.present? && blacklight_sort != 'score desc'
     access_f = blacklight_params.dig(:f, :access_f)
     if !blacklight_params[:q].present?
+      # no q param (with or without facets) causes the default 'score' sort
+      # to return results in a different random order each time b/c there's
+      # no scoring to apply. if there's no q and user hasn't explicitly chosen
+      # a sort, we sort by id to provide stable deterministic ordering.
       if blacklight_config.induce_sort
         induced_sort = blacklight_config.induce_sort.call(blacklight_params)
         if induced_sort

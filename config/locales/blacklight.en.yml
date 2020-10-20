@@ -13,9 +13,13 @@ en:
         invalid_solr_id: "The requested record was not found."
     tools:
       librarian_view: 'Staff View'
-
   franklin:
     landing_page_title: 'Franklin - University of Pennsylvania'
+    catalog_search:
+      no_results: 'No results'
+      holdings: "%{count} print %{option}"
+      available_with_location: "Available - %{location} - %{classification} %{item}"
+      available: "Available - %{classification} %{item}"
     bento_search:
       placeholder: 'Find articles, books, journals & more'
     articles_search:

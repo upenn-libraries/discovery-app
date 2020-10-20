@@ -1,5 +1,5 @@
 <% # main container for facets/limits menu -%>
-<%= render_expert_help(@response.aggregations["subject_specialists"]) %>
+<%= render_expert_help(@response.aggregations['subject_specialists']) %>
 <% if has_facet_values? %>
 <div id="facets" class="facets sidenav">
 
@@ -26,7 +26,7 @@
   <div id="facet-panel-collapse" class="collapse panel-group">
     <% hide = false; display_facet_types.each do |facet_type, field_configs| %>
       <div id="facets_<%= facet_type %>" class="<%= hide ? 'hide facet-group' : 'facet-group' %>">
-        <%= facet_type != :default ? render_facet_partials(facet_field_names(facet_type), :facet_type => facet_type) : render_facet_partials(facet_field_names(nil)) %>
+        <%= render_facet_partials(facet_field_names(facet_type), :facet_type => facet_type) %>
       </div>
     <% hide = true; end %>
   </div>
