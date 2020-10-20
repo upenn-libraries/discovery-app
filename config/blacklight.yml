@@ -1,9 +1,9 @@
 development:
   adapter: solr
-  url: <%= ENV['SOLR_URL'] || "http://127.0.0.1:9983/solr/franklin-dev" %>
+  url: <%= ENV['SOLR_URL'] || "http://localhost:9983/solr/franklin-dev" %>
 test: &test
   adapter: solr
-  url: <%= ENV['TEST_SOLR_URL'] || "http://127.0.0.1:9983/solr/franklin-test" %>
+  url: <%= ENV['TEST_SOLR_URL'] || "http://localhost:9983/solr/franklin-test" %>
 production:
   adapter: solr
   url: <%= ENV['SOLR_URL'] || "http://127.0.0.1:8983/solr/blacklight-core" %>

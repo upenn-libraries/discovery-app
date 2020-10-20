@@ -143,6 +143,17 @@ Any leaks will be logged to `stdout`. You can add the `--redact` flag if you do 
 
 # Running Tests
 
+Start a Franklin Solr image with
+```
+docker run -d -p 9983:8983 --name franklin_solr -v $PWD/solr:/opt/solr/server/solr/configsets quay.io/upennlibraries/upenn_solr:7.7.0 /opt/solr/bin/solr start -c -f -m 2g -p 8983 -Dsolr.jetty.request.header.size=65536
+```
+
+Create Solr cores
+```
+docker exec -it franklin_solr bin/solr create_collection -c franklin-dev -d franklin
+docker exec -it franklin_solr bin/solr create_collection -c franklin-test -d franklin
+```
+
 DL Chrome @ `https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Linux_x64/737173/`
 
 Extract to `PATH_OF_YOUR_CHOOSING`
