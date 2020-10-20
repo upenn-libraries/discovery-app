@@ -1,6 +1,6 @@
 <div class="well">These subjects are most strongly correlated to your search terms</div>
 <ul class="facet-values list-unstyled">
-  <% display_facet.items[0].subs[:correlation].slice(0, 5).each do |item| %>
+  <% display_facet.items[0].subs[:correlation].each do |item| %>
     <% break unless item.subs[:r1][:relatedness] > -Float::INFINITY %>
     <li>
       <span class="facet-label">

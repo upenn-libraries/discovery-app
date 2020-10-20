@@ -244,9 +244,12 @@ module Blacklight::Solr::Response::Facets
   # a hash of Blacklight::Solr::Response::Facet::FacetField objects
   def facet_json_aggregations
     return {} unless blacklight_config
+    json_facet_params = @request_params[:'json.facet']&.each_with_object({}) do |json_facet_entry, hash|
+      hash[json_facet_entry.key] = json_facet_entry.request_hash
+    end
+    return {} unless json_facet_params.present?
     facet_json.each_with_object({}) do |(key, value), hash|
-      facet_config = blacklight_config.facet_fields[key]
-      json_facet = facet_config[:json_facet]
+      json_facet = json_facet_params[key]
       items = subfacet(key, json_facet[key.to_sym], value)
 
       # facet queries return only a single FacetItem (because they are inherently
