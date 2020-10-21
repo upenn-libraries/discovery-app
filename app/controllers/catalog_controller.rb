@@ -369,6 +369,24 @@ class CatalogController < ApplicationController
                              params[:search_field] == 'subject_correlation' ? :first_class : :default
                            }
 
+    config.add_facet_field 'author_creator_f',
+                           label: 'Author/Creator',
+                           collapse: false,
+                           limit: 5,
+                           index_range: 'A'..'Z',
+                           solr_params: MINCOUNT,
+                           sort: 'r1 desc', # 'r1 desc', 'count', or 'index'
+                           #partial: 'catalog/json_facet_limit',
+                           json_facet: PennLib::JsonFacet::Config.new(CORRELATION_JSON_FACET, {
+                             if: actionable_filters,
+                             fallback: {
+                               map_sort: lambda { |sort, blacklight_params| sort == 'r1 desc' ? 'count' : sort }
+                             }
+                           }),
+                           facet_type: lambda { |params|
+                             params[:search_field] == 'author_creator_correlation' ? :first_class : :default
+                           }
+
     config.add_facet_field 'azlist', label: 'A-Z List', collapse: false, single: :manual, :facet_type => :header,
                            options: {:layout => 'horizontal_facet_list'}, solr_params: { 'facet.mincount' => 0 },
                            :if => database_selected, query: {
@@ -409,8 +427,6 @@ class CatalogController < ApplicationController
         'Penn' => { :label => 'Penn', :fq => "{!join ex=orig_q from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Penn\\'}'}"},
     }
     config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false, :ex => 'orig_q', solr_params: MINCOUNT
-    config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z', collapse: false,
-        :ex => 'orig_q', solr_params: MINCOUNT
     #config.add_facet_field 'subject_taxonomy', label: 'Subject Taxonomy', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy', :json_facet => SUBJECT_TAXONOM, :helper_method => :render_subcategories
     config.add_facet_field 'language_f', label: 'Language', limit: 5, collapse: false, :ex => 'orig_q', solr_params: MINCOUNT
     config.add_facet_field 'library_f', label: 'Library', limit: 5, collapse: false, :ex => 'orig_q', solr_params: MINCOUNT
