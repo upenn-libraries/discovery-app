@@ -58,7 +58,8 @@ class SearchBuilder < Blacklight::SearchBuilder
       solr_parameters[:facet] ||= true
 
       sort = facet.sort
-      json_facet = add_json_facet(solr_parameters, facet, facet.limit, 0, sort, nil)
+      limit = facet_limit_with_pagination(field_name)
+      json_facet = add_json_facet(solr_parameters, facet, limit, 0, sort, nil)
       next if json_facet == true || json_facet.nil?
       if json_facet
         # if json_facet is not explicitly "false", it represents the fallback sort value
@@ -83,7 +84,6 @@ class SearchBuilder < Blacklight::SearchBuilder
         end
       end
 
-      limit = facet_limit_with_pagination(field_name)
       solr_parameters[:"f.#{facet.field}.facet.limit"] = limit if limit
     end
   end

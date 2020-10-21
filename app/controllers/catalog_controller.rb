@@ -301,6 +301,7 @@ class CatalogController < ApplicationController
             # NOTE: mincount pre-filters vals that could not possibly match min_pop
             mincount: 3, # guarantee fgSize >= 3
             limit: limit,
+            offset: offset,
             refine: true,
             sort: sort,
             blacklight_options: {
