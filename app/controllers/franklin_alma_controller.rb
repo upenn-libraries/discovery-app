@@ -115,47 +115,58 @@ class FranklinAlmaController < ApplicationController
     public_note = nil
     authentication_note = nil
 
-    collection_url = "https://api-na.hosted.exlibrisgroup.com/almaws/v1/electronic/e-collections/%{collection_id}?#{api_key_param}"
-    services_url = "https://api-na.hosted.exlibrisgroup.com/almaws/v1/electronic/e-collections/%{collection_id}/e-services?#{api_key_param}"
-    portfolio_url = "https://api-na.hosted.exlibrisgroup.com/almaws/v1/electronic/e-collections/%{collection_id}/e-services/%{service_id}/portfolios/%{portfolio_id}?#{api_key_param}"
+    # default case
+    if collection_id.present?
+      collection_url = "https://api-na.hosted.exlibrisgroup.com/almaws/v1/electronic/e-collections/%{collection_id}?#{api_key_param}"
+      services_url = "https://api-na.hosted.exlibrisgroup.com/almaws/v1/electronic/e-collections/%{collection_id}/e-services?#{api_key_param}"
+      portfolio_url = "https://api-na.hosted.exlibrisgroup.com/almaws/v1/electronic/e-collections/%{collection_id}/e-services/%{service_id}/portfolios/%{portfolio_id}?#{api_key_param}"
 
-    api_response = HTTParty.get(
-      services_url % url_params,
-      headers: { 'Accept' => 'application/json' }
-    )
-    api_response['electronic_service'].each do |e|
-      portfolio_response = HTTParty.get(portfolio_url % url_params.merge(:portfolio_id => portfolio_pid, :service_id => e['id']), :headers => {'Accept' => 'application/json'})
-      public_note ||= portfolio_response['public_note'].presence
-      authentication_note ||= portfolio_response['authentication_note'].presence
+      api_response = HTTParty.get(
+        services_url % url_params,
+        headers: { 'Accept' => 'application/json' }
+      )
+
+      # 'electronic_service' is not set for e-portfolios et al
+      api_response['electronic_service'].each do |e|
+        portfolio_response = HTTParty.get(portfolio_url % url_params.merge(:portfolio_id => portfolio_pid, :service_id => e['id']), :headers => {'Accept' => 'application/json'})
+        public_note ||= portfolio_response['public_note'].presence
+        authentication_note ||= portfolio_response['authentication_note'].presence
+
+        if(public_note.nil? || authentication_note.nil?)
+          service_response = HTTParty.get(e['link'] + "?#{api_key_param}", :headers => {'Accept' => 'application/json'})
+          public_note ||= service_response['public_note'].presence
+          authentication_note ||= service_response['authentication_note'].presence
+        end
+      end
 
       if(public_note.nil? || authentication_note.nil?)
-        service_response = HTTParty.get(e['link'] + "?#{api_key_param}", :headers => {'Accept' => 'application/json'})
-        public_note ||= service_response['public_note'].presence
-        authentication_note ||= service_response['authentication_note'].presence
+        api_response = HTTParty.get(collection_url % url_params, :headers => {'Accept' => 'application/json'})
+        public_note ||= api_response['public_note'].presence
+        authentication_note ||= api_response['authentication_note'].presence
       end
+
+      coverage_content = [coverage]
+      public_note_content = public_note.nil? || public_note.empty? ? [] : ["Public Notes: ", public_note]
+      authentication_note_content = authentication_note.nil? || authentication_note.empty? ? [] : ["Authentication Notes: ", authentication_note]
+    else # e-portfolio/standalone portfolio case TODO: don't ever even get here
+      coverage_content = []
+      public_note_content = []
+      authentication_note_content = []
     end
 
-    if(public_note.nil? || authentication_note.nil?)
-      api_response = HTTParty.get(collection_url % url_params, :headers => {'Accept' => 'application/json'})
-      public_note ||= api_response['public_note'].presence
-      authentication_note ||= api_response['authentication_note'].presence
-    end
-
-    coverage_content = [coverage]
-    public_note_content = public_note.nil? || public_note.empty? ? [] : ["Public Notes: ", public_note]
-    authentication_note_content = authentication_note.nil? || authentication_note.empty? ? [] : ["Authentication Notes: ", authentication_note]
-
-    render :json => { "portfolio_details": coverage_content.join("<br/>").html_safe, "notes": (public_note_content + authentication_note_content).join("<br/>").html_safe }
+    render json: { "portfolio_details": coverage_content.join("<br/>").html_safe,
+                   "notes": (public_note_content + authentication_note_content).join("<br/>").html_safe
+    }
   end
 
   def has_holding_info?(api_mms_data, mmsid)
     # check if any holdings have more than one item
-    has_holding_info = api_mms_data['availability'][mmsid]['holdings'].map(&:keys).reduce([], &:+).member?('holding_info') ||
-                       api_mms_data['availability'][mmsid]['holdings'].any? { |hld| hld['total_items'].to_i > 1 || hld['availability'] == 'check_holdings' }
+    api_mms_data['availability'][mmsid]['holdings'].map(&:keys).reduce([], &:+).member?('holding_info') ||
+      api_mms_data['availability'][mmsid]['holdings'].any? { |hld| hld['total_items'].to_i > 1 || hld['availability'] == 'check_holdings' }
   end
 
   def has_portfolio_info?(api_mms_data, mmsid)
-    has_portfolio_info = api_mms_data['availability'][mmsid]['holdings'].map(&:keys).reduce([], &:+).member?('portfolio_pid')
+    api_mms_data['availability'][mmsid]['holdings'].map(&:keys).reduce([], &:+).member?('portfolio_pid')
   end
 
   def single_availability
@@ -177,7 +188,6 @@ class FranklinAlmaController < ApplicationController
 
     # check if any holdings have more than one item
     has_holding_info = has_holding_info?(bib_data, mmsid)
-
     # check if portfolio information is present
     has_portfolio_info = has_portfolio_info?(bib_data, mmsid)
 
@@ -239,13 +249,7 @@ class FranklinAlmaController < ApplicationController
           holding['availability'] = "<span class='load-holding-details' data-mmsid='#{mmsid}' data-holdingid='#{holding['holding_id']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/></span>"
         elsif has_portfolio_info
           inventory_type = 'electronic'
-          holding['availability'] = if holding['collection_id']
-                                      "<span class='load-portfolio-details' data-mmsid='#{mmsid}' data-portfoliopid='#{holding['portfolio_pid']}' data-collectionid='#{holding['collection_id']}' data-coverage='#{holding['coverage_statement']}' data-publicnote='#{holding['public_note']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/></span>"
-                                    else
-                                      Honeybadger.notify("Couldn't generate proper data attributes for portfolio (no collection_id)",
-                                                         context: { mms_id: mmsid, holding: holding })
-                                      'Sorry, there was a problem determining availability.'
-                                    end
+          holding['availability'] = "<span class='load-portfolio-details' data-mmsid='#{mmsid}' data-portfoliopid='#{holding['portfolio_pid']}' data-collectionid='#{holding['collection_id']}' data-coverage='#{holding['coverage_statement']}' data-publicnote='#{holding['public_note']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/></span>"
         else
           inventory_type = 'physical'
           holding['location'] = %Q[#{holding['location']}<br /><span class="call-number">#{holding['call_number']}</span>]
@@ -283,8 +287,9 @@ class FranklinAlmaController < ApplicationController
                     .sort { |a,b| cmpOnlineServices(a,b) }
                     .reject { |p| p['activation_status'] == 'Not Available' }
                     .each_with_index
-                    .map { |p,i|
-                      link = "<a target='_blank' href='https://upenn.alma.exlibrisgroup.com/view/uresolver/01UPENN_INST/openurl?Force_direct=true&portfolio_pid=#{p['portfolio_pid']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com&u.ignore_date_coverage=true'>#{p['collection']}</a>"
+                    .map { |p, i|
+                      link_text = p['collection'] || p['public_note'] # TODO: get bib title instead??? or vendor???
+                      link = "<a target='_blank' href='https://upenn.alma.exlibrisgroup.com/view/uresolver/01UPENN_INST/openurl?Force_direct=true&portfolio_pid=#{p['portfolio_pid']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com&u.ignore_date_coverage=true'>#{link_text}</a>"
                       [i, link, p['availability'], "<span id='notes-#{p['portfolio_pid']}'></span>", '', '', '', '']
                     }
       end
@@ -292,7 +297,7 @@ class FranklinAlmaController < ApplicationController
 
     metadata[mmsid][:inventory_type] = inventory_type
     metadata[mmsid][:pickupable] = pickupable
-    render :json => { "metadata": metadata, "data": table_data }
+    render json: { "metadata": metadata, "data": table_data }
   end
 
   def check_requestable(has_holding_info = false)
