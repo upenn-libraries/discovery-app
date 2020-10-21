@@ -46,12 +46,13 @@ class BentoSearch::DatabasesEngine
   # @return [BentoSearch::ResultItem]
   def build_bento_item(doc)
     links = {}
-    doc['full_text_link_text_a'].each do |link_hash|
+    doc['full_text_link_text_a']&.each do |link_hash|
       link_info = JSON.parse(link_hash).first
       links[link_info['linkurl']] = link_info['linktext'].strip
     end
     BentoSearch::ResultItem.new(title: doc['title'].strip.html_safe,
-                                link: doc['id'],
+                                link: Rails.application.routes.url_helpers
+                                           .solr_document_path(doc['id']),
                                 publisher: doc['publication_a']&.first,
                                 other_links: links)
   end
