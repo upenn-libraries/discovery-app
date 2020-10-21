@@ -101,9 +101,7 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
-    ansi (1.5.0)
     arel (6.0.4)
-    ast (2.4.1)
     autoprefixer-rails (9.8.6)
       execjs
     bcrypt (3.1.16)
@@ -222,9 +220,6 @@ GEM
     mysql2 (0.4.10)
     nokogiri (1.10.10)
       mini_portile2 (~> 2.4.0)
-    oga (3.3)
-      ast
-      ruby-ll (~> 2.1)
     openurl (1.0.0)
       marc
       scrub_rb (~> 1.0)
@@ -269,9 +264,6 @@ GEM
       railties (>= 4.2.0, < 6.0)
     rsolr (1.1.2)
       builder (>= 2.1.2)
-    ruby-ll (2.1.2)
-      ansi
-      ast
     sass (3.7.4)
       sass-listen (~> 4.0.0)
     sass-listen (4.0.0)
@@ -360,7 +352,6 @@ DEPENDENCIES
   jquery-rails (= 4.3.1)
   mysql2 (~> 0.4.10)
   nokogiri (~> 1.10.0)
-  oga
   rails (~> 4.2.0)
   rsolr (= 1.1.2)
   sass-rails (= 5.0.6)
