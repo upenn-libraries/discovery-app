@@ -289,6 +289,11 @@ class CatalogController < ApplicationController
           query: '{!query v=$cluster}'
         },
         q: '{!query tag=REFINE v=$correlation_domain}',
+        blacklight_options: {
+          parse: {
+            delegate: lambda { |subs| subs[:correlation] }
+          }
+        },
         facet: {
           correlation:{
             type: 'terms',
@@ -298,6 +303,12 @@ class CatalogController < ApplicationController
             limit: limit,
             refine: true,
             sort: sort,
+            blacklight_options: {
+              parse: {
+                filter: lambda { |bucket| bucket[:r1][:relatedness] > 0 },
+                get_hits: lambda { |bucket| bucket[:fg_filtered_count][:count] }
+              }
+            },
             facet: {
               r1: {
                 type: 'func',
@@ -345,10 +356,15 @@ class CatalogController < ApplicationController
                            limit: 5,
                            index_range: 'A'..'Z',
                            solr_params: MINCOUNT,
-                           sort: 'r1 desc',
-                           partial: 'blacklight/hierarchy/facet_relatedness',
-                           json_facet: PennLib::JsonFacet::Config.new(CORRELATION_JSON_FACET, {if: actionable_filters}),
-                           :facet_type => lambda { |params|
+                           sort: 'r1 desc', # 'r1 desc', 'count', or 'index'
+                           #partial: 'catalog/json_facet_limit',
+                           json_facet: PennLib::JsonFacet::Config.new(CORRELATION_JSON_FACET, {
+                             if: actionable_filters,
+                             fallback: {
+                               map_sort: lambda { |sort, blacklight_params| sort == 'r1 desc' ? 'count' : sort }
+                             }
+                           }),
+                           facet_type: lambda { |params|
                              params[:search_field] == 'subject_correlation' ? :first_class : :default
                            }
 

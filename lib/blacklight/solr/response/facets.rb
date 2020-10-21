@@ -51,12 +51,20 @@ module Blacklight::Solr::Response::Facets
       @options[:prefix] || solr_default_prefix
     end
 
+    def display_options
+      @options[:display_options]
+    end
+
     def index?
       sort == 'index'
     end
 
     def count?
       sort == 'count'
+    end
+
+    def replace_name(new_name)
+      FacetField.new(new_name.to_s, @items, @options)
     end
 
     private
@@ -245,22 +253,17 @@ module Blacklight::Solr::Response::Facets
   def facet_json_aggregations
     return {} unless blacklight_config
     json_facet_params = @request_params[:'json.facet']&.each_with_object({}) do |json_facet_entry, hash|
-      hash[json_facet_entry.key] = json_facet_entry.request_hash
+      hash[json_facet_entry.key] = json_facet_entry
     end
     return {} unless json_facet_params.present?
     facet_json.each_with_object({}) do |(key, value), hash|
       json_facet = json_facet_params[key]
-      items = subfacet(key, json_facet[key.to_sym], value)
 
-      # facet queries return only a single FacetItem (because they are inherently
-      # singletons). However, it seems likely that FacetField may assume that
-      # its `items` attribute is an array; so at the top level we make sure such
-      # assumptions will remain valid
-      items = [items] if items.is_a?(FacetItem)
+      top_level = subfacet(key, json_facet.request_hash[key.to_sym], value)
 
       # alias all the possible blacklight config names..
       blacklight_config.facet_fields.select { |k,v| v.json_facet and k == key }.each do |key, _|
-        hash[key] = Blacklight::Solr::Response::Facets::FacetField.new key, items
+        hash[key] = top_level
       end
     end
   end
@@ -290,17 +293,27 @@ module Blacklight::Solr::Response::Facets
     case req[:type]
       when 'query'
         count = rsp[:count]
-        return Blacklight::Solr::Response::Facets::FacetItem.new(value: key, hits: count, label: key, subs: subs(req, rsp, {count: count}))
+        subs = subs(req, rsp, {count: count})
+        if delegate = req.dig(:blacklight_options, :parse, :delegate)
+          return delegate.call(subs).replace_name(key)
+        end
+        items = [Blacklight::Solr::Response::Facets::FacetItem.new(value: key, hits: count, label: key, subs: subs)]
+        return Blacklight::Solr::Response::Facets::FacetField.new(key.to_s, items, {
+          display_options: req.dig(:blacklight_options, :display)
+        })
       when 'terms'
         # most info/stats/facets are at the level of the individual term
         # here we ignore top-level "count", but TODO: perhaps in some contexts it could be relevant?
         # count = rsp['count']
         field_name = req[:field]
         parent_fq = nil #nocommit: should populate parent_fq to be meaningful?
-        return rsp['buckets'].map do |bucket|
+        filter = req.dig(:blacklight_options, :parse, :filter)
+        get_hits = req.dig(:blacklight_options, :parse, :get_hits) || DEFAULT_GET_HITS
+        items = rsp['buckets'].each_with_object([]) do |bucket, arr|
+          next if filter && !filter.call(bucket)
           val = bucket[:val]
-          count = bucket[:count]
-          Blacklight::Solr::Response::Facets::FacetItem.new(
+          count = get_hits.call(bucket)
+          arr << Blacklight::Solr::Response::Facets::FacetItem.new(
             value: val,
             hits: count,
             field: field_name,
@@ -308,9 +321,18 @@ module Blacklight::Solr::Response::Facets
             subs: subs(req, bucket, {val: val, count: count})
           )
         end
+        return Blacklight::Solr::Response::Facets::FacetField.new(key.to_s, items, {
+          limit: req[:limit],
+          sort: req[:sort],
+          offset: req[:offset],
+          prefix: req[:prefix],
+          display_options: req.dig(:blacklight_options, :display)
+        })
       else
         raise StandardError, "unsupported facet type: #{req[:type]}" # range, heatmap
     end
   end
+
+  DEFAULT_GET_HITS = lambda { |bucket| bucket[:count] }
 
 end # end Facets

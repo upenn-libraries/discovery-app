@@ -3,8 +3,8 @@ module PennLib
 
 class Config
 
-  def initialize(json_facet_spec, static_display_options = nil)
-    @display_options = static_display_options
+  def initialize(json_facet_spec, static_options = nil)
+    @options = static_options
     if json_facet_spec.respond_to?(:lambda?) && json_facet_spec.lambda?
       @json_facet_lambda = json_facet_spec
     else
@@ -16,34 +16,38 @@ class Config
     if @json_facet_lambda
       resolved = @json_facet_lambda.call(field, limit, offset, sort, prefix)
       if resolved.is_a?(Array)
-        request_hash, display_options = resolved
+        request_hash, options = resolved
       else
         request_hash = resolved
-        display_options = @display_options
+        options = @options
       end
     else
       request_hash = @json_facet_spec
-      display_options = @display_options
+      options = @options
     end
-    return nil if request_hash.nil? || (display_options && !condition.call(display_options))
-    RequestStruct.new(key, request_hash, display_options)
+    if request_hash && (options.nil? || condition.call(options[:if], options[:unless]))
+      return { request: RequestStruct.new(key, request_hash, options) }
+    else
+      fallback = options&.[](:fallback)
+      return fallback.nil? ? nil : { fallback: fallback }
+    end
   end
 end
 
 class RequestStruct
 
-  attr_accessor :key, :request_hash, :display_options
+  attr_reader :key, :request_hash, :options
 
-  def initialize(key, request_hash, display_options)
+  def initialize(key, request_hash, options)
     @key = key
     @request_hash = {
       @key.to_sym => request_hash
     }
-    @display_options = display_options
+    @options = options
   end
 
   def to_s
-    @request_hash.to_json
+    @request_hash.to_json({ except: :blacklight_options })
   end
 end
 end

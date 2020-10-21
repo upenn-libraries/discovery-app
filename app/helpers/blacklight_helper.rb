@@ -14,10 +14,10 @@ module BlacklightHelper
   def render_expert_help(specialists_facet_field)
     return render partial: 'catalog/ask' unless specialists_facet_field
     specialists = extract_and_sort_by_relatedness(specialists_facet_field)
-    if specialists.blank? || specialists.first.subs[:r1][:relatedness] < EXPERT_HELP_CORRELATION_THRESHOLD
+    if specialists.blank? || specialists.first.items[0].subs[:r1][:relatedness] < EXPERT_HELP_CORRELATION_THRESHOLD
       return render partial: 'catalog/ask'
     end
-    subject = specialists.first.value
+    subject = specialists.first.items[0].value
     specialist_data = PennLib::SubjectSpecialists.data
     relevant_specialists = specialist_data[subject]
     if relevant_specialists.present?
@@ -36,10 +36,10 @@ module BlacklightHelper
   # items, sorted by relatedness
   def extract_and_sort_by_relatedness(specialists_facet_field)
     specialists_facet_field.items[0].subs.each_with_object([]) do |(k, v), arr|
-      if k != :count && v.subs[:r1]
+      if k != :count && v.items[0].subs[:r1]
         arr << v
       end
-    end.sort! { |a,b| b.subs[:r1][:relatedness] <=> a.subs[:r1][:relatedness] }
+    end.sort! { |a,b| b.items[0].subs[:r1][:relatedness] <=> a.items[0].subs[:r1][:relatedness] }
   end
 
   # override so that we can insert separators
