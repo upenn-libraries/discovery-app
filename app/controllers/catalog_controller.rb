@@ -23,7 +23,8 @@ class CatalogController < ApplicationController
 
   # establish an effective "record depth" beyond which pagination is not supported
   PAGINATION_THRESHOLD = 1000
-  before_action :limit_pagination, only: :index
+  before_action :limit_index_pagination, only: :index
+  before_action :limit_show_pagination, only: :show
 
   # and also for facets
   FACET_PAGINATION_THRESHOLD = 50
@@ -929,7 +930,7 @@ class CatalogController < ApplicationController
     end
   end
 
-  def limit_pagination
+  def limit_index_pagination
     per_page = (params[:per_page] || params[:rows])&.to_i || blacklight_config.default_per_page
     if per_page > blacklight_config.max_per_page
       # somebody's hacking the url; they're not going to get more than MAX_PER_PAGE records anyway, so give them an error.
@@ -938,6 +939,14 @@ class CatalogController < ApplicationController
       flash[:error] = "Request exceeds maximum number of records per page: #{blacklight_config.max_per_page}."
       redirect_to root_path
     elsif ((params[:page]&.to_i || 1) * per_page) > PAGINATION_THRESHOLD
+      flash[:error] = "You have paginated too deep into the result set. Please contact us if you need to view results past record #{PAGINATION_THRESHOLD}."
+      redirect_to root_path
+    end
+  end
+
+  def limit_show_pagination
+    if (counter = search_session['counter']&.to_i) && counter > PAGINATION_THRESHOLD
+      Honeybadger.notify "Blocked attempt to paginate to record #{counter} (PAGINATION_THRESHOLD=#{PAGINATION_THRESHOLD})"
       flash[:error] = "You have paginated too deep into the result set. Please contact us if you need to view results past record #{PAGINATION_THRESHOLD}."
       redirect_to root_path
     end
