@@ -4,82 +4,33 @@ require 'uri'
 # frozen_string_literal: true
 class CatalogController < ApplicationController
   include ReplaceInvalidBytes
-
   include BlacklightAdvancedSearch::Controller
-
   include Blacklight::Catalog
   include Blacklight::Marc::Catalog
   include Blacklight::Ris::Catalog
-
   include BlacklightSolrplugins::XBrowse
-
   include HandleInvalidAdvancedSearch
-
   include AssociateExpandedDocs
-
   include HandleEmptyEmail
 
+  ENABLE_SUBJECT_CORRELATION = ENV['ENABLE_SUBJECT_CORRELATION']&.downcase == 'true'
+
+  # expire session if needed
   before_action :expire_session
 
-  SECONDS_PER_DAY = 86400
+  # screen for illegit sort params
+  before_action :block_invalid_sort_params, only: :index
 
-  def has_shib_session?
-    session[:alma_sso_user].present?
-  end
+  # establish an effective "record depth" beyond which pagination is not supported
+  PAGINATION_THRESHOLD = 1000
+  before_action :limit_index_pagination, only: :index
+  before_action :limit_show_pagination, only: :show
 
-  def shib_session_valid?
-    session[:alma_sso_user] == request.headers['HTTP_REMOTE_USER']
-  end
+  # and also for facets
+  FACET_PAGINATION_THRESHOLD = 50
+  before_action :limit_facet_pagination, only: :facet
 
-  # should return true if page isn't protected behind Shib
-  def is_unprotected_url?
-    true
-  end
-
-  def expire_shib_session_return_url
-    is_unprotected_url? ? request.original_url : root_url
-  end
-
-  def search_results(user_params)
-    sid = session&.id
-    if !sid.nil? && sid.length >= 8
-      routingHash = [sid[-8..-1]].pack("H*").unpack("l>")[0]
-      # mod 12 to support even distribution for replication
-      # factors 1,2,3,4; that should be sufficient for all
-      # practical cases.
-      user_params[:routingHash] = routingHash % 12
-    end
-    super
-  end
-
-  # manually expire the session if user has exceeded 'hard expiration' or if
-  # shib session has become inactive
-  def expire_session
-    #invalid_shib = has_shib_session? && !shib_session_valid?
-    # TODO: the above line is broken when deployed to the test site; Investigate and fix
-    invalid_shib = false
-    if (session[:hard_expiration] && session[:hard_expiration] < Time.now.to_i) || invalid_shib
-      reset_session
-      url = invalid_shib ? "/Shibboleth.sso/Logout?return=#{URI.encode(expire_shib_session_return_url)}" : expire_shib_session_return_url
-      redirect_to url, alert: 'Your session has expired, please log in again'
-    end
-  end
-
-  PAGINATION_THRESHOLD=250
-  before_action only: :index do
-    if params[:page] && params[:page].to_i > PAGINATION_THRESHOLD
-      flash[:error] = "You have paginated too deep into the result set. Please contact us if you have a need to view results past page #{PAGINATION_THRESHOLD}."
-      redirect_to root_path
-    end
-  end
-
-  FACET_PAGINATION_THRESHOLD=50
-  before_action only: :facet do
-    if params['facet.page'] && params['facet.page'].to_i > FACET_PAGINATION_THRESHOLD
-      flash[:error] = "You have paginated too deep into facets. Please contact us if you have a need to view facets past page #{FACET_PAGINATION_THRESHOLD}."
-      redirect_to root_path
-    end
-  end
+  SECONDS_PER_DAY = 86_400
 
   configure_blacklight do |config|
     # default advanced config values
@@ -103,12 +54,12 @@ class CatalogController < ApplicationController
     config.default_solr_params = {
         #cache: 'false',
         defType: 'perEndPosition_dense_shingle_graphSpans',
-        combo: '{!filters param=$q param=$fq excludeTags=cluster}',
+        combo: '{!filters param=$q param=$fq excludeTags=cluster,no_correlation}', # NOTE: $correlation_domain is applied within facets
+        presentation_domain: '{!query v=$combo}', # default, overridden for first-class subject_correlation search_field
         post_1928: 'content_max_dtsort:[1929-01-01T00:00:00Z TO *]',
         culture_filter: "{!bool should='{!terms f=subject_search v=literature,customs,religion,ethics,society,social,culture,cultural}' should='{!prefix f=subject_search v=art}'}",
         #combo: '{!bool must=$q filter=\'{!filters param=$fq v=*:*}\'}',
         #combo: '{!query v=$q}',
-        back: '*:*',
         # this list is annoying to maintain, but this avoids hard-coding a field list
         # in the search request handler in solrconfig.xml
         fl: %w{
@@ -135,11 +86,20 @@ class CatalogController < ApplicationController
         bound_with_ids_a
         marcrecord_text
         recently_added_isort
+        hld_count_isort
+        prt_count_isort
       }.join(','),
         'facet.threads': 2,
         'facet.mincount': 0,
-        #      fq: '{!tag=cluster}{!collapse field=cluster_id nullPolicy=expand size=5000000 min=record_source_id}',
         # this approach needs expand.field=cluster_id
+        cluster: '{!tieredDomainDedupe f=record_source_f joinField=cluster_id v=Penn,Brown,Chicago,Columbia,Cornell,Duke,Harvard,Princeton,Stanford,HathiTrust}',
+        back: '{!query v=$correlation_domain}',
+        # NOTE: correlation_domain is separately defined from correlation_domain_refine so that the latter may be applied
+        # and selectively excluded (via excludeTags) for reporting counts over the full cluster domain, while calculating
+        # relatedness over a subset of that domain. This is not always necessary -- e.g., in the case where counts are not
+        # needed, such as for "expert help", which can use correlation_domain directly
+        correlation_domain: '{!bool filter=$cluster filter=$correlation_domain_refine}',
+        correlation_domain_refine: '{!bool filter=elvl_rank_isort:0}',
         expand: 'true',
         'expand.field': 'cluster_id',
         'expand.q': '*:*',
@@ -205,16 +165,19 @@ class CatalogController < ApplicationController
       'Include Partner Libraries' != a.params.dig(:f, :cluster, 0)
     }
 
-    # Some filters (e.g., subject_f) are capable of driving meaning correlations;
+    # Some filters (e.g., subject_f) are capable of driving meaningful correlations;
     # others are not, and either generate spurious correlations, or at best pointlessly add extra
     # overhead to Solr request.
     # Keys below indicate filters that we should not attempt to use for purpose of cacluating
     # correlations -- either entirely (nil value) or for an array of certain filter values
-    @@CORRELATION_IGNORELIST = {
+    # TODO: in search_builder, tag corresponding fq's with `no_correlation` so that they may be
+    # excluded from calculation of foreground domains for the purpose of relatedness/correlation
+    # calculation.
+    CORRELATION_IGNORELIST = {
       :access_f => nil,
       :record_source_f => nil,
       :format_f => ['Database & Article Index']
-    }
+    }.freeze
 
     actionable_filters = lambda { |a, b, c|
       params = a.params
@@ -222,23 +185,34 @@ class CatalogController < ApplicationController
       f = params[:f]
       return false if f.nil?
       # we return true if there is at least one non-ignorelisted filter
-      return true if f.size > @@CORRELATION_IGNORELIST.size
+      return true if f.size > CORRELATION_IGNORELIST.size
       f.symbolize_keys.each do |facet_key, facet_values|
-        return true unless @@CORRELATION_IGNORELIST.include?(facet_key) # no vals are ignored for this key
-        ignorelisted_vals = @@CORRELATION_IGNORELIST[facet_key]
+        return true unless CORRELATION_IGNORELIST.include?(facet_key) # no vals are ignored for this key
+        ignorelisted_vals = CORRELATION_IGNORELIST[facet_key]
         next unless ignorelisted_vals # all vals are ignored for this key
         return true if (facet_values - ignorelisted_vals).present? # there is at least one non-ignored val
       end
       return false
     }
 
-    get_hits = lambda { |v|
-      r1 = v[:r1]
-      r1.nil? ? 0 : (r1[:relatedness].to_f * 100000).to_i
+    search_field_accept = lambda { |field_names, other_conditions = []|
+      return lambda { |a, b, c|
+        return false unless field_names.include?(a.params[:search_field])
+        other_conditions.each do |condition|
+          return false unless condition.call(a, b, c)
+        end
+        return true
+      }
     }
 
-    post_sort = lambda { |items|
-      items.sort { |a,b| b.hits <=> a.hits }
+    search_field_reject = lambda { |field_names, other_conditions = []|
+      return lambda { |a, b, c|
+        return false if field_names.include?(a.params[:search_field])
+        other_conditions.each do |condition|
+          return false unless condition.call(a, b, c)
+        end
+        return true
+      }
     }
 
     config.induce_sort = lambda { |blacklight_params|
@@ -246,6 +220,11 @@ class CatalogController < ApplicationController
     }
 
     config.facet_types = {
+        :first_class => {
+            :priority => 3,
+            :sidebar => false,
+            :display => 'First class filters'
+        },
         :header => {
             :priority => 2,
             :sidebar => false,
@@ -261,71 +240,122 @@ class CatalogController < ApplicationController
         }
     }
 
-    @@SUBJECT_SPECIALISTS = File.open("config/translation_maps/subject_specialists.solr-json", "rb").map do |line|
-      comment_idx = line.index('#')
-      (comment_idx.nil? ? line : line.slice(0, comment_idx)).strip.presence
-    end.compact.join
+    DATABASE_CATEGORY_TAXONOMY = {
+      db_category_f: {
+        type: 'terms',
+        field: 'db_category_f',
+        mincount: 1,
+        limit: -1,
+        sort: 'index',
+        facet: {
+          db_subcategory_f: {
+            type: 'terms',
+            prefix: '$parent--',
+            field: 'db_subcategory_f',
+            mincount: 1,
+            limit: -1,
+            sort: 'index'
+          }
+        }
+      }
+    }.freeze
 
-    @@DATABASE_CATEGORY_TAXONOMY = [
-        '{',
-        'db_category_f:{',
-        'type: terms,',
-        'field: db_category_f,',
-        'mincount: 1,',
-        'limit: -1,',
-        'sort: index,',
-        'facet:{',
-        'db_subcategory_f: {',
-        'type : terms,',
-        'prefix : $parent--,',
-        'field: db_subcategory_f,',
-        'mincount: 1,',
-        'limit: -1,',
-        'sort: index',
-        '}',
-        '}',
-        '}',
-        '}'].join
+    SUBJECT_TAXONOMY = {
+      subject_taxonomy: {
+        type: 'terms',
+        field: 'toplevel_subject_f',
+        top_level_term: 'term()',
+        facet: {
+          identity: {
+            type: 'query',
+            q: '{!term f=subject_f v=$top_level_term}',
+          },
+          subject_f: {
+            type: 'terms',
+            prefix: '$top_level_term--',
+            field: 'subject_f',
+            limit: 5
+          }
+        }
+      }
+    }.freeze
 
-    @@SUBJECT_TAXONOMY = [
-        '{',
-        'subject_taxonomy: {',
-        'type: terms,',
-        'field: toplevel_subject_f,',
-        'top_level_term: "term()",',
-        'facet: {',
-        'identity: {',
-        'type: query,',
-        'q: "{!term f=subject_f v=$top_level_term}"',
-        '},',
-        'subject_f: {',
-        'type: terms,',
-        'prefix: $top_level_term--,',
-        'field: subject_f,',
-        'limit: 5',
-        '}',
-        '}',
-        '}',
-        '}'].join
+    MINCOUNT = { 'facet.mincount' => 1 }.freeze
 
-    @@MINCOUNT = { 'facet.mincount' => 1 }
+    SUBJECT_CORRELATION = {
+      subject_correlation: {
+        type: 'query',
+        domain: {
+          query: '{!query ex=cluster v=$cluster}'
+        },
+        q: '{!query tag=REFINE v=$correlation_domain}',
+        facet: {
+          correlation:{
+            type: 'terms',
+            field: 'subject_f',
+            # NOTE: mincount pre-filters vals that could not possibly match min_pop
+            mincount: 3, # guarantee fgSize >= 3
+            limit: 25,
+            refine: true,
+            sort: {r1: 'desc'},
+            facet: {
+              r1: {
+                type: 'func',
+                min_popularity: 0.0000002, # lower bound n/bgSize to guarantee fgCount>=n (here, n==2)
+                func: 'relatedness($combo,$back)'
+              },
+              fg_all_count: { # count over unfiltered logical base domain
+                domain: {
+                  excludeTags: 'REFINE'
+                },
+                type: 'query',
+                q: '*:*'
+              },
+              fg_filtered_count: { # count over logical base domain, filtered by q and fq
+                domain: {
+                  excludeTags: 'REFINE',
+                  filter: '{!query v=$presentation_domain}',
+                },
+                type: 'query',
+                q: '*:*'
+              }
+            }
+          }
+        }
+      }
+    }.freeze
 
-    config.add_facet_field 'cluster', label: 'Search domain', collapse: false, single: :manual, solr_params: @@MINCOUNT, query: {
+    NO_FACET_SEARCH_FIELDS = ['subject_correlation'].freeze
+
+    config.add_facet_field 'cluster', label: 'Search domain', collapse: false, single: :manual, solr_params: MINCOUNT, query: {
         #'Penn' => { :label => 'Penn', :fq => '{!term tag=cluster ex=cluster f=record_source_f v=Penn}'},
-        'Include Partner Libraries' => { :label => 'Include Partner Libraries', :fq => '{!tieredDomainDedupe tag=cluster ex=cluster f=record_source_f joinField=cluster_id v=Penn,Brown,Chicago,Columbia,Cornell,Duke,Harvard,Princeton,Stanford,HathiTrust}'}
+        'Include Partner Libraries' => { :label => 'Include Partner Libraries', :fq => '{!query tag=cluster ex=cluster v=$cluster}'}
     }
     config.add_facet_field 'db_subcategory_f', label: 'Database Subject', if: lambda { |a,b,c| false }
     config.add_facet_field 'db_category_f', label: 'Database Subject', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy',
-                           :json_facet => @@DATABASE_CATEGORY_TAXONOMY, :top_level_field => 'db_category_f', :facet_type => :database,
+                           :json_facet => DATABASE_CATEGORY_TAXONOMY, :sub_hierarchy => [:db_subcategory_f], :facet_type => :database,
                            :helper_method => :render_subcategories, :if => database_selected
 
-    config.add_facet_field 'db_type_f', label: 'Database Type', limit: -1, collapse: false, :if => database_selected,
-                           :facet_type => :database, solr_params: @@MINCOUNT
-    config.add_facet_field 'subject_specialists', label: 'Subject Area Correlation', collapse: true, :partial => 'blacklight/hierarchy/facet_hierarchy',
-        :json_facet => @@SUBJECT_SPECIALISTS, :top_level_field => 'subject_specialists', :get_hits => get_hits, :post_sort => post_sort,
-        :if => actionable_filters
+    config.add_facet_field 'db_type_f', label: 'Database Type', limit: -1, collapse: false,
+                           :if => database_selected,
+                           :facet_type => :database, solr_params: MINCOUNT
+    # NOTE: set facet_type=nil below, to bypass normal facet display
+    config.add_facet_field 'subject_specialists', label: 'Subject Area Correlation', collapse: true, :facet_type => nil,
+        :json_facet => PennLib::SubjectSpecialists::QUERIES, :if => actionable_filters
+
+    config.add_facet_field 'subject_correlation',
+                           label: 'Subject Correlation',
+                           collapse: false,
+                           partial: 'blacklight/hierarchy/facet_relatedness',
+                           json_facet: SUBJECT_CORRELATION,
+                           :facet_type => lambda { |params|
+                             params[:search_field] == 'subject_correlation' ? :first_class : :default
+                           },
+                           :if => actionable_filters if ENABLE_SUBJECT_CORRELATION
+
     config.add_facet_field 'azlist', label: 'A-Z List', collapse: false, single: :manual, :facet_type => :header,
-                           options: {:layout => 'horizontal_facet_list'}, solr_params: { 'facet.mincount' => 0 }, :if => database_selected, query: {
+                           options: {:layout => 'horizontal_facet_list'}, solr_params: { 'facet.mincount' => 0 },
+                           :if => database_selected, query: {
             'A' => { :label => 'A', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='a'}"},
             'B' => { :label => 'B', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='b'}"},
             'C' => { :label => 'C', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='c'}"},
@@ -354,11 +384,11 @@ class CatalogController < ApplicationController
             'Z' => { :label => 'Z', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='z'}"},
             'Other' => { :label => 'Other', :fq => "{!tag=azlist ex=azlist}title_xfacet:/[ -`{-~].*/"}
         }
-    config.add_facet_field 'access_f', label: 'Access', collapse: false, solr_params: @@MINCOUNT, :if => local_only, query: {
-        'Online' => { :label => 'Online', :fq => "{!join from=cluster_id to=cluster_id v='access_f:Online OR record_source_id:3'}"},
-        'At the library' => { :label => 'At the library', :fq => "{!join from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"}
+    config.add_facet_field 'access_f', label: 'Access', collapse: false, solr_params: MINCOUNT, :if => local_only, query: {
+        'Online' => { :label => 'Online', :fq => "{!join ex=orig_q from=cluster_id to=cluster_id v='access_f:Online OR record_source_id:3'}"},
+        'At the library' => { :label => 'At the library', :fq => "{!join ex=orig_q from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"},
     }
-    config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false, solr_params: @@MINCOUNT, :if => local_only, query: {
+    config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false, :ex => 'orig_q', solr_params: MINCOUNT, :if => local_only, query: {
         'Book' => { :label => 'Book', :fq => "{!term f=format_f v='Book'}"},
         'Government document' => { :label => 'Government document', :fq => "{!term f=format_f v='Government document'}"},
         'Journal/Periodical' => { :label => 'Journal/Periodical', :fq => "{!term f=format_f v='Journal/Periodical'}"},
@@ -380,21 +410,24 @@ class CatalogController < ApplicationController
         '3D object' => { :label => '3D object', :fq => "{!term f=format_f v='3D object'}"},
         'Projected graphic' => { :label => 'Projected graphic', :fq => "{!term f=format_f v='Projected graphic'}"},
     }
-    config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z', collapse: false, solr_params: @@MINCOUNT
-    #config.add_facet_field 'subject_taxonomy', label: 'Subject Taxonomy', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy', :json_facet => @@SUBJECT_TAXONOMY, :top_level_field => 'toplevel_subject_f', :helper_method => :render_subcategories
-    config.add_facet_field 'subject_f', label: 'Subject', limit: 5, index_range: 'A'..'Z', collapse: false, solr_params: @@MINCOUNT
-    config.add_facet_field 'language_f', label: 'Language', limit: 5, collapse: false, solr_params: @@MINCOUNT
-    config.add_facet_field 'library_f', label: 'Library', limit: 5, collapse: false, :if => local_only, solr_params: @@MINCOUNT
-    config.add_facet_field 'specific_location_f', label: 'Specific location', limit: 5, :if => local_only, solr_params: @@MINCOUNT
-    config.add_facet_field 'recently_published', label: 'Recently published', collapse: false, solr_params: @@MINCOUNT, :query => {
+    config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z', collapse: false,
+        :ex => 'orig_q', solr_params: MINCOUNT
+    #config.add_facet_field 'subject_taxonomy', label: 'Subject Taxonomy', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy', :json_facet => SUBJECT_TAXONOM, :helper_method => :render_subcategories
+    config.add_facet_field 'subject_f', label: 'Subject', limit: 5, index_range: 'A'..'Z', collapse: false,
+        :ex => 'orig_q', solr_params: MINCOUNT
+    config.add_facet_field 'language_f', label: 'Language', limit: 5, collapse: false, :ex => 'orig_q', solr_params: MINCOUNT
+    config.add_facet_field 'library_f', label: 'Library', limit: 5, collapse: false, :ex => 'orig_q', :if => local_only, solr_params: MINCOUNT
+    config.add_facet_field 'specific_location_f', label: 'Specific location', limit: 5, :ex => 'orig_q', :if => local_only, solr_params: MINCOUNT
+    config.add_facet_field 'recently_published', label: 'Recently published', collapse: false, :ex => 'orig_q',
+        solr_params: MINCOUNT, :query => {
         :last_5_years => { label: 'Last 5 years', fq: "pub_max_dtsort:[#{Date.current.year - 4}-01-01T00:00:00Z TO *]" },
         :last_10_years => { label: 'Last 10 years', fq: "pub_max_dtsort:[#{Date.current.year - 9}-01-01T00:00:00Z TO *]" },
         :last_15_years => { label: 'Last 15 years', fq: "pub_max_dtsort:[#{Date.current.year - 14}-01-01T00:00:00Z TO *]" },
     }
-    config.add_facet_field 'publication_date_f', label: 'Publication date', limit: 5, collapse: false, solr_params: @@MINCOUNT
-    config.add_facet_field 'classification_f', label: 'Classification', limit: 5, collapse: false, :if => local_only, solr_params: @@MINCOUNT
-    config.add_facet_field 'genre_f', label: 'Form/Genre', limit: 5, solr_params: @@MINCOUNT
-    config.add_facet_field 'recently_added_f', label: 'Recently added', solr_params: @@MINCOUNT, :if => local_only, :query => {
+    config.add_facet_field 'publication_date_f', label: 'Publication date', limit: 5, :ex => 'orig_q', solr_params: MINCOUNT
+    config.add_facet_field 'classification_f', label: 'Classification', limit: 5, collapse: false, :ex => 'orig_q', :if => local_only, solr_params: MINCOUNT
+    config.add_facet_field 'genre_f', label: 'Form/Genre', limit: 5, :ex => 'orig_q', solr_params: MINCOUNT
+    config.add_facet_field 'recently_added_f', label: 'Recently added', solr_params: MINCOUNT, :if => local_only, :query => {
         :within_90_days => { label: 'Within 90 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (90 * SECONDS_PER_DAY) } TO *]" },
         :within_60_days => { label: 'Within 60 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (60 * SECONDS_PER_DAY) } TO *]" },
         :within_30_days => { label: 'Within 30 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (30 * SECONDS_PER_DAY) } TO *]" },
@@ -410,16 +443,20 @@ class CatalogController < ApplicationController
     # config.add_facet_field 'pub_date_isort', label: 'Publication Year', range: true, collapse: false,
     #                        include_in_advanced_search: false
 
-    config.add_facet_field 'subject_xfacet2', label: 'Subject', limit: 20, show: false, solr_params: @@MINCOUNT,
-                           xfacet: true, xfacet_view_type: 'xbrowse', facet_for_filtering: 'subject_f'
-    config.add_facet_field 'title_xfacet', label: 'Title', limit: 20, show: false, solr_params: @@MINCOUNT,
-                           xfacet: true, xfacet_view_type: 'rbrowse', xfacet_rbrowse_fields: %w(title author_creator_a standardized_title_a edition conference_a series contained_within_a publication_a format_a full_text_links_for_cluster_display availability)
+    config.add_facet_field 'subject_xfacet2', label: 'Subject', limit: 20, show: false, solr_params: MINCOUNT,
+                           xfacet: true, xfacet_view_type: 'xbrowse', facet_for_filtering: 'subject_f',
+                           :if => search_field_accept::(['subject_xfacet2'])
+    config.add_facet_field 'title_xfacet', label: 'Title', limit: 20, show: false, solr_params: MINCOUNT,
+                           xfacet: true, xfacet_view_type: 'rbrowse', :if => search_field_accept::(['title_xfacet']),
+                           xfacet_rbrowse_fields: %w(title author_creator_a standardized_title_a edition conference_a series contained_within_a publication_a format_a full_text_links_for_cluster_display availability)
     #config.add_facet_field 'author_creator_xfacet', label: 'Author', limit: 20, show: false,
     #                       xfacet: true, xfacet_view_type: 'xbrowse', facet_for_filtering: 'author_creator_f'
-    config.add_facet_field 'author_creator_xfacet2', label: 'Author', limit: 20, show: false, solr_params: @@MINCOUNT,
-                           xfacet: true, xfacet_view_type: 'xbrowse', facet_for_filtering: 'author_creator_f'
-    config.add_facet_field 'call_number_xfacet', label: 'Call number', limit: 20, show: false, solr_params: @@MINCOUNT,
-                           xfacet: true, xfacet_view_type: 'rbrowse', xfacet_rbrowse_fields: %w(title author_creator_a standardized_title_a edition conference_a series contained_within_a publication_a format_a full_text_links_for_cluster_display availability)
+    config.add_facet_field 'author_creator_xfacet2', label: 'Author', limit: 20, show: false, solr_params: MINCOUNT,
+                           xfacet: true, xfacet_view_type: 'xbrowse', facet_for_filtering: 'author_creator_f',
+                           :if => search_field_accept::(['author_creator_xfacet2'])
+    config.add_facet_field 'call_number_xfacet', label: 'Call number', limit: 20, show: false, solr_params: MINCOUNT,
+                           xfacet: true, xfacet_view_type: 'rbrowse', :if => search_field_accept::(['call_number_xfacet']),
+                           xfacet_rbrowse_fields: %w(title author_creator_a standardized_title_a edition conference_a series contained_within_a publication_a format_a full_text_links_for_cluster_display availability)
 
     # Have BL send all facet field names to Solr, which has been the default
     # previously. Simply remove these lines if you'd rather use Solr request
@@ -651,6 +688,17 @@ class CatalogController < ApplicationController
       field.include_in_advanced_search = false
     end
 
+    config.add_search_field('subject_correlation') do |field|
+      field.label = 'Subject Heading Correlation'
+      #field.action = '/catalog/correlation/subject_correlation'
+      field.solr_local_parameters = {
+          tag: 'orig_q',
+          qf: 'marcrecord_xml', # the most general text search we can get, to avoid spurious correlations
+          pf: '' # domain only, no scoring, so pf doesn't matter
+      }
+      field.include_in_advanced_search = false
+    end if ENABLE_SUBJECT_CORRELATION
+
     config.add_search_field('subject_search') do |field|
       field.label = 'Subject Heading Keyword'
       field.solr_parameters = { :'spellcheck.dictionary' => 'subject_search' }
@@ -838,19 +886,9 @@ class CatalogController < ApplicationController
     config.navbar.partials.delete(:search_history)
   end
 
-  # override from Blacklight::Marc::Catalog so that action appears on bookmarks page
-  def render_refworks_action? config, options = {}
-    doc = options[:document] || (options[:document_list] || []).first
-    doc && doc.respond_to?(:export_formats) && doc.export_formats.keys.include?(:refworks_marc_txt)
-  end
-
-  def render_saved_searches?
-    # don't ever show saved searches link to the user
-    false
-  end
-
   # extend 'index' so we can override views
   def bento
+    params[:per_page] = 5
     index
   end
 
@@ -858,7 +896,116 @@ class CatalogController < ApplicationController
   # certain BL view partials used on landing page won't resolve correctly.
   def landing
     @page_title = t('franklin.landing_page_title')
+    # only facets are needed, so set rows=0; we do need to grab these provisionally
+    # because switching landing tabs happens by content hash, without network request
+    # params[:per_page] = 0 #TODO: prevent this from being sticky!
     index
+  end
+
+  # override
+  def search_results(user_params)
+    sid = session&.id
+    if !sid.nil? && sid.length >= 8
+      routingHash = [sid[-8..-1]].pack("H*").unpack("l>")[0]
+      # mod 12 to support even distribution for replication
+      # factors 1,2,3,4; that should be sufficient for all
+      # practical cases.
+      user_params[:routingHash] = routingHash % 12
+    end
+    super
+  end
+
+  private
+
+  def has_shib_session?
+    session[:alma_sso_user].present?
+  end
+
+  def shib_session_valid?
+    session[:alma_sso_user] == request.headers['HTTP_REMOTE_USER']
+  end
+
+  # should return true if page isn't protected behind Shib
+  def is_unprotected_url?
+    true
+  end
+
+  def expire_shib_session_return_url
+    is_unprotected_url? ? request.original_url : root_url
+  end
+
+  # manually expire the session if user has exceeded 'hard expiration' or if
+  # shib session has become inactive
+  def expire_session
+    invalid_shib = has_shib_session? && !shib_session_valid?
+    if (session[:hard_expiration] && session[:hard_expiration] < Time.now.to_i) || invalid_shib
+      reset_session
+      url = invalid_shib ? "/Shibboleth.sso/Logout?return=#{URI.encode(expire_shib_session_return_url)}" : expire_shib_session_return_url
+      redirect_to url, alert: 'Your session has expired, please log in again'
+    end
+  end
+
+  def limit_facet_pagination
+    if params['facet.page'] && params['facet.page'].to_i > FACET_PAGINATION_THRESHOLD
+      flash[:error] = "You have paginated too deep into facets. Please contact us if you need to view facets past page #{FACET_PAGINATION_THRESHOLD}."
+      redirect_to root_path
+    end
+  end
+
+  def limit_index_pagination
+    per_page = (params[:per_page] || params[:rows])&.to_i || blacklight_config.default_per_page
+    if per_page > blacklight_config.max_per_page
+      # somebody's hacking the url; they're not going to get more than MAX_PER_PAGE records anyway, so give them an error.
+      # if it's a real person, they can resubmit the request and get what they would have gotten anyway; but don't jump through
+      # hoops to return records to what's most likely an overly-curious crawler
+      flash[:error] = "Request exceeds maximum number of records per page: #{blacklight_config.max_per_page}."
+      redirect_to root_path
+    elsif ((params[:page]&.to_i || 1) * per_page) > PAGINATION_THRESHOLD
+      flash[:error] = "You have paginated too deep into the result set. Please contact us if you need to view results past record #{PAGINATION_THRESHOLD}."
+      redirect_to root_path
+    end
+  end
+
+  def limit_show_pagination
+    if (counter = search_session['counter']&.to_i) && counter > PAGINATION_THRESHOLD
+      Honeybadger.notify "Blocked attempt to paginate to record #{counter} (PAGINATION_THRESHOLD=#{PAGINATION_THRESHOLD})"
+      flash[:error] = "You have paginated too deep into the result set. Please contact us if you need to view results past record #{PAGINATION_THRESHOLD}."
+      redirect_to root_path
+    end
+  end
+
+  ALIAS_SORT_FIELD = {
+    # For now we will continue to transparently support links that might plausibly have been legit at
+    # some point, by internally aliasing to the current field name. The right way to do this is
+    # probably via 301 redirect to bridge a onetime migration to a more stable naming abstraction
+    'title_ssort asc' => 'title_nssort asc',
+    'title_ssort desc' => 'title_nssort desc',
+    'author_creator_ssort asc' => 'author_creator_nssort asc',
+    'author_creator_ssort desc' => 'author_creator_nssort desc',
+    'publication_date_ssort asc, title_ssort asc' => 'publication_date_ssort asc, title_nssort asc',
+    'publication_date_ssort desc, title_ssort asc' => 'publication_date_ssort desc, title_nssort asc'
+  }
+
+  def block_invalid_sort_params
+    sort_val = params[:sort]
+    return unless sort_val
+    if aliased_sort_val = ALIAS_SORT_FIELD[sort_val]
+      params[:sort] = aliased_sort_val
+    elsif !blacklight_config.sort_fields.has_key?(sort_val)
+      flash[:error] = "Requested illegal sort val: #{sort_val}"
+      redirect_to root_path
+    end
+  end
+
+  # override from Blacklight::Marc::Catalog so that action appears on bookmarks page
+  def render_refworks_action?(config, options = {})
+    doc = options[:document] || (options[:document_list] || []).first
+    doc && doc.respond_to?(:export_formats) && doc.export_formats.keys.include?(:refworks_marc_txt)
+  end
+
+  def render_saved_searches?
+    # don't ever show saved searches link to the user
+    false
   end
 
 end

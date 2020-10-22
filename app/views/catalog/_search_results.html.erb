@@ -11,7 +11,9 @@
 
 <h2 class="sr-only"><%= t('blacklight.search.search_results') %></h2>
 
-<%- if @response.empty? %>
+<%- if params[:search_field] == 'subject_correlation' %>
+  <%= render 'facets_first_class' %>
+<%- elsif @response.empty? %>
   <%= render "zero_results" %>
 <%- elsif render_grouped_response? %>
   <%= render_grouped_document_index %>

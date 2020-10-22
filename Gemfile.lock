@@ -1,20 +1,4 @@
 GIT
-  remote: https://github.com/magibney/bento_search
-  revision: af7c055b8ee0eed24c7fcf02e4fdab33b3e67bbe
-  branch: search_controller_engine_params
-  specs:
-    bento_search (1.8.0)
-      confstruct (~> 1.0)
-      htmlentities
-      httpclient (>= 2.2.5, < 3.0.0)
-      language_list (~> 1.0)
-      multi_json (>= 1.0.4, < 2.0)
-      nokogiri
-      openurl (>= 0.3.1, < 1.1)
-      rails (>= 3.2.3, < 6)
-      summon
-
-GIT
   remote: https://github.com/magibney/blacklight.git
   revision: b8a2e5f823e7b8cca623e185fb53dc29c91aa825
   branch: v6.8.0-solr7-qq-feedFormat
@@ -36,6 +20,22 @@ GIT
   specs:
     summon (2.0.12)
       json (~> 1.8)
+
+GIT
+  remote: https://github.com/upenn-libraries/bento_search
+  revision: 3f45d1c286ae19146aa51dc7b54b5a5a6b7c3dd0
+  branch: search_controller_engine_params
+  specs:
+    bento_search (1.8.0)
+      confstruct (~> 1.0)
+      htmlentities
+      httpclient (>= 2.2.5, < 3.0.0)
+      language_list (~> 1.0)
+      multi_json (>= 1.0.4, < 2.0)
+      nokogiri
+      openurl (>= 0.3.1, < 1.1)
+      rails (>= 3.2.3, < 6)
+      summon
 
 GIT
   remote: https://github.com/upenn-libraries/blacklight-ris.git
@@ -101,9 +101,7 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
-    ansi (1.5.0)
     arel (6.0.4)
-    ast (2.4.1)
     autoprefixer-rails (9.8.6)
       execjs
     bcrypt (3.1.16)
@@ -142,10 +140,10 @@ GEM
     debug_inspector (0.0.3)
     deprecation (1.0.0)
       activesupport
-    devise (4.6.2)
+    devise (4.7.3)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
-      railties (>= 4.1.0, < 6.0)
+      railties (>= 4.1.0)
       responders
       warden (~> 1.2.3)
     devise-guests (0.5.0)
@@ -222,9 +220,6 @@ GEM
     mysql2 (0.4.10)
     nokogiri (1.10.10)
       mini_portile2 (~> 2.4.0)
-    oga (3.3)
-      ast
-      ruby-ll (~> 2.1)
     openurl (1.0.0)
       marc
       scrub_rb (~> 1.0)
@@ -269,9 +264,6 @@ GEM
       railties (>= 4.2.0, < 6.0)
     rsolr (1.1.2)
       builder (>= 2.1.2)
-    ruby-ll (2.1.2)
-      ansi
-      ast
     sass (3.7.4)
       sass-listen (~> 4.0.0)
     sass-listen (4.0.0)
@@ -349,7 +341,7 @@ DEPENDENCIES
   browserify-rails
   byebug
   coffee-rails (= 4.2.1)
-  devise (~> 4.6.0)
+  devise (~> 4)
   devise-guests (= 0.5.0)
   dotenv-rails
   faraday
@@ -360,7 +352,6 @@ DEPENDENCIES
   jquery-rails (= 4.3.1)
   mysql2 (~> 0.4.10)
   nokogiri (~> 1.10.0)
-  oga
   rails (~> 4.2.0)
   rsolr (= 1.1.2)
   sass-rails (= 5.0.6)

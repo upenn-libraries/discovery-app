@@ -1,0 +1,7 @@
+<div class="bento-box colenda-results" id="bento-results-colenda">
+  <a name="colenda"></a>
+  <div class="corner left-top hide"></div>
+  <div class="corner right-top hide"></div>
+  <h3>Colenda <%=link_to("(What is Colenda?)", "https://colenda.library.upenn.edu/pages/about", class: "colenda-help") %></h3>
+  <%= bento_search 'colenda', query: query_param_value, load: :ajax_auto %>
+</div>
