@@ -55,7 +55,7 @@ class CatalogController < ApplicationController
         #cache: 'false',
         defType: 'perEndPosition_dense_shingle_graphSpans',
         combo: '{!filters param=$q param=$fq excludeTags=cluster,no_correlation}', # NOTE: $correlation_domain is applied within facets
-        presentation_domain: '{!query v=$combo}', # default, overridden for first-class subject_correlation search_field
+        presentation_domain: '{!filters param=$q param=$fq}', # default, overridden for first-class subject_correlation search_field
         post_1928: 'content_max_dtsort:[1929-01-01T00:00:00Z TO *]',
         culture_filter: "{!bool should='{!terms f=subject_search v=literature,customs,religion,ethics,society,social,culture,cultural}' should='{!prefix f=subject_search v=art}'}",
         #combo: '{!bool must=$q filter=\'{!filters param=$fq v=*:*}\'}',
