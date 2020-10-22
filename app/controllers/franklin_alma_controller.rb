@@ -288,7 +288,7 @@ class FranklinAlmaController < ApplicationController
                     .reject { |p| p['activation_status'] == 'Not Available' }
                     .each_with_index
                     .map { |p, i|
-                      link_text = p['collection'] || p['public_note'] # TODO: get bib title instead??? or vendor???
+                      link_text = p['collection'] || 'Online'
                       link = "<a target='_blank' href='https://upenn.alma.exlibrisgroup.com/view/uresolver/01UPENN_INST/openurl?Force_direct=true&portfolio_pid=#{p['portfolio_pid']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com&u.ignore_date_coverage=true'>#{link_text}</a>"
                       [i, link, p['availability'], "<span id='notes-#{p['portfolio_pid']}'></span>", '', '', '', '']
                     }

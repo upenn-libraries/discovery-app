@@ -209,6 +209,12 @@ $(document).ready(function() {
                     var coverage = $(element).data("coverage");
                     var publicnote = $(element).data("publicnote");
 
+                    // "standalone" portfolios have no collection_id, and so we should skip this lookup
+                    if(!collectionid) {
+                        $(element).removeClass('load-portfolio-details').html('');
+                        return;
+                    }
+
                     var url = "/alma/portfolio_details?mms_id="+mmsid+"&portfolio_pid="+portfoliopid+"&collection_id="+collectionid+"&coverage="+coverage+"&public_note="+publicnote
                     $.ajax({
                         url: url,
