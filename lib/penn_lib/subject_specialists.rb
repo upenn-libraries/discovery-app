@@ -100,7 +100,6 @@ module PennLib
       end
     end
 QUERIES = {
-  subject_specialists: {
     # the only purpose served by this top-level of hierarchy is to group the nested facet
     # queries, where the real "work" happens. This allows them to be easily parsed, disabled,
     # etc. as a group.
@@ -780,7 +779,6 @@ QUERIES = {
     facet: {
       r1: 'relatedness($combo,$back)'
     }
-  }
   }
   }
 }.freeze

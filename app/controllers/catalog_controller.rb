@@ -282,22 +282,35 @@ class CatalogController < ApplicationController
 
     MINCOUNT = { 'facet.mincount' => 1 }.freeze
 
-    SUBJECT_CORRELATION = {
-      subject_correlation: {
+    CORRELATION_JSON_FACET = lambda { |field, limit, offset, sort, prefix|
+      return nil unless ENABLE_SUBJECT_CORRELATION && sort == 'r1 desc'
+      {
         type: 'query',
         domain: {
           query: '{!query ex=cluster v=$cluster}'
         },
         q: '{!query tag=REFINE v=$correlation_domain}',
+        blacklight_options: {
+          parse: {
+            delegate: lambda { |subs| subs[:correlation] }
+          }
+        },
         facet: {
           correlation:{
             type: 'terms',
-            field: 'subject_f',
+            field: field,
             # NOTE: mincount pre-filters vals that could not possibly match min_pop
             mincount: 3, # guarantee fgSize >= 3
-            limit: 25,
+            limit: limit,
+            offset: offset,
             refine: true,
-            sort: {r1: 'desc'},
+            sort: sort,
+            blacklight_options: {
+              parse: {
+                filter: lambda { |bucket| bucket[:r1][:relatedness] > 0 },
+                get_hits: lambda { |bucket| bucket[:fg_filtered_count][:count] }
+              }
+            },
             facet: {
               r1: {
                 type: 'func',
@@ -341,17 +354,43 @@ class CatalogController < ApplicationController
                            :facet_type => :database, solr_params: MINCOUNT
     # NOTE: set facet_type=nil below, to bypass normal facet display
     config.add_facet_field 'subject_specialists', label: 'Subject Area Correlation', collapse: true, :facet_type => nil,
-        :json_facet => PennLib::SubjectSpecialists::QUERIES, :if => actionable_filters
+        :json_facet => PennLib::JsonFacet::Config.new(PennLib::SubjectSpecialists::QUERIES), :if => actionable_filters
 
-    config.add_facet_field 'subject_correlation',
-                           label: 'Subject Correlation',
+    config.add_facet_field 'subject_f',
+                           label: 'Subject',
                            collapse: false,
-                           partial: 'blacklight/hierarchy/facet_relatedness',
-                           json_facet: SUBJECT_CORRELATION,
-                           :facet_type => lambda { |params|
+                           limit: 5,
+                           index_range: 'A'..'Z',
+                           solr_params: MINCOUNT,
+                           sort: 'r1 desc', # 'r1 desc', 'count', or 'index'
+                           #partial: 'catalog/json_facet_limit',
+                           json_facet: PennLib::JsonFacet::Config.new(CORRELATION_JSON_FACET, {
+                             if: actionable_filters,
+                             fallback: {
+                               map_sort: lambda { |sort, blacklight_params| sort == 'r1 desc' ? 'count' : sort }
+                             }
+                           }),
+                           facet_type: lambda { |params|
                              params[:search_field] == 'subject_correlation' ? :first_class : :default
-                           },
-                           :if => actionable_filters if ENABLE_SUBJECT_CORRELATION
+                           }
+
+    config.add_facet_field 'author_creator_f',
+                           label: 'Author/Creator',
+                           collapse: false,
+                           limit: 5,
+                           index_range: 'A'..'Z',
+                           solr_params: MINCOUNT,
+                           sort: 'r1 desc', # 'r1 desc', 'count', or 'index'
+                           #partial: 'catalog/json_facet_limit',
+                           json_facet: PennLib::JsonFacet::Config.new(CORRELATION_JSON_FACET, {
+                             if: actionable_filters,
+                             fallback: {
+                               map_sort: lambda { |sort, blacklight_params| sort == 'r1 desc' ? 'count' : sort }
+                             }
+                           }),
+                           facet_type: lambda { |params|
+                             params[:search_field] == 'author_creator_correlation' ? :first_class : :default
+                           }
 
     config.add_facet_field 'azlist', label: 'A-Z List', collapse: false, single: :manual, :facet_type => :header,
                            options: {:layout => 'horizontal_facet_list'}, solr_params: { 'facet.mincount' => 0 },
@@ -410,11 +449,7 @@ class CatalogController < ApplicationController
         '3D object' => { :label => '3D object', :fq => "{!term f=format_f v='3D object'}"},
         'Projected graphic' => { :label => 'Projected graphic', :fq => "{!term f=format_f v='Projected graphic'}"},
     }
-    config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z', collapse: false,
-        :ex => 'orig_q', solr_params: MINCOUNT
     #config.add_facet_field 'subject_taxonomy', label: 'Subject Taxonomy', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy', :json_facet => SUBJECT_TAXONOM, :helper_method => :render_subcategories
-    config.add_facet_field 'subject_f', label: 'Subject', limit: 5, index_range: 'A'..'Z', collapse: false,
-        :ex => 'orig_q', solr_params: MINCOUNT
     config.add_facet_field 'language_f', label: 'Language', limit: 5, collapse: false, :ex => 'orig_q', solr_params: MINCOUNT
     config.add_facet_field 'library_f', label: 'Library', limit: 5, collapse: false, :ex => 'orig_q', :if => local_only, solr_params: MINCOUNT
     config.add_facet_field 'specific_location_f', label: 'Specific location', limit: 5, :ex => 'orig_q', :if => local_only, solr_params: MINCOUNT
