@@ -13,7 +13,7 @@ class CatalogController < ApplicationController
   include AssociateExpandedDocs
   include HandleEmptyEmail
 
-  ENABLE_SUBJECT_CORRELATION = ENV['ENABLE_SUBJECT_CORRELATION']&.downcase == 'true'
+  ENABLE_SUBJECT_CORRELATION = true #ENV['ENABLE_SUBJECT_CORRELATION']&.downcase == 'true'
 
   # expire session if needed
   before_action :expire_session
