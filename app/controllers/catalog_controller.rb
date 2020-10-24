@@ -283,6 +283,13 @@ class CatalogController < ApplicationController
     MINCOUNT = { 'facet.mincount' => 1 }.freeze
 
     CORRELATION_JSON_FACET = lambda { |field, limit, offset, sort, prefix|
+      if field == 'subject_f'
+        overrequest = 300
+        overrefine = 500
+      else
+        overrequest = -1
+        overrefine = -1
+      end
       return nil unless ENABLE_SUBJECT_CORRELATION && sort == 'r1 desc'
       {
         type: 'query',
@@ -300,9 +307,11 @@ class CatalogController < ApplicationController
             type: 'terms',
             field: field,
             # NOTE: mincount pre-filters vals that could not possibly match min_pop
-            mincount: 3, # guarantee fgSize >= 3
+            mincount: 2, # guarantee fgSize >= 2
             limit: limit,
             offset: offset,
+            overrequest: overrequest,
+            overrefine: overrefine,
             refine: true,
             sort: sort,
             blacklight_options: {
@@ -312,6 +321,7 @@ class CatalogController < ApplicationController
               }
             },
             facet: {
+              processEmpty: true,
               r1: {
                 type: 'func',
                 min_popularity: 0.0000002, # lower bound n/bgSize to guarantee fgCount>=n (here, n==2)
