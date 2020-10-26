@@ -170,7 +170,7 @@ class FranklinAlmaController < ApplicationController
     api = api_instance.ezwadl_api[0]
 
     mmsid = params[:mms_id]
-    userid = session['id'] || 'GUEST'
+    userid = session['id'].presence || 'GUEST'
     bibapi = alma_api_class.new
     bib_data = bibapi.get_availability([mmsid])
     holding_map = {}
