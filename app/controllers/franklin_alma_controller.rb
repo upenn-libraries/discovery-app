@@ -108,7 +108,7 @@ class FranklinAlmaController < ApplicationController
     portfolio_pid = params['portfolio_pid']
     collection_id = params['collection_id']
     api_key_param = "apikey=#{ENV['ALMA_API_KEY']}"
-    url_params = {:collection_id => collection_id}
+    url_params = { collection_id: collection_id }
     coverage = params['coverage']
 
     # we also get this from availability API. Opportunity for improvement?
@@ -119,20 +119,25 @@ class FranklinAlmaController < ApplicationController
     services_url = "https://api-na.hosted.exlibrisgroup.com/almaws/v1/electronic/e-collections/%{collection_id}/e-services?#{api_key_param}"
     portfolio_url = "https://api-na.hosted.exlibrisgroup.com/almaws/v1/electronic/e-collections/%{collection_id}/e-services/%{service_id}/portfolios/%{portfolio_id}?#{api_key_param}"
 
-    api_response = HTTParty.get(services_url % url_params, :headers => {'Accept' => 'application/json'})
+    api_response = HTTParty.get(
+      services_url % url_params,
+      headers: { 'Accept' => 'application/json' }
+    )
+
+    # 'electronic_service' is not set for e-portfolios et al
     api_response['electronic_service'].each do |e|
       portfolio_response = HTTParty.get(portfolio_url % url_params.merge(:portfolio_id => portfolio_pid, :service_id => e['id']), :headers => {'Accept' => 'application/json'})
       public_note ||= portfolio_response['public_note'].presence
       authentication_note ||= portfolio_response['authentication_note'].presence
 
-      if(public_note.nil? || authentication_note.nil?)
+      if public_note.nil? || authentication_note.nil?
         service_response = HTTParty.get(e['link'] + "?#{api_key_param}", :headers => {'Accept' => 'application/json'})
         public_note ||= service_response['public_note'].presence
         authentication_note ||= service_response['authentication_note'].presence
       end
     end
 
-    if(public_note.nil? || authentication_note.nil?)
+    if public_note.nil? || authentication_note.nil?
       api_response = HTTParty.get(collection_url % url_params, :headers => {'Accept' => 'application/json'})
       public_note ||= api_response['public_note'].presence
       authentication_note ||= api_response['authentication_note'].presence
@@ -142,39 +147,38 @@ class FranklinAlmaController < ApplicationController
     public_note_content = public_note.nil? || public_note.empty? ? [] : ["Public Notes: ", public_note]
     authentication_note_content = authentication_note.nil? || authentication_note.empty? ? [] : ["Authentication Notes: ", authentication_note]
 
-    render :json => { "portfolio_details": coverage_content.join("<br/>").html_safe, "notes": (public_note_content + authentication_note_content).join("<br/>").html_safe }
+    render json: { "portfolio_details": coverage_content.join("<br/>").html_safe,
+                   "notes": (public_note_content + authentication_note_content).join("<br/>").html_safe
+    }
   end
 
   def has_holding_info?(api_mms_data, mmsid)
     # check if any holdings have more than one item
-    has_holding_info = api_mms_data['availability'][mmsid]['holdings'].map(&:keys).reduce([], &:+).member?('holding_info') ||
-                       api_mms_data['availability'][mmsid]['holdings'].any? { |hld| hld['total_items'].to_i > 1 || hld['availability'] == 'check_holdings' }
+    api_mms_data['availability'][mmsid]['holdings'].map(&:keys).reduce([], &:+).member?('holding_info') ||
+      api_mms_data['availability'][mmsid]['holdings'].any? { |hld| hld['total_items'].to_i > 1 || hld['availability'] == 'check_holdings' }
   end
 
   def has_portfolio_info?(api_mms_data, mmsid)
-    has_portfolio_info = api_mms_data['availability'][mmsid]['holdings'].map(&:keys).reduce([], &:+).member?('portfolio_pid')
+    api_mms_data['availability'][mmsid]['holdings'].map(&:keys).reduce([], &:+).member?('portfolio_pid')
   end
 
   def single_availability
-    availability_status = {'available' => 'Available',
-                           'check_holdings' => 'Requestable'}
+    availability_status = { 'available' => 'Available',
+                            'check_holdings' => 'Requestable' }
 
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
 
     mmsid = params[:mms_id]
     userid = session['id'].presence || 'GUEST'
-    bibapi = alma_api_class.new()
+    bibapi = alma_api_class.new
     bib_data = bibapi.get_availability([mmsid])
-    holding_data = nil
     holding_map = {}
     pickupable = false
-
     inventory_type = ''
 
     # check if any holdings have more than one item
     has_holding_info = has_holding_info?(bib_data, mmsid)
-
     # check if portfolio information is present
     has_portfolio_info = has_portfolio_info?(bib_data, mmsid)
 
@@ -183,7 +187,11 @@ class FranklinAlmaController < ApplicationController
     # Load holding information for monographs. Monographs do not have
     # a 'holding_info' value.
     unless has_holding_info
-      holding_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items, :get, :mms_id => mmsid, :holding_id => 'ALL', :expand => 'due_date_policy', :user_id => userid)
+      holding_data = api_instance.request(
+        api.almaws_v1_bibs.mms_id_holdings_holding_id_items,
+        :get,
+        mms_id: mmsid, holding_id: 'ALL', expand: 'due_date_policy', user_id: userid
+      )
 
       [holding_data['items']['item']].flatten.reject(&:nil?).each do |item|
         holding_id = item['holding_data']['holding_id']
@@ -198,88 +206,118 @@ class FranklinAlmaController < ApplicationController
     # Check if URL for bib is on collection record
     if bib_data['availability'][mmsid]['holdings'].empty?
       inventory_type = 'electronic'
-      bib_collection_response = api_instance.request(api.almaws_v1_bibs.mms_id_e_collections, :get, :mms_id => mmsid)
-      table_data = [bib_collection_response.dig("electronic_collections", "electronic_collection")].flatten
-                   .reject(&:nil?)
-                   .each_with_index.map do |c,i|
-                     url = c.dig("link")
+      bib_collection_response = api_instance.request(
+        api.almaws_v1_bibs.mms_id_e_collections, :get, mms_id: mmsid
+      )
+      table_data =
+        [bib_collection_response.dig('electronic_collections', 'electronic_collection')]
+        .flatten.reject(&:nil?).each_with_index
+        .map do |c, i|
+          url = c.dig('link')
+          next if url.nil?
 
-                     next if url.nil?
-
-                     collection_response = HTTParty.get(url +"?apikey=#{ENV['ALMA_API_KEY']}", :headers => {'Accept' => 'application/json'})
-                     link = "<a target='_blank' href='#{collection_response['url_override'].presence || collection_response['url']}'>#{collection_response['public_name_override'].presence || collection_response['public_name']}</a>"
-                     public_note = collection_response['public_note'].presence
-                     authentication_note = collection_response['authentication_note'].presence
-                     public_note_content = public_note.nil? || public_note.empty? ? [] : ["Public Notes: ", public_note]
-                     authentication_note_content = authentication_note.nil? || authentication_note.empty? ? [] : ["Authentication Notes: ", authentication_note]
-
-                     notes = ('<span>' + (public_note_content + authentication_note_content).join("<br/>") + '</span>').html_safe
-                     [i, link, notes, '', '', '', '', '']
-                   end
-                   .reject(&:nil?)
+          collection_response = HTTParty.get(
+            url + "?apikey=#{ENV['ALMA_API_KEY']}",
+            headers: { 'Accept' => 'application/json' }
+          )
+          link_url = collection_response['url_override'].presence || collection_response['url']
+          link_text = collection_response['public_name_override'].presence || collection_response['public_name']
+          link = "<a target='_blank' href='#{link_url}'>#{link_text}</a>"
+          public_note = collection_response['public_note'].presence
+          authentication_note = collection_response['authentication_note'].presence
+          public_note_content = public_note.present? ? [] : ['Public Notes: ', public_note]
+          authentication_note_content = authentication_note.present? ? [] : ['Authentication Notes: ', authentication_note]
+          notes = ('<span>' + (public_note_content + authentication_note_content).join("<br/>") + '</span>').html_safe
+          [
+            i,
+            link,
+            notes,
+            '', '', '', '', ''
+          ]
+        end
+        .reject(&:nil?)
     else
       ctx = JSON.parse(params[:request_context])
       bib_data['availability'][mmsid]['holdings'].each do |holding|
         holding_pickupable = holding['availability'] == 'available'
         pickupable = true if holding_pickupable
         links = []
-        links << "<a href='/redir/aeon?bibid=#{holding['mmsid']}&hldid=#{holding['holding_id']}'' target='_blank'>Request to view in reading room</a>" if holding['link_to_aeon'] unless (ctx['hathi_etas'] && ctx['monograph'])
+        if holding['link_to_aeon'] && !(ctx['hathi_etas'] && ctx['monograph'])
+          links << "<a href='/redir/aeon?bibid=#{holding['mmsid']}&hldid=#{holding['holding_id']}'' target='_blank'>Request to view in reading room</a>"
+        end
         holding['availability'] = availability_status[holding['availability']] || 'Requestable'
-
         if has_holding_info
           inventory_type = 'physical'
-          holding['location'] = %Q[<a href="javascript:loadItems('#{mmsid}', '#{holding['holding_id'].presence || 'ALL'}', '#{holding['location_code']}', '#{holding_pickupable}')">#{holding['location']} &gt;</a><br /><span class="call-number">#{holding['call_number']}</span>]
-          holding['availability'] = "<span class='load-holding-details' data-mmsid='#{mmsid}' data-holdingid='#{holding['holding_id']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/></span>"
+          holding['location'] =
+            %Q[<a href="javascript:loadItems('#{mmsid}', '#{holding['holding_id'].presence || 'ALL'}', '#{holding['location_code']}', '#{holding_pickupable}')">#{holding['location']} &gt;</a><br /><span class="call-number">#{holding['call_number']}</span>]
+          holding['availability'] =
+            "<span class='load-holding-details' data-mmsid='#{mmsid}' data-holdingid='#{holding['holding_id']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/></span>"
         elsif has_portfolio_info
           inventory_type = 'electronic'
-          holding['availability'] = "<span class='load-portfolio-details' data-mmsid='#{mmsid}' data-portfoliopid='#{holding['portfolio_pid']}' data-collectionid='#{holding['collection_id']}' data-coverage='#{holding['coverage_statement']}' data-publicnote='#{holding['public_note']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/></span>"
+          holding['availability'] =
+            "<span class='load-portfolio-details' data-mmsid='#{mmsid}' data-portfoliopid='#{holding['portfolio_pid']}' data-collectionid='#{holding['collection_id']}' data-coverage='#{holding['coverage_statement']}' data-publicnote='#{holding['public_note']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/></span>"
         else
           inventory_type = 'physical'
           holding['location'] = %Q[#{holding['location']}<br /><span class="call-number">#{holding['call_number']}</span>]
           holding['item_pid'] = holding_map.dig(holding['holding_id'], :item_pid)
           holding['due_date_policy'] = holding_map.dig(holding['holding_id'], :due_date_policy)
         end
-
         holding['links'] = links
-
         if holding['availability'] == 'Requestable'
-          if userid == 'GUEST'
-            holding['availability'] = 'Log in &amp; request below'
-          else
-            if suppress_pickup_at_penn(ctx) && session['user_group'] != 'Faculty Express'
-              # we're temporarily disabling all request options for non facex
-              holding['availability'] = 'Not on shelf'
-            else
-              # for non-request-suppressed items and FacEx users, still present the usual link
-              holding['availability'] = 'Not on shelf; <a class="request-option-link">request below</a>'
-            end
-          end
+          holding['availability'] = if userid == 'GUEST'
+                                      'Log in &amp; request below'
+                                    elsif suppress_pickup_at_penn(ctx) && session['user_group'] != 'Faculty Express'
+                                      # we're temporarily disabling all request options for non facex
+                                      'Not on shelf'
+                                    else
+                                      # for non-request-suppressed items and FacEx users, still present the usual link
+                                      'Not on shelf; <a class="request-option-link">request below</a>'
+                                    end
         elsif holding['availability'] == 'Available' && suppress_pickup_at_penn(ctx)
           holding['availability'] = 'Restricted (COVID-19)'
         end
       end
 
       policy = 'Please log in for loan and request information' if userid == 'GUEST'
-      table_data = bib_data['availability'][mmsid]['holdings'].select { |h| h['inventory_type'] == 'physical' }
-                   .sort { |a,b| cmpHoldingLocations(a,b) }
-                   .each_with_index
-                   .map { |h,i| [i, h['location'], h['availability'], (has_holding_info ? "" : "<span class='load-holding-details' data-mmsid='#{mmsid}' data-holdingid='#{h['holding_id']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/>") + "</span><span id='notes-#{h['holding_id']}'></span>", policy || h['due_date_policy'], h['links'], h['holding_id'], h['item_pid']] }
+      table_data = bib_data['availability'][mmsid]['holdings']
+                     .select { |h| h['inventory_type'] == 'physical' }
+                     .sort { |a, b| cmpHoldingLocations(a, b) }
+                     .each_with_index
+                     .map do |h, i|
+                       [
+                         i,
+                         h['location'],
+                         h['availability'],
+                         (has_holding_info ? "" : "<span class='load-holding-details' data-mmsid='#{mmsid}' data-holdingid='#{h['holding_id']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/>") + "</span><span id='notes-#{h['holding_id']}'></span>",
+                         policy || h['due_date_policy'],
+                         h['links'],
+                         h['holding_id'],
+                         h['item_pid']
+                       ]
+                     end
 
       if table_data.empty?
-        table_data = bib_data['availability'][mmsid]['holdings'].select { |h| h['inventory_type'] == 'electronic' }
-                    .sort { |a,b| cmpOnlineServices(a,b) }
-                    .reject { |p| p['activation_status'] == 'Not Available' }
-                    .each_with_index
-                    .map { |p,i|
-                      link = "<a target='_blank' href='https://upenn.alma.exlibrisgroup.com/view/uresolver/01UPENN_INST/openurl?Force_direct=true&portfolio_pid=#{p['portfolio_pid']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com&u.ignore_date_coverage=true'>#{p['collection']}</a>"
-                      [i, link, p['availability'], "<span id='notes-#{p['portfolio_pid']}'></span>", '', '', '', '']
-                    }
+        table_data = bib_data['availability'][mmsid]['holdings']
+                     .select { |h| h['inventory_type'] == 'electronic' }
+                     .sort { |a, b| cmpOnlineServices(a, b) }
+                     .reject { |p| p['activation_status'] == 'Not Available' }
+                     .each_with_index
+                     .map do |p, i|
+                       link_text = p['collection'] || 'Online'
+                       link = "<a target='_blank' href='https://upenn.alma.exlibrisgroup.com/view/uresolver/01UPENN_INST/openurl?Force_direct=true&portfolio_pid=#{p['portfolio_pid']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com&u.ignore_date_coverage=true'>#{link_text}</a>"
+                       [
+                         i,
+                         link,
+                         p['availability'],
+                         "<span id='notes-#{p['portfolio_pid']}'></span>",
+                         '', '', '', ''
+                       ]
+                     end
       end
     end
-
     metadata[mmsid][:inventory_type] = inventory_type
     metadata[mmsid][:pickupable] = pickupable
-    render :json => { "metadata": metadata, "data": table_data }
+    render json: { "metadata": metadata, "data": table_data }
   end
 
   def check_requestable(has_holding_info = false)
@@ -313,68 +351,100 @@ class FranklinAlmaController < ApplicationController
     due_date_policy = 'Please log in for loan and request information' if userid.nil?
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
-    options = {:expand => 'due_date_policy', :offset => 0, :limit => 100, :user_id => userid, :order_by => 'description'}
-    response_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items, :get, params.merge(options))
-
-    if !response_data.key?('item')
-      render :json => {"data": []}
+    options = { expand: 'due_date_policy', offset: 0, limit: 100,
+                user_id: userid, order_by: 'description' }
+    response_data = api_instance.request(
+      api.almaws_v1_bibs.mms_id_holdings_holding_id_items, :get, params.merge(options)
+    )
+    unless response_data.key?('item')
+      render json: { "data": [] }
       return
     end
 
     policies = {}
     pids_to_check = []
 
-    table_data = response_data['item'].map { |item|
+    # table_data here is used to compose the columns in the availability DataTable
+    table_data = response_data['item'].map do |item|
       data = item['item_data']
-      unless(policies.has_key?(data['policy']['value']) || data['base_status']['desc'] != "Item in place" || userid.nil?)
+      unless policies.has_key?(data['policy']['value']) ||
+             data['base_status']['desc'] != "Item in place" || userid.nil?
         policies[data['policy']['value']] = nil
         pids_to_check << [data['pid'], data['policy']['value']]
       end
-      [data['policy']['value'], data['pid'], data['description'], data['base_status']['desc'], data['barcode'], due_date_policy || data['due_date_policy'], [], params['mms_id'], params['holding_id']]
-    }
+      [
+        data['policy']['value'],
+        data['pid'],
+        data['description'],
+        data['base_status']['desc'],
+        data['barcode'],
+        due_date_policy || data['due_date_policy'],
+        [],
+        params['mms_id'],
+        params['holding_id']
+      ]
+    end
 
+    # add some more rows to table_data (duplicates above)
     while options[:offset] + options[:limit] < response_data['total_record_count']
       options[:offset] += options[:limit]
-      response_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items, :get, params.merge(options))
-
-      table_data += response_data['item'].map { |item|
+      response_data = api_instance.request(
+        api.almaws_v1_bibs.mms_id_holdings_holding_id_items, :get, params.merge(options)
+      )
+      table_data += response_data['item'].map do |item|
         data = item['item_data']
-        unless(policies.has_key?(data['policy']['value']) || data['base_status']['desc'] != "Item in place" || userid.nil?)
+        unless policies.has_key?(data['policy']['value']) || data['base_status']['desc'] != "Item in place" || userid.nil?
           policies[data['policy']['value']] = nil
           pids_to_check << [data['pid'], data['policy']['value']]
         end
-        [data['policy']['value'], data['pid'], data['description'], data['base_status']['desc'], data['barcode'], due_date_policy || data['due_date_policy'], [], params['mms_id'], params['holding_id']]
-      }
+        [
+          data['policy']['value'],
+          data['pid'],
+          data['description'],
+          data['base_status']['desc'],
+          data['barcode'],
+          due_date_policy || data['due_date_policy'],
+          [],
+          params['mms_id'],
+          params['holding_id']
+        ]
+      end
     end
 
-    pids_to_check.each{ |pid, policy|
-      options = {:user_id => userid, :item_pid => pid}
-      response_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items_item_pid_request_options, :get, params.merge(options))
+    pids_to_check.each do |pid, policy|
+      options = { user_id: userid, item_pid: pid }
+      response_data = api_instance.request(
+        api.almaws_v1_bibs.mms_id_holdings_holding_id_items_item_pid_request_options, :get, params.merge(options)
+      )
       not_requestable = true
       if response_data.body != '{}'
-
-        not_requestable = response_data['request_option'].select { |option|
+        not_requestable = response_data['request_option'].select do |option|
           option['type']['value'] == 'HOLD'
-        }.empty?
+        end.empty?
       end
-      policies[policy] = "/alma/request/?mms_id=%{mms_id}&holding_id=%{holding_id}&item_pid=%{item_pid}" unless not_requestable
-    }
+      unless not_requestable
+        policies[policy] = '/alma/request/?mms_id=%{mms_id}&holding_id=%{holding_id}&item_pid=%{item_pid}'
+      end
+    end
     suppress = suppress_pickup_at_penn(JSON.parse(params['request_context']))
-    table_data.each { |item|
-      policy = item.shift()
-      request_url = (policies[policy] || '') % params.merge({:item_pid => item[0]})
+    table_data.each do |item|
+      policy = item.shift
+      request_url = (policies[policy] || '') % params.merge({ item_pid: item[0] })
       # TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
-      item[5] << (suppress ? "" : "<a target='_blank' href='#{request_url}'>Pickup@Penn</a>") unless (request_url.empty? || item[2] != 'Item in place')
-    }
+      unless request_url.empty? || item[2] != 'Item in place'
+        item[5] << (suppress ? '' : "<a target='_blank' href='#{request_url}'>Pickup@Penn</a>")
+      end
+    end
 
-    render :json => {"data": table_data}
+    render json: { "data": table_data }
   end
 
   def suppress_pickup_at_penn(ctx)
     return false unless ctx['monograph']
     return true unless ctx['pickupable'] != false
     return true if ctx['hathi_etas'] #|| ctx['hathi_pd']
-    return false
+
+    false
   end
 
   def request_options
@@ -383,89 +453,96 @@ class FranklinAlmaController < ApplicationController
     ctx = JSON.parse(params['request_context'])
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
-    options = {:user_id => userid, :consider_dlr => true}
+    options = { user_id: userid, consider_dlr: true }
     response_data = api_instance.request(api.almaws_v1_bibs.mms_id_request_options, :get, params.merge(options))
-    results = response_data['request_option'].map { |option|
+    results = response_data['request_option'].map do |option|
       request_url = option['request_url']
-      type = option['type']
       details = option['general_electronic_service_details'] || option['rs_broker_details'] || {}
-
       if request_url.nil?
         nil
       else
         case option['type']['value']
         when 'HOLD'
-          {
-            :option_name => 'Pickup@Penn',
-            #:option_url => option['request_url'],
-            :option_url => "/alma/request?mms_id=#{params['mms_id']}",
-            :avail_for_physical => true,
-            :avail_for_electronic => true,
-            :highlightable => true
-          } unless suppress_pickup_at_penn(ctx) # TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
+          # TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
+          unless suppress_pickup_at_penn(ctx)
+            {
+              option_name: 'Pickup@Penn',
+              # option_url: option['request_url'],
+              option_url: "/alma/request?mms_id=#{params['mms_id']}",
+              avail_for_physical: true,
+              avail_for_electronic: true,
+              highlightable: true
+            }
+          end
         when 'GES'
           option_url = option['request_url']
-          if option_url.index('?')
-            option_url += '&'
-          else
-            option_url += '?'
-          end
-
+          option_url += if option_url.index('?')
+                          '&'
+                        else
+                          '?'
+                        end
           {
-            :option_name => details['public_name'],
+            option_name: details['public_name'],
             # Remove appended mmsid when SF case #00584311 is resolved
-            :option_url => option_url + "bibid=#{params['mms_id']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com",
-            :avail_for_physical => details['avail_for_physical'],
-            :avail_for_electronic => details['avail_for_electronic'],
-            :highlightable => ['SCANDEL'].member?(details['code'])
+            option_url: option_url + "bibid=#{params['mms_id']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com",
+            avail_for_physical: details['avail_for_physical'],
+            avail_for_electronic: details['avail_for_electronic'],
+            highlightable: ['SCANDEL'].member?(details['code'])
           }
         when 'RS_BROKER'
-          # Remove special URL handling when SF case #00584311 is resolved
           option_url = option['request_url']
-          if option_url.index('?')
-            option_url += '&'
-          else
-            option_url += '?'
-          end
-
+          option_url += if option_url.index('?')
+                          '&'
+                        else
+                          '?'
+                        end
           {
-            :option_name => details['name'],
+            option_name: details['name'],
             # Remove appended mmsid when SF case #00584311 is resolved
-            :option_url => option_url + "bibid=#{params['mms_id']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com",
-            :avail_for_physical => true,
-            :avail_for_electronic => true,
-            :highlightable => true
+            option_url: option_url + "bibid=#{params['mms_id']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com",
+            avail_for_physical: true,
+            avail_for_electronic: true,
+            highlightable: true
           }
         else
           nil
         end
       end
-    } .compact
-      .uniq # Required due to request options API bug returning duplicate options
-      .sort { |a,b| cmpRequestOptions(a,b) }
-    # TODO: Remove when GES is updated in Alma & request option API is fixed (again)
-    results.reject! { |option|
-      ['Send Penn Libraries a question','Books By Mail'].member?(option[:option_name]) || (option[:option_name] == 'FacultyEXPRESS' && usergroup != 'Faculty Express')
-    }
+    end
 
+    # .uniq required due to request options API bug returning duplicate options
+    results = results.compact.uniq.sort { |a, b| cmpRequestOptions(a, b) }
+
+    # TODO: Remove when GES is updated in Alma & request option API is fixed (again)
+    results.reject! do |option|
+      ['Send Penn Libraries a question', 'Books By Mail'].member?(option[:option_name]) ||
+        (option[:option_name] == 'FacultyEXPRESS' && usergroup != 'Faculty Express')
+    end
 
     # TODO: Remove when GES is updated in Alma
-    results.each { |option|
-      case option[:option_name]
-      when 'Suggest Fix / Enhance Record'
-          option[:option_name] = "Report Cataloging Error"
+    results.each do |option|
+      if option[:option_name] == 'Suggest Fix / Enhance Record'
+        option[:option_name] = 'Report Cataloging Error'
       end
-    }
+    end
 
-    results.append({
-                     :option_name => "Books By Mail",
-                     :option_url => "https://franklin.library.upenn.edu/redir/booksbymail?bibid=#{params['mms_id']}",
-                     :avail_for_physical => true,
-                     :avail_for_electronic => false,
-                     :highlightable => true
-                   }) if ['Associate','Athenaeum Staff','Faculty','Faculty Express','Faculty Spouse','Grad Student','Library Staff','Medical Center Staff','Retired Library Staff','Staff','Undergraduate Student'].member?(session['user_group']) && !suppress_pickup_at_penn(ctx) # suppress for bbm is same as for Pickup@Penn
+    # suppress for bbm is same as for Pickup@Penn
+    if ['Associate', 'Athenaeum Staff', 'Faculty', 'Faculty Express',
+        'Faculty Spouse', 'Grad Student', 'Library Staff', 'Medical Center Staff',
+        'Retired Library Staff', 'Staff', 'Undergraduate Student']
+       .member?(session['user_group']) && !suppress_pickup_at_penn(ctx)
+      results.append(
+        {
+          option_name: 'Books By Mail',
+          option_url: "https://franklin.library.upenn.edu/redir/booksbymail?bibid=#{params['mms_id']}",
+          avail_for_physical: true,
+          avail_for_electronic: false,
+          highlightable: true
+        }
+      )
+    end
 
-    render :json => results
+    render json: results
   end
 
   def request_title?
@@ -604,35 +681,37 @@ class FranklinAlmaController < ApplicationController
   # TODO: move into blacklight_alma gem (availability.rb concern)
   def availability
     if params[:id_list].present?
-      api = alma_api_class.new()
-      id_list = params[:id_list].split(',');
+      api = alma_api_class.new
+      id_list = params[:id_list].split(',')
       response_data = api.get_availability(id_list)
 
       if response_data.include?('availability')
-        if response_data.dig('availability', id_list.first, 'holdings', 0, 'inventory_type') == 'electronic'
-          response_data['availability'].keys.each { |mmsid|
-            response_data['availability'][mmsid]['holdings'].sort! do |a,b|
-              cmpOnlineServices(a,b)
+        if response_data.dig(
+          'availability',
+          id_list.first, 'holdings', 0, 'inventory_type'
+        ) == 'electronic'
+          response_data['availability'].keys.each do |mmsid|
+            response_data['availability'][mmsid]['holdings'].sort! do |a, b|
+              cmpOnlineServices(a, b)
             end
-          }
+          end
         else
-          response_data['availability'].keys.each { |mmsid|
-            response_data['availability'][mmsid]['holdings'].sort! do |a,b|
-              cmpHoldingLocations(a,b)
+          response_data['availability'].keys.each do |mmsid|
+            response_data['availability'][mmsid]['holdings'].sort! do |a, b|
+              cmpHoldingLocations(a, b)
             end
-          }
+          end
         end
       end
     else
       response_data = {
-          'error' => 'No id_list parameter'
+        'error' => 'No id_list parameter'
       }
     end
 
     respond_to do |format|
-      format.xml  { render :xml => response_data }
-      format.json { render :json => response_data }
+      format.xml  { render xml: response_data }
+      format.json { render json: response_data }
     end
   end
-
 end
