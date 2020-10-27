@@ -284,8 +284,12 @@ class CatalogController < ApplicationController
 
     CORRELATION_JSON_FACET = lambda { |field, limit, offset, sort, prefix|
       if field == 'subject_f'
-        overrequest = 300
-        overrefine = 500
+        overrequest = (limit * 0.7).to_i + 4 # default is *0.1
+#        overrefine = ((offset + limit) * 0.1).to_i + 4 # the default
+        # 24 below is for 24 shards; essentially, we want to refine *everything* that
+        # comes back from the initial requests, because we're dealing with high-cardinality
+        # and correspondingly low-frequency/unevently distributed fields/values.
+        overrefine = ((offset + limit + overrequest) * 24).to_i + 4
       else
         overrequest = -1
         overrefine = -1
@@ -312,7 +316,8 @@ class CatalogController < ApplicationController
             offset: offset,
             overrequest: overrequest,
             overrefine: overrefine,
-            refine: true,
+            refine: 'simple',
+            cacheDf: -1, # disable caching; only affects refinement. esp. important b/c of extent of overrefining
             sort: sort,
             blacklight_options: {
               parse: {
