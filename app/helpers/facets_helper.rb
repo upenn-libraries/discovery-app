@@ -132,4 +132,31 @@ module FacetsHelper
     idx = v.index('--')
     idx.nil? ? v : v.slice((idx + 2)..-1)
   end
+
+  # Display facet sort options for modal with active sort selected
+  # @param [Blacklight::Solr::FacetPaginator] pagination
+  # @return [ActiveSupport::SafeBuffer] links html
+  def modal_sort_options(pagination)
+    links = ['index', 'count', 'r1 desc'].map do |possible_sort|
+      active = pagination.sort == possible_sort
+      modal_sort_link possible_sort, active
+    end
+    links.join.html_safe
+  end
+
+  # Generate a link for a facet sort option
+  # @param [String] type
+  # @param [TrueClass, FalseClass] active
+  # @return [ActiveSupport::SafeBuffer] link html
+  def modal_sort_link(type, active)
+    label = t "blacklight.search.facets.sort.#{type}"
+    if active
+      content_tag :span, label, class: 'active numeric btn btn-default'
+    else
+      link_to label,
+              @pagination.params_for_resort_url(type, search_state.to_h),
+              class: 'sort_change numeric btn btn-default',
+              data: { ajax_modal: 'preserve' }
+    end
+  end
 end
