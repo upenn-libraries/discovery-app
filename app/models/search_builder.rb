@@ -51,9 +51,8 @@ class SearchBuilder < Blacklight::SearchBuilder
     # BL param, it's useful to support this at the BL level; esp. because I think `facet=false`
     # in Solr does not disable "JSON Facet API" faceting!
     return if blacklight_params[:facet] == false # default true, so distinguish from falsey `nil`
-    return if blacklight_params[:action] == 'facet'
+    return if blacklight_params[:action] == 'facet' # any faceting should be added by add_facet_paging_to_solr
     facet_fields_to_include_in_request.each do |field_name, facet|
-      next if blacklight_params[:action] == 'facet' && blacklight_params[:id] != field_name
       next unless evaluate_if_unless_configuration(facet, blacklight_params)
       solr_parameters[:facet] ||= true
 
@@ -155,6 +154,13 @@ class SearchBuilder < Blacklight::SearchBuilder
     if blacklight_params[request_keys[:prefix]]
       solr_params[:"f.#{facet_config.field}.facet.prefix"] = prefix
     end
+
+    if facet_config.solr_params
+      facet_config.solr_params.each do |k, v|
+        solr_params[:"f.#{facet_config.field}.#{k}"] = v
+      end
+    end
+
     solr_params[:rows] = 0
   end
 
