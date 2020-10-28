@@ -180,8 +180,7 @@ class CatalogController < ApplicationController
       :format_f => ['Database & Article Index']
     }.freeze
 
-    actionable_filters = lambda { |a, b, c|
-      params = a.params
+    params_actionable_filters = lambda { |params|
       return true if params[:q].present?
       f = params[:f]
       return false if f.nil?
@@ -194,6 +193,18 @@ class CatalogController < ApplicationController
         return true if (facet_values - ignorelisted_vals).present? # there is at least one non-ignored val
       end
       return false
+    }
+
+    actionable_filters = lambda { |a, b, c|
+      params_actionable_filters.call(a.params)
+    }
+
+    conditional_sort_options = lambda { |params|
+      if params_actionable_filters.call(params)
+        ['index', 'count', 'r1 desc']
+      else
+        ['index', 'count']
+      end
     }
 
     search_field_accept = lambda { |field_names, other_conditions = []|
@@ -380,6 +391,7 @@ class CatalogController < ApplicationController
                            limit: 5,
                            index_range: 'A'..'Z',
                            solr_params: MINCOUNT,
+                           sort_options: conditional_sort_options,
                            sort: 'r1 desc', # 'r1 desc', 'count', or 'index'
                            #partial: 'catalog/json_facet_limit',
                            json_facet: PennLib::JsonFacet::Config.new(CORRELATION_JSON_FACET, {
@@ -398,6 +410,7 @@ class CatalogController < ApplicationController
                            limit: 5,
                            index_range: 'A'..'Z',
                            solr_params: MINCOUNT,
+                           sort_options: conditional_sort_options,
                            sort: 'r1 desc', # 'r1 desc', 'count', or 'index'
                            #partial: 'catalog/json_facet_limit',
                            json_facet: PennLib::JsonFacet::Config.new(CORRELATION_JSON_FACET, {

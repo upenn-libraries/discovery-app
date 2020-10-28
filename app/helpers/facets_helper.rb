@@ -136,8 +136,9 @@ module FacetsHelper
   # Display facet sort options for modal with active sort selected
   # @param [Blacklight::Solr::FacetPaginator] pagination
   # @return [ActiveSupport::SafeBuffer] links html
-  def modal_sort_options(pagination)
-    links = ['index', 'count', 'r1 desc'].map do |possible_sort|
+  def modal_sort_options(pagination, facet_config)
+    sort_options = facet_config.sort_options&.call(params) || ['index', 'count']
+    links = sort_options.map do |possible_sort|
       active = pagination.sort == possible_sort
       modal_sort_link possible_sort, active
     end
