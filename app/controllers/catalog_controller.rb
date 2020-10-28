@@ -99,7 +99,7 @@ class CatalogController < ApplicationController
         # relatedness over a subset of that domain. This is not always necessary -- e.g., in the case where counts are not
         # needed, such as for "expert help", which can use correlation_domain directly
         correlation_domain: '{!bool filter=$cluster filter=$correlation_domain_refine}',
-        correlation_domain_refine: '{!bool filter=elvl_rank_isort:0}',
+        correlation_domain_refine: '{!bool filter=elvl_rank_isort:0 must_not=\'{!term f=record_source_f v=Stanford}\'}',
         expand: 'true',
         'expand.field': 'cluster_id',
         'expand.q': '*:*',
