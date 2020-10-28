@@ -283,13 +283,15 @@ class CatalogController < ApplicationController
     MINCOUNT = { 'facet.mincount' => 1 }.freeze
 
     CORRELATION_JSON_FACET = lambda { |field, limit, offset, sort, prefix|
+      overRequestRatio = 0.7 # default is 0.1
+      overRefineRatio = 24 # often based on number of shards
       if field == 'subject_f'
-        overrequest = (limit * 0.7).to_i + 4 # default is *0.1
-#        overrefine = ((offset + limit) * 0.1).to_i + 4 # the default
-        # 24 below is for 24 shards; essentially, we want to refine *everything* that
-        # comes back from the initial requests, because we're dealing with high-cardinality
-        # and correspondingly low-frequency/unevently distributed fields/values.
-        overrefine = ((offset + limit + overrequest) * 24).to_i + 4
+        overrequest = (limit * overRequestRatio).to_i + 4 # based on the default forumula
+        ## overrefine = ((offset + limit) * 0.1).to_i + 4 # the default
+        # essentially, we want to refine *everything* that comes back from the
+        # initial requests, because we're dealing with high-cardinality and
+        # correspondingly low-frequency/unevently distributed fields/values.
+        overrefine = ((offset + limit + overrequest) * overRefineRatio).to_i + 4
       else
         overrequest = -1
         overrefine = -1
