@@ -176,6 +176,7 @@ class CatalogController < ApplicationController
     CORRELATION_IGNORELIST = {
       :access_f => nil,
       :record_source_f => nil,
+      :cluster => nil,
       :format_f => ['Database & Article Index']
     }.freeze
 
