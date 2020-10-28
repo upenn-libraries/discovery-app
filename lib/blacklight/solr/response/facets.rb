@@ -277,6 +277,7 @@ module Blacklight::Solr::Response::Facets
   # the need to interact with the Blacklight "FacetItem" abstraction).
   def subs(req, rsp, hash)
     req[:facet]&.each_with_object(hash) do |(k,v), hash|
+      next if k == :processEmpty # ignore special case
       subrsp = rsp[k]
       if v.is_a?(String) || v[:type] == 'func'
         hash[k] = subrsp
