@@ -7,7 +7,7 @@ module FacetsHelper
     hash = {}
     blacklight_config.facet_fields.values.each_with_object(hash) do |facet_config, hash|
       display_facet = agg[facet_config.field]
-      next if display_facet.nil? || display_facet.items.empty? || !should_render_field?(facet_config, display_facet)
+      next if display_facet.nil? || !should_render_facet?(display_facet)
       facet_type = facet_config[:facet_type] || :default
       facet_type = facet_type.call(params) if facet_type.respond_to?(:lambda?)
       if fields_for_facet_type = hash[facet_type]
@@ -33,7 +33,7 @@ module FacetsHelper
   # @param [Hash] options
   # @return [Boolean]
   def has_facet_values? fields = facet_field_names, options = {}
-    facets_from_request(fields).any? { |display_facet| !display_facet.items.empty? && should_render_facet?(display_facet) }
+    facets_from_request(fields).any? { |display_facet| should_render_facet?(display_facet) }
   end
 
   ##
@@ -126,7 +126,7 @@ module FacetsHelper
     # display when show is nil or true
     facet_config = facet_configuration_for_field(display_facet.name)
     display = should_render_field?(facet_config, display_facet)
-    display && display_facet.items.present?
+    display && (facet_config.render_empty?&.call(display_facet) || display_facet.items.present?)
   end
 
   ##
@@ -136,9 +136,10 @@ module FacetsHelper
   #   - if the facet is configured not to collapse, don't collapse
   # 
   # @param [Blacklight::Configuration::FacetField] facet_field
+  # @param [Blacklight::Solr::Response::Facets::FacetField] display_facet
   # @return [Boolean]
-  def should_collapse_facet? facet_field
-    !facet_field_in_params?(facet_field.key) && facet_field.collapse
+  def should_collapse_facet? facet_field, display_facet
+    !facet_field_in_params?(facet_field.key) && (facet_field.collapse || display_facet.items.empty?)
   end
 
   def render_subcategories(v)

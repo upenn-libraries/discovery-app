@@ -205,6 +205,8 @@ class CatalogController < ApplicationController
       end
     }
 
+    relatedness_sort_applied = lambda { |display_facet| display_facet.sort == 'r1 desc' }
+
     search_field_accept = lambda { |field_names, other_conditions = []|
       return lambda { |a, b, c|
         return false unless field_names.include?(a.params[:search_field])
@@ -386,6 +388,8 @@ class CatalogController < ApplicationController
                            index_range: 'A'..'Z',
                            solr_params: MINCOUNT,
                            sort_options: conditional_sort_options,
+                           render_empty?: relatedness_sort_applied,
+                           always_show_more_link?: relatedness_sort_applied,
                            sort: 'r1 desc', # 'r1 desc', 'count', or 'index'
                            #partial: 'catalog/json_facet_limit',
                            json_facet: PennLib::JsonFacet::Config.new(CORRELATION_JSON_FACET, {
@@ -405,6 +409,8 @@ class CatalogController < ApplicationController
                            index_range: 'A'..'Z',
                            solr_params: MINCOUNT,
                            sort_options: conditional_sort_options,
+                           render_empty?: relatedness_sort_applied,
+                           always_show_more_link?: relatedness_sort_applied,
                            sort: 'r1 desc', # 'r1 desc', 'count', or 'index'
                            #partial: 'catalog/json_facet_limit',
                            json_facet: PennLib::JsonFacet::Config.new(CORRELATION_JSON_FACET, {
