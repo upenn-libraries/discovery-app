@@ -79,6 +79,7 @@ module FacetsHelper
       render_facet_value(facet_field, item, options)
     end
   end
+
   ##
   # Standard display of a facet value in a list. Used in both _facets sidebar
   # partial and catalog/facet expanded list. Will output facet value name as
@@ -126,6 +127,18 @@ module FacetsHelper
     facet_config = facet_configuration_for_field(display_facet.name)
     display = should_render_field?(facet_config, display_facet)
     display && display_facet.items.present?
+  end
+
+  ##
+  # Determine whether a facet should be rendered as collapsed or not.
+  #   - if the facet is 'active', don't collapse
+  #   - if the facet is configured to collapse (the default), collapse
+  #   - if the facet is configured not to collapse, don't collapse
+  # 
+  # @param [Blacklight::Configuration::FacetField] facet_field
+  # @return [Boolean]
+  def should_collapse_facet? facet_field
+    !facet_field_in_params?(facet_field.key) && facet_field.collapse
   end
 
   def render_subcategories(v)
