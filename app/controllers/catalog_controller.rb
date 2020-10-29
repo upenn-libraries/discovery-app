@@ -198,6 +198,7 @@ class CatalogController < ApplicationController
     }
 
     conditional_sort_options = lambda { |params|
+      return nil unless ENABLE_SUBJECT_CORRELATION # fallback to legacy/default behavior
       if params_actionable_filters.call(params)
         ['index', 'count', 'r1 desc']
       else
@@ -295,9 +296,10 @@ class CatalogController < ApplicationController
     MINCOUNT = { 'facet.mincount' => 1 }.freeze
 
     CORRELATION_JSON_FACET = lambda { |field, limit, offset, sort, prefix|
-      overRequestRatio = 0.7 # default is 0.1
-      overRefineRatio = 6 # often based on number of shards
+      return nil unless ENABLE_SUBJECT_CORRELATION && sort == 'r1 desc'
       if field == 'subject_f'
+        overRequestRatio = 0.7 # default is 0.1
+        overRefineRatio = 6 # often based on number of shards
         overrequest = (limit * overRequestRatio).to_i + 4 # based on the default forumula
         ## overrefine = ((offset + limit) * 0.1).to_i + 4 # the default
         # essentially, we want to refine *everything* that comes back from the
@@ -308,7 +310,6 @@ class CatalogController < ApplicationController
         overrequest = -1
         overrefine = -1
       end
-      return nil unless ENABLE_SUBJECT_CORRELATION && sort == 'r1 desc'
       {
         type: 'query',
         domain: {
