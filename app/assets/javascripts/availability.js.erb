@@ -219,14 +219,13 @@ $(document).ready(function() {
                     $.ajax({
                         url: url,
                         success: function(data, textStatus, jqXHR) {
-                            var public_note = data['public_note']
-                            var auth_note = data['authentication_note']
                             $(element).removeClass('load-portfolio-details');
                             $(element).html('');
                             $(element).append(coverage);
-                            var $notes = $('#notes-' + portfoliopid)
-                            $notes.append(public_note);
-                            $notes.append(auth_note);
+                            var notes = [data['public_note'], data['authentication_note']]
+                                .filter(function(obj) { return obj }) // compact
+                                .join('<br>')
+                            $('#notes-' + portfoliopid).append(notes)
                         }
                     });
                 });
