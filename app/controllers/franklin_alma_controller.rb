@@ -124,12 +124,12 @@ class FranklinAlmaController < ApplicationController
     # the Availability API call made earlier? "we also get this from availability API. Opportunity for improvement?"
 
     # Get the right Service ID from the Bibs API
-    bib_portfolio_url = "#{alma_api_base_path}/bibs/#{params['mms_id']}/portfolios/#{params['portfolio_pid']}?#{api_key_param}"
+    bib_portfolio_url = "#{alma_api_base_path}/bibs/#{params[:mms_id]}/portfolios/#{params[:portfolio_pid]}?#{api_key_param}"
     bib_portfolio_response = HTTParty.get(bib_portfolio_url, headers: request_headers)
     service_id = bib_portfolio_response.dig 'electronic_collection', 'service', 'value'
 
     # The portfolio is the most trustworthy source for details
-    portfolio_url = "#{alma_api_base_path}/electronic/e-collections/#{params['collection_id']}/e-services/#{service_id}/portfolios/#{params['portfolio_pid']}?#{api_key_param}"
+    portfolio_url = "#{alma_api_base_path}/electronic/e-collections/#{params[:collection_id]}/e-services/#{service_id}/portfolios/#{params[:portfolio_pid]}?#{api_key_param}"
     portfolio_response = HTTParty.get(portfolio_url, headers: request_headers)
     public_note = portfolio_response['public_note'].presence
     authentication_note = portfolio_response['authentication_note'].presence
@@ -144,7 +144,7 @@ class FranklinAlmaController < ApplicationController
 
     # Finally check the Collection (not set in standalone case)
     if params[:collection_id].present? && (public_note.nil? || authentication_note.nil?)
-      collection_url = "#{alma_api_base_path}/electronic/e-collections/#{params['collection_id']}?#{api_key_param}"
+      collection_url = "#{alma_api_base_path}/electronic/e-collections/#{params[:collection_id]}?#{api_key_param}"
       collection_response = HTTParty.get(collection_url, headers: request_headers)
       public_note ||= collection_response['public_note'].presence
       authentication_note ||= collection_response['authentication_note'].presence
