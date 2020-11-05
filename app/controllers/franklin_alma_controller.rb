@@ -128,11 +128,16 @@ class FranklinAlmaController < ApplicationController
     bib_portfolio_response = HTTParty.get(bib_portfolio_url, headers: request_headers)
     service_id = bib_portfolio_response.dig 'electronic_collection', 'service', 'value'
 
+    public_note = nil # TODO: determine if the value from params should take precedence over any API call below
+    authentication_note = nil
+
     # The portfolio is the most trustworthy source for details
-    portfolio_url = "#{alma_api_base_path}/electronic/e-collections/#{params[:collection_id]}/e-services/#{service_id}/portfolios/#{params[:portfolio_pid]}?#{api_key_param}"
-    portfolio_response = HTTParty.get(portfolio_url, headers: request_headers)
-    public_note = portfolio_response['public_note'].presence
-    authentication_note = portfolio_response['authentication_note'].presence
+    if service_id && params[:collection_id] && params[:portfolio_pid]
+      portfolio_url = "#{alma_api_base_path}/electronic/e-collections/#{params[:collection_id]}/e-services/#{service_id}/portfolios/#{params[:portfolio_pid]}?#{api_key_param}"
+      portfolio_response = HTTParty.get(portfolio_url, headers: request_headers)
+      public_note ||= portfolio_response['public_note'].presence
+      authentication_note ||= portfolio_response['authentication_note'].presence
+    end
 
     # Next try the Service
     service_url = bib_portfolio_response.dig 'electronic_collection', 'service', 'link'
