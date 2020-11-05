@@ -104,52 +104,59 @@ class FranklinAlmaController < ApplicationController
 
   end
 
+  # Return JSON of portfolio details (public & authentication notes only)
+  # Also returns received coverage value
+  # @todo wrap API calls
+  # Params can include:
+  #  - portfolio_pid
+  #  - collection_id
+  #  - coverage
+  #  - public_note
+  # Data is queried for in this order:
+  #  1. Portfolio API
+  #  2. Service API
+  #  3. Collection API
   def portfolio_details
-    portfolio_pid = params['portfolio_pid']
-    collection_id = params['collection_id']
-    api_key_param = "apikey=#{ENV['ALMA_API_KEY']}"
-    url_params = { collection_id: collection_id }
-    coverage = params['coverage']
+    alma_api_base_path = 'https://api-na.hosted.exlibrisgroup.com/almaws/v1'
+    request_headers = { 'Accept' => 'application/json' }
 
-    # we also get this from availability API. Opportunity for improvement?
-    public_note = nil
+    # TODO: params can have a public_note value, not to mention coverage. where are those values coming from?
+    # the Availability API call made earlier? "we also get this from availability API. Opportunity for improvement?"
+
+    # Get the right Service ID from the Bibs API
+    bib_portfolio_url = "#{alma_api_base_path}/bibs/#{params[:mms_id]}/portfolios/#{params[:portfolio_pid]}?#{api_key_param}"
+    bib_portfolio_response = HTTParty.get(bib_portfolio_url, headers: request_headers)
+    service_id = bib_portfolio_response.dig 'electronic_collection', 'service', 'value'
+
+    public_note = nil # TODO: determine if the value from params should take precedence over any API call below
     authentication_note = nil
 
-    collection_url = "https://api-na.hosted.exlibrisgroup.com/almaws/v1/electronic/e-collections/%{collection_id}?#{api_key_param}"
-    services_url = "https://api-na.hosted.exlibrisgroup.com/almaws/v1/electronic/e-collections/%{collection_id}/e-services?#{api_key_param}"
-    portfolio_url = "https://api-na.hosted.exlibrisgroup.com/almaws/v1/electronic/e-collections/%{collection_id}/e-services/%{service_id}/portfolios/%{portfolio_id}?#{api_key_param}"
-
-    api_response = HTTParty.get(
-      services_url % url_params,
-      headers: { 'Accept' => 'application/json' }
-    )
-
-    # 'electronic_service' is not set for e-portfolios et al
-    api_response['electronic_service'].each do |e|
-      portfolio_response = HTTParty.get(portfolio_url % url_params.merge(:portfolio_id => portfolio_pid, :service_id => e['id']), :headers => {'Accept' => 'application/json'})
+    # The portfolio is the most trustworthy source for details
+    if service_id && params[:collection_id] && params[:portfolio_pid]
+      portfolio_url = "#{alma_api_base_path}/electronic/e-collections/#{params[:collection_id]}/e-services/#{service_id}/portfolios/#{params[:portfolio_pid]}?#{api_key_param}"
+      portfolio_response = HTTParty.get(portfolio_url, headers: request_headers)
       public_note ||= portfolio_response['public_note'].presence
       authentication_note ||= portfolio_response['authentication_note'].presence
-
-      if public_note.nil? || authentication_note.nil?
-        service_response = HTTParty.get(e['link'] + "?#{api_key_param}", :headers => {'Accept' => 'application/json'})
-        public_note ||= service_response['public_note'].presence
-        authentication_note ||= service_response['authentication_note'].presence
-      end
     end
 
-    if public_note.nil? || authentication_note.nil?
-      api_response = HTTParty.get(collection_url % url_params, :headers => {'Accept' => 'application/json'})
-      public_note ||= api_response['public_note'].presence
-      authentication_note ||= api_response['authentication_note'].presence
+    # Next try the Service
+    service_url = bib_portfolio_response.dig 'electronic_collection', 'service', 'link'
+    if service_url && (public_note.nil? || authentication_note.nil?)
+      service_response = HTTParty.get(service_url + "?#{api_key_param}", headers: request_headers)
+      public_note ||= service_response['public_note'].presence
+      authentication_note ||= service_response['authentication_note'].presence
     end
 
-    coverage_content = [coverage]
-    public_note_content = public_note.nil? || public_note.empty? ? [] : ["Public Notes: ", public_note]
-    authentication_note_content = authentication_note.nil? || authentication_note.empty? ? [] : ["Authentication Notes: ", authentication_note]
+    # Finally check the Collection (not set in standalone case)
+    if params[:collection_id].present? && (public_note.nil? || authentication_note.nil?)
+      collection_url = "#{alma_api_base_path}/electronic/e-collections/#{params[:collection_id]}?#{api_key_param}"
+      collection_response = HTTParty.get(collection_url, headers: request_headers)
+      public_note ||= collection_response['public_note'].presence
+      authentication_note ||= collection_response['authentication_note'].presence
+    end
 
-    render json: { "portfolio_details": coverage_content.join("<br/>").html_safe,
-                   "notes": (public_note_content + authentication_note_content).join("<br/>").html_safe
-    }
+    render json: { portfolio_details: params[:coverage].squish,
+                   public_note: public_note, authentication_note: authentication_note }
   end
 
   def has_holding_info?(api_mms_data, mmsid)
@@ -713,5 +720,11 @@ class FranklinAlmaController < ApplicationController
       format.xml  { render xml: response_data }
       format.json { render json: response_data }
     end
+  end
+
+  # API key param for appending to Alma API request URLs
+  # @return [String]
+  def api_key_param
+    "apikey=#{ENV['ALMA_API_KEY']}"
   end
 end
