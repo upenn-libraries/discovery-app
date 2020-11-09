@@ -209,16 +209,23 @@ $(document).ready(function() {
                     var coverage = $(element).data("coverage");
                     var publicnote = $(element).data("publicnote");
 
+                    // "standalone" portfolios have no collection_id, and so we should skip this lookup
+                    if(!collectionid) {
+                        $(element).removeClass('load-portfolio-details').html('');
+                        return;
+                    }
+
                     var url = "/alma/portfolio_details?mms_id="+mmsid+"&portfolio_pid="+portfoliopid+"&collection_id="+collectionid+"&coverage="+coverage+"&public_note="+publicnote
                     $.ajax({
                         url: url,
                         success: function(data, textStatus, jqXHR) {
-                            var portfoliodetails = data['portfolio_details'];
-                            var notes = data['notes']
                             $(element).removeClass('load-portfolio-details');
                             $(element).html('');
-                            $(element).append(portfoliodetails);
-                            $('#notes-' + portfoliopid).append(notes);
+                            $(element).append(coverage);
+                            var notes = [data['public_note'], data['authentication_note']]
+                                .filter(function(obj) { return obj }) // compact
+                                .join('<br>')
+                            $('#notes-' + portfoliopid).append(notes)
                         }
                     });
                 });
