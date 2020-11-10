@@ -11,7 +11,7 @@ class CatalogController < ApplicationController
   include BlacklightSolrplugins::XBrowse
   include HandleInvalidAdvancedSearch
   include AssociateExpandedDocs
-  include HandleEmptyEmail
+  include EmailActionProtection
 
   ENABLE_SUBJECT_CORRELATION = ENV['ENABLE_SUBJECT_CORRELATION']&.downcase == 'true'
 
@@ -856,6 +856,10 @@ class CatalogController < ApplicationController
     add_show_tools_partial(:print, partial: 'print')
 
     config.show.document_actions.delete(:sms)
+
+    config.show.document_actions.email.if = lambda do |controller, _, _|
+      controller.current_user
+    end
 
     PennLib::Util.reorder_document_actions(
         config.show.document_actions,
