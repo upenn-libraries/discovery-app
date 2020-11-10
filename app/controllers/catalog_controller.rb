@@ -856,14 +856,12 @@ class CatalogController < ApplicationController
     add_show_tools_partial(:print, partial: 'print')
 
     config.show.document_actions.delete(:sms)
-
-    config.show.document_actions.email.if = lambda do |controller, _, _|
-      controller.current_user
-    end
+    config.show.document_actions.email.if = PennLib::BlacklightConfig::USER_LOGGED_IN
+    config.show.document_actions.login_for_email.unless = PennLib::BlacklightConfig::USER_LOGGED_IN
 
     PennLib::Util.reorder_document_actions(
         config.show.document_actions,
-        :bookmark, :email, :citation, :print, :refworks, :endnote, :ris, :librarian_view)
+        :bookmark, :email, :login_for_email, :citation, :print, :refworks, :endnote, :ris, :librarian_view)
 
     config.navbar.partials.delete(:search_history)
   end
