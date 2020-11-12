@@ -11,7 +11,7 @@ class CatalogController < ApplicationController
   include BlacklightSolrplugins::XBrowse
   include HandleInvalidAdvancedSearch
   include AssociateExpandedDocs
-  include HandleEmptyEmail
+  include EmailActionProtection
 
   ENABLE_SUBJECT_CORRELATION = ENV['ENABLE_SUBJECT_CORRELATION']&.downcase == 'true'
 
@@ -856,10 +856,12 @@ class CatalogController < ApplicationController
     add_show_tools_partial(:print, partial: 'print')
 
     config.show.document_actions.delete(:sms)
+    config.show.document_actions.email.if = :user_signed_in?
+    config.show.document_actions.login_for_email.unless = :user_signed_in?
 
     PennLib::Util.reorder_document_actions(
         config.show.document_actions,
-        :bookmark, :email, :citation, :print, :refworks, :endnote, :ris, :librarian_view)
+        :bookmark, :email, :login_for_email, :citation, :print, :refworks, :endnote, :ris, :librarian_view)
 
     config.navbar.partials.delete(:search_history)
   end
