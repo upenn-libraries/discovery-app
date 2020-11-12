@@ -1744,6 +1744,11 @@
 <location location_code="vanpmiddle">
   <display>Van Pelt - Middle East Tech Services</display>
 </location>
+<location location_code="vanpNoCirc">
+  <specific_location>Van Pelt - Non Circulating</specific_location>
+  <library>Van Pelt-Dietrich Library Center</library>
+  <display>Van Pelt - Non Circulating</display>
+</location>
 <location location_code="vanpvideo">
   <specific_location>Van Pelt - Video Collection</specific_location>
   <library>Van Pelt-Dietrich Library Center</library>
