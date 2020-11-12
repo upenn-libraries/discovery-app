@@ -2,7 +2,7 @@ name: franklin
 services:
   gibneysolr:
     type: compose
-    scanner: false # TODO: temp
+    scanner: false # solr isn't running after lando start
     services:
       user: root
       image: quay.io/upennlibraries/upenn_solr:7.7.0
@@ -12,8 +12,6 @@ services:
 #        /opt/solr/bin/solr create_collection -c franklin-test -d franklin && \
       ports:
         - '8983:8983'
-      environment:
-        LANDO_DROP_USER: solr
 proxy:
   gibneysolr:
     - franklin.solr.lndo.site:8983
