@@ -6,6 +6,7 @@ gem 'bento_search', git: 'https://github.com/upenn-libraries/bento_search', bran
 gem 'blacklight', '6.8.0', git: 'https://github.com/magibney/blacklight.git', branch: 'v6.8.0-solr7-qq-feedFormat'
 gem 'blacklight-marc', '6.2.0'
 gem 'blacklight-ris', git: 'https://github.com/upenn-libraries/blacklight-ris.git'
+gem 'blacklight-sitemaps', git: 'https://github.com/mksndz/blacklight-sitemaps'
 gem 'blacklight_advanced_search', '6.3.1'
 gem 'blacklight_alma', git: 'https://github.com/upenn-libraries/blacklight_alma.git'
 gem 'blacklight_solrplugins', git: 'https://github.com/upenn-libraries/blacklight_solrplugins.git'

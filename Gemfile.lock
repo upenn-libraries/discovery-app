@@ -22,6 +22,14 @@ GIT
       json (~> 1.8)
 
 GIT
+  remote: https://github.com/mksndz/blacklight-sitemaps
+  revision: dc206625701103b1693911fdf42cdaafb33bfcff
+  specs:
+    blacklight-sitemaps (0.1.0)
+      blacklight (>= 6)
+      rails (>= 4.2, < 7)
+
+GIT
   remote: https://github.com/upenn-libraries/bento_search
   revision: 3f45d1c286ae19146aa51dc7b54b5a5a6b7c3dd0
   branch: search_controller_engine_params
@@ -335,6 +343,7 @@ DEPENDENCIES
   blacklight (= 6.8.0)!
   blacklight-marc (= 6.2.0)
   blacklight-ris!
+  blacklight-sitemaps!
   blacklight_advanced_search (= 6.3.1)
   blacklight_alma!
   blacklight_solrplugins!
