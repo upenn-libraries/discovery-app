@@ -16,6 +16,8 @@ Rails.application.routes.draw do
   get 'bento/' => 'catalog#bento'
 
   mount Blacklight::Engine => '/'
+  mount BlacklightDynamicSitemap::Engine => '/'
+
 
   mount BlacklightAdvancedSearch::Engine => '/'
 
