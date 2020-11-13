@@ -227,7 +227,8 @@ class FranklinAlmaController < ApplicationController
             url + "?apikey=#{ENV['ALMA_API_KEY']}",
             headers: { 'Accept' => 'application/json' }
           )
-          link_url = collection_response['url_override'].presence || collection_response['url']
+          link_url = LinkResolver.resolution_url_for mmsid
+          # link_url = collection_response['url_override'].presence || collection_response['url']
           link_text = collection_response['public_name_override'].presence || collection_response['public_name']
           link = "<a target='_blank' href='#{link_url}'>#{link_text}</a>"
           public_note = collection_response['public_note'].presence
