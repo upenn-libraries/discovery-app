@@ -19,6 +19,8 @@
 /*.mrc
 /node_modules
 
+/solr_conf
+
 /public/version.txt
 
 local_dev_env
