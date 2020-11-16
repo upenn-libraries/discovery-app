@@ -23,8 +23,10 @@
   - You can get the production Solr URL and use that, assuming you're on the Penn VPN
   - Otherwise, you can run Penn's custom Solr locally using Lando
     - `franklin:start` to pull and start the Solr container
+    - `franklin:solrconfig` to pull a Solr config from `stable` in the [Franklin Solr Config repo](https://gitlab.library.upenn.edu/franklin/franklin-solr-config) and create dev and test collections
+      - set `SOLR_CONFIG_BRANCH` env var to pull from a different branch when initializing collections
     - `franklin:stop` when you're done working
-    - `franklin:clean` when things get weird
+    - `franklin:clean` when things get weird and you need to start fresh
 - Start the rails server:
 
   ```bash
