@@ -55,15 +55,6 @@ GIT
       rails (~> 4.2)
 
 GIT
-  remote: https://github.com/upenn-libraries/blacklight_dynamic_sitemap
-  revision: 9baf83b713a55698f8940b5a54f272d99a9683a7
-  branch: provisional
-  specs:
-    blacklight_dynamic_sitemap (0.3.0)
-      blacklight (> 6.0)
-      rails (>= 4.2, <= 6.1)
-
-GIT
   remote: https://github.com/upenn-libraries/blacklight_solrplugins.git
   revision: 6353f899962cd8f60b25836b306b330892fe3d5e
   specs:
@@ -126,6 +117,9 @@ GEM
     blacklight_advanced_search (6.3.1)
       blacklight (~> 6.0, >= 6.0.1)
       parslet
+    blacklight_dynamic_sitemap (0.4.0)
+      blacklight (> 6.0)
+      rails (<= 6.1)
     bootstrap-sass (3.4.1)
       autoprefixer-rails (>= 5.2.1)
       sassc (>= 2.0.0)
@@ -346,7 +340,7 @@ DEPENDENCIES
   blacklight-ris!
   blacklight_advanced_search (= 6.3.1)
   blacklight_alma!
-  blacklight_dynamic_sitemap!
+  blacklight_dynamic_sitemap
   blacklight_solrplugins!
   browserify-rails
   byebug
