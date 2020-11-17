@@ -63,11 +63,7 @@ class SessionsController < Devise::SessionsController
     # the right thing to do but needs testing in a production-like
     # environment
     remote_user_header = request.headers['HTTP_REMOTE_USER'] || 'none@upenn.edu'
-    pennkey_username = if Rails.env.production?
-                         remote_user_header.split('@').first
-                       else
-                         ENV['DEVELOPMENT_USERNAME']
-                       end
+    pennkey_username = remote_user_header.split('@').first
     set_session_user_details(pennkey_username)
     set_session_userid(pennkey_username)
   end
