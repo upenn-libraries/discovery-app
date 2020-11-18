@@ -503,6 +503,9 @@ class FranklinAlmaController < ApplicationController
                         else
                           '?'
                         end
+          # explicitly set requesttype to book if we are working with a monograph
+          # this will ensure the ILL "Book" request form is loaded
+          option_url += 'requesttype=book&' if ctx['monograph']
           {
             option_name: details['name'],
             # Remove appended mmsid when SF case #00584311 is resolved
