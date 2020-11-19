@@ -37,6 +37,7 @@ gem 'uglifier', '3.0.2'
 group :development do
   gem 'dotenv-rails'
   gem 'web-console', '~> 2.0', platforms: :ruby
+  gem 'xray-rails'
 end
 
 group :development, :test do
