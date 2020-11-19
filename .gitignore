@@ -19,7 +19,7 @@
 /*.mrc
 /node_modules
 
-/solr_conf
+/solr_conf/*
 
 /public/version.txt
 

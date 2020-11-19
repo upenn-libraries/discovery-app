@@ -44,10 +44,16 @@ namespace :franklin do
     # Pull configset based on branch parameter, if present
     solr_config_branch = ENV['SOLR_CONFIG_BRANCH'] || 'stable'
     solr_config_name = "franklin-solr-config-#{solr_config_branch}"
+    # eventually, this will be a public URL - but not yet - VPN needed
     config_download_path = "https://gitlab.library.upenn.edu/franklin/franklin-solr-config/-/archive/#{solr_config_branch}/#{solr_config_name}.tar.gz"
 
     # download file to Tempfile
-    tar_file = URI(config_download_path).open
+    begin
+      tar_file = URI(config_download_path).open
+    rescue StandardError => _e
+      puts "Problem retrieving Solr config - are you on the VPN? Are you sure branch '#{solr_config_branch}' exists?"
+      next # exit
+    end
 
     # extract files
     tar_extract = Gem::Package::TarReader.new(Zlib::GzipReader.open(tar_file))
