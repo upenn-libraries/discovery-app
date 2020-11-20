@@ -11,6 +11,7 @@ namespace :franklin do
     # Start solr
     system('lando ssh gibneysolr -u solr -c "/opt/solr/bin/solr start -c -m 2g -p 8983 -Dsolr.jetty.request.header.size=65536"')
 
+    # TODO: detect if solr collections need to be created and do so
     puts "      Services initialized! Please create Solr collections with franklin:solrconfig if you haven't already"
 
     # No Lando DB for now
@@ -37,6 +38,9 @@ namespace :franklin do
     system('lando start') # TODO: check if already started?
 
     solr_config_path = File.join Rails.root, 'solr_conf'
+
+    # create solr_config_path if it doesnt already exist
+    FileUtils.mkdir solr_config_path unless Dir.exist? solr_config_path
 
     # clear out old config
     FileUtils.rm_rf(Dir.glob(File.join(solr_config_path, '*')))
