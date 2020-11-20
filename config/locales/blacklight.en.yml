@@ -16,6 +16,8 @@ en:
       login_for_email: "Login to Email"
   franklin:
     landing_page_title: "Franklin - University of Pennsylvania"
+    ill_info_link: "https://guides.library.upenn.edu/resourcesharing/ill"
+    bbm_info_link: "https://guides.library.upenn.edu/resourcesharing/books-by-mail"
     catalog_search:
       no_results: "No results"
       holdings: "%{count} print %{option}"
