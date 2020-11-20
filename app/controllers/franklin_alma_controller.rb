@@ -439,7 +439,7 @@ class FranklinAlmaController < ApplicationController
       request_url = (policies[policy] || '') % params.merge({ item_pid: item[0] })
       # TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
       unless request_url.empty? || item[2] != 'Item in place'
-        item[5] << (suppress ? '' : "<a target='_blank' href='#{request_url}'>Pickup@Penn</a>")
+        item[5] << (suppress ? '' : "<a target='_blank' href='#{request_url}'>PickUp@Penn</a>")
       end
     end
 
@@ -473,7 +473,7 @@ class FranklinAlmaController < ApplicationController
           # TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
           unless suppress_pickup_at_penn(ctx)
             {
-              option_name: 'Pickup@Penn',
+              option_name: 'PickUp@Penn',
               # option_url: option['request_url'],
               option_url: "/alma/request?mms_id=#{params['mms_id']}",
               avail_for_physical: true,
