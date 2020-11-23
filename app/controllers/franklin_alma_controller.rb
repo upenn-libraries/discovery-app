@@ -462,6 +462,7 @@ class FranklinAlmaController < ApplicationController
     api = api_instance.ezwadl_api[0]
     options = { user_id: userid, consider_dlr: true }
     response_data = api_instance.request(api.almaws_v1_bibs.mms_id_request_options, :get, params.merge(options))
+    pickup_at_penn = false
     results = response_data['request_option'].map do |option|
       request_url = option['request_url']
       details = option['general_electronic_service_details'] || option['rs_broker_details'] || {}
@@ -472,6 +473,7 @@ class FranklinAlmaController < ApplicationController
         when 'HOLD'
           # TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
           unless suppress_pickup_at_penn(ctx)
+            pickup_at_penn = true
             {
               option_name: 'PickUp@Penn',
               # option_url: option['request_url'],
@@ -540,7 +542,7 @@ class FranklinAlmaController < ApplicationController
     if ['Associate', 'Athenaeum Staff', 'Faculty', 'Faculty Express',
         'Faculty Spouse', 'Grad Student', 'Library Staff', 'Medical Center Staff',
         'Retired Library Staff', 'Staff', 'Undergraduate Student']
-       .member?(session['user_group']) && !suppress_pickup_at_penn(ctx)
+       .member?(session['user_group']) && pickup_at_penn
       results.append(
         {
           option_name: 'Books By Mail',
