@@ -9,6 +9,7 @@ Sitemap: https://franklin.library.upenn.edu/sitemap.xml
 # and bandwidth for no useful purpose (from server and crawler's perspective alike)
 Disallow: /*?*
 
+Disallow: /advanced
 Disallow: /catalog/facet/
 Disallow: /catalog.atom
 Disallow: /catalog.rss
