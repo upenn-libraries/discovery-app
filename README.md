@@ -22,9 +22,8 @@
 - Configure Solr
   - You can get the production Solr URL and use that, assuming you're on the Penn VPN
   - Otherwise, you can run Penn's custom Solr locally using Lando
-    - `franklin:start` to pull and start the Solr container
-    - `franklin:solrconfig` to pull a Solr config from `stable` in the [Franklin Solr Config repo](https://gitlab.library.upenn.edu/franklin/franklin-solr-config) and create dev and test collections
-      - set `SOLR_CONFIG_BRANCH` env var to pull from a different branch when initializing collections
+    - `franklin:start` to pull and start the Solr container and load the `stable` Solr config from the [Franklin Solr Config repo](https://gitlab.library.upenn.edu/franklin/franklin-solr-config) and create dev and test collections 
+        - `franklin:solrconfig` can read the `SOLR_CONFIG_BRANCH` env var to pull from a different branch when and initialize new collections
     - `franklin:stop` when you're done working
     - `franklin:clean` when things get weird and you need to start fresh
 - Start the rails server:
@@ -105,7 +104,7 @@ The usual ENV variables need to be set, for now
 
 - DL Chrome @ `https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Linux_x64/737173/`
 - Extract to `PATH_OF_YOUR_CHOOSING`
-- Precompile assets for `test` (why???): `RAILS_ENV=test bundle exec rake assets:precompile`
+- Load the required environment variables (e.g., `source local_dev_env`)
 - Start dockerized UPenn Solr `rake franklin:start`
 - Run suite: `RAILS_ENV=test rspec`
 
