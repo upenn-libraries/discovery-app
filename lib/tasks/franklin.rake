@@ -2,6 +2,7 @@ require 'fileutils'
 require 'open-uri'
 require 'rubygems/package'
 require 'zlib'
+require 'penn_lib/lando'
 
 namespace :franklin do
   desc 'Start development/test environment Solr instance'
@@ -9,10 +10,13 @@ namespace :franklin do
     system('lando start')
 
     # Start solr
-    system('lando ssh gibneysolr -u solr -c "/opt/solr/bin/solr start -c -m 2g -p 8983 -Dsolr.jetty.request.header.size=65536"')
+    PennLib::Lando.start_solr
 
-    # TODO: detect if solr collections need to be created and do so
-    puts "      Services initialized! Please create Solr collections with franklin:solrconfig if you haven't already"
+    if PennLib::Lando.collections_exist?
+      puts "\nServices initialized!"
+    else
+      Rake::Task['franklin:solrconfig'].invoke
+    end
 
     # No Lando DB for now
     # # Create databases, if they aren't present.
@@ -35,8 +39,6 @@ namespace :franklin do
 
   desc 'Update Solr config from repo and recreate Solr collections'
   task :solrconfig do
-    system('lando start') # TODO: check if already started?
-
     solr_config_path = File.join Rails.root, 'solr_conf'
 
     # create solr_config_path if it doesnt already exist
@@ -77,15 +79,15 @@ namespace :franklin do
     tar_extract.close
 
     # delete existing collections
-    # TODO: only if they exist?
-    system("lando ssh gibneysolr -u solr -c '/opt/solr/bin/solr delete -c franklin-dev'")
-    system("lando ssh gibneysolr -u solr -c '/opt/solr/bin/solr delete -c franklin-test'")
+    if PennLib::Lando.collections_exist?
+      PennLib::Lando.delete_collection 'franklin-test'
+      PennLib::Lando.delete_collection 'franklin-dev'
+    end
 
-    # Copy configset to proper location
-    system("lando ssh gibneysolr -u solr -c 'cp -r /app/solr_conf/#{solr_config_name} /opt/solr/server/solr/configsets/#{solr_config_name}'")
+    PennLib::Lando.copy_config solr_config_name
 
-    # recreate solr collections
-    system("lando ssh gibneysolr -u solr -c '/opt/solr/bin/solr create_collection -c franklin-dev -d #{solr_config_name}'")
-    system("lando ssh gibneysolr -u solr -c '/opt/solr/bin/solr create_collection -c franklin-test -d #{solr_config_name}'")
+    # create solr collections
+    PennLib::Lando.create_collection 'franklin-test', solr_config_name
+    PennLib::Lando.create_collection 'franklin-dev', solr_config_name
   end
 end
