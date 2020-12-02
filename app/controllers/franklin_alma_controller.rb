@@ -230,14 +230,17 @@ class FranklinAlmaController < ApplicationController
           link_url = collection_response['url_override'].presence || collection_response['url']
           link_text = collection_response['public_name_override'].presence || collection_response['public_name']
           link = "<a target='_blank' href='#{link_url}'>#{link_text}</a>"
-          public_note_content = collection_response['public_note'].present? ? ['Public Notes: ', collection_response['public_note']] : []
-          authentication_note_content = collection_response['authentication_note'].present? ? ['Authentication Notes: ', collection_response['authentication_note']] : []
-          notes = ('<span>' + (public_note_content + authentication_note_content).join("<br/>") + '</span>').html_safe
+          notes = [
+            collection_response['public_note'],
+            collection_response['authentication_note']
+          ].compact
+          note_html = "<span>#{notes.join('<br>')}</span>".html_safe
           [
             i,
             link,
-            notes,
-            '', '', '', '', ''
+            '',
+            note_html,
+            '', '', '', ''
           ]
         end
         .reject(&:nil?)
