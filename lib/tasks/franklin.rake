@@ -39,7 +39,7 @@ namespace :franklin do
 
   desc 'Update Solr config from repo and recreate Solr collections'
   task :solrconfig do
-    solr_config_path = File.join Rails.root, 'solr_conf'
+    solr_config_path = File.join Rails.root, 'tmp', 'solr_conf'
 
     # create solr_config_path if it doesnt already exist
     FileUtils.mkdir solr_config_path unless Dir.exist? solr_config_path

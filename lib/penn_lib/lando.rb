@@ -45,7 +45,7 @@ module PennLib
       # @param [String] name
       # @return [TrueClass, FalseClass, nil]
       def copy_config(name)
-        solr_run "cp -r /app/solr_conf/#{name} /opt/solr/server/solr/configsets/#{name}"
+        solr_run "cp -r /app/tmp/solr_conf/#{name} /opt/solr/server/solr/configsets/#{name}"
       end
 
       # Check if collections exist in solr container
