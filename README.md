@@ -105,6 +105,7 @@ The usual ENV variables need to be set, for now
 - DL Chrome @ `https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Linux_x64/737173/`
 - Extract to `PATH_OF_YOUR_CHOOSING`
 - Load the required environment variables (e.g., `source local_dev_env`)
+  - include chrome path with ENV var: BROWSER_PATH=`PATH_OF_YOUR_CHOOSING`
 - Start dockerized UPenn Solr `rake franklin:start`
 - Run suite: `RAILS_ENV=test rspec`
 

@@ -12,7 +12,11 @@ require 'capybara/cuprite'
 # Use cuprite driver to run specs requiring JS in headless chrome
 Capybara.javascript_driver = :cuprite
 Capybara.register_driver(:cuprite) do |app|
-  Capybara::Cuprite::Driver.new(app, window_size: [1200, 800])
+  Capybara::Cuprite::Driver.new(app,
+                                window_size: [1200, 800],
+                                inspector: true,
+                                browser_path: ENV['BROWSER_PATH']
+  )
 end
 Capybara.server = :webrick
 
