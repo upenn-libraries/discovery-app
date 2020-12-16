@@ -279,7 +279,7 @@ class FranklinAlmaController < ApplicationController
                                       'Not on shelf; <a class="request-option-link">request below</a>'
                                     end
         elsif holding['availability'] == 'Available' && suppress_pickup_at_penn(ctx)
-          holding['availability'] = 'Restricted (COVID-19)'
+          holding['availability'] = 'Use online access — print restricted'
         end
       end
 

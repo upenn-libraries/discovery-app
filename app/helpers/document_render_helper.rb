@@ -53,8 +53,8 @@ module DocumentRenderHelper
 
   @@HATHI_PD_TEXT = 'HathiTrust Digital Library Connect to full text'
   @@HATHI_TMP_TEXT = 'HathiTrust Digital Library Login for full text'
-  @@HATHI_REPLACEMENT_TEXT = 'COVID-19 Special Access from HathiTrust'
-  @@HATHI_INFO = ' — Full text access only for <a data-toggle="tooltip" title="details regarding HathiTrust ETAS access authorization" href="https://guides.library.upenn.edu/hathitrust">students, active faculty, and permanent staff</a>'
+  @@HATHI_REPLACEMENT_TEXT = 'Online access'
+  @@HATHI_INFO = ' from HathiTrust during COVID-19 — only for <a data-toggle="tooltip" title="details regarding HathiTrust ETAS access authorization" href="https://guides.library.upenn.edu/hathitrust">students, active faculty, and permanent staff</a>'
   @@HATHI_LOGIN_PREFIX = 'https://babel.hathitrust.org/Shibboleth.sso/Login?entityID=https://idp.pennkey.upenn.edu/idp/shibboleth&target=https%3A%2F%2Fbabel.hathitrust.org%2Fcgi%2Fping%2Fpong%3Ftarget%3D'
 
   def detect_monograph(document)
