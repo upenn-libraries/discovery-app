@@ -69,7 +69,7 @@ module BentoHelper
 
   HATHI_PD_TEXT = 'HathiTrust Digital Library Connect to full text'
   HATHI_TMP_TEXT = 'HathiTrust Digital Library Login for full text'
-  HATHI_REPLACEMENT_TEXT = 'COVID-19 Special Access from HathiTrust'
+  HATHI_REPLACEMENT_TEXT = 'Online access'
   HATHI_LOGIN_PREFIX = 'https://babel.hathitrust.org/Shibboleth.sso/Login?entityID=https://idp.pennkey.upenn.edu/idp/shibboleth&target=https%3A%2F%2Fbabel.hathitrust.org%2Fcgi%2Fping%2Fpong%3Ftarget%3D'
 
   def dedupe_hathi(online_links_arr)
@@ -82,6 +82,7 @@ module BentoHelper
       when HATHI_TMP_TEXT
         e['linktext'] = HATHI_REPLACEMENT_TEXT
         e['linkurl'] = HATHI_LOGIN_PREFIX + URI.encode_www_form_component(e['linkurl'])
+        e[:postfix] = ' (from HathiTrust during COVID-19)' # `:postfix` key introduced temporarily here
         acc[:etas] = e
       else
         acc[:arr] << e
@@ -96,6 +97,6 @@ module BentoHelper
   # @param [SolrDocument] document
   # @return [ActiveSupport::SafeBuffer]
   def fulltext_link_for(link_info)
-    link_to link_info['linktext'], link_info['linkurl']
+    link_to(link_info['linktext'], link_info['linkurl']) + link_info[:postfix]
   end
 end

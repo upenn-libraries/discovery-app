@@ -52,12 +52,12 @@ $(document).ready(function() {
                 // pre-COVID-19 always mapped to "See request options";
                 if (holding['link_to_aeon']) {
                     // Aeon materials show as "unavailable", but not in the sense of being unviewable.
-                    availability = (ctx.hathi_etas && ctx.monograph) ? "Restricted (COVID-19)" : "See request options";
+                    availability = (ctx.hathi_etas && ctx.monograph) ? "Use online access — print restricted" : "See request options";
                 } else {
                     availability = "Unavailable";
                 }
             } else if (holding['availability'] == 'available') {
-                availability = disable_pickup_at_penn(ctx) ? "Restricted (COVID-19)" : "Available";
+                availability = disable_pickup_at_penn(ctx) ? "Use online access — print restricted" : "Available";
             }
             // TODO: pass in format to shelfLocatorLink() somehow
             return [availability, holding['location'], holding['call_number'], $.shelfLocatorLink(mms_id, holding, "TODO"), constructAeonLink(mms_id, holding, ctx)]
