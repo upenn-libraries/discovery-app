@@ -2479,16 +2479,15 @@ module PennLib
       acc
     end
 
-    HATHI_LOGIN_PREFIX = 'https://babel.hathitrust.org/Shibboleth.sso/Login?entityID=https://idp.pennkey.upenn.edu/idp/shibboleth&target=https%3A%2F%2Fbabel.hathitrust.org%2Fcgi%2Fping%2Fpong%3Ftarget%3D'
+    HATHI_POSTFIX = ' from HathiTrust during COVID-19'
 
     def add_etas_full_text(rec, acc)
       primary_oclc_id = get_oclc_id_values(rec).first
       return unless primary_oclc_id # defensive (e.g., if hathi match based on subsequently deleted oclc id)
-      core_url = 'http://catalog.hathitrust.org/api/volumes/oclc/' + primary_oclc_id + '.html'
       acc << {
         linktext: 'Online access',
-        linkurl: HATHI_LOGIN_PREFIX + URI.encode_www_form_component(core_url),
-        postfix: ' from HathiTrust during COVID-19'
+        linkurl: 'http://catalog.hathitrust.org/api/volumes/oclc/' + primary_oclc_id + '.html',
+        postfix: HATHI_POSTFIX
       }
     end
 
