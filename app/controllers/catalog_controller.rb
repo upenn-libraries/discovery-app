@@ -94,7 +94,7 @@ class CatalogController < ApplicationController
         #      fq: '{!tag=cluster}{!collapse field=cluster_id nullPolicy=expand size=5000000 min=record_source_id}',
         # this approach needs expand.field=cluster_id
         #cluster: %q~NOT ({!join from=cluster_id to=cluster_id v='record_source_f:"Penn"'} AND record_source_f:"HathiTrust") NOT record_source_id:3~,
-        cluster: '{!bool filter=*:* must_not=\'{!bool filter=\\\'{!join from=cluster_id to=cluster_id v=record_source_f:Penn}\\\' filter=record_source_f:HathiTrust}\' must_not=record_source_id:3}',
+        cluster: '{!bool filter=*:* must_not=\'{!bool filter=\\\'{!join from=cluster_id to=cluster_id v=record_source_id:1}\\\' filter=record_source_id:2}\'}',
         back: '{!query v=$correlation_domain}',
         # NOTE: correlation_domain is separately defined from correlation_domain_refine so that the latter may be applied
         # and selectively excluded (via excludeTags) for reporting counts over the full cluster domain, while calculating
@@ -380,11 +380,11 @@ class CatalogController < ApplicationController
             'Other' => { :label => 'Other', :fq => "{!tag=azlist ex=azlist}title_xfacet:/[ -`{-~].*/"}
         }
     config.add_facet_field 'access_f', label: 'Access', collapse: false, solr_params: MINCOUNT, query: {
-        'Online' => { :label => 'Online', :fq => "{!join ex=orig_q from=cluster_id to=cluster_id v='access_f:Online OR record_source_id:3'}"},
+        'Online' => { :label => 'Online', :fq => "{!join ex=orig_q from=cluster_id to=cluster_id v='{!term f=access_f v=Online}'}"},
         'At the library' => { :label => 'At the library', :fq => "{!join ex=orig_q from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"},
     }
     config.add_facet_field 'record_source_f', label: 'Record Source', collapse: false, solr_params: MINCOUNT, query: {
-        'HathiTrust' => { :label => 'HathiTrust', :fq => "{!join ex=orig_q from=cluster_id to=cluster_id v='{!terms f=record_source_id v=2,3}'}"},
+        'HathiTrust' => { :label => 'HathiTrust', :fq => "{!join ex=orig_q from=cluster_id to=cluster_id v='{!term f=record_source_f v=HathiTrust}'}"},
         'Penn' => { :label => 'Penn', :fq => "{!join ex=orig_q from=cluster_id to=cluster_id v='{!term f=record_source_f v=\\'Penn\\'}'}"},
     }
     config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false, :ex => 'orig_q', solr_params: MINCOUNT
