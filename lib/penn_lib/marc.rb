@@ -733,7 +733,16 @@ module PennLib
           end
         end.compact
       end
+      acc << 'Online' if is_etas(rec)
       acc.uniq
+    end
+
+    def is_etas(rec)
+      rec.fields('977').any? do |f|
+        f.any? do |sf|
+          sf.code == 'e' && sf.value == 'ETAS'
+        end
+      end
     end
 
     # examines a 1xx datafield and constructs a string out of select
@@ -2457,7 +2466,7 @@ module PennLib
     end
 
     def get_full_text_link_values(rec)
-      rec.fields('856')
+      acc = rec.fields('856')
           .select { |f| (f.indicator1 == '4') && %w{0 1}.member?(f.indicator2) }
           .map do |field|
         linktext, linkurl = linktext_and_url(field)
@@ -2466,6 +2475,21 @@ module PennLib
           linkurl: linkurl
         }
       end
+      add_etas_full_text(rec, acc) if is_etas(rec)
+      acc
+    end
+
+    HATHI_LOGIN_PREFIX = 'https://babel.hathitrust.org/Shibboleth.sso/Login?entityID=https://idp.pennkey.upenn.edu/idp/shibboleth&target=https%3A%2F%2Fbabel.hathitrust.org%2Fcgi%2Fping%2Fpong%3Ftarget%3D'
+
+    def add_etas_full_text(rec, acc)
+      primary_oclc_id = get_oclc_id_values(rec).first
+      return unless primary_oclc_id # defensive (e.g., if hathi match based on subsequently deleted oclc id)
+      core_url = 'http://catalog.hathitrust.org/api/volumes/oclc/' + primary_oclc_id + '.html'
+      acc << {
+        linktext: 'Online access',
+        linkurl: HATHI_LOGIN_PREFIX + URI.encode_www_form_component(core_url),
+        postfix: ' from HathiTrust during COVID-19'
+      }
     end
 
     # It's not clear whether Alma can suppress these auto-generated
