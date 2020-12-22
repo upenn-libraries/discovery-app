@@ -29,8 +29,8 @@ $(document).ready(function() {
       return ctx.monograph && (ctx.pickupable === false || ctx.hathi_etas /*|| ctx.hathi_pd*/);
     }
 
-    function constructAeonLink(mmsid, holding, ctx) {
-        if (ctx.hathi_etas && ctx.monograph) {
+    function constructAeonLink(mmsid, holding) {
+        if (holding['location_code'] == 'vanpNocirc') {
           return null;
         }
 
@@ -53,15 +53,15 @@ $(document).ready(function() {
                 // pre-COVID-19 always mapped to "See request options";
                 if (holding['link_to_aeon']) {
                     // Aeon materials show as "unavailable", but not in the sense of being unviewable.
-                    availability = (ctx.hathi_etas && ctx.monograph) ? "Use online access — print restricted" : "See request options";
+                    availability = holding['location_code'] == 'vanpNocirc' ? "Use online access — print restricted" : "See request options";
                 } else {
                     availability = "Unavailable";
                 }
             } else if (holding['availability'] == 'available') {
-                availability = disable_pickup_at_penn(ctx) ? "Use online access — print restricted" : "Available";
+                availability = holding['location_code'] == 'vanpNocirc' ? "Use online access — print restricted" : "Available";
             }
             // TODO: pass in format to shelfLocatorLink() somehow
-            return [availability, holding['location'], holding['call_number'], $.shelfLocatorLink(mms_id, holding, "TODO"), constructAeonLink(mms_id, holding, ctx)]
+            return [availability, holding['location'], holding['call_number'], $.shelfLocatorLink(mms_id, holding, "TODO"), constructAeonLink(mms_id, holding)]
                 .filter(function (item) {
                     return item != null && item.length > 0;
                 }).join(". ");

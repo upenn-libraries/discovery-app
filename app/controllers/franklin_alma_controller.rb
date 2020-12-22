@@ -247,7 +247,7 @@ class FranklinAlmaController < ApplicationController
         holding_pickupable = holding['availability'] == 'available'
         pickupable = true if holding_pickupable
         links = []
-        if holding['link_to_aeon'] && !(ctx['hathi_etas'] && ctx['monograph'])
+        if holding['link_to_aeon'] && holding['location_code'] != 'vanpNocirc'
           links << "<a href='/redir/aeon?bibid=#{holding['mmsid']}&hldid=#{holding['holding_id']}'' target='_blank'>Request to view in reading room</a>"
         end
         holding['availability'] = availability_status[holding['availability']] || 'Requestable'
@@ -271,14 +271,14 @@ class FranklinAlmaController < ApplicationController
         if holding['availability'] == 'Requestable'
           holding['availability'] = if userid == 'GUEST'
                                       'Log in &amp; request below'
-                                    elsif suppress_pickup_at_penn(ctx) && session['user_group'] != 'Faculty Express'
+                                    elsif holding['location_code'] == 'vanpNocirc' && session['user_group'] != 'Faculty Express'
                                       # we're temporarily disabling all request options for non facex
                                       'Not on shelf'
                                     else
                                       # for non-request-suppressed items and FacEx users, still present the usual link
                                       'Not on shelf; <a class="request-option-link">request below</a>'
                                     end
-        elsif holding['availability'] == 'Available' && suppress_pickup_at_penn(ctx)
+        elsif holding['availability'] == 'Available' && holding['location_code'] == 'vanpNocirc'
           holding['availability'] = 'Use online access — print restricted'
         end
       end
@@ -377,11 +377,12 @@ class FranklinAlmaController < ApplicationController
         policies[data['policy']['value']] = nil
         pids_to_check << [data['pid'], data['policy']['value']]
       end
+      status = data.dig('location', 'value') == 'vanpNocirc' ? 'Use online access — print restricted' : data['base_status']['desc']
       [
         data['policy']['value'],
         data['pid'],
         data['description'],
-        data['base_status']['desc'],
+        status,
         data['barcode'],
         due_date_policy || data['due_date_policy'],
         [],
@@ -461,6 +462,7 @@ class FranklinAlmaController < ApplicationController
     api = api_instance.ezwadl_api[0]
     options = { user_id: userid, consider_dlr: true }
     response_data = api_instance.request(api.almaws_v1_bibs.mms_id_request_options, :get, params.merge(options))
+    has_pickup_option = false
     results = response_data['request_option'].map do |option|
       request_url = option['request_url']
       details = option['general_electronic_service_details'] || option['rs_broker_details'] || {}
@@ -471,6 +473,7 @@ class FranklinAlmaController < ApplicationController
         when 'HOLD'
           # TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
           unless suppress_pickup_at_penn(ctx)
+            has_pickup_option = true
             {
               option_name: 'PickUp@Penn',
               # option_url: option['request_url'],
@@ -539,7 +542,7 @@ class FranklinAlmaController < ApplicationController
     if ['Associate', 'Athenaeum Staff', 'Faculty', 'Faculty Express',
         'Faculty Spouse', 'Grad Student', 'Library Staff', 'Medical Center Staff',
         'Retired Library Staff', 'Staff', 'Undergraduate Student']
-       .member?(session['user_group']) && !suppress_pickup_at_penn(ctx)
+       .member?(session['user_group']) && has_pickup_option
       results.append(
         {
           option_name: 'Books By Mail',
