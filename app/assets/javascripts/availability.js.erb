@@ -10,7 +10,7 @@ $.fn.dataTable.ext.errMode = 'none';
 function get_request_context(mmsid) {
   return {
     pickupable: null,
-    hathi_etas: (document.getElementById('hathi_etas-'+mmsid) != null),
+    hathi_etas: false && (document.getElementById('hathi_etas-'+mmsid) != null),
     hathi_pd: (document.getElementById('hathi_pd-'+mmsid) != null),
     monograph: (document.getElementById('monograph-'+mmsid) != null)
   };
@@ -25,6 +25,7 @@ $(document).ready(function() {
 
     // Based on hackily-parsed DOM context, determine whether the Pickup@Penn link should be suppressed
     function disable_pickup_at_penn(ctx) {
+      return false;
       return ctx.monograph && (ctx.pickupable === false || ctx.hathi_etas /*|| ctx.hathi_pd*/);
     }
 

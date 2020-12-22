@@ -445,6 +445,7 @@ class FranklinAlmaController < ApplicationController
   end
 
   def suppress_pickup_at_penn(ctx)
+    return false
     return false unless ctx['monograph']
     return true unless ctx['pickupable'] != false
     return true if ctx['hathi_etas'] #|| ctx['hathi_pd']
