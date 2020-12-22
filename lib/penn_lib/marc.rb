@@ -903,6 +903,30 @@ module PennLib
       return acc
     end
 
+    def items_nocirc(rec)
+      items = rec.fields(EnrichedMarc::TAG_ITEM)
+      return 'na' if items.empty?
+      all = true
+      none = true
+      items.each do |f|
+        nocirc = f.any? do |sf|
+          sf.code == EnrichedMarc::SUB_ITEM_CURRENT_LOCATION && sf.value == 'vanpNocirc'
+        end
+        if nocirc
+          none = false
+        else
+          all = false
+        end
+      end
+      if all
+        return 'all'
+      elsif none
+        return 'none'
+      else
+        return 'partial'
+      end
+    end
+
     def get_library_values(rec)
       holdings_location_mappings(rec, 'library')
     end
