@@ -8,11 +8,11 @@ $.fn.dataTable.ext.errMode = 'none';
 
 // Hackily parses relevant context out of the DOM for the specified mmsid
 function get_request_context(mmsid) {
+  var d = document.getElementById('items_nocirc-'+mmsid);
+  var items_nocirc = (d === null) ? '' : d.getAttribute('val');
   return {
     pickupable: null,
-    hathi_etas: false && (document.getElementById('hathi_etas-'+mmsid) != null),
-    hathi_pd: (document.getElementById('hathi_pd-'+mmsid) != null),
-    monograph: (document.getElementById('monograph-'+mmsid) != null)
+    items_nocirc: items_nocirc
   };
 }
 
@@ -21,12 +21,6 @@ $(document).ready(function() {
     // subclass BlacklightAlma
     function Franklin() {
         BlacklightAlma.call(this);
-    }
-
-    // Based on hackily-parsed DOM context, determine whether the Pickup@Penn link should be suppressed
-    function disable_pickup_at_penn(ctx) {
-      return false;
-      return ctx.monograph && (ctx.pickupable === false || ctx.hathi_etas /*|| ctx.hathi_pd*/);
     }
 
     function constructAeonLink(mmsid, holding) {
@@ -142,7 +136,7 @@ $(document).ready(function() {
                             if(validRequestTypes.indexOf(requests[0]) != -1) {
                                 renderdata[mmsid].push(data[i][7]);
                                 // TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
-                                data[i][5][0] = disable_pickup_at_penn(request_context) ? "" : "<a target='_blank' href='/alma/request?mms_id=" + mmsid + "&holding_id=" + data[i][6] + "&item_pid=" + data[i][7] + "'>PickUp@Penn</a>";
+                                data[i][5][0] = "<a target='_blank' href='/alma/request?mms_id=" + mmsid + "&holding_id=" + data[i][6] + "&item_pid=" + data[i][7] + "'>PickUp@Penn</a>";
                                 table.row(i).invalidate().draw();
                             }
                         }
@@ -262,7 +256,7 @@ $(document).ready(function() {
                             break;
                     }
                 }
-                if (booksByMailOption != null && (!request_context.monograph || !request_context.hathi_etas)) {
+                if (booksByMailOption != null) {
                     // assume first querystring param is 'requesttype=[...]' -- subsequent options (preceded by '&') should be openUrl params
                     var startOpenUrlParams = openUrlTemplate === null ? -1 : openUrlTemplate.indexOf('&');
                     if (startOpenUrlParams < 0) {
@@ -363,7 +357,7 @@ $(document).ready(function() {
                             if(validRequestTypes.indexOf(requests[0]) != -1) {
                                 renderdata[mmsid].push(data[i][0]);
                                 // TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
-                                data[i][5].push(disable_pickup_at_penn(request_context) ? "" : "<a target='_blank' href='/alma/request?mms_id=" + data[i][6] + "&holding_id=" + data[i][7] + "&item_pid=" + data[i][0] + "'>PickUp@Penn</a>");
+                                data[i][5].push("<a target='_blank' href='/alma/request?mms_id=" + data[i][6] + "&holding_id=" + data[i][7] + "&item_pid=" + data[i][0] + "'>PickUp@Penn</a>");
                                 table.row(i).invalidate().draw();
                             }
                         }

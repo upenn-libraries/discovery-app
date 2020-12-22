@@ -242,7 +242,6 @@ class FranklinAlmaController < ApplicationController
         end
         .reject(&:nil?)
     else
-      ctx = JSON.parse(params[:request_context])
       bib_data['availability'][mmsid]['holdings'].each do |holding|
         holding_pickupable = holding['availability'] == 'available'
         pickupable = true if holding_pickupable
@@ -432,25 +431,23 @@ class FranklinAlmaController < ApplicationController
         policies[policy] = '/alma/request/?mms_id=%{mms_id}&holding_id=%{holding_id}&item_pid=%{item_pid}'
       end
     end
-    suppress = suppress_pickup_at_penn(JSON.parse(params['request_context']))
     table_data.each do |item|
       policy = item.shift
       request_url = (policies[policy] || '') % params.merge({ item_pid: item[0] })
-      # TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
       unless request_url.empty? || item[2] != 'Item in place'
-        item[5] << (suppress ? '' : "<a target='_blank' href='#{request_url}'>PickUp@Penn</a>")
+        item[5] << "<a target='_blank' href='#{request_url}'>PickUp@Penn</a>"
       end
     end
 
     render json: { "data": table_data }
   end
 
-  def suppress_pickup_at_penn(ctx)
-    return false
-    return false unless ctx['monograph']
+  def suppress_bbm(ctx)
+    # temporary NOTE: only 80% confident (initially) that we want to filter on `pickupable` here
+    # this should be set in/returned from `single_availablity` method, and will be `true` if any
+    # holding has a raw `holding['availability']` property of `available`
     return true unless ctx['pickupable'] != false
-    return true if ctx['hathi_etas'] #|| ctx['hathi_pd']
-
+    return true if ctx['items_nocirc'] == 'all'
     false
   end
 
@@ -471,18 +468,15 @@ class FranklinAlmaController < ApplicationController
       else
         case option['type']['value']
         when 'HOLD'
-          # TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
-          unless suppress_pickup_at_penn(ctx)
-            has_pickup_option = true
-            {
-              option_name: 'PickUp@Penn',
-              # option_url: option['request_url'],
-              option_url: "/alma/request?mms_id=#{params['mms_id']}",
-              avail_for_physical: true,
-              avail_for_electronic: true,
-              highlightable: true
-            }
-          end
+          has_pickup_option = true
+          {
+            option_name: 'PickUp@Penn',
+            # option_url: option['request_url'],
+            option_url: "/alma/request?mms_id=#{params['mms_id']}",
+            avail_for_physical: true,
+            avail_for_electronic: true,
+            highlightable: true
+          }
         when 'GES'
           option_url = option['request_url']
           option_url += if option_url.index('?')
@@ -538,11 +532,11 @@ class FranklinAlmaController < ApplicationController
       end
     end
 
-    # suppress for bbm is same as for Pickup@Penn
     if ['Associate', 'Athenaeum Staff', 'Faculty', 'Faculty Express',
         'Faculty Spouse', 'Grad Student', 'Library Staff', 'Medical Center Staff',
         'Retired Library Staff', 'Staff', 'Undergraduate Student']
-       .member?(session['user_group']) && has_pickup_option
+       .member?(session['user_group']) && (has_pickup_option || !suppress_bbm(ctx))
+      # NOTE: has_pickup_option==true overrides any suppression of bbm by possibly-out-of-date (indexed) info in ctx
       results.append(
         {
           option_name: 'Books By Mail',
