@@ -242,12 +242,11 @@ class FranklinAlmaController < ApplicationController
         end
         .reject(&:nil?)
     else
-      ctx = JSON.parse(params[:request_context])
       bib_data['availability'][mmsid]['holdings'].each do |holding|
         holding_pickupable = holding['availability'] == 'available'
         pickupable = true if holding_pickupable
         links = []
-        if holding['link_to_aeon'] && !(ctx['hathi_etas'] && ctx['monograph'])
+        if holding['link_to_aeon'] && holding['location_code'] != 'vanpNocirc'
           links << "<a href='/redir/aeon?bibid=#{holding['mmsid']}&hldid=#{holding['holding_id']}'' target='_blank'>Request to view in reading room</a>"
         end
         holding['availability'] = availability_status[holding['availability']] || 'Requestable'
@@ -271,14 +270,14 @@ class FranklinAlmaController < ApplicationController
         if holding['availability'] == 'Requestable'
           holding['availability'] = if userid == 'GUEST'
                                       'Log in &amp; request below'
-                                    elsif suppress_pickup_at_penn(ctx) && session['user_group'] != 'Faculty Express'
+                                    elsif holding['location_code'] == 'vanpNocirc' && session['user_group'] != 'Faculty Express'
                                       # we're temporarily disabling all request options for non facex
                                       'Not on shelf'
                                     else
                                       # for non-request-suppressed items and FacEx users, still present the usual link
                                       'Not on shelf; <a class="request-option-link">request below</a>'
                                     end
-        elsif holding['availability'] == 'Available' && suppress_pickup_at_penn(ctx)
+        elsif holding['availability'] == 'Available' && holding['location_code'] == 'vanpNocirc'
           holding['availability'] = 'Use online access — print restricted'
         end
       end
@@ -377,11 +376,12 @@ class FranklinAlmaController < ApplicationController
         policies[data['policy']['value']] = nil
         pids_to_check << [data['pid'], data['policy']['value']]
       end
+      status = data.dig('location', 'value') == 'vanpNocirc' ? 'Use online access — print restricted' : data['base_status']['desc']
       [
         data['policy']['value'],
         data['pid'],
         data['description'],
-        data['base_status']['desc'],
+        status,
         data['barcode'],
         due_date_policy || data['due_date_policy'],
         [],
@@ -431,24 +431,23 @@ class FranklinAlmaController < ApplicationController
         policies[policy] = '/alma/request/?mms_id=%{mms_id}&holding_id=%{holding_id}&item_pid=%{item_pid}'
       end
     end
-    suppress = suppress_pickup_at_penn(JSON.parse(params['request_context']))
     table_data.each do |item|
       policy = item.shift
       request_url = (policies[policy] || '') % params.merge({ item_pid: item[0] })
-      # TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
       unless request_url.empty? || item[2] != 'Item in place'
-        item[5] << (suppress ? '' : "<a target='_blank' href='#{request_url}'>PickUp@Penn</a>")
+        item[5] << "<a target='_blank' href='#{request_url}'>PickUp@Penn</a>"
       end
     end
 
     render json: { "data": table_data }
   end
 
-  def suppress_pickup_at_penn(ctx)
-    return false unless ctx['monograph']
+  def suppress_bbm(ctx)
+    # temporary NOTE: only 80% confident (initially) that we want to filter on `pickupable` here
+    # this should be set in/returned from `single_availablity` method, and will be `true` if any
+    # holding has a raw `holding['availability']` property of `available`
     return true unless ctx['pickupable'] != false
-    return true if ctx['hathi_etas'] #|| ctx['hathi_pd']
-
+    return true if ctx['items_nocirc'] == 'all'
     false
   end
 
@@ -460,6 +459,7 @@ class FranklinAlmaController < ApplicationController
     api = api_instance.ezwadl_api[0]
     options = { user_id: userid, consider_dlr: true }
     response_data = api_instance.request(api.almaws_v1_bibs.mms_id_request_options, :get, params.merge(options))
+    has_pickup_option = false
     results = response_data['request_option'].map do |option|
       request_url = option['request_url']
       details = option['general_electronic_service_details'] || option['rs_broker_details'] || {}
@@ -468,17 +468,15 @@ class FranklinAlmaController < ApplicationController
       else
         case option['type']['value']
         when 'HOLD'
-          # TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
-          unless suppress_pickup_at_penn(ctx)
-            {
-              option_name: 'PickUp@Penn',
-              # option_url: option['request_url'],
-              option_url: "/alma/request?mms_id=#{params['mms_id']}",
-              avail_for_physical: true,
-              avail_for_electronic: true,
-              highlightable: true
-            }
-          end
+          has_pickup_option = true
+          {
+            option_name: 'PickUp@Penn',
+            # option_url: option['request_url'],
+            option_url: "/alma/request?mms_id=#{params['mms_id']}",
+            avail_for_physical: true,
+            avail_for_electronic: true,
+            highlightable: true
+          }
         when 'GES'
           option_url = option['request_url']
           option_url += if option_url.index('?')
@@ -534,11 +532,11 @@ class FranklinAlmaController < ApplicationController
       end
     end
 
-    # suppress for bbm is same as for Pickup@Penn
     if ['Associate', 'Athenaeum Staff', 'Faculty', 'Faculty Express',
         'Faculty Spouse', 'Grad Student', 'Library Staff', 'Medical Center Staff',
         'Retired Library Staff', 'Staff', 'Undergraduate Student']
-       .member?(session['user_group']) && !suppress_pickup_at_penn(ctx)
+       .member?(session['user_group']) && (has_pickup_option || !suppress_bbm(ctx))
+      # NOTE: has_pickup_option==true overrides any suppression of bbm by possibly-out-of-date (indexed) info in ctx
       results.append(
         {
           option_name: 'Books By Mail',

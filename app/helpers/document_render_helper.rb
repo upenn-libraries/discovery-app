@@ -52,37 +52,40 @@ module DocumentRenderHelper
   end
 
   @@HATHI_PD_TEXT = 'HathiTrust Digital Library Connect to full text'
-  @@HATHI_TMP_TEXT = 'HathiTrust Digital Library Login for full text'
-  @@HATHI_REPLACEMENT_TEXT = 'Online access'
-  @@HATHI_INFO = ' from HathiTrust during COVID-19 — only for <a data-toggle="tooltip" title="details regarding HathiTrust ETAS access authorization" href="https://guides.library.upenn.edu/hathitrust">students, active faculty, and permanent staff</a>'
+  @@HATHI_ETAS_POSTFIX = ' from HathiTrust during COVID-19'
+  @@HATHI_INFO = ' — only for <a data-toggle="tooltip" title="details regarding HathiTrust ETAS access authorization" href="https://guides.library.upenn.edu/hathitrust">students, active faculty, and permanent staff</a>'
   @@HATHI_LOGIN_PREFIX = 'https://babel.hathitrust.org/Shibboleth.sso/Login?entityID=https://idp.pennkey.upenn.edu/idp/shibboleth&target=https%3A%2F%2Fbabel.hathitrust.org%2Fcgi%2Fping%2Fpong%3Ftarget%3D'
 
-  def detect_monograph(document)
+  def detect_nocirc(document)
     return nil unless (alma_mms_id = document[:alma_mms_id]).presence
-    return nil unless ['a','m'].include?(document.to_marc.leader[7])
-    "<div id=\"monograph-#{alma_mms_id}\" display=\"none\"></div>".html_safe
+    "<div id=\"items_nocirc-#{alma_mms_id}\" display=\"none\" val=\"#{document[:nocirc_a].first}\"></div>".html_safe
   end
 
   def render_online_resource_display_for_index_view(options)
     values = options[:value]
     alma_mms_id = options[:document][:alma_mms_id]
     hathi_pd = false
-    hathi_etas = false
+    hathi_etas = nil
     ret = values.map do |value|
       JSON.parse(value).map do |link_struct|
         url = link_struct['linkurl']
         text = link_struct['linktext']
-        append = ''
+        postfix = link_struct['postfix']
         if text == @@HATHI_PD_TEXT
           hathi_pd = true
-        elsif text == @@HATHI_TMP_TEXT
-          hathi_etas = true
-          text = @@HATHI_REPLACEMENT_TEXT
+        elsif postfix == @@HATHI_ETAS_POSTFIX
+          if hathi_etas.nil?
+            hathi_etas = [url]
+          elsif hathi_etas.include? url
+            next # dedupe identical urls; infrequent, but possible
+          else
+            hathi_etas << url
+          end
           url = @@HATHI_LOGIN_PREFIX + URI.encode_www_form_component(url)
           append = @@HATHI_INFO
         end
-        %Q{<a href="#{url}">#{text}</a>#{append}}
-      end.join('<br/>')
+        %Q{<a href="#{url}">#{text}</a>#{postfix}#{append}}
+      end.compact.join('<br/>')
     end.join('<br/>')
     unless alma_mms_id.nil?
       if hathi_pd
@@ -99,22 +102,27 @@ module DocumentRenderHelper
     values = options[:value]
     alma_mms_id = options[:document][:alma_mms_id]
     hathi_pd = false
-    hathi_etas = false
+    hathi_etas = nil
     ret = values.map do |value|
       JSON.parse(value).map do |link_struct|
         url = link_struct['linkurl']
         text = link_struct['linktext']
-        append = ''
+        postfix = link_struct['postfix']
         orig_url = url
         if text == @@HATHI_PD_TEXT
           hathi_pd = true
-        elsif text == @@HATHI_TMP_TEXT
-          hathi_etas = true
-          text = @@HATHI_REPLACEMENT_TEXT
+        elsif postfix == @@HATHI_ETAS_POSTFIX
+          if hathi_etas.nil?
+            hathi_etas = [url]
+          elsif hathi_etas.include? url
+            next # dedupe identical urls; infrequent, but possible
+          else
+            hathi_etas << url
+          end
           url = @@HATHI_LOGIN_PREFIX + URI.encode_www_form_component(url)
           append = @@HATHI_INFO
         end
-        html = %Q{<div class="online-resource-link-group"><a href="#{url}">#{text}</a>#{append}}
+        html = %Q{<div class="online-resource-link-group"><a href="#{url}">#{text}</a>#{postfix}#{append}}
         html += '<br/>'.html_safe
 
         if !text.start_with?('http')
@@ -145,7 +153,7 @@ module DocumentRenderHelper
         html += '</div>'
 
         html
-      end.join
+      end.compact.join
     end.join
     unless alma_mms_id.nil?
       if hathi_pd
@@ -159,6 +167,7 @@ module DocumentRenderHelper
   end
 
   def hathi_tag_id(type, id)
+    # TODO: remove? deprecated? I don't think anyone reads this value anymore as of now
     "<div id=\"hathi_#{type}-#{id}\" display=\"none\"></div>"
   end
 

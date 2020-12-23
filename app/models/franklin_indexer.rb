@@ -104,6 +104,10 @@ class FranklinIndexer < BaseIndexer
 
     define_record_source_facet
 
+    to_field 'nocirc_f_stored' do |rec, acc|
+      acc << pennlibmarc.items_nocirc(rec)
+    end
+
     define_mms_id
 
     define_oclc_id
@@ -495,6 +499,7 @@ class FranklinIndexer < BaseIndexer
   def define_record_source_facet
     to_field 'record_source_f' do |rec, acc|
       acc << 'Penn'
+      acc << 'HathiTrust' if pennlibmarc.is_etas(rec)
     end
   end
 
