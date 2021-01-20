@@ -619,7 +619,7 @@ module PennLib
             locations.none? { |loc| loc =~ /cajs/i } &&
             locations.none? { |loc| loc =~ /cjs/i } &&
             locations.none? { |loc| loc =~ /nursing/i }
-        # Add 'Archive' is locations include archives and not cajs, cjs or nursing
+        # Add 'archive' if locations include archives and not cajs, cjs or nursing
         acc << 'Archive'
       elsif locations.any? { |loc| loc =~ /micro/i } ||
             f245h.any? { |val| val =~ /micro/i } ||
