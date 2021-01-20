@@ -611,16 +611,20 @@ module PennLib
       end
       locations = get_specific_location_values(rec)
 
-      if locations.any? { |loc| loc =~ /manuscripts/i }
+      if locations.any? { |loc| loc =~ /manuscripts/i } &&
+         locations.none? { |loc| loc =~ /scmss/i }
+        # Add 'manuscript' if locations include manuscript and not scmss
         acc << 'Manuscript'
       elsif locations.any? { |loc| loc =~ /archives/i } &&
-          locations.none? { |loc| loc =~ /cajs/i } &&
-          locations.none? { |loc| loc =~ /nursing/i }
+            locations.none? { |loc| loc =~ /cajs/i } &&
+            locations.none? { |loc| loc =~ /cjs/i } &&
+            locations.none? { |loc| loc =~ /nursing/i }
+        # Add 'Archive' is locations include archives and not cajs, cjs or nursing
         acc << 'Archive'
       elsif locations.any? { |loc| loc =~ /micro/i } ||
-          f245h.any? { |val| val =~ /micro/i } ||
-          call_nums.any? { |val| val =~ /micro/i } ||
-          f337a.any? { |val| val =~ /microform/i }
+            f245h.any? { |val| val =~ /micro/i } ||
+            call_nums.any? { |val| val =~ /micro/i } ||
+            f337a.any? { |val| val =~ /microform/i }
         acc << 'Microformat'
       else
         # these next 4 can have this format plus ONE of the formats down farther below
