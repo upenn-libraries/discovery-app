@@ -52,7 +52,7 @@ regex = '''xox[baprs]-.*'''
 description = "Strip API Key"
 regex = '''(?i)(sk|pk)_(test|live)_[0-9a-zA-Z]{10,32}'''
 
-[whitelist]
+[allowlist]
 commits = [
     # Initial commit
     '10b90fd18d590e9db6fef8675aa86a003835b441',
