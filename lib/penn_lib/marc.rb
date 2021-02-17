@@ -78,6 +78,189 @@ module PennLib
     }
   end
 
+  module SubjectConfig
+
+    module Prefixes
+      NAME = 'n'
+      TITLE = 't'
+      SUBJECT = 's' # used for default, handled as lcsh
+      CHILDRENS = 'c'
+      MESH = 'm'
+      FAST = 'f'
+      OTHER = 'o'
+    end
+
+    THESAURI = {
+      'aat' => Prefixes::OTHER,
+      'cct' => Prefixes::OTHER,
+      'fast' => Prefixes::FAST,
+      'jlabsh' => Prefixes::OTHER,
+      'lcsh' => Prefixes::SUBJECT,
+      'lcstt' => Prefixes::OTHER,
+      'lctgm' => Prefixes::OTHER,
+      'local/osu' => Prefixes::OTHER,
+      'mesh' => Prefixes::MESH,
+      'ndlsh' => Prefixes::OTHER,
+      'nlksh' => Prefixes::OTHER
+    }
+
+    static_name = lambda { |f| Prefixes::NAME }
+    static_other = lambda { |f| Prefixes::OTHER }
+
+    FIELDS = {
+      '600' => static_name,
+      '610' => static_name,
+      '611' => static_name,
+      '630' => lambda { |f| Prefixes::TITLE },
+      '650' => lambda { |f|
+        case f.indicator2
+          when '0'
+            return Prefixes::SUBJECT
+          when '1'
+            return Prefixes::CHILDRENS
+          when '2'
+            return Prefixes::MESH
+          when '4'
+            # somewhat of a special case; always keep local headings, fallback mapped to Prefixes::OTHER
+            return Prefixes::OTHER
+        end
+      },
+      '651' => lambda { |f| Prefixes::SUBJECT }, #TODO: is it right to not care about ind2 here?
+      '690' => static_other,
+      '691' => static_other,
+      '697' => static_other
+    }
+
+    def self.prepare_subjects(rec)
+      acc = []
+      rec.fields(FIELDS.keys).each do |f|
+        filter_subject(f, f.tag, acc)
+      end
+      rec.fields('880').each do |f|
+        field_type_tag = f.find { |sf| sf.code == '6' && FIELDS.has_key?(sf.value) }&.value
+        filter_subject(f, field_type_tag, acc) if field_type_tag
+      end
+      return acc.empty? ? nil : map_to_input_fields(acc)
+    end
+
+    ONLY_KEYS = [:val, :prefix, :append, :local, :vernacular]
+
+    def self.map_to_input_fields(acc)
+      ret = {
+        # `xfacets` entries support browse/facet, and will be mapped to stored fields solr-side
+        xfacet: [],
+        # `stored_*` fields (below) are stored only, and do _not_ support browse/facet
+        stored_lcsh: nil,
+        stored_childrens: nil,
+        stored_mesh: nil,
+        stored_local: nil
+      }
+      acc.each do |struct|
+        Marc.trim_trailing_period!(struct[:parts].last)
+        if struct[:local] && struct[:prefix] == Prefixes::OTHER
+          # local subjects without source specified are really too messy
+          struct[:val] = struct.delete(:parts).join('--')
+          struct.delete(:prefix)
+          serialized = struct.to_json(:only => ONLY_KEYS)
+          (ret[:stored_local] ||= []) << serialized
+        elsif struct.size == 2
+          # only `parts` and `prefix` (required keys) are present; use legacy format (for now
+          # we're mainly doing this to incidentally test backward compatibility of server-side
+          # parsing
+          serialized = struct[:prefix] + struct[:parts].join('--')
+          ret[:xfacet] << serialized
+        else
+          # simply map `parts` to `val`
+          struct[:val] = struct.delete(:parts).join('--')
+          serialized = struct.to_json(:only => ONLY_KEYS)
+          ret[:xfacet] << serialized
+        end
+      end
+      return ret
+    end
+
+    def self.filter_subject(field, tag, acc)
+      ret = build_subject_struct(field, tag)
+      return nil unless map_prefix(ret, tag, field)
+      acc << ret if post_process(ret)
+    end
+
+    def self.map_prefix(ret, tag, field)
+      if ret[:source_specified]
+        # source_specified takes priority. NOTE: This is true even if ind2!=7 (i.e., source_specified
+        # shouldn't even apply), because we want to be lenient with our parsing, so the priciple is that
+        # we defer to the _most explicit_ heading type declaration
+        return ret[:prefix] = THESAURI[ret[:source_specified]]
+      else
+        # in the absence of `source_specified`, handling depends on field. NOTE: fields should be
+        # pre-filtered to only valid codes, so intentionally don't use the safe-nav operator here
+        return ret[:prefix] = FIELDS[tag].call(field)
+      end
+    end
+
+    def self.build_subject_struct(field, tag)
+      local = field.indicator2 == '4' || tag.starts_with?('69')
+      ret = {
+        count: 0,
+        parts: [],
+      }
+      ret[:local] = true if local
+      ret[:vernacular] = true if field.tag == '880'
+      field.each do |sf|
+        case sf.code
+          when '0', '6', '8', '5'
+            # ignore these subfields
+            next
+          when 'a'
+            # filter out PRO/CHR entirely (but only need to check on local heading types)
+            return nil if local && sf.value =~ /^%?(PRO|CHR)([ $]|$)/
+          when '2'
+            # use the _last_ source specified, so don't worry about overriding any prior values
+            ret[:source_specified] = sf.value.strip
+            next
+          when 'e', 'w'
+            # 'e' is relator term; not sure what 'w' is. These are used to append for record-view display only
+            (ret[:append] ||= []) << sf.value.strip
+            next
+          when 'b', 'c', 'd', 'p', 'q', 't'
+            # these are appended to the last component if possible (i.e., when joined, should have no delimiter)
+            append_to_last_part(ret[:parts], sf.value.strip)
+            ret[:count] += 1
+            next
+        end
+        # the usual case; add a new component to `parts`
+        ret[:parts] << sf.value.strip
+        ret[:count] += 1
+      end
+      return ret
+    end
+
+    def self.append_to_last_part(parts, value)
+      if parts.empty?
+        parts << value
+      else
+        parts.last << ' ' + value
+      end
+    end
+
+    def self.post_process(ret)
+      case ret.delete(:count)
+        when 0
+          return nil
+        when 1
+          # when we've only encountered one subfield, assume that it might be a poorly-coded record
+          # with a bunch of subdivisions mashed together, and attempt to convert it to a consistent
+          # form. Note that we must separately track count (as opposed to simply checking `parts.size`),
+          # because we're using "subdivision count" as a heuristic for the quality level of the heading.
+          only = ret[:parts].first
+          only.gsub!(/([[[:alnum:]])])(\s+--\s*|\s*--\s+)([[[:upper:]][[:digit:]]])/, '\1--\3')
+          only.gsub!(/([[[:alpha:]])])\s+-\s+([[:upper:]]|[[:digit:]]{2,})/, '\1--\2')
+          only.gsub!(/([[[:alnum:]])])\s+-\s+([[:upper:]])/, '\1--\2')
+      end
+      return ret
+    end
+  end
+
   module EncodingLevel
     # Official MARC codes (https://www.loc.gov/marc/bibliographic/bdleader.html)
     FULL = ' '
@@ -187,10 +370,19 @@ module PennLib
     end
 
     def trim_trailing_period(s)
+      self.class.trim_trailing_period(s, false)
+    end
+
+    def self.trim_trailing_period!(s)
+      trim_trailing_period(s, true)
+    end
+
+    def self.trim_trailing_period(s, inplace)
       if s.end_with?('etc.') || s =~ /(^|[^a-zA-Z])[A-Z]\.$/
-        s
+        inplace ? nil : s # nil if unchanged, for consistency with standard `inplace` semantics
       else
-        s.sub(/\.\s*$/, '')
+        replace_regex = /\.\s*$/
+        inplace ? s.sub!(replace_regex, '') : s.sub(replace_regex, '')
       end
     end
 
@@ -349,37 +541,6 @@ module PennLib
 
     def reject_pro_chr(sf)
       %w{a %}.member?(sf.code) && sf.value =~ /^%?(PRO|CHR)([ $]|$)/
-    end
-
-    # if double_dash is true, then some subfields are joined together with --
-    def join_subject_parts(field, double_dash: false)
-      subfields = field.find_all
-      begin
-        while %w{0 6 5 2}.member?((sf = subfields.next).code)
-          # keep advancing
-        end
-        if !reject_pro_chr(sf)
-          parts = [ sf.value.strip ]
-          while (!reject_pro_chr(sf = subfields.next))
-            if !%w{0 6 5 2}.member?(sf.code)
-              parts << (double_dash && !%w{b c d q t}.member?(sf.code) ? '--' : ' ') + sf.value.strip
-            end
-          end
-        end
-        return '' # rejected
-      rescue StopIteration => e
-        case parts.nil? ? 0 : parts.size
-          when 0
-            return ''
-          when 1
-            return parts.first
-                .gsub(/([[[:alnum:]])])(\s+--\s*|\s*--\s+)([[[:upper:]][[:digit:]]])/, '\1--\3')
-                .gsub(/([[[:alpha:]])])\s+-\s+([[:upper:]]|[[:digit:]]{2,})/, '\1--\2')
-                .gsub(/([[[:alnum:]])])\s+-\s+([[:upper:]])/, '\1--\2')
-          else
-            return parts.join('')
-        end
-      end
     end
 
     def is_curated_database(rec)
