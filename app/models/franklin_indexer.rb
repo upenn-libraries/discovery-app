@@ -457,7 +457,8 @@ class FranklinIndexer < BaseIndexer
 
   def define_oclc_id
     to_field 'oclc_id' do |rec, acc|
-      acc.concat(pennlibmarc.get_oclc_id_values(rec))
+      oclc_ids = pennlibmarc.get_oclc_id_values(rec)
+      acc << oclc_ids.first unless oclc_ids.empty?
     end
   end
 
