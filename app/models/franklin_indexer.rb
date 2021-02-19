@@ -324,7 +324,7 @@ class FranklinIndexer < BaseIndexer
     # browseable/facetable
     to_field 'subject_xfacet2_input' do |rec, acc, ctx|
       val = ctx.clipboard.dig(:subjects, :xfacet)
-      acc << val if val
+      acc.concat(val) if val
     end
 
     # The fields below exist because there are some values that appear in _display_, but should not be
@@ -338,22 +338,22 @@ class FranklinIndexer < BaseIndexer
     # BEGIN STORED SUBJECTS
     to_field 'lcsh_subject_stored_a' do |rec, acc, ctx|
       val = ctx.clipboard.dig(:subjects, :stored_lcsh)
-      acc << val if val
+      acc.concat(val) if val
     end
 
     to_field 'childrens_subject_stored_a' do |rec, acc, ctx|
       val = ctx.clipboard.dig(:subjects, :stored_childrens)
-      acc << val if val
+      acc.concat(val) if val
     end
 
     to_field 'mesh_subject_stored_a' do |rec, acc, ctx|
       val = ctx.clipboard.dig(:subjects, :stored_mesh)
-      acc << val if val
+      acc.concat(val) if val
     end
 
     to_field 'local_subject_stored_a' do |rec, acc, ctx|
       val = ctx.clipboard.dig(:subjects, :stored_local)
-      acc << val if val
+      acc.concat(val) if val
     end
     # END STORED SUBJECTS
 

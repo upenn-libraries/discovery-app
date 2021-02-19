@@ -84,9 +84,9 @@ module PennLib
       NAME = 'n'
       TITLE = 't'
       SUBJECT = 's' # used for default, handled as lcsh
+      FAST = 'f'
       CHILDRENS = 'c'
       MESH = 'm'
-      FAST = 'f'
       OTHER = 'o'
     end
 
@@ -146,9 +146,10 @@ module PennLib
     ONLY_KEYS = [:val, :prefix, :append, :local, :vernacular]
 
     def self.map_to_input_fields(acc)
+      xfacet = [] # provisionally instantiate; we'll almost always need it
       ret = {
         # `xfacets` entries support browse/facet, and will be mapped to stored fields solr-side
-        xfacet: [],
+        xfacet: nil,
         # `stored_*` fields (below) are stored only, and do _not_ support browse/facet
         stored_lcsh: nil,
         stored_childrens: nil,
@@ -168,19 +169,21 @@ module PennLib
           # we're mainly doing this to incidentally test backward compatibility of server-side
           # parsing
           serialized = struct[:prefix] + struct[:parts].join('--')
-          ret[:xfacet] << serialized
+          xfacet << serialized
         else
           # simply map `parts` to `val`
           struct[:val] = struct.delete(:parts).join('--')
           serialized = struct.to_json(:only => ONLY_KEYS)
-          ret[:xfacet] << serialized
+          xfacet << serialized
         end
       end
+      ret[:xfacet] = xfacet unless xfacet.empty?
       return ret
     end
 
     def self.filter_subject(field, tag, acc)
       ret = build_subject_struct(field, tag)
+      return nil unless ret
       return nil unless map_prefix(ret, tag, field)
       acc << ret if post_process(ret)
     end
