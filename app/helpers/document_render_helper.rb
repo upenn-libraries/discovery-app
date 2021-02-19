@@ -224,11 +224,12 @@ module DocumentRenderHelper
   # a different format.
   def render_linked_values_new(options)
     track_dups = Set.new
-    values = options[:value].map do |s|
+    values = []
+    options[:value].each do |s|
       s = JSON.parse(s)
       val = s['val']
       val << '.' unless val.ends_with?('.')
-      next unless track_dups.add(val) # skip duplicate vals
+      next unless track_dups.add?(val) # skip duplicate vals
       append = s['append']
       if s['prefix']
         # presence of a prefix indicates that the heading is browseable
@@ -238,7 +239,7 @@ module DocumentRenderHelper
         link_type = 'subject_search'
         append = "#{append} (search)"
       end
-      {
+      values << {
         value: val.gsub('--', ' -- '), # back-compat with "spacious" delimiter display
         value_for_link: val.gsub('--', ' '), # link value for some reason omits delimiters
         value_append: append,
