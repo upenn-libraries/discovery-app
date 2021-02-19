@@ -744,8 +744,21 @@ module PennLib
       get_subjects_from_600s_and_800(rec, '4')
     end
 
+    def get_subject_solrdoc_display(doc)
+      doc[:default_subject_stored_a]
+    end
 
+    def get_children_subject_solrdoc_display(doc)
+      doc[:childrens_subject_stored_a]
+    end
 
+    def get_medical_subject_solrdoc_display(doc)
+      doc[:mesh_subject_stored_a]
+    end
+
+    def get_local_subject_solrdoc_display(doc)
+      doc[:local_subject_stored_a]
+    end
 
     def get_format(rec)
       acc = []
