@@ -85,9 +85,20 @@ module PennLib
       TITLE = 't'
       SUBJECT = 's' # used for default, handled as lcsh
       FAST = 'f'
+      GEO = 'g'
       CHILDRENS = 'c'
       MESH = 'm'
       OTHER = 'o'
+    end
+
+    class FieldConfig
+      def initialize(mapper)
+        @mapper = mapper
+      end
+
+      def map_prefix(field)
+        @mapper.call(field)
+      end
     end
 
     THESAURI = {
@@ -104,31 +115,63 @@ module PennLib
       'nlksh' => Prefixes::OTHER
     }
 
-    static_name = lambda { |f| Prefixes::NAME }
-    static_other = lambda { |f| Prefixes::OTHER }
+    # default field mapping is based only on ind2, and topic headings (as
+    # opposed to name/title headings) vary significantly across thesauri
+    default_field_mapping = FieldConfig.new(lambda { |f|
+      case f.indicator2
+        when '0'
+          return Prefixes::SUBJECT
+        when '1'
+          return Prefixes::CHILDRENS
+        when '2'
+          return Prefixes::MESH
+        when '4'
+          return Prefixes::OTHER
+        else
+          return nil
+      end
+    })
+
+    # for name/title, ind2=='0'/'1'/'2' are _all_ backed by LCNAF. See:
+    # https://www.loc.gov/aba/cyac/childsubjhead.html
+    # https://www.nlm.nih.gov/tsd/cataloging/trainingcourses/mesh/mod8_020.html
+    base_factory = lambda { |base|
+      lambda { |f|
+        case f.indicator2
+          when '0', '1', '2'
+            return base
+          when '4'
+            return Prefixes::OTHER
+          else
+            return nil
+        end
+      }
+    }
+    name_general = FieldConfig.new(base_factory.call(Prefixes::NAME))
+    title_general = FieldConfig.new(base_factory.call(Prefixes::TITLE))
+    geo_general = FieldConfig.new(base_factory.call(Prefixes::GEO))
+    static_other = FieldConfig.new(lambda { |f|
+      # For now, treat all of these as "other"
+      case f.indicator2
+        when '0', '1', '2', '4'
+          # NOTE: 2nd indicator for local subject fields is inconsistently applied; map everything to "other"
+          return Prefixes::OTHER
+        else
+          return nil
+      end
+    })
 
     FIELDS = {
-      '600' => static_name,
-      '610' => static_name,
-      '611' => static_name,
-      '630' => lambda { |f| Prefixes::TITLE },
-      '650' => lambda { |f|
-        case f.indicator2
-          when '0'
-            return Prefixes::SUBJECT
-          when '1'
-            return Prefixes::CHILDRENS
-          when '2'
-            return Prefixes::MESH
-          when '4'
-            # somewhat of a special case; always keep local headings, fallback mapped to Prefixes::OTHER
-            return Prefixes::OTHER
-        end
-      },
-      '651' => lambda { |f| Prefixes::SUBJECT }, #TODO: is it right to not care about ind2 here?
-      '690' => static_other,
-      '691' => static_other,
-      '697' => static_other
+      '600' => name_general,
+      '610' => name_general,
+      '611' => name_general,
+      '630' => title_general,
+      '650' => default_field_mapping,
+      '651' => geo_general,
+      '690' => static_other, # topical (650)
+      '691' => static_other, # geographic (651)
+      #'696' => static_other  # personal name (600) NOTE: not currently mapped!
+      '697' => static_other  # corporate name (610)
     }
 
     def self.prepare_subjects(rec)
@@ -157,9 +200,14 @@ module PennLib
         stored_local: nil
       }
       acc.each do |struct|
-        Marc.trim_trailing_period!(struct[:parts].last)
+        last = struct[:parts].last
+        # Normalize trailing punctuation on the last heading component. If a comma is present (to be
+        # normalized away), then any `.` present is integral (i.e., not ISBD punctuation), and thus
+        # should be left intact as part of the heading.
+        Marc.trim_trailing_comma!(last) || Marc.trim_trailing_period!(last)
         if struct[:local] && struct[:prefix] == Prefixes::OTHER
-          # local subjects without source specified are really too messy
+          # local subjects without source specified are really too messy, so they should bypass
+          # xfacet processing and be placed directly in stored field for display only
           struct[:val] = struct.delete(:parts).join('--')
           struct.delete(:prefix)
           serialized = struct.to_json(:only => ONLY_KEYS)
@@ -193,12 +241,13 @@ module PennLib
         # source_specified takes priority. NOTE: This is true even if ind2!=7 (i.e., source_specified
         # shouldn't even apply), because we want to be lenient with our parsing, so the priciple is that
         # we defer to the _most explicit_ heading type declaration
-        return ret[:prefix] = THESAURI[ret[:source_specified]]
+        prefix = THESAURI[ret[:source_specified].downcase]
       else
         # in the absence of `source_specified`, handling depends on field. NOTE: fields should be
         # pre-filtered to only valid codes, so intentionally don't use the safe-nav operator here
-        return ret[:prefix] = FIELDS[tag].call(field)
+        prefix = FIELDS[tag].map_prefix(field)
       end
+      prefix ? (ret[:prefix] = prefix) : nil
     end
 
     def self.build_subject_struct(field, tag)
@@ -232,10 +281,20 @@ module PennLib
             next
         end
         # the usual case; add a new component to `parts`
-        ret[:parts] << sf.value.strip
+        append_new_part(ret[:parts], sf.value.strip)
         ret[:count] += 1
       end
       return ret
+    end
+
+    def self.append_new_part(parts, value)
+      if parts.empty?
+        parts << value
+      else
+        last = parts.last
+        Marc.trim_trailing_comma!(last) || Marc.trim_trailing_period!(last)
+        parts << value
+      end
     end
 
     def self.append_to_last_part(parts, value)
@@ -369,7 +428,16 @@ module PennLib
     end
 
     def trim_trailing_comma(s)
-      s.sub(/\s*,\s*$/, '')
+      self.class.trim_trailing_comma(s, false)
+    end
+
+    def self.trim_trailing_comma!(s)
+      trim_trailing_comma(s, true)
+    end
+
+    def self.trim_trailing_comma(s, inplace)
+      replace_regex = /\s*,\s*$/
+      inplace ? s.sub!(replace_regex, '') : s.sub(replace_regex, '')
     end
 
     def trim_trailing_period(s)
