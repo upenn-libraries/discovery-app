@@ -220,6 +220,35 @@ module DocumentRenderHelper
     render_values_with_breaks(values)
   end
 
+  # Shim between the solr-stored subject structs and `render_linked_values`, which expects
+  # a different format.
+  def render_linked_values_new(options)
+    track_dups = Set.new
+    values = []
+    options[:value].each do |s|
+      s = JSON.parse(s)
+      val = s['val']
+      val << '.' unless val.ends_with?('.')
+      next unless track_dups.add?(val) # skip duplicate vals
+      append = s['append']
+      if s['prefix']
+        # presence of a prefix indicates that the heading is browseable
+        link_type = 'subject_xfacet2'
+      else
+        # no prefix => not browseable => use search instead (and append action for transparency)
+        link_type = 'subject_search'
+        append = "#{append} (search)"
+      end
+      values << {
+        value: val.gsub('--', ' -- '), # back-compat with "spacious" delimiter display
+        value_for_link: val.gsub('--', ' '), # link value for some reason omits delimiters
+        value_append: append,
+        link_type: link_type
+      }
+    end
+    render_linked_values(value: values)
+  end
+
   # 2017/06/22: This is now obsolete and unused because both subject facet
   # and xfacet values have -- separators and they don't need to be removed.
   #
