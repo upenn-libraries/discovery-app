@@ -52,15 +52,13 @@ module DocumentRenderHelper
   end
 
   @@HATHI_PD_TEXT = 'HathiTrust Digital Library Connect to full text'
-  @@HATHI_TMP_TEXT = 'HathiTrust Digital Library Login for full text'
-  @@HATHI_REPLACEMENT_TEXT = 'COVID-19 Special Access from HathiTrust'
-  @@HATHI_INFO = ' — Full text access only for <a data-toggle="tooltip" title="details regarding HathiTrust ETAS access authorization" href="https://guides.library.upenn.edu/hathitrust">students, active faculty, and permanent staff</a>'
+  @@HATHI_ETAS_POSTFIX = ' from HathiTrust during COVID-19'
+  @@HATHI_INFO = ' — only for <a data-toggle="tooltip" title="details regarding HathiTrust ETAS access authorization" href="https://guides.library.upenn.edu/hathitrust">students, active faculty, and permanent staff</a>'
   @@HATHI_LOGIN_PREFIX = 'https://babel.hathitrust.org/Shibboleth.sso/Login?entityID=https://idp.pennkey.upenn.edu/idp/shibboleth&target=https%3A%2F%2Fbabel.hathitrust.org%2Fcgi%2Fping%2Fpong%3Ftarget%3D'
 
-  def detect_monograph(document)
+  def detect_nocirc(document)
     return nil unless (alma_mms_id = document[:alma_mms_id]).presence
-    return nil unless ['a','m'].include?(document.to_marc.leader[7])
-    "<div id=\"monograph-#{alma_mms_id}\" display=\"none\"></div>".html_safe
+    "<div id=\"items_nocirc-#{alma_mms_id}\" display=\"none\" val=\"#{document[:nocirc_a].first}\"></div>".html_safe
   end
 
   def render_online_resource_display_for_index_view(options)
@@ -68,21 +66,26 @@ module DocumentRenderHelper
     suppress_remote_links = 'Include Partner Libraries' != params.dig('f', 'cluster', 0)
     alma_mms_id = options[:document][:alma_mms_id]
     hathi_pd = false
-    hathi_etas = false
+    hathi_etas = nil
     ret = values.map do |value|
       JSON.parse(value).map do |link_struct|
         url = link_struct['linkurl']
         text = link_struct['linktext']
-        append = ''
+        postfix = link_struct['postfix']
         if text == @@HATHI_PD_TEXT
           hathi_pd = true
-        elsif text == @@HATHI_TMP_TEXT
-          hathi_etas = true
-          text = @@HATHI_REPLACEMENT_TEXT
+        elsif postfix == @@HATHI_ETAS_POSTFIX
+          if hathi_etas.nil?
+            hathi_etas = [url]
+          elsif hathi_etas.include? url
+            next # dedupe identical urls; infrequent, but possible
+          else
+            hathi_etas << url
+          end
           url = @@HATHI_LOGIN_PREFIX + URI.encode_www_form_component(url)
           append = @@HATHI_INFO
         end
-        (suppress_remote_links && text =~ /View record in .*\'s catalog/) ? nil : %Q{<a href="#{url}">#{text}</a>#{append}}
+        (suppress_remote_links && text =~ /View record in .*\'s catalog/) ? nil : %Q{<a href="#{url}">#{text}</a>#{postfix}#{append}}
       end.compact.join('<br/>')
     end.reject { |item| item.blank? }.join('<br/>')
     unless alma_mms_id.nil?
@@ -100,22 +103,27 @@ module DocumentRenderHelper
     values = options[:value]
     alma_mms_id = options[:document][:alma_mms_id]
     hathi_pd = false
-    hathi_etas = false
+    hathi_etas = nil
     ret = values.map do |value|
       JSON.parse(value).map do |link_struct|
         url = link_struct['linkurl']
         text = link_struct['linktext']
-        append = ''
+        postfix = link_struct['postfix']
         orig_url = url
         if text == @@HATHI_PD_TEXT
           hathi_pd = true
-        elsif text == @@HATHI_TMP_TEXT
-          hathi_etas = true
-          text = @@HATHI_REPLACEMENT_TEXT
+        elsif postfix == @@HATHI_ETAS_POSTFIX
+          if hathi_etas.nil?
+            hathi_etas = [url]
+          elsif hathi_etas.include? url
+            next # dedupe identical urls; infrequent, but possible
+          else
+            hathi_etas << url
+          end
           url = @@HATHI_LOGIN_PREFIX + URI.encode_www_form_component(url)
           append = @@HATHI_INFO
         end
-        html = %Q{<div class="online-resource-link-group"><a href="#{url}">#{text}</a>#{append}}
+        html = %Q{<div class="online-resource-link-group"><a href="#{url}">#{text}</a>#{postfix}#{append}}
         html += '<br/>'.html_safe
 
         if !text.start_with?('http')
@@ -146,7 +154,7 @@ module DocumentRenderHelper
         html += '</div>'
 
         html
-      end.join
+      end.compact.join
     end.join
     unless alma_mms_id.nil?
       if hathi_pd
@@ -160,6 +168,7 @@ module DocumentRenderHelper
   end
 
   def hathi_tag_id(type, id)
+    # TODO: remove? deprecated? I don't think anyone reads this value anymore as of now
     "<div id=\"hathi_#{type}-#{id}\" display=\"none\"></div>"
   end
 
@@ -210,6 +219,35 @@ module DocumentRenderHelper
       [ record[:value_prepend], text, record[:value_append] ].select(&:present?).join(' ')
     end
     render_values_with_breaks(values)
+  end
+
+  # Shim between the solr-stored subject structs and `render_linked_values`, which expects
+  # a different format.
+  def render_linked_values_new(options)
+    track_dups = Set.new
+    values = []
+    options[:value].each do |s|
+      s = JSON.parse(s)
+      val = s['val']
+      val << '.' unless val.ends_with?('.')
+      next unless track_dups.add?(val) # skip duplicate vals
+      append = s['append']
+      if s['prefix']
+        # presence of a prefix indicates that the heading is browseable
+        link_type = 'subject_xfacet2'
+      else
+        # no prefix => not browseable => use search instead (and append action for transparency)
+        link_type = 'subject_search'
+        append = "#{append} (search)"
+      end
+      values << {
+        value: val.gsub('--', ' -- '), # back-compat with "spacious" delimiter display
+        value_for_link: val.gsub('--', ' '), # link value for some reason omits delimiters
+        value_append: append,
+        link_type: link_type
+      }
+    end
+    render_linked_values(value: values)
   end
 
   # 2017/06/22: This is now obsolete and unused because both subject facet

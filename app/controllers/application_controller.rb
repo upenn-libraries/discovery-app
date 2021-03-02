@@ -3,6 +3,10 @@ class ApplicationController < ActionController::Base
   include Blacklight::Controller
   layout 'blacklight'
 
+  # Allow developers to simulate HTTP_REMOTE_USER using
+  # DEVELOPMENT_USERNAME env var
+  before_action :set_dev_user_header
+
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
@@ -40,4 +44,10 @@ class ApplicationController < ActionController::Base
     render :template => "/known_issues"
   end
 
+  # Sets HTTP_REMOTE_USER value for development use
+  def set_dev_user_header
+    if Rails.env.development?
+      request.headers['HTTP_REMOTE_USER'] = ENV['DEVELOPMENT_USERNAME']
+    end
+  end
 end

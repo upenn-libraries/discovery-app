@@ -1,9 +1,17 @@
 # See http://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
 #
 User-agent: *
-Crawl-delay: 10
+Sitemap: https://franklin.library.upenn.edu/sitemap.xml
+
+# it's possible that some relevant pages with query params could be derived, e.g. from curated
+# links, etc.; but until we can guide targeted crawling of such pages, the vast majority of
+# requests with params will just be random combinations of filters, consuming everyone's CPU
+# and bandwidth for no useful purpose (from server and crawler's perspective alike)
+Disallow: /*?*
+
+Disallow: /advanced
+Disallow: /catalog/facet/
 Disallow: /catalog.atom
 Disallow: /catalog.rss
 Disallow: /catalog/*/email
 Disallow: /catalog/*/marc_view
-# Disallow: /

@@ -74,7 +74,7 @@ class SolrDocument
           if instance_variable_defined?("@#{method_name}")
             result = instance_variable_get("@#{method_name}")
           else
-            result = pennlibmarc.send("get_#{method_name}", to_marc)
+            result = pennlibmarc.send("get_#{method_name}", method_name.to_s.end_with?('_solrdoc_display') ? self : to_marc)
             instance_variable_set("@#{method_name}", result)
           end
           return result

@@ -104,6 +104,10 @@ class FranklinIndexer < BaseIndexer
 
     define_record_source_facet
 
+    to_field 'nocirc_f_stored' do |rec, acc|
+      acc << pennlibmarc.items_nocirc(rec)
+    end
+
     define_mms_id
 
     define_oclc_id
@@ -168,10 +172,6 @@ class FranklinIndexer < BaseIndexer
 
     to_field 'subject_search' do |rec, acc|
       acc.concat(pennlibmarc.get_subject_search_values(rec))
-    end
-
-    to_field 'subject_xfacet2_input' do |rec, acc|
-      acc.concat(pennlibmarc.get_subject_xfacet_values(rec))
     end
 
     to_field 'toplevel_subject_f' do |rec, acc|
@@ -314,8 +314,48 @@ class FranklinIndexer < BaseIndexer
       ctx.clipboard.tap do |c|
         c[:timestamps] = pennlibmarc.prepare_timestamps(rec)
         c[:dates] = pennlibmarc.prepare_dates(rec)
+        c[:subjects] = PennLib::SubjectConfig.prepare_subjects(rec)
       end
     end
+
+    # All browseable/facetable subject types are multiplexed through this field; for corresponding display,
+    # these values are then mapped Solr-side to the `*_subject_stored_a` fields below. The fields are still
+    # directly configured below for storage of values that should be displayed, but not directly
+    # browseable/facetable
+    to_field 'subject_xfacet2_input' do |rec, acc, ctx|
+      val = ctx.clipboard.dig(:subjects, :xfacet)
+      acc.concat(val) if val
+    end
+
+    # The fields below exist because there are some values that appear in _display_, but should not be
+    # _directly_ browseable/facetable (except perhaps as xrefs).
+    # Note, this is a step towards consolidation/consistency in management of subjects generally; there are
+    # choices that are preserved here initially for functional backward compatibility, but some of the behavior
+    # we're preserving is of questionable merit. Namely, the fields below allow the display of fields that will
+    # be links, but which will in some cases not be present in the linked "browse" view. We'll take this one
+    # step at a time, consolidating first with minimal behavioral changes; but note that some of the preserved
+    # behavior may be ripe for reconsideration.
+    # BEGIN STORED SUBJECTS
+    to_field 'lcsh_subject_stored_a' do |rec, acc, ctx|
+      val = ctx.clipboard.dig(:subjects, :stored_lcsh)
+      acc.concat(val) if val
+    end
+
+    to_field 'childrens_subject_stored_a' do |rec, acc, ctx|
+      val = ctx.clipboard.dig(:subjects, :stored_childrens)
+      acc.concat(val) if val
+    end
+
+    to_field 'mesh_subject_stored_a' do |rec, acc, ctx|
+      val = ctx.clipboard.dig(:subjects, :stored_mesh)
+      acc.concat(val) if val
+    end
+
+    to_field 'local_subject_stored_a' do |rec, acc, ctx|
+      val = ctx.clipboard.dig(:subjects, :stored_local)
+      acc.concat(val) if val
+    end
+    # END STORED SUBJECTS
 
     to_field 'recently_added_isort' do |rec, acc, ctx|
       val = ctx.clipboard.dig(:timestamps, :most_recent_add)
@@ -453,7 +493,8 @@ class FranklinIndexer < BaseIndexer
 
   def define_oclc_id
     to_field 'oclc_id' do |rec, acc|
-      acc.concat(pennlibmarc.get_oclc_id_values(rec))
+      oclc_ids = pennlibmarc.get_oclc_id_values(rec)
+      acc << oclc_ids.first unless oclc_ids.empty?
     end
   end
 
@@ -495,6 +536,7 @@ class FranklinIndexer < BaseIndexer
   def define_record_source_facet
     to_field 'record_source_f' do |rec, acc|
       acc << 'Penn'
+      acc << 'HathiTrust' if pennlibmarc.is_etas(rec)
     end
   end
 

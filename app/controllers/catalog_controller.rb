@@ -11,7 +11,7 @@ class CatalogController < ApplicationController
   include BlacklightSolrplugins::XBrowse
   include HandleInvalidAdvancedSearch
   include AssociateExpandedDocs
-  include HandleEmptyEmail
+  include EmailActionProtection
 
   ENABLE_SUBJECT_CORRELATION = ENV['ENABLE_SUBJECT_CORRELATION']&.downcase == 'true'
 
@@ -88,6 +88,7 @@ class CatalogController < ApplicationController
         recently_added_isort
         hld_count_isort
         prt_count_isort
+        nocirc_a
       }.join(','),
         'facet.threads': 2,
         'facet.mincount': 0,
@@ -385,7 +386,7 @@ class CatalogController < ApplicationController
             'Other' => { :label => 'Other', :fq => "{!tag=azlist ex=azlist}title_xfacet:/[ -`{-~].*/"}
         }
     config.add_facet_field 'access_f', label: 'Access', collapse: false, solr_params: MINCOUNT, :if => local_only, query: {
-        'Online' => { :label => 'Online', :fq => "{!join ex=orig_q from=cluster_id to=cluster_id v='access_f:Online OR record_source_id:3'}"},
+        'Online' => { :label => 'Online', :fq => "{!join ex=orig_q from=cluster_id to=cluster_id v='{!term f=access_f v=Online}'}"},
         'At the library' => { :label => 'At the library', :fq => "{!join ex=orig_q from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"},
     }
     config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false, :ex => 'orig_q', solr_params: MINCOUNT, :if => local_only, query: {
@@ -408,7 +409,7 @@ class CatalogController < ApplicationController
         'Other' => { :label => 'Other', :fq => "{!term f=format_f v='Other'}"},
         'Database & Article Index' => { :label => 'Database & Article Index', :fq => "{!term f=format_f v='Database & Article Index'}"},
         '3D object' => { :label => '3D object', :fq => "{!term f=format_f v='3D object'}"},
-        'Projected graphic' => { :label => 'Projected graphic', :fq => "{!term f=format_f v='Projected graphic'}"},
+        'Projected graphic' => { :label => 'Projected graphic', :fq => "{!term f=format_f v='Projected graphic'}"}
     }
     config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z', collapse: false,
         :ex => 'orig_q', solr_params: MINCOUNT
@@ -546,10 +547,16 @@ class CatalogController < ApplicationController
         { dynamic_name: 'former_title_display', label: 'Former title', helper_method: 'render_linked_values' },
         { dynamic_name: 'continues_display', label: 'Continues' },
         { dynamic_name: 'continued_by_display', label: 'Continued By' },
-        { dynamic_name: 'subject_display', label: 'Subjects', helper_method: 'render_linked_values' },
-        { dynamic_name: 'children_subject_display', label: 'Childrens subjects', helper_method: 'render_linked_values' },
-        { dynamic_name: 'medical_subject_display', label: 'Medical subjects', helper_method: 'render_linked_values' },
-        { dynamic_name: 'local_subject_display', label: 'Local subjects', helper_method: 'render_linked_values' },
+        { dynamic_name: 'subject_solrdoc_display', label: 'Subjects', helper_method: 'render_linked_values_new'},
+        { dynamic_name: 'children_subject_solrdoc_display', label: 'Childrens subjects', helper_method: 'render_linked_values_new'},
+        { dynamic_name: 'medical_subject_solrdoc_display', label: 'Medical subjects', helper_method: 'render_linked_values_new'},
+        { dynamic_name: 'local_subject_solrdoc_display', label: 'Local subjects', helper_method: 'render_linked_values_new'},
+# nocommit: the above four *_solrdoc_* fields are intended to replace the below four.
+# we're leaving these so they can be enabled for comparison, but the below should ultimately be removed
+#        { dynamic_name: 'subject_display', label: 'Subjects (legacy)', helper_method: 'render_linked_values' },
+#        { dynamic_name: 'children_subject_display', label: 'Childrens subjects (legacy)', helper_method: 'render_linked_values' },
+#        { dynamic_name: 'medical_subject_display', label: 'Medical subjects (legacy)', helper_method: 'render_linked_values' },
+#        { dynamic_name: 'local_subject_display', label: 'Local subjects (legacy)', helper_method: 'render_linked_values' },
         { dynamic_name: 'genre_display', label: 'Form/Genre', helper_method: 'render_linked_values' },
         { dynamic_name: 'place_of_publication_display', label: 'Place of Publication', helper_method: 'render_linked_values' },
         { dynamic_name: 'language_display', label: 'Language' },
@@ -878,10 +885,12 @@ class CatalogController < ApplicationController
     add_show_tools_partial(:print, partial: 'print')
 
     config.show.document_actions.delete(:sms)
+    config.show.document_actions.email.if = :user_signed_in?
+    config.show.document_actions.login_for_email.unless = :user_signed_in?
 
     PennLib::Util.reorder_document_actions(
         config.show.document_actions,
-        :bookmark, :email, :citation, :print, :refworks, :endnote, :ris, :librarian_view)
+        :bookmark, :email, :login_for_email, :citation, :print, :refworks, :endnote, :ris, :librarian_view)
 
     config.navbar.partials.delete(:search_history)
   end

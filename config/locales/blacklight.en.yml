@@ -1,28 +1,31 @@
 en:
   blacklight:
-    application_name: 'Franklin'
-    back_to_search: 'Back to Search Results'
+    application_name: "Franklin"
+    back_to_search: "Back to Search Results"
     search:
       form:
         search:
-          placeholder: 'Find books, journals, videos, & more'
+          placeholder: "Find books, journals, videos, & more"
       librarian_view:
-        title: 'Staff View'
+        title: "Staff View"
       errors:
         request_error: "Franklin is having trouble executing your search. Please try again."
         invalid_solr_id: "The requested record was not found."
     tools:
-      librarian_view: 'Staff View'
+      librarian_view: "Staff View"
+      login_for_email: "Login to Email"
   franklin:
-    landing_page_title: 'Franklin - University of Pennsylvania'
+    landing_page_title: "Franklin - University of Pennsylvania"
+    pap_info_link: "https://guides.library.upenn.edu/circulation/PickUpatPenn"
+    bbm_info_link: "https://guides.library.upenn.edu/resourcesharing/books-by-mail"
     catalog_search:
-      no_results: 'No results'
+      no_results: "No results"
       holdings: "%{count} print %{option}"
       available_with_location: "Available - %{location} - %{classification} %{item}"
       available: "Available - %{classification} %{item}"
     bento_search:
-      placeholder: 'Find articles, books, journals & more'
+      placeholder: "Find articles, books, journals & more"
     articles_search:
-      placeholder: 'Find articles & more'
+      placeholder: "Find articles & more"
     databases_search:
-      placeholder: 'Find databases & articles'
+      placeholder: "Find databases & articles"

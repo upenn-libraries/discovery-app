@@ -51,11 +51,12 @@ module BentoHelper
   # @param [SolrDocument] document
   # @return [ActiveSupport::SafeBuffer]
   def online_holding_info_for(document)
-    online_links_arr = dedupe_hathi(document.full_text_links_for_cluster_display)
-    per_se_links_count = document['full_text_link_text_a']&.size || 0
+    online_links_arr = []
+    has_hathi_link = dedupe_hathi(document.full_text_links_for_cluster_display, online_links_arr)
     # online holdings are not necessarily represented in 'full_text_link_text_a'
+    # derive the canonical `links_count` from `prt_count_isort`, possibly incremented by hathi holding
     # where legit holding has no link, below prevents Hathi holdings from masking the presence of "real" online holding
-    links_count = (document['prt_count_isort'] || 0) + (per_se_links_count < online_links_arr.size ? online_links_arr.size - per_se_links_count : 0)
+    links_count = (document['prt_count_isort'] || 0) + (has_hathi_link ? 1 : 0)
     if links_count == 1 && online_links_arr.size == 1
       fulltext_link_for online_links_arr.first
     elsif document['prt_count_isort'].nil?
@@ -68,19 +69,16 @@ module BentoHelper
   end
 
   HATHI_PD_TEXT = 'HathiTrust Digital Library Connect to full text'
-  HATHI_TMP_TEXT = 'HathiTrust Digital Library Login for full text'
-  HATHI_REPLACEMENT_TEXT = 'COVID-19 Special Access from HathiTrust'
+  HATHI_ETAS_POSTFIX = ' from HathiTrust during COVID-19'
   HATHI_LOGIN_PREFIX = 'https://babel.hathitrust.org/Shibboleth.sso/Login?entityID=https://idp.pennkey.upenn.edu/idp/shibboleth&target=https%3A%2F%2Fbabel.hathitrust.org%2Fcgi%2Fping%2Fpong%3Ftarget%3D'
 
-  def dedupe_hathi(online_links_arr)
-    acc = { arr: [] }
+  def dedupe_hathi(online_links_arr, result_arr)
+    acc = { arr: result_arr }
     online_links_arr.each_with_object(acc) do |v, acc|
       e = JSON.parse(v).first
-      case e['linktext']
-      when HATHI_PD_TEXT
+      if e['linktext'] == HATHI_PD_TEXT
         acc[:pd] = e
-      when HATHI_TMP_TEXT
-        e['linktext'] = HATHI_REPLACEMENT_TEXT
+      elsif e['postfix'] == HATHI_ETAS_POSTFIX
         e['linkurl'] = HATHI_LOGIN_PREFIX + URI.encode_www_form_component(e['linkurl'])
         acc[:etas] = e
       else
@@ -88,14 +86,18 @@ module BentoHelper
       end
     end
     hathi = (acc[:etas] || acc[:pd])
-    acc[:arr] << hathi if hathi
-    acc[:arr]
+    if hathi.nil?
+      return false
+    else
+      result_arr << hathi
+      return true
+    end
   end
 
   # Return a link to full text
   # @param [SolrDocument] document
   # @return [ActiveSupport::SafeBuffer]
   def fulltext_link_for(link_info)
-    link_to link_info['linktext'], link_info['linkurl']
+    link_to(link_info['linktext'], link_info['linkurl']) + link_info['postfix']
   end
 end

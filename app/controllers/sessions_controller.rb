@@ -57,8 +57,12 @@ class SessionsController < Devise::SessionsController
     # adjust this to be deliberately lower.
     session['hard_expiration'] = Time.now.to_i + (10 * 60 * 60)
 
+    # TODO: this can lead to 'none' being set as the session userid
+    # which breaks some Alma lookups for guest users. Removing this
+    # and not setting session user info for guest users is probably
+    # the right thing to do but needs testing in a production-like
+    # environment
     remote_user_header = request.headers['HTTP_REMOTE_USER'] || 'none@upenn.edu'
-
     pennkey_username = remote_user_header.split('@').first
     set_session_user_details(pennkey_username)
     set_session_userid(pennkey_username)
