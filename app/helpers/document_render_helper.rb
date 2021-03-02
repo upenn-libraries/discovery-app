@@ -58,7 +58,7 @@ module DocumentRenderHelper
 
   def detect_nocirc(document)
     return nil unless (alma_mms_id = document[:alma_mms_id]).presence
-    "<div id=\"items_nocirc-#{alma_mms_id}\" display=\"none\" val=\"#{document[:nocirc_a].first}\"></div>".html_safe
+    "<div id=\"items_nocirc-#{alma_mms_id}\" display=\"none\" val=\"#{document[:nocirc_stored_a].first}\"></div>".html_safe
   end
 
   def render_online_resource_display_for_index_view(options)

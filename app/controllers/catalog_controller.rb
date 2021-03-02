@@ -88,7 +88,7 @@ class CatalogController < ApplicationController
         recently_added_isort
         hld_count_isort
         prt_count_isort
-        nocirc_a
+        nocirc_stored_a
       }.join(','),
         'facet.threads': 2,
         'facet.mincount': 0,

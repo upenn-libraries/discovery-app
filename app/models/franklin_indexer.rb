@@ -104,7 +104,7 @@ class FranklinIndexer < BaseIndexer
 
     define_record_source_facet
 
-    to_field 'nocirc_f_stored' do |rec, acc|
+    to_field 'nocirc_stored_a' do |rec, acc|
       acc << pennlibmarc.items_nocirc(rec)
     end
 
