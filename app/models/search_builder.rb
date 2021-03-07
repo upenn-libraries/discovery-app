@@ -3,7 +3,7 @@ class SearchBuilder < Blacklight::SearchBuilder
   include Blacklight::Solr::SearchBuilderBehavior
   include BlacklightAdvancedSearch::AdvancedSearchBuilder
   self.default_processor_chain += [:add_advanced_search_to_solr, :manipulate_sort_and_rows_params, :modify_combo_param_with_absent_q,
-      :lowercase_expert_boolean_operators, :add_left_anchored_title, :add_routing_hash]
+      :lowercase_expert_boolean_operators, :add_left_anchored_title, :add_routing_hash, :add_cluster_params]
   include BlacklightSolrplugins::FacetFieldsQueryFilter
 
   ##
@@ -99,6 +99,12 @@ class SearchBuilder < Blacklight::SearchBuilder
       end
     end
     super(params_copy)
+  end
+
+  def add_cluster_params(solr_parameters)
+    if 'Include Partner Libraries' != blacklight_params.dig(:f, :cluster, 0)
+      solr_parameters[:fq] << '{!term tag=cluster ex=cluster f=record_source_f v=Penn}'
+    end
   end
 
   def add_left_anchored_title(solr_parameters)

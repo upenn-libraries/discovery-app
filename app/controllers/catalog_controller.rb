@@ -68,7 +68,7 @@ class CatalogController < ApplicationController
         alma_mms_id
         score
         format_a
-        full_text_link_text_a
+        full_text_link_a
         isbn_isxn
         language_a
         title
@@ -88,14 +88,12 @@ class CatalogController < ApplicationController
         recently_added_isort
         hld_count_isort
         prt_count_isort
-        nocirc_a
+        nocirc_stored_a
       }.join(','),
         'facet.threads': 2,
         'facet.mincount': 0,
-        #      fq: '{!tag=cluster}{!collapse field=cluster_id nullPolicy=expand size=5000000 min=record_source_id}',
         # this approach needs expand.field=cluster_id
-        #cluster: %q~NOT ({!join from=cluster_id to=cluster_id v='record_source_f:"Penn"'} AND record_source_f:"HathiTrust") NOT record_source_id:3~,
-        cluster: '{!bool filter=*:* must_not=\'{!bool filter=\\\'{!join from=cluster_id to=cluster_id v=record_source_id:1}\\\' filter=record_source_id:2}\'}',
+        cluster: '{!tieredDomainDedupe f=record_source_f joinField=cluster_id v=Penn,Brown,Chicago,Columbia,Cornell,Duke,Harvard,Princeton,Stanford,HathiTrust}',
         back: '{!query v=$correlation_domain}',
         # NOTE: correlation_domain is separately defined from correlation_domain_refine so that the latter may be applied
         # and selectively excluded (via excludeTags) for reporting counts over the full cluster domain, while calculating
@@ -103,7 +101,6 @@ class CatalogController < ApplicationController
         # needed, such as for "expert help", which can use correlation_domain directly
         correlation_domain: '{!bool filter=$cluster filter=$correlation_domain_refine}',
         correlation_domain_refine: '{!bool filter=elvl_rank_isort:0}',
-        fq: '{!query tag=cluster v=$cluster}',
         expand: 'true',
         'expand.field': 'cluster_id',
         'expand.q': '*:*',
@@ -163,6 +160,10 @@ class CatalogController < ApplicationController
 
     database_selected = lambda { |a, b, c|
       a.params.dig(:f, :format_f)&.include?('Database & Article Index')
+    }
+
+    local_only = lambda { |a, b, c|
+      'Include Partner Libraries' != a.params.dig(:f, :cluster, 0)
     }
 
     # Some filters (e.g., subject_f) are capable of driving meaningful correlations;
@@ -286,7 +287,7 @@ class CatalogController < ApplicationController
       subject_correlation: {
         type: 'query',
         domain: {
-          query: '{!query v=$cluster}'
+          query: '{!query ex=cluster v=$cluster}'
         },
         q: '{!query tag=REFINE v=$correlation_domain}',
         facet: {
@@ -327,6 +328,10 @@ class CatalogController < ApplicationController
 
     NO_FACET_SEARCH_FIELDS = ['subject_correlation'].freeze
 
+    config.add_facet_field 'cluster', label: 'Search domain', collapse: false, single: :manual, solr_params: MINCOUNT, query: {
+        #'Penn' => { :label => 'Penn', :fq => '{!term tag=cluster ex=cluster f=record_source_f v=Penn}'},
+        'Include Partner Libraries' => { :label => 'Include Partner Libraries', :fq => '{!query tag=cluster ex=cluster v=$cluster}'}
+    }
     config.add_facet_field 'db_subcategory_f', label: 'Database Subject', if: lambda { |a,b,c| false }
     config.add_facet_field 'db_category_f', label: 'Database Subject', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy',
                            :json_facet => DATABASE_CATEGORY_TAXONOMY, :sub_hierarchy => [:db_subcategory_f], :facet_type => :database,
@@ -380,29 +385,40 @@ class CatalogController < ApplicationController
             'Z' => { :label => 'Z', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='z'}"},
             'Other' => { :label => 'Other', :fq => "{!tag=azlist ex=azlist}title_xfacet:/[ -`{-~].*/"}
         }
-    config.add_facet_field 'access_f', label: 'Access', collapse: false, solr_params: MINCOUNT, query: {
-        # NOTE: we want joins here in order to "cross-pollinate" access types among same-source clusters; e.g., if there's
-        # a cluster with multiple "Penn source" records, they should all be close enough to be considered to share each
-        # others' access modes
+    config.add_facet_field 'access_f', label: 'Access', collapse: false, solr_params: MINCOUNT, :if => local_only, query: {
         'Online' => { :label => 'Online', :fq => "{!join ex=orig_q from=cluster_id to=cluster_id v='{!term f=access_f v=Online}'}"},
         'At the library' => { :label => 'At the library', :fq => "{!join ex=orig_q from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"},
     }
-    config.add_facet_field 'record_source_f', label: 'Record Source', collapse: false, solr_params: MINCOUNT, query: {
-        # NOTE: joins here are similarly relevant to the `access_f` case (see above), but with the exception that records from the
-        # "top-priority" source are all guaranteed to have the same value for this field, so can be optimized to a simple term query
-        # (because there can be nothing to meaningfully "cross-pollinate")
-        'HathiTrust' => { :label => 'HathiTrust', :fq => "{!join ex=orig_q from=cluster_id to=cluster_id v='{!term f=record_source_f v=HathiTrust}'}"},
-        'Penn' => { :label => 'Penn', :fq => "{!term f=record_source_f v=Penn}"},
+    config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false, :ex => 'orig_q', solr_params: MINCOUNT, :if => local_only, query: {
+        'Book' => { :label => 'Book', :fq => "{!term f=format_f v='Book'}"},
+        'Government document' => { :label => 'Government document', :fq => "{!term f=format_f v='Government document'}"},
+        'Journal/Periodical' => { :label => 'Journal/Periodical', :fq => "{!term f=format_f v='Journal/Periodical'}"},
+        'Microformat' => { :label => 'Microformat', :fq => "{!term f=format_f v='Microformat'}"},
+        'Sound recording' => { :label => 'Sound recording', :fq => "{!term f=format_f v='Sound recording'}"},
+        'Musical score' => { :label => 'Musical score', :fq => "{!term f=format_f v='Musical score'}"},
+        'Video' => { :label => 'Video', :fq => "{!term f=format_f v='Video'}"},
+        'Conference/Event' => { :label => 'Conference/Event', :fq => "{!term f=format_f v='Conference/Event'}"},
+        'Manuscript' => { :label => 'Manuscript', :fq => "{!term f=format_f v='Manuscript'}"},
+        'Thesis/Dissertation' => { :label => 'Thesis/Dissertation', :fq => "{!term f=format_f v='Thesis/Dissertation'}"},
+        'Newspaper' => { :label => 'Newspaper', :fq => "{!term f=format_f v='Newspaper'}"},
+        'Datafile' => { :label => 'Datafile', :fq => "{!term f=format_f v='Datafile'}"},
+        'Image' => { :label => 'Image', :fq => "{!term f=format_f v='Image'}"},
+        'Website/Database' => { :label => 'Website/Database', :fq => "{!term f=format_f v='Website/Database'}"},
+        'Map/Atlas' => { :label => 'Map/Atlas', :fq => "{!term f=format_f v='Map/Atlas'}"},
+        'Archive' => { :label => 'Archive', :fq => "{!term f=format_f v='Archive'}"},
+        'Other' => { :label => 'Other', :fq => "{!term f=format_f v='Other'}"},
+        'Database & Article Index' => { :label => 'Database & Article Index', :fq => "{!term f=format_f v='Database & Article Index'}"},
+        '3D object' => { :label => '3D object', :fq => "{!term f=format_f v='3D object'}"},
+        'Projected graphic' => { :label => 'Projected graphic', :fq => "{!term f=format_f v='Projected graphic'}"}
     }
-    config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false, :ex => 'orig_q', solr_params: MINCOUNT
     config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z', collapse: false,
         :ex => 'orig_q', solr_params: MINCOUNT
     #config.add_facet_field 'subject_taxonomy', label: 'Subject Taxonomy', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy', :json_facet => SUBJECT_TAXONOM, :helper_method => :render_subcategories
     config.add_facet_field 'subject_f', label: 'Subject', limit: 5, index_range: 'A'..'Z', collapse: false,
         :ex => 'orig_q', solr_params: MINCOUNT
     config.add_facet_field 'language_f', label: 'Language', limit: 5, collapse: false, :ex => 'orig_q', solr_params: MINCOUNT
-    config.add_facet_field 'library_f', label: 'Library', limit: 5, collapse: false, :ex => 'orig_q', solr_params: MINCOUNT
-    config.add_facet_field 'specific_location_f', label: 'Specific location', limit: 5, :ex => 'orig_q', solr_params: MINCOUNT
+    config.add_facet_field 'library_f', label: 'Library', limit: 5, collapse: false, :ex => 'orig_q', :if => local_only, solr_params: MINCOUNT
+    config.add_facet_field 'specific_location_f', label: 'Specific location', limit: 5, :ex => 'orig_q', :if => local_only, solr_params: MINCOUNT
     config.add_facet_field 'recently_published', label: 'Recently published', collapse: false, :ex => 'orig_q',
         solr_params: MINCOUNT, :query => {
         :last_5_years => { label: 'Last 5 years', fq: "pub_max_dtsort:[#{Date.current.year - 4}-01-01T00:00:00Z TO *]" },
@@ -410,9 +426,9 @@ class CatalogController < ApplicationController
         :last_15_years => { label: 'Last 15 years', fq: "pub_max_dtsort:[#{Date.current.year - 14}-01-01T00:00:00Z TO *]" },
     }
     config.add_facet_field 'publication_date_f', label: 'Publication date', limit: 5, :ex => 'orig_q', solr_params: MINCOUNT
-    config.add_facet_field 'classification_f', label: 'Classification', limit: 5, collapse: false, :ex => 'orig_q', solr_params: MINCOUNT
+    config.add_facet_field 'classification_f', label: 'Classification', limit: 5, collapse: false, :ex => 'orig_q', :if => local_only, solr_params: MINCOUNT
     config.add_facet_field 'genre_f', label: 'Form/Genre', limit: 5, :ex => 'orig_q', solr_params: MINCOUNT
-    config.add_facet_field 'recently_added_f', label: 'Recently added', solr_params: MINCOUNT, :query => {
+    config.add_facet_field 'recently_added_f', label: 'Recently added', solr_params: MINCOUNT, :if => local_only, :query => {
         :within_90_days => { label: 'Within 90 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (90 * SECONDS_PER_DAY) } TO *]" },
         :within_60_days => { label: 'Within 60 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (60 * SECONDS_PER_DAY) } TO *]" },
         :within_30_days => { label: 'Within 30 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (30 * SECONDS_PER_DAY) } TO *]" },

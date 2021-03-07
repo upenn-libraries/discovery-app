@@ -16,6 +16,8 @@
     <%# render partial: 'alma_availability_button', locals: { document: document } %>
     <%= render partial: 'alma_availability', locals: { document: document, collapsed: true } %>
     <%# render partial: 'request_button', locals: { document: document } %>
+  <% else %>
+    <%= render partial: 'ivies_request', locals: { document: document } %>
   <% end %>
 
 </dl>

@@ -1,0 +1,27 @@
+<% @page_title = "BorrowDirect+ Requests" %>
+
+<div class="section">
+  <div class="section-heading">
+    <h1>BorrowDirect+ Requests</h1>
+  </div>
+  <div class="section-body">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Request #</th>
+          <th>Title</th>
+          <th>Date Submitted</th>
+        </tr>
+      </thead>
+      <tbody>
+      <% requests.each do |req| %>
+        <tr>
+          <td><%= req['RequestNumber'] %></td>
+          <td><%= req['Title'] %></td>
+          <td><%= req['DateSubmitted'] %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

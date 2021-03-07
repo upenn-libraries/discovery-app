@@ -65,6 +65,10 @@ Rails.application.routes.draw do
   get 'alma/request' => 'franklin_alma#load_request'
   post 'alma/request' => 'franklin_alma#create_request'
 
+  get 'requests' => 'ivies_plus#index'
+  get 'new_request' => 'ivies_plus#new_request'
+  post 'new_request' => 'ivies_plus#place_request'
+
   devise_scope :user do
     get 'alma/social_login_callback' => 'sessions#social_login_callback'
     get 'accounts/login' => 'sessions#sso_login_callback'
