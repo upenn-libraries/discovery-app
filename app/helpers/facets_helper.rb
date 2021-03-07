@@ -7,7 +7,7 @@ module FacetsHelper
     hash = {}
     blacklight_config.facet_fields.values.each_with_object(hash) do |facet_config, hash|
       display_facet = agg[facet_config.field]
-      next if display_facet.nil? || display_facet.items.empty? || !should_render_field?(facet_config, display_facet)
+      next if display_facet.nil? || !should_render_facet?(display_facet)
       facet_type = facet_config[:facet_type] || :default
       facet_type = facet_type.call(params) if facet_type.respond_to?(:lambda?)
       if fields_for_facet_type = hash[facet_type]
@@ -33,7 +33,7 @@ module FacetsHelper
   # @param [Hash] options
   # @return [Boolean]
   def has_facet_values? fields = facet_field_names, options = {}
-    facets_from_request(fields).any? { |display_facet| !display_facet.items.empty? && should_render_facet?(display_facet) }
+    facets_from_request(fields).any? { |display_facet| should_render_facet?(display_facet) }
   end
 
   ##
@@ -79,6 +79,7 @@ module FacetsHelper
       render_facet_value(facet_field, item, options)
     end
   end
+
   ##
   # Standard display of a facet value in a list. Used in both _facets sidebar
   # partial and catalog/facet expanded list. Will output facet value name as
@@ -125,11 +126,52 @@ module FacetsHelper
     # display when show is nil or true
     facet_config = facet_configuration_for_field(display_facet.name)
     display = should_render_field?(facet_config, display_facet)
-    display && display_facet.items.present?
+    display && (facet_config.render_empty?&.call(display_facet) || display_facet.items.present?)
+  end
+
+  ##
+  # Determine whether a facet should be rendered as collapsed or not.
+  #   - if the facet is 'active', don't collapse
+  #   - if the facet is configured to collapse (the default), collapse
+  #   - if the facet is configured not to collapse, don't collapse
+  # 
+  # @param [Blacklight::Configuration::FacetField] facet_field
+  # @param [Blacklight::Solr::Response::Facets::FacetField] display_facet
+  # @return [Boolean]
+  def should_collapse_facet? facet_field, display_facet
+    !facet_field_in_params?(facet_field.key) && (facet_field.collapse || display_facet.items.empty?)
   end
 
   def render_subcategories(v)
     idx = v.index('--')
     idx.nil? ? v : v.slice((idx + 2)..-1)
+  end
+
+  # Display facet sort options for modal with active sort selected
+  # @param [Blacklight::Solr::FacetPaginator] pagination
+  # @return [ActiveSupport::SafeBuffer] links html
+  def modal_sort_options(pagination, facet_config)
+    sort_options = facet_config.sort_options&.call(params) || ['index', 'count']
+    links = sort_options.map do |possible_sort|
+      active = pagination.sort == possible_sort
+      modal_sort_link possible_sort, active
+    end
+    links.join.html_safe
+  end
+
+  # Generate a link for a facet sort option
+  # @param [String] type
+  # @param [TrueClass, FalseClass] active
+  # @return [ActiveSupport::SafeBuffer] link html
+  def modal_sort_link(type, active)
+    label = t "blacklight.search.facets.sort.#{type}"
+    if active
+      content_tag :span, label, class: 'active numeric btn btn-default'
+    else
+      link_to label,
+              @pagination.params_for_resort_url(type, search_state.to_h),
+              class: 'sort_change numeric btn btn-default',
+              data: { ajax_modal: 'preserve' }
+    end
   end
 end
