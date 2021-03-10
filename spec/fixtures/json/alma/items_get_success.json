@@ -1,0 +1,137 @@
+{
+  "item": [
+    {
+      "bib_data": {
+        "mms_id": "1234",
+        "title": "Mathematics as a science of patterns /",
+        "author": "Resnik, Michael D.",
+        "issn": null,
+        "isbn": "0198236085 (hb)",
+        "complete_edition": "",
+        "network_number": [
+          "(PU)2232742-penndb-Voyager",
+          "2232742",
+          "NHDG97-B17544",
+          "(OCoLC)36011733",
+          "(OCoLC)ocm36011733"
+        ],
+        "place_of_publication": "Oxford : New York :",
+        "date_of_publication": "1997.",
+        "publisher_const": "Oxford University Press",
+        "link": "https://api-na.hosted.exlibrisgroup.com/almaws/v1/bibs/9922327423503681"
+      },
+      "holding_data": {
+        "holding_id": "2345",
+        "call_number_type": {
+          "value": "0",
+          "desc": "Library of Congress classification"
+        },
+        "call_number": "QA8.4 .R473 1997",
+        "accession_number": "",
+        "copy_id": "0",
+        "in_temp_location": false,
+        "temp_library": {
+          "value": null,
+          "desc": null
+        },
+        "temp_location": {
+          "value": null,
+          "desc": null
+        },
+        "temp_call_number_type": {
+          "value": "",
+          "desc": null
+        },
+        "temp_call_number": "",
+        "temp_policy": {
+          "value": "",
+          "desc": null
+        },
+        "link": "https://api-na.hosted.exlibrisgroup.com/almaws/v1/bibs/1234/holdings/2345"
+      },
+      "item_data": {
+        "pid": "3456",
+        "barcode": "31198022078369",
+        "creation_date": "2017-06-06Z",
+        "modification_date": "2021-01-08Z",
+        "base_status": {
+          "value": "0",
+          "desc": "Item not in place"
+        },
+        "awaiting_reshelving": false,
+        "physical_material_type": {
+          "value": "BOOK",
+          "desc": "Book"
+        },
+        "policy": {
+          "value": "book/seria",
+          "desc": "Book/serial"
+        },
+        "provenance": {
+          "value": "",
+          "desc": null
+        },
+        "po_line": "",
+        "is_magnetic": false,
+        "arrival_date": "1998-02-12Z",
+        "year_of_issue": "",
+        "enumeration_a": "",
+        "enumeration_b": "",
+        "enumeration_c": "",
+        "enumeration_d": "",
+        "enumeration_e": "",
+        "enumeration_f": "",
+        "enumeration_g": "",
+        "enumeration_h": "",
+        "chronology_i": "",
+        "chronology_j": "",
+        "chronology_k": "",
+        "chronology_l": "",
+        "chronology_m": "",
+        "description": "",
+        "receiving_operator": "import",
+        "process_type": {
+          "value": "HOLDSHELF",
+          "desc": "Hold Shelf"
+        },
+        "inventory_number": "",
+        "inventory_price": "",
+        "library": {
+          "value": "VanPeltLib",
+          "desc": "Van Pelt Library"
+        },
+        "location": {
+          "value": "vanp",
+          "desc": "Van Pelt Library"
+        },
+        "alternative_call_number": "",
+        "alternative_call_number_type": {
+          "value": "",
+          "desc": null
+        },
+        "storage_location_id": "",
+        "pages": "",
+        "pieces": "1",
+        "public_note": "",
+        "fulfillment_note": "",
+        "due_date_policy": "Please log in for loan and request information",
+        "internal_note_1": "",
+        "internal_note_2": "",
+        "internal_note_3": "ON_RESERVE: N | RESERVE_CHARGES: 0 | RECALLS_PLACED: 0 | HOLDS_PLACED: 0 | HISTORICAL_BOOKINGS: 0 | SHORT_LOAN_CHARGES: 0 | ",
+        "statistics_note_1": "",
+        "statistics_note_2": "",
+        "statistics_note_3": "",
+        "requested": true,
+        "edition": null,
+        "imprint": null,
+        "language": null,
+        "physical_condition": {
+          "value": null,
+          "desc": null
+        }
+      },
+      "link": "https://api-na.hosted.exlibrisgroup.com/almaws/v1/bibs/1234/holdings/2345/items/3456"
+    }
+  ],
+  "total_record_count": 1
+}

@@ -1,0 +1,138 @@
+{
+  "item": [
+    {
+      "bib_data": {
+        "mms_id": "1111",
+        "title": "Being and time.",
+        "author": "Heidegger, Martin,",
+        "issn": null,
+        "isbn": null,
+        "complete_edition": "",
+        "network_number": [
+          "(PU)952277-penndb-Voyager",
+          "952277",
+          "(CaOTULAS)159508682",
+          "(CStRLIN)PAUG88-B37833",
+          "(OCoLC)372138",
+          "(OCoLC)ocm00372138"
+        ],
+        "place_of_publication": "New York,",
+        "date_of_publication": "[1962]",
+        "publisher_const": "Harper",
+        "link": "https://api-na.hosted.exlibrisgroup.com/almaws/v1/bibs/1111"
+      },
+      "holding_data": {
+        "holding_id": "2222",
+        "call_number_type": {
+          "value": "0",
+          "desc": "Library of Congress classification"
+        },
+        "call_number": "B3279.H48 S43 1962",
+        "accession_number": "",
+        "copy_id": "0",
+        "in_temp_location": false,
+        "temp_library": {
+          "value": null,
+          "desc": null
+        },
+        "temp_location": {
+          "value": null,
+          "desc": null
+        },
+        "temp_call_number_type": {
+          "value": "",
+          "desc": null
+        },
+        "temp_call_number": "",
+        "temp_policy": {
+          "value": "",
+          "desc": null
+        },
+        "link": "https://api-na.hosted.exlibrisgroup.com/almaws/v1/bibs/1111/holdings/2222"
+      },
+      "item_data": {
+        "pid": "3333",
+        "barcode": "31198017469615",
+        "creation_date": "2017-06-06Z",
+        "modification_date": "2020-11-23Z",
+        "base_status": {
+          "value": "1",
+          "desc": "Item in place"
+        },
+        "awaiting_reshelving": false,
+        "physical_material_type": {
+          "value": "BOOK",
+          "desc": "Book"
+        },
+        "policy": {
+          "value": "book/seria",
+          "desc": "Book/serial"
+        },
+        "provenance": {
+          "value": "",
+          "desc": null
+        },
+        "po_line": "",
+        "is_magnetic": false,
+        "arrival_date": "1997-06-12Z",
+        "year_of_issue": "",
+        "enumeration_a": "",
+        "enumeration_b": "",
+        "enumeration_c": "",
+        "enumeration_d": "",
+        "enumeration_e": "",
+        "enumeration_f": "",
+        "enumeration_g": "",
+        "enumeration_h": "",
+        "chronology_i": "",
+        "chronology_j": "",
+        "chronology_k": "",
+        "chronology_l": "",
+        "chronology_m": "",
+        "description": "",
+        "receiving_operator": "import",
+        "process_type": {
+          "value": "",
+          "desc": null
+        },
+        "inventory_number": "",
+        "inventory_price": "",
+        "library": {
+          "value": "VanPeltLib",
+          "desc": "Van Pelt Library"
+        },
+        "location": {
+          "value": "vanp",
+          "desc": "Van Pelt Library"
+        },
+        "alternative_call_number": "",
+        "alternative_call_number_type": {
+          "value": "",
+          "desc": null
+        },
+        "storage_location_id": "",
+        "pages": "",
+        "pieces": "1",
+        "public_note": "",
+        "fulfillment_note": "",
+        "due_date_policy": "Please log in for loan and request information",
+        "internal_note_1": "",
+        "internal_note_2": "Extra barcodes: 31198017222493",
+        "internal_note_3": "ON_RESERVE: N | RESERVE_CHARGES: 0 | RECALLS_PLACED: 0 | HOLDS_PLACED: 0 | HISTORICAL_BOOKINGS: 0 | SHORT_LOAN_CHARGES: 0 | ",
+        "statistics_note_1": "",
+        "statistics_note_2": "",
+        "statistics_note_3": "",
+        "requested": false,
+        "edition": null,
+        "imprint": null,
+        "language": null,
+        "physical_condition": {
+          "value": null,
+          "desc": null
+        }
+      },
+      "link": "https://api-na.hosted.exlibrisgroup.com/almaws/v1/bibs/1111/holdings/2222/items/3333"
+    }
+  ],
+  "total_record_count": 1
+}
