@@ -54,6 +54,10 @@ Rails.application.routes.draw do
     end
   end
 
+  # Items API
+  get 'alma/items/:mms_id/all', to: 'items#all'
+  get 'alma/bib/:mms_id/holding/:holding_id/item/:item_pid', to: 'items#one'
+
   get 'alma/availability' => 'franklin_alma#availability'
   get 'alma/single_availability' => 'franklin_alma#single_availability'
   get 'alma/holding_items' => 'franklin_alma#holding_items'
