@@ -1,0 +1,62 @@
+include:
+  - project: "devops/gitlab/ci-templates/docker"
+    ref: "master"
+    file: ".build_docker_image.yml"
+  - project: "devops/gitlab/ci-templates/docker"
+    ref: "master"
+    file: ".push_docker_image.yml"
+  - project: "devops/gitlab/ci-templates/docker"
+    ref: "master"
+    file: ".remove_docker_image.yml"
+  - project: "devops/gitlab/ci-templates/sast"
+    ref: "master"
+    file: ".shiftleft_container_scanning.yml"
+  - project: "devops/gitlab/ci-templates/sast"
+    ref: "master"
+    file: ".trivy_container_scanning.yml"
+  - template: "Workflows/MergeRequest-Pipelines.gitlab-ci.yml"
+
+stages:
+  - .pre
+  - sast
+  - push
+  - .post
+
+build_image:
+  stage: .pre
+  extends:
+    - .build_docker_image
+  tags:
+    - build
+
+shiftleft_container_scanning:
+  stage: sast
+  extends:
+    - .shiftleft_container_scanning
+  allow_failure: true
+  tags:
+    - build
+
+trivy_container_scanning:
+  stage: sast
+  extends:
+    - .trivy_container_scanning
+  allow_failure: true
+  tags:
+    - build
+
+push_image_to_registry:
+  stage: push
+  extends:
+    - .push_docker_image
+  tags:
+    - build
+
+remove_image:
+  stage: .post
+  extends:
+    - .remove_docker_image
+  rules:
+    - when: always
+  tags:
+    - build
