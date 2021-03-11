@@ -28,6 +28,7 @@ gem 'rails', '~> 4.2.0'
 gem 'rsolr', '1.1.2'
 gem 'sass-rails', '5.0.6'
 gem 'sdoc', '0.4.2', group: :doc
+gem 'select2-rails'
 gem 'sqlite3', '1.3.12', platforms: :ruby # we always need sqlite to the boundwiths database
 # TODO: switch back to official gem when PR #21 is accepted and makes it into a release
 gem 'summon', git: 'https://github.com/magibney/summon.rb', branch: 'sign-empty-param-values'
@@ -45,5 +46,5 @@ end
 group :development, :test do
   gem 'byebug', platforms: :ruby
   gem 'rspec-rails'
-gem 'webmock'
+  gem 'webmock'
 end

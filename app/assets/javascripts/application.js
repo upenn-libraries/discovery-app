@@ -13,6 +13,7 @@
 //= require jquery
 //= require jquery_ujs
 //= require bootstrap/tab
+//= require select2
 //= require_directory ./DataTables
 // Required by Blacklight
 //= require blacklight/blacklight

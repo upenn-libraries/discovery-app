@@ -141,6 +141,15 @@ module TurboAlmaApi
           etas_restricted: etas_restricted?
         }
       end
+
+      def for_select(_options = {})
+        {
+          'id' => item_data['pid'],
+          'text' => label_for_select,
+          'delivery_options' => delivery_options
+          # checkoutable: checkoutable?
+        }
+      end
     end
   end
 end

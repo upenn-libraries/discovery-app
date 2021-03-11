@@ -31,6 +31,10 @@ module TurboAlmaApi
                  end
       end
 
+      def to_json(_options = {})
+        Oj.dump @items.map(&:for_select)
+      end
+
       private
 
       # @return [Array<Alma::BibItem>]
