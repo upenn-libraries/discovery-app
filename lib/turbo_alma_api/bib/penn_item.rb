@@ -5,8 +5,8 @@ module TurboAlmaApi
     # sprinkle additional and Penn-specific behavior on top of Alma::BibItem
     class PennItem < Alma::BibItem
       ETAS_TEMPORARY_LOCATION = 'Van Pelt - Non Circulating'
-      PHYSICAL_ITEM_DELIVERY_OPTIONS = %i[pickup booksbymail scandeliver].freeze
-      RESTRICTED_ITEM_DELIVERY_OPTIONS = [:scandeliver].freeze
+      PHYSICAL_ITEM_DELIVERY_OPTIONS = %w[pickup booksbymail scandeliver].freeze
+      RESTRICTED_ITEM_DELIVERY_OPTIONS = ['scandeliver'].freeze
 
       def identifiers
         { item_pid: pid,
