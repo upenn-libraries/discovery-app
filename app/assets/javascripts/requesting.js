@@ -6,6 +6,16 @@ function disableRequestButtons() {
     $('.request-button').prop("disabled", true);
 }
 
+function showAndUpdateDiv(id, content) {
+    if(content) {
+        var $element = $("#" + id);
+        if($element) {
+            $element.closest('.form-group').removeClass('hidden');
+            $element.text(content);
+        }
+    }
+}
+
 $(document).ready(function() {
     var $widget = $('#request-item-select');
     if($widget) {
@@ -52,26 +62,29 @@ $(document).ready(function() {
         $('#confirm-modal').on('show.bs.modal', function(e) {
             var $modal = $(this)
             var $deliveryButton = e.relatedTarget;
+            updateModalHeader($modal, $deliveryButton.val());
             $modal.find('#requestItemPid').val(selectedItem.id);
             $modal.find('#requestHoldingId').val(selectedItem.holding_id);
             $modal.find('#requestMmsId').val(mmsId);
+            $modal.find('#requestDeliveryMethod').val($deliveryButton.val());
             showAndUpdateDiv('requestItemTitle', selectedItem.title);
-            // $modal.find('#requestItemTitle').text(selectedItem.title);
             showAndUpdateDiv('requestItemDescription', selectedItem.description);
-            // $modal.find('#requestItemDescription').text(selectedItem.description);
-            $modal.find('#requestItemNote').text(selectedItem.public_note);
-            $modal.find('#requestDeliveryMethod').text($deliveryButton.val());
+            showAndUpdateDiv('requestItemNote', selectedItem.publicNote);
         });
     }
 })
 
-function showAndUpdateDiv(id, content) {
-    if(content) {
-        var $element = $("#" + id);
-        if($element) {
-            $element.closest('.form-group').removeClass('hidden');
-            $element.text(content);
-        }
+function deliveryNameFor(deliveryCode) {
+    switch(deliveryCode) {
+        case 'pap':
+            return "Confirm PickUp @ Penn Request";
+        case 'bbm':
+            return "Confirm Books by Mail Request";
+        case 'sad':
+            return "Confirm Scan & Deliver Request";
     }
-//    if content is not empty, show #id and add content as text
+}
+
+function updateModalHeader($modal, deliveryCode) {
+    $modal.find('.modal-title').text(deliveryNameFor(deliveryCode));
 }
