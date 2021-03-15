@@ -43,5 +43,35 @@ $(document).ready(function() {
                     if(selectedItem.delivery_options.includes('scandeliver')) { activateButton(sadButton) }
                 });
             });
+
+        $('.request-button').on('click', function(e) {
+            e.preventDefault();
+            $("#confirm-modal").modal('show', $(this));
+        });
+
+        $('#confirm-modal').on('show.bs.modal', function(e) {
+            var $modal = $(this)
+            var $deliveryButton = e.relatedTarget;
+            $modal.find('#requestItemPid').val(selectedItem.id);
+            $modal.find('#requestHoldingId').val(selectedItem.holding_id);
+            $modal.find('#requestMmsId').val(mmsId);
+            showAndUpdateDiv('requestItemTitle', selectedItem.title);
+            // $modal.find('#requestItemTitle').text(selectedItem.title);
+            showAndUpdateDiv('requestItemDescription', selectedItem.description);
+            // $modal.find('#requestItemDescription').text(selectedItem.description);
+            $modal.find('#requestItemNote').text(selectedItem.public_note);
+            $modal.find('#requestDeliveryMethod').text($deliveryButton.val());
+        });
     }
 })
+
+function showAndUpdateDiv(id, content) {
+    if(content) {
+        var $element = $("#" + id);
+        if($element) {
+            $element.closest('.form-group').removeClass('hidden');
+            $element.text(content);
+        }
+    }
+//    if content is not empty, show #id and add content as text
+}

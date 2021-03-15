@@ -146,7 +146,11 @@ module TurboAlmaApi
         {
           'id' => item_data['pid'],
           'text' => label_for_select,
-          'delivery_options' => delivery_options
+          'title' => self['bib_data']['title'],
+          'description' => description,
+          'public_note' => public_note,
+          'delivery_options' => delivery_options,
+          'holding_id' => holding_data['holding_id']
           # checkoutable: checkoutable?
         }
       end
