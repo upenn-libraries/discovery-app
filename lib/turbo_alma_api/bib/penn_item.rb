@@ -85,7 +85,8 @@ module TurboAlmaApi
           physical_material_type['desc'],
           public_note,
           user_policy_display(user_due_date_policy),
-          location_name
+          location_name,
+          call_number
         ]
         label_info.reject(&:blank?).join(' - ')
       end
@@ -150,8 +151,11 @@ module TurboAlmaApi
           'description' => description,
           'public_note' => public_note,
           'delivery_options' => delivery_options,
-          'holding_id' => holding_data['holding_id']
-          # checkoutable: checkoutable?
+          'holding_id' => holding_data['holding_id'],
+          'circulate' => checkoutable?,
+          'call_number' => call_number,
+          'library' => location_name,
+          'due_date' => user_due_date_policy
         }
       end
     end

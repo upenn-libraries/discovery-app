@@ -11,7 +11,7 @@ class ItemsController < ApplicationController
   end
 
   def all
-    @items = client.all_items_for params[:mms_id].to_s
+    @items = client.all_items_for params[:mms_id].to_s, session['id']
 
     render json: @items
   end

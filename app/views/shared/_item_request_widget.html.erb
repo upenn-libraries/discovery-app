@@ -1,7 +1,7 @@
 <section id="item-request-widget">
   <div class="panel panel-default">
     <div class="panel-heading">
-      Request
+      Get It
     </div>
     <div class="panel-body">
       <form action="">
@@ -16,6 +16,11 @@
           <button type="submit" id="pap-request-button" class="btn btn-default request-button" value="pap" disabled>PickUp @ Penn</button>
           <button type="submit" id="bbm-request-button" class="btn btn-default request-button" value="bbm" disabled>Books by Mail</button>
           <button type="submit" id="sad-request-button" class="btn btn-default request-button" value="sad" disabled>Scan & Deliver</button>
+          <button type="submit" id="ill-request-button" class="btn btn-default request-button hidden" value="ill">Interlibrary Loan</button>
+        </div>
+        <div id="due-date-group" class="form-group hidden">
+          <label for="">Due Date</label>
+          <p class="form-control-static" id="due-date-display"></p>
         </div>
       </form>
     </div>
