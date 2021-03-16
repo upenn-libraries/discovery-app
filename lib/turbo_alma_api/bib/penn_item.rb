@@ -86,7 +86,6 @@ module TurboAlmaApi
           public_note,
           user_policy_display(user_due_date_policy),
           location_name,
-          call_number
         ]
         label_info.reject(&:blank?).join(' - ')
       end
