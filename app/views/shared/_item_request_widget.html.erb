@@ -6,10 +6,10 @@
     <div class="panel-body">
       <form action="">
         <div class="form-group">
-          <label for="request-item">Selection</label>
-          <select name="request-item" id="request-item-select" class="form-control" data-mmsid="<%= document.alma_mms_id %>">
-            <option value=""></option>
-          </select>
+            <label for="request-item">Selection</label>
+            <select name="request-item" id="request-item-select" class="form-control" data-mmsid="<%= document.alma_mms_id %>">
+              <option value=""></option>
+            </select>
         </div>
         <div class="form-group">
           <label for="">Delivery Method</label><br>
@@ -17,10 +17,6 @@
           <button type="submit" id="bbm-request-button" class="btn btn-default request-button" value="bbm" disabled>Books by Mail</button>
           <button type="submit" id="sad-request-button" class="btn btn-default request-button" value="sad" disabled>Scan & Deliver</button>
           <button type="submit" id="ill-request-button" class="btn btn-default request-button hidden" value="ill">Interlibrary Loan</button>
-        </div>
-        <div id="due-date-group" class="form-group hidden">
-          <label for="">Due Date</label>
-          <p class="form-control-static" id="due-date-display"></p>
         </div>
       </form>
     </div>
@@ -56,6 +52,12 @@
             <label class="col-sm-3 control-label">Notes</label>
             <div class="col-sm-9">
               <p class="form-control-static" id="requestItemNote"></p>
+            </div>
+          </div>
+          <div class="form-group hidden">
+            <label class="col-sm-3 control-label">Due Date</label>
+            <div class="col-sm-9">
+              <p class="form-control-static" id="requestItemDueDate"></p>
             </div>
           </div>
           <% if current_user %>

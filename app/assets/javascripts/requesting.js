@@ -38,7 +38,8 @@ $(document).ready(function() {
                 if(responseData.length === 1) {
                     $widget.closest('.form-group').hide();
                     selectedItem = responseData[0];
-                    updateDueDateDisplay(selectedItem);
+                    $('.single-item-info-group').removeClass('hidden');
+                    $('#singleItemInfo').text(selectedItem.text);
                     if(selectedItem.delivery_options.includes('pickup')) { activateButton(papButton) }
                     if(selectedItem.delivery_options.includes('booksbymail')) { activateButton(bbmButton) }
                     if(selectedItem.delivery_options.includes('scandeliver')) { activateButton(sadButton) }
@@ -67,7 +68,6 @@ $(document).ready(function() {
                             illButton.removeClass('hidden');
                             activateButton(illButton);
                         }
-                        updateDueDateDisplay(selectedItem);
                     });
                 }
             });
@@ -92,6 +92,7 @@ $(document).ready(function() {
                 showAndUpdateDiv('requestItemTitle', selectedItem.title);
                 showAndUpdateDiv('requestItemDescription', selectedItem.description);
                 showAndUpdateDiv('requestItemNote', selectedItem.publicNote);
+                showAndUpdateDiv('requestItemDueDate', selectedItem.due_date);
             }
         });
     }
