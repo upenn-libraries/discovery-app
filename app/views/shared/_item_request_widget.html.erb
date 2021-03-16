@@ -31,7 +31,7 @@
         <div class="modal-title" id="exampleModalLabel">Confirm Request</div>
       </div>
       <div class="modal-body">
-        <%= form_tag request_submit_path, method: :post, class: 'form-horizontal' do %>
+        <%= form_tag request_submit_path, method: :post, class: '' do %>
           <%= hidden_field_tag :item_pid, nil, id: 'requestItemPid' %>
           <%= hidden_field_tag :holding_id, nil, id: 'requestHoldingId' %>
           <%= hidden_field_tag :mms_id, nil, id: 'requestMmsId' %>
@@ -60,16 +60,31 @@
               <p class="form-control-static" id="requestItemDueDate"></p>
             </div>
           </div>
-          <% if current_user %>
           <div class="form-group">
             <label class="col-sm-3 control-label">Deliver To</label>
             <div class="col-sm-9">
               <p class="form-control-static"><%= current_user.email %></p>
             </div>
           </div>
-          <% end %>
-          <div class="well">
-            Delivery Option messages...
+          <div class="form-group sad-field">
+            <label for="section-title">Section Title</label>
+            <input type="text" name="section_title" class="form-control" required>
+          </div>
+          <div class="form-group sad-field">
+            <label for="section-title">Section Author</label>
+            <input type="text" name="section_author" class="form-control" required>
+          </div>
+          <div class="form-group sad-field">
+            <label for="section-title">Section Pages</label>
+            <input type="text" name="section_pages" class="form-control" required>
+          </div>
+          <div class="form-group sad-field">
+            <label for="section-title">Section Volume</label>
+            <input type="text" name="section_volume" class="form-control">
+          </div>
+          <div class="form-group sad-field">
+            <label for="section-title">Section Issue</label>
+            <input type="text" name="section_issue" class="form-control">
           </div>
         <% end %>
       </div>

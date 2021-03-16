@@ -82,6 +82,12 @@ $(document).ready(function() {
             var $deliveryButton = e.relatedTarget;
             var option = $deliveryButton.val();
             updateModalHeader($modal, option);
+            if(option !== 'sad') {
+                $('.sad-field').hide();
+            } else {
+                $('.sad-field').show();
+            }
+
             if(option === 'ill') {
 
             } else {
