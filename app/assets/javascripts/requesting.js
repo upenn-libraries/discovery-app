@@ -77,6 +77,13 @@ $(document).ready(function() {
             $("#confirm-modal").modal('show', $(this));
         });
 
+        $('#ill-request-button').on('click', function(e) {
+            e.preventDefault();
+            var illUrl = this.dataset.url;
+            // TODO: add to URL with item info? volume, issue? from selectedItem?
+            window.open(illUrl, '_blank');
+        })
+
         $('#confirm-modal').on('show.bs.modal', function(e) {
             var $modal = $(this)
             var $deliveryButton = e.relatedTarget;
