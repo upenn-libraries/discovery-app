@@ -10,6 +10,7 @@ class ItemsController < ApplicationController
     render json: @item
   end
 
+  # TODO: pass in an expected count? maybe from solr_document? so we cna skip the canary request
   def all
     @items = client.all_items_for params[:mms_id].to_s, session['id']
 

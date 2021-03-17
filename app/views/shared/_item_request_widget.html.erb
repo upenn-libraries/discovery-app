@@ -13,11 +13,13 @@
         </div>
         <div class="form-group">
           <label for="">Delivery Method</label><br>
-          <button type="submit" id="pap-request-button" class="btn btn-default request-button" value="pap" disabled>PickUp @ Penn</button>
-          <button type="submit" id="bbm-request-button" class="btn btn-default request-button" value="bbm" disabled>Books by Mail</button>
-          <button type="submit" id="sad-request-button" class="btn btn-default request-button" value="sad" disabled>Scan & Deliver</button>
-          <button type="submit" id="ill-request-button" class="btn btn-default ff-form-load hidden" value="ill" data-url="<%= ill_request_form_url_for(document) %>">Interlibrary Loan</button>
-          <button type="submit" id="aeon-request-button" class="btn btn-default ff-form-load hidden" value="aeon" data-url="<%= aeon_request_form_url_for(document) %>">Request to View in Reading Room</button>
+          <div class="btn-toolbar" aria-label="Get It Options">
+            <button type="submit" id="pap-request-button" class="btn btn-default request-button" value="pap" disabled>PickUp @ Penn</button>
+            <button type="submit" id="bbm-request-button" class="btn btn-default request-button" value="bbm" disabled>Books by Mail</button>
+            <button type="submit" id="sad-request-button" class="btn btn-default request-button" value="sad" disabled>Scan & Deliver</button>
+            <button type="submit" id="ill-request-button" class="btn btn-default ff-form-load hidden" value="ill" data-url="<%= ill_request_form_url_for(document) %>">Interlibrary Loan</button>
+            <button type="submit" id="aeon-request-button" class="btn btn-default ff-form-load hidden" value="aeon" data-url="<%= aeon_request_form_url_for(document) %>">Request to View in Reading Room</button>
+          </div>
         </div>
       </form>
     </div>
