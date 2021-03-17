@@ -161,7 +161,9 @@ module TurboAlmaApi
           'call_number' => call_number,
           'library' => location_name,
           'due_date' => user_due_date_policy,
-          'aeon_requestable' => aeon_requestable
+          'aeon_requestable' => aeon_requestable,
+          'volume' => volume,
+          'issue' => issue
         }
       end
     end

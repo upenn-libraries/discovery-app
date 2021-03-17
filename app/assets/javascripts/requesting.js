@@ -105,8 +105,15 @@ $(document).ready(function() {
 
             // show spinner?
 
+
+            if(option === 'sad') {
+                var params = { method: option, volume: selectedItem.volume, issue: selectedItem.issue }
+            } else {
+                var params = { method: option }
+            }
+
             // load modal HTML via ajax
-            $.get('/request/confirm', { method: option }, function(html) {
+            $.get('/request/confirm', params, function(html) {
                 $modal.find('.modal-body').empty().html(html);
 
                 // set hidden fields
