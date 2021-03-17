@@ -45,9 +45,22 @@ $(document).ready(function() {
                     selectedItem = responseData[0];
                     $('.single-item-info-group').removeClass('hidden');
                     $('#singleItemInfo').text(selectedItem.text);
+                    // TODO: dry this up
                     if(selectedItem.delivery_options.includes('pickup')) { activateButton(papButton) }
                     if(selectedItem.delivery_options.includes('booksbymail')) { activateButton(bbmButton) }
                     if(selectedItem.delivery_options.includes('scandeliver')) { activateButton(sadButton) }
+                    if(!selectedItem.circulate) {
+                        // show ill button
+                        var illButton = $('#ill-request-button');
+                        illButton.removeClass('hidden');
+                        activateButton(illButton);
+                    }
+                    if(selectedItem.aeon_requestable) {
+                        // show Aeon form link button
+                        var aeonButton = $('#aeon-request-button');
+                        aeonButton.removeClass('hidden');
+                        activateButton(aeonButton);
+                    }
                 } else {
                     $widget.select2({
                         theme: 'bootstrap',
@@ -103,9 +116,6 @@ $(document).ready(function() {
             var option = $deliveryButton.val();
             updateModalHeader($modal, option);
 
-            // show spinner?
-
-
             if(option === 'sad') {
                 var params = { method: option, volume: selectedItem.volume, issue: selectedItem.issue }
             } else {
@@ -123,7 +133,7 @@ $(document).ready(function() {
                 $modal.find('#requestDeliveryMethod').val(option);
 
                 // set Item details
-                //     showAndUpdateDiv('requestItemTitle', selectedItem.title);
+                $('#selection').val(selectedItem.description);
                 //     showAndUpdateDiv('requestItemDescription', selectedItem.description);
                 //     showAndUpdateDiv('requestItemNote', selectedItem.publicNote);
                 //     showAndUpdateDiv('requestItemDueDate', selectedItem.due_date);

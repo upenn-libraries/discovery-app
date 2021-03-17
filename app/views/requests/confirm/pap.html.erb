@@ -8,5 +8,8 @@
   <div class="alert alert-info">
     <%= t('requests.delivery_messages.pap_html') %>
   </div>
+  <%= f.text_field :selection,
+                   label: 'Selection',
+                   disabled: true %>
 
 <% end %>

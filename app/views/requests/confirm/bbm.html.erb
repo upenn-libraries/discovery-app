@@ -9,6 +9,9 @@
     <%= t('requests.delivery_messages.bbm_html') %>
   </div>
 
+  <%= f.text_field :selection,
+                   label: 'Selection',
+                   disabled: true %>
   <%= f.form_group :bbm_confirm do %>
     <%= f.check_box :bbm_confirm,
                     id: 'bbm_validation_checkbox',

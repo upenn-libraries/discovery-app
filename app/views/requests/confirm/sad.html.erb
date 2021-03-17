@@ -9,6 +9,9 @@
     <%= t('requests.delivery_messages.digi_html') %>
   </div>
 
+  <%= f.text_field :selection,
+                   label: 'Selection',
+                   disabled: true %>
   <%= f.text_field :section_title,
                    label: t('requests.fields.section_title'),
                    help: t('requests.help.section_title'),
