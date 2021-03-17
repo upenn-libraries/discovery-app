@@ -20,4 +20,43 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
+  requests:
+    buttons:
+      submit: "Submit Request"
+    delivery_messages:
+      bbm_html: "<strong>IMPORTANT!</strong> Users must <a href='https://upenn.libwizard.com/f/books-by-mail'>register for Books by Mail</a> before submitting requests. Please do not submit Books by Mail requests without registering. These requests will be canceled."
+      pap_html: "The <a href='https://guides.library.upenn.edu/circulation/PickUpatPenn'>PickUp@Penn service</a> currently only provides pickup at Van Pelt-Dietrich Library Center, Ground Floor."
+      digi_html: "We are unable to scan entire works. Please specify chapter or article title and author information..."
+    types:
+      booksbymail: "Books by Mail"
+      scandeliver: "Request Digital Delivery"
+      pickup: "PickUp@Penn"
+    messages:
+      bib_item_validation: "Unable to get an Item from Alma based on the given identifiers."
+      unavailable_html: "Item is currently unavailable for loan. Try <a href='%{ill_link}'>requesting via Interlibrary Loan</a> if you require a physical copy."
+      digital_delivery_warning_html: "<p>Entire works cannot be delivered electronically. Please specify article or chapter information to enable scan delivery of your request.</p><p>Please request only one article or book chapter per request.</p>"
+      comment_limit: "Maximum 256 characters"
+      invalid_request: "Request is invalid. See errors below."
+      invalid_deliver_to: "PennKey specified for delivery is not valid"
+    fields:
+      affiliation: "Affiliation"
+      delivery_method: "Method"
+      deliver_to: "Deliver To"
+      comment: "Comments"
+      title: "Title"
+      author: "Author"
+      issn: "ISSN"
+      publisher: "Publisher"
+      pub_date: "Date of Publication"
+      section_title: "Article/Chapter Title"
+      section_author: "Article/Chapter Author"
+      section_pages: "Page Range"
+      section_volume: "Volume"
+      section_issue: "Issue"
+    help:
+      deliver_to: "PennKey of recipient for electronic materials."
+      section_title: "Article Title or Chapter Title (or Chapter Number, if there is no title) to be digitized."
+      section_author: "Author(s) of article or chapter to be digitized."
+      section_pages: "Page range of the article or chapter to be digitized."
+      section_volume: "Volume containing article or chapter for digitization."
+      section_issue: "Issue containing article or chapter for digitization."

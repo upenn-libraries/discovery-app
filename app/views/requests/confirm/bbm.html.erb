@@ -1,0 +1,19 @@
+<%= bootstrap_form_tag url: request_submit_path, method: :post do |f| %>
+
+  <%= f.hidden_field :item_pid, id: 'requestItemPid' %>
+  <%= f.hidden_field :holding_id, id: 'requestHoldingId' %>
+  <%= f.hidden_field :mms_id, id: 'requestMmsId' %>
+  <%= f.hidden_field :delivery_method, id: 'requestDeliveryMethod' %>
+
+  <div class="alert alert-info">
+    <%= t('requests.delivery_messages.bbm_html') %>
+  </div>
+
+  <%= f.form_group :bbm_confirm do %>
+    <%= f.check_box :bbm_confirm,
+                    id: 'bbm_validation_checkbox',
+                    label: 'I am a registered Books by Mail user',
+                    required: true %>
+  <% end %>
+
+<% end %>

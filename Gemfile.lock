@@ -134,6 +134,7 @@ GEM
     bootstrap-sass (3.4.1)
       autoprefixer-rails (>= 5.2.1)
       sassc (>= 2.0.0)
+    bootstrap_form (2.7.0)
     browserify-rails (4.4.0)
       addressable (>= 2.4.0)
       railties (>= 4.0.0)
@@ -385,6 +386,7 @@ DEPENDENCIES
   blacklight_alma!
   blacklight_dynamic_sitemap
   blacklight_solrplugins!
+  bootstrap_form (= 2.7.0)
   browserify-rails
   byebug
   coffee-rails (= 4.2.1)

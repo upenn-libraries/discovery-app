@@ -82,24 +82,26 @@ $(document).ready(function() {
             var $deliveryButton = e.relatedTarget;
             var option = $deliveryButton.val();
             updateModalHeader($modal, option);
-            if(option !== 'sad') {
-                $('.sad-field').hide();
-            } else {
-                $('.sad-field').show();
-            }
 
-            if(option === 'ill') {
+            // show spinner?
 
-            } else {
+            // load modal HTML via ajax
+            $.get('/request/confirm', { method: option }, function(html) {
+                $modal.find('.modal-body').empty().html(html);
+
+                // set hidden fields
                 $modal.find('#requestItemPid').val(selectedItem.id);
                 $modal.find('#requestHoldingId').val(selectedItem.holding_id);
                 $modal.find('#requestMmsId').val(mmsId);
                 $modal.find('#requestDeliveryMethod').val(option);
-                showAndUpdateDiv('requestItemTitle', selectedItem.title);
-                showAndUpdateDiv('requestItemDescription', selectedItem.description);
-                showAndUpdateDiv('requestItemNote', selectedItem.publicNote);
-                showAndUpdateDiv('requestItemDueDate', selectedItem.due_date);
-            }
+
+                // set Item details
+                //     showAndUpdateDiv('requestItemTitle', selectedItem.title);
+                //     showAndUpdateDiv('requestItemDescription', selectedItem.description);
+                //     showAndUpdateDiv('requestItemNote', selectedItem.publicNote);
+                //     showAndUpdateDiv('requestItemDueDate', selectedItem.due_date);
+
+            });
         });
     }
 })
