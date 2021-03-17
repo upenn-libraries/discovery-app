@@ -119,7 +119,7 @@ module TurboAlmaApi
       def user_policy_display(raw_policy)
         case raw_policy
         when 'Not loanable'
-          'Digital Delivery Only'
+          'Restricted Access'
         when 'End of Year'
           'Return by End of Year'
         when 'End of Term'
@@ -142,6 +142,12 @@ module TurboAlmaApi
         }
       end
 
+      # TODO: is this right? AlmaAvailability parses availability XML and gets a location_code
+      def aeon_requestable
+        aeon_site_codes = PennLib::BlacklightAlma::CodeMappingsSingleton.instance.code_mappings.aeon_site_codes
+        item_data['location']['value'].in? aeon_site_codes
+      end
+
       def for_select(_options = {})
         {
           'id' => item_data['pid'],
@@ -154,7 +160,8 @@ module TurboAlmaApi
           'circulate' => checkoutable?,
           'call_number' => call_number,
           'library' => location_name,
-          'due_date' => user_due_date_policy
+          'due_date' => user_due_date_policy,
+          'aeon_requestable' => aeon_requestable
         }
       end
     end

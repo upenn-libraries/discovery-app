@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Requesting actions
 class RequestsController < ApplicationController
   def confirm
 

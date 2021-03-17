@@ -4,7 +4,7 @@ function activateButton($elem) {
 
 function resetRequestButtons() {
     $('.request-button').prop("disabled", true);
-    $('#ill-request-button').addClass('hidden');
+    $('.ff-form-load').addClass('hidden');
 }
 
 function showAndUpdateDiv(id, content) {
@@ -68,6 +68,12 @@ $(document).ready(function() {
                             illButton.removeClass('hidden');
                             activateButton(illButton);
                         }
+                        if(selectedItem.aeon_requestable) {
+                            // show Aeon form link button
+                            var aeonButton = $('#aeon-request-button');
+                            aeonButton.removeClass('hidden');
+                            activateButton(aeonButton);
+                        }
                     });
                 }
             });
@@ -77,12 +83,14 @@ $(document).ready(function() {
             $("#confirm-modal").modal('show', $(this));
         });
 
-        $('#ill-request-button').on('click', function(e) {
+        $('.ff-form-load').on('click', function(e) {
             e.preventDefault();
-            var illUrl = this.dataset.url;
+            var ffUrl = this.dataset.url;
             // TODO: add to URL with item info? volume, issue? from selectedItem?
-            window.open(illUrl, '_blank');
+            ffUrl.replace('__HOLDINGID__', selectedItem.holding_id);
+            window.open(ffUrl, '_blank');
         })
+
 
         $('#confirm-modal').on('show.bs.modal', function(e) {
             var $modal = $(this)
