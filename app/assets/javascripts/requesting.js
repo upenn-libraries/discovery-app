@@ -19,6 +19,7 @@ function showAndUpdateDiv(id, content) {
 
 $(document).ready(function() {
     var $panel = $('#item-request-widget .panel');
+    var $requestForm = $panel.find('#request-form')
     var $widget = $('#request-item-select');
     if($widget) {
         var mmsId = $widget.data('mmsid');
@@ -29,11 +30,15 @@ $(document).ready(function() {
         var bbmButton = $('#bbm-request-button');
         var sadButton = $('#sad-request-button');
 
+        $requestForm.hide();
+
         $.ajax({
             url: '/alma/items/' + mmsId + '/all',
             dataType: 'json'
         })
             .done(function(data) {
+                $panel.find('.panel-body').removeClass('spinner');
+                $requestForm.show();
                 responseData = data
                 if(responseData.length === 1) {
                     $widget.closest('.form-group').hide();
