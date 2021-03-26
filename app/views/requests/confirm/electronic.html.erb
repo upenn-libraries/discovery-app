@@ -1,3 +1,5 @@
+<%= render 'requests/confirm/online_access' %>
+
 <%= bootstrap_form_tag url: request_submit_path, method: :post do |f| %>
 
   <%= f.hidden_field :item_pid, id: 'requestItemPid' %>
@@ -5,9 +7,7 @@
   <%= f.hidden_field :mms_id, id: 'requestMmsId' %>
   <%= f.hidden_field :delivery_method, id: 'requestDeliveryMethod' %>
 
-  <div class="alert alert-warning">
-    <%= t('requests.delivery_messages.digi_html') %>
-  </div>
+  <%= t('requests.delivery_messages.digi_html') %>
 
   <%= f.text_field :selection,
                    label: 'Selection',
@@ -37,5 +37,5 @@
   <div class="proxy-input hidden">
     <%= f.text_field :deliver_to, label: 'Deliver To' %>
   </div>
-  
+
 <% end %>

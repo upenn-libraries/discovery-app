@@ -4,9 +4,7 @@ module TurboAlmaApi
   module Bib
     # sprinkle additional and Penn-specific behavior on top of Alma::BibItem
     class PennItem < Alma::BibItem
-      ETAS_TEMPORARY_LOCATION = 'Van Pelt - Non Circulating'
-      PHYSICAL_ITEM_DELIVERY_OPTIONS = %w[pickup booksbymail scandeliver].freeze
-      RESTRICTED_ITEM_DELIVERY_OPTIONS = ['scandeliver'].freeze
+      ETAS_TEMPORARY_LOCATION = 'ETAS No Loans No Requests'
 
       def identifiers
         { item_pid: pid,
@@ -26,7 +24,8 @@ module TurboAlmaApi
         in_place? &&
           !non_circulating? &&
           !etas_restricted? &&
-          !not_loanable?
+          !not_loanable? &&
+          !aeon_requestable?
       end
 
       # Penn uses "Non-circ" in Alma
@@ -47,16 +46,6 @@ module TurboAlmaApi
       # @return [TrueClass, FalseClass]
       def not_loanable?
         user_due_date_policy&.include? 'Not loanable'
-      end
-
-      # Delivery options for this Item
-      # @return [Array]
-      def delivery_options
-        if checkoutable?
-          PHYSICAL_ITEM_DELIVERY_OPTIONS
-        else
-          RESTRICTED_ITEM_DELIVERY_OPTIONS
-        end
       end
 
       # Is this Item restricted from circulation due to ETAS?
@@ -129,21 +118,8 @@ module TurboAlmaApi
         end
       end
 
-      # Hash of data used to build Item radio button client side
-      # Used by HoldingItems API controller
-      # @return [Hash]
-      def for_radio_button
-        {
-          pid: item_data['pid'],
-          label: label_for_radio_button,
-          delivery_options: delivery_options,
-          checkoutable: checkoutable?,
-          etas_restricted: etas_restricted?
-        }
-      end
-
       # TODO: is this right? AlmaAvailability parses availability XML and gets a location_code
-      def aeon_requestable
+      def aeon_requestable?
         aeon_site_codes = PennLib::BlacklightAlma::CodeMappingsSingleton.instance.code_mappings.aeon_site_codes
         item_data['location']['value'].in? aeon_site_codes
       end
@@ -155,15 +131,15 @@ module TurboAlmaApi
           'title' => self['bib_data']['title'],
           'description' => description,
           'public_note' => public_note,
-          'delivery_options' => delivery_options,
           'holding_id' => holding_data['holding_id'],
           'circulate' => checkoutable?,
           'call_number' => call_number,
           'library' => location_name,
           'due_date' => user_due_date_policy,
-          'aeon_requestable' => aeon_requestable,
+          'aeon_requestable' => aeon_requestable?,
           'volume' => volume,
-          'issue' => issue
+          'issue' => issue,
+          'in_place' => in_place?
         }
       end
     end

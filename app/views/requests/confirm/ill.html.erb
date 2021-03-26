@@ -1,0 +1,8 @@
+<%= render 'requests/confirm/online_access' %>
+
+<p>
+  This item is currently unavailable in print from Penn Libraries. Try electronic access or you may use the link below
+  to submit an Interlibrary loan request:
+</p>
+
+<%= link_to 'ILL Request', ill_request_form_url_for(params[:mms_id]), target: '_blank' %>

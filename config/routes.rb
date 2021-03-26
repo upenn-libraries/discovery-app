@@ -59,7 +59,7 @@ Rails.application.routes.draw do
   get 'alma/bib/:mms_id/holding/:holding_id/item/:item_pid', to: 'items#one'
 
   # New Requesting Actions
-  get 'request/confirm', to: 'requests#confirm'
+  get 'request/confirm/:type', to: 'requests#confirm'
   post 'request/submit', to: 'requests#submit'
 
   get 'alma/availability' => 'franklin_alma#availability'

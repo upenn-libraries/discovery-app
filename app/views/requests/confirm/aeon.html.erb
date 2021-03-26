@@ -1,0 +1,5 @@
+<%= render 'requests/confirm/online_access' %>
+
+<p>This item is available for viewing in the special collections reading room by submitting a viewing request in Aeon:</p>
+
+<%= link_to 'Aeon Request', aeon_request_form_url_for(params[:mms_id], params[:holding_id]) %>

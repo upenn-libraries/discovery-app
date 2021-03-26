@@ -24,6 +24,7 @@ module TurboAlmaApi
         )
         parsed_response = Oj.load first_items_response.body
         @total_count = parsed_response['total_record_count']
+        # TODO: no items case?
         @items = if @total_count == 1
                    Array.wrap PennItem.new parsed_response['item'].first
                  else

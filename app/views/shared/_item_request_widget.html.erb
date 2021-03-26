@@ -12,16 +12,22 @@
             </select>
         </div>
         <div class="form-group">
-          <label for="">Delivery Method</label><br>
           <div class="btn-toolbar" aria-label="Get It Options">
-            <button type="submit" id="pap-request-button" class="btn btn-default request-button" value="pap" disabled>PickUp @ Penn</button>
-            <button type="submit" id="bbm-request-button" class="btn btn-default request-button" value="bbm" disabled>Books by Mail</button>
-            <button type="submit" id="sad-request-button" class="btn btn-default request-button" value="sad" disabled>Scan & Deliver</button>
-            <button type="submit" id="ill-request-button" class="btn btn-default ff-form-load hidden" value="ill" data-url="<%= ill_request_form_url_for(document) %>">Interlibrary Loan</button>
-            <button type="submit" id="aeon-request-button" class="btn btn-default ff-form-load hidden" value="aeon" data-url="<%= aeon_request_form_url_for(document) %>">Request to View in Reading Room</button>
+            <% if document['full_text_link_text_a']&.any? %>
+              <%# TODO: what if multiple links?  %>
+              <% link_object = JSON.parse(document['full_text_link_text_a'].first).first %>
+              <% fulltext_link_url = link_object['linkurl'] %>
+              <% fulltext_link_label = link_object['linktext'] %>
+            <% end %>
+            <button type="submit" id="print-request-button" class="btn btn-default request-button" value="print" disabled>In Print</button>
+            <button type="submit" id="electronic-request-button" class="btn btn-default request-button"
+                    value="electronic"<% if link_object %> data-fulltext-url="<%= fulltext_link_url %>" data-fulltext-label="<%= fulltext_link_label %>"<% end %> disabled>
+              Electronic
+            </button>
           </div>
         </div>
       </form>
+      <pre id="selected-item-debug"></pre>
     </div>
   </div>
 </section>
@@ -33,9 +39,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <div class="modal-title" id="exampleModalLabel">Confirm Request</div>
       </div>
-      <div class="modal-body">
-
-      </div>
+      <div class="modal-body"></div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Go Back</button>
         <button type="button" class="btn btn-primary" data-dismiss="modal">Submit</button>

@@ -1,35 +1,34 @@
-function activateButton($elem) {
-    $elem.prop("disabled", false);
+function populateItemDebugWell(selectedItem) {
+    $('#selected-item-debug').show().text('Debug Info: ' + JSON.stringify(selectedItem, null, 4));
 }
 
-function resetRequestButtons() {
-    $('.request-button').prop("disabled", true);
-    $('.ff-form-load').addClass('hidden');
-}
-
-function showAndUpdateDiv(id, content) {
-    if(content) {
-        var $element = $("#" + id);
-        if($element) {
-            $element.closest('.form-group').removeClass('hidden');
-            $element.text(content);
-        }
+function updateModalHeader($modal, format) {
+    var text;
+    switch(format) {
+        case 'print':
+            text = "Confirm Print Request";
+            break;
+        case 'electronic':
+            text = "Confirm Electronic Request";
+            break;
     }
+    $modal.find('.modal-title').text(text);
+}
+
+function enableRequestButtons() {
+    $('.request-button').prop('disabled', false);
 }
 
 $(document).ready(function() {
+    $('#selected-item-debug').hide();
     var $panel = $('#item-request-widget .panel');
     var $requestForm = $panel.find('#request-form')
     var $widget = $('#request-item-select');
-    if($widget) {
+    if($widget.length > 0) {
         var mmsId = $widget.data('mmsid');
         var responseData;
         var selectedItem;
         var selectedItemId;
-        var papButton = $('#pap-request-button');
-        var bbmButton = $('#bbm-request-button');
-        var sadButton = $('#sad-request-button');
-
         $requestForm.hide();
 
         $.ajax({
@@ -43,24 +42,8 @@ $(document).ready(function() {
                 if(responseData.length === 1) {
                     $widget.closest('.form-group').hide();
                     selectedItem = responseData[0];
-                    $('.single-item-info-group').removeClass('hidden');
-                    $('#singleItemInfo').text(selectedItem.text);
-                    // TODO: dry this up
-                    if(selectedItem.delivery_options.includes('pickup')) { activateButton(papButton) }
-                    if(selectedItem.delivery_options.includes('booksbymail')) { activateButton(bbmButton) }
-                    if(selectedItem.delivery_options.includes('scandeliver')) { activateButton(sadButton) }
-                    if(!selectedItem.circulate) {
-                        // show ill button
-                        var illButton = $('#ill-request-button');
-                        illButton.removeClass('hidden');
-                        activateButton(illButton);
-                    }
-                    if(selectedItem.aeon_requestable) {
-                        // show Aeon form link button
-                        var aeonButton = $('#aeon-request-button');
-                        aeonButton.removeClass('hidden');
-                        activateButton(aeonButton);
-                    }
+                    enableRequestButtons();
+                    populateItemDebugWell(selectedItem);
                 } else {
                     $widget.select2({
                         theme: 'bootstrap',
@@ -70,28 +53,14 @@ $(document).ready(function() {
                     }).on('select2:open', function(e) {
                         $('.select2-search__field').attr('placeholder', 'Start typing to filter the list');
                     }).on('select2:select', function(e) {
-                        resetRequestButtons();
+                        enableRequestButtons();
                         selectedItemId = this.value;
                         selectedItem = responseData.find(function(item, index) {
                             if(item.id === selectedItemId) {
                                 return item;
                             }
                         });
-                        if(selectedItem.delivery_options.includes('pickup')) { activateButton(papButton) }
-                        if(selectedItem.delivery_options.includes('booksbymail')) { activateButton(bbmButton) }
-                        if(selectedItem.delivery_options.includes('scandeliver')) { activateButton(sadButton) }
-                        if(!selectedItem.circulate) {
-                            // show ill button
-                            var illButton = $('#ill-request-button');
-                            illButton.removeClass('hidden');
-                            activateButton(illButton);
-                        }
-                        if(selectedItem.aeon_requestable) {
-                            // show Aeon form link button
-                            var aeonButton = $('#aeon-request-button');
-                            aeonButton.removeClass('hidden');
-                            activateButton(aeonButton);
-                        }
+                        populateItemDebugWell(selectedItem);
                     });
                 }
             });
@@ -101,65 +70,56 @@ $(document).ready(function() {
             $("#confirm-modal").modal('show', $(this));
         });
 
-        $('.ff-form-load').on('click', function(e) {
-            e.preventDefault();
-            var ffUrl = this.dataset.url;
-            // TODO: add to URL with item info? volume, issue? from selectedItem?
-            ffUrl.replace('__HOLDINGID__', selectedItem.holding_id);
-            window.open(ffUrl, '_blank');
-        })
-
+        $('body').on('click', '.delivery-option-radio', function(e) {
+            var $radio = $(this);
+            if($radio.val() === 'mail') {
+                $('#bbm_validation_checkbox').prop('disabled', false).focus();
+            } else {
+                $('#bbm_validation_checkbox').prop('disabled', true);
+            }
+        });
 
         $('#confirm-modal').on('show.bs.modal', function(e) {
-            var $modal = $(this)
-            var $deliveryButton = e.relatedTarget;
-            var option = $deliveryButton.val();
-            updateModalHeader($modal, option);
+            var $modal = $(this);
+            var $formatButton = e.relatedTarget;
+            var format = $formatButton.val();
+            updateModalHeader($modal, format);
 
-            if(option === 'sad') {
-                var params = { method: option, volume: selectedItem.volume, issue: selectedItem.issue }
+            var urlPart;
+            var params = { mms_id: mmsId, holding_id: selectedItem.holding_id };
+            var fulltextUrl = $('#electronic-request-button').data('fulltext-url');
+            if(format === 'electronic') {
+                params.volume = selectedItem.volume;
+                params.issue = selectedItem.issue;
+                urlPart = 'electronic';
             } else {
-                var params = { method: option }
+                if(selectedItem.circulate) {
+                    params.available = selectedItem.in_place;
+                    urlPart = 'circulate';
+                } else {
+                    if(selectedItem.aeon_requestable) {
+                        urlPart = 'aeon';
+                    } else {
+                        urlPart = 'ill';
+                    }
+                }
             }
 
             // load modal HTML via ajax
-            $.get('/request/confirm', params, function(html) {
+            $.get('/request/confirm/' + urlPart, params, function(html) {
                 $modal.find('.modal-body').empty().html(html);
 
                 // set hidden fields
                 $modal.find('#requestItemPid').val(selectedItem.id);
                 $modal.find('#requestHoldingId').val(selectedItem.holding_id);
                 $modal.find('#requestMmsId').val(mmsId);
-                $modal.find('#requestDeliveryMethod').val(option);
 
-                // set Item details
+                // set Item details TODO: what if description is empty? :(
                 $('#selection').val(selectedItem.description);
-                //     showAndUpdateDiv('requestItemDescription', selectedItem.description);
-                //     showAndUpdateDiv('requestItemNote', selectedItem.publicNote);
-                //     showAndUpdateDiv('requestItemDueDate', selectedItem.due_date);
 
+                // set Fulltext link if possible
+                if(fulltextUrl) { $('#fulltext-link').attr('href', fulltextUrl).closest('div#online-access-div').show(); }
             });
         });
     }
 })
-
-function updateDueDateDisplay(selectedItem) {
-    var dueDateDisplay = $('#due-date-display');
-    dueDateDisplay.closest('.form-group').removeClass('hidden');
-    dueDateDisplay.text(selectedItem.due_date);
-}
-
-function deliveryNameFor(deliveryCode) {
-    switch(deliveryCode) {
-        case 'pap':
-            return "Confirm PickUp @ Penn Request";
-        case 'bbm':
-            return "Confirm Books by Mail Request";
-        case 'sad':
-            return "Confirm Scan & Deliver Request";
-    }
-}
-
-function updateModalHeader($modal, deliveryCode) {
-    $modal.find('.modal-title').text(deliveryNameFor(deliveryCode));
-}

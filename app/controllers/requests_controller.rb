@@ -4,10 +4,17 @@
 class RequestsController < ApplicationController
   def confirm
 
-    partial = case params[:method].to_sym
-              when :sad then 'sad'
-              when :pap then 'pap'
-              when :bbm then 'bbm'
+    partial = case params[:type].to_sym
+              when :circulate
+                params[:available] ? 'circulate' : 'ill'
+              when :electronic
+                'electronic'
+              when :ill
+                # TODO: get OpenURL from Alma GES?
+                # ill_url = get_ill_openurl_from_alma params[:mms_id], params[:holding_id], params[:item_id] ??
+                'ill'
+              when :aeon
+                'aeon'
               else
                 # TODO: error
               end
