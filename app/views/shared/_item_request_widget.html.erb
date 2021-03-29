@@ -19,11 +19,24 @@
               <% fulltext_link_url = link_object['linkurl'] %>
               <% fulltext_link_label = link_object['linktext'] %>
             <% end %>
+            <% if current_user %>
             <button type="submit" id="print-request-button" class="btn btn-default request-button" value="print" disabled>In Print</button>
             <button type="submit" id="electronic-request-button" class="btn btn-default request-button"
                     value="electronic"<% if link_object %> data-fulltext-url="<%= fulltext_link_url %>" data-fulltext-label="<%= fulltext_link_label %>"<% end %> disabled>
               Electronic
             </button>
+            <% else %>
+              <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Login to See Requesting Options <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                  <li><a href="<%= accounts_login_url(next: request.original_url) %>">Current faculty, student, staff login</a></li>
+                  <li role="separator" class="divider"></li>
+                  <li><a href="https://guides.library.upenn.edu/franklinaccount#s-lg-box-19646803">Subscribed alumni and courtesy user login</a></li>
+                </ul>
+              </div>
+            <% end %>
           </div>
         </div>
       </form>
