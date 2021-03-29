@@ -22,7 +22,7 @@
   <ul class="nav nav-tabs ezproxy-login-status" role="tablist">
     <li role="presentation" class="<%= active_tab_classes('bento') %>">
       <div class="franklin-tab">
-        <%= render_tab_link('bento', image_tag('bento.png') + " Everything", '#bento', bento_path(q: params[:q]), '#bento-main, #bento-search-navbar') %>
+        <%= render_tab_link('bento', " Everything", '#bento', bento_path(q: params[:q]), '#bento-main, #bento-search-navbar') %>
       </div>
     </li>
     <li role="presentation" class="<%= active_tab_classes('catalog') %>">
@@ -35,12 +35,6 @@
         <%= render_tab_link('articles', 'Articles+', '#articles', summon_url(params[:q]), '#articles-main, #articles-search-navbar') %>
       </div>
     </li>
-    <li role="presentation" class="ezproxy-show-logged-in">
-      <div class="franklin-tab">
-        <%= render_tab_link('articles', 'Articles+', '#articles', summon_url(params[:q], true), '#articles-main, #articles-search-navbar') %>
-      </div>
-    </li>
-
     <li role="presentation" class="<%= active_tab_classes('databases') %>">
       <div class="franklin-tab">
         <%= link_to 'Databases', databases_results_path(params[:q]) %>

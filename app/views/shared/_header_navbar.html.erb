@@ -1,23 +1,74 @@
-<div id="header-navbar" class="navbar navbar-inverse navbar-static-top" role="navigation">
-  <div class="<%= container_classes %>">
-    <div class="navbar-header">
-    <button type="button" class="navbar-toggle btn collapsed" data-toggle="collapse" data-target="#user-util-collapse">
-      <span class="sr-only">Toggle navigation</span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-    </button>
-    <%= link_to application_name, 'http://www.library.upenn.edu', class: "navbar-brand" %>
-    <span class="site-name"><%= link_to application_name, root_path %></span>
-    </div>
+<header>
+  <div id="navandidbar" class="clearfix">
+      <h2 class="visually-hidden">Login, libraries-wide information</h2>
+     
+      <!-- LOGIN -->
+      <% if has_user_authentication_provider? %>
+          <ul class="nav navbar-nav">
+            
+            <% if current_user %>
+                <li class="nameuser">
+                    <a href="<%= my_library_card_url %>"><% if session['first_name'].present? %><span class="user-first-name"><%= session['first_name'] %> - </span><% end %>PennKey Library Account</a>
+                </li>
+                <li class="destroysession">
+                    <button type="button" class="btn btn-default btn-sm"><%= link_to t('blacklight.header_links.logout'), destroy_user_session_path %></button>
+                </li>
+            <% else %>
+                <li class="loginbutton">
+                  <div class="navbar-btn-group btn-group">
+                    <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Login <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li class="small"><a href="<%= accounts_login_url(next: request.original_url) %>">Current faculty, student, staff login</a></li>
+                      <li role="separator" class="divider"></li>
+                      <li class="small"><a href="https://guides.library.upenn.edu/franklinaccount#s-lg-box-19646803">Subscribed alumni and courtesy user login</a></li>
+                    </ul>
+                  </div>
+                  
+                  <%# = link_to t('blacklight.header_links.login'), new_user_session_path %>
+                </li>
+            <% end %>
+          </ul>
+      <% end %>
+      <!-- END LOGIN --> 
+      <ul class="top-nav">
 
-    <div class="collapse navbar-collapse" id="user-util-collapse">
-      <%= render :partial=>'/user_util_links' %>
+        <li id="chooselibrarylink"><!-- 2 -->
+          <a class="library-home-link" href="http://www.library.upenn.edu">Library Home</a>
+        </li>
+        <li><a href="https://www.library.upenn.edu/about/locations">Libraries &amp; hours</a></li>
+        <li><a href="//libcal.library.upenn.edu/appointments">Make an appointment</a></li>
+       
+      </ul>
+  </div>
+  <!-- END NAVANDIDBAR  -->
+  <div id="header-navbar" class="navbar navbar-inverse navbar-static-top" role="navigation">
+    <div class="<%= container_classes %>">
+        <!-- hamburger -->
+        <button type="button" class="navbar-toggle btn collapsed" data-toggle="collapse" data-target="#user-util-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+       
+        <div class="navbar-header">
+           <a class="navbar-brand" href="http://www.library.upenn.edu"><span class="visually-hidden">Libraries homepage</span></a>
+        </div><!-- end navbar header -->
+
+
+
+        <div class="collapse navbar-collapse" id="user-util-collapse">
+          <%= render :partial=>'/user_util_links' %>
+        </div>
+      </div><!-- end container -->
+  </div>
+  <div id="search-navbar" class="navbar navbar-default navbar-static-top" role="navigation">
+
+    <div class="<%= container_classes %>">
+      
+      <%= render_search_bar  %>
     </div>
   </div>
-</div>
-<div id="search-navbar" class="navbar navbar-default navbar-static-top" role="navigation">
-  <div class="<%= container_classes %>">
-    <%= render_search_bar  %>
-  </div>
-</div>
+</header>
