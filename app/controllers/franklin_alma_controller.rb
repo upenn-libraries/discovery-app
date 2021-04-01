@@ -457,6 +457,8 @@ class FranklinAlmaController < ApplicationController
     ctx = JSON.parse(params['request_context'])
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
+    # consider_dlr here tell the API to look at Alma's configured Discovery display logic rules
+    # defined in the Alma configuration. it will limit returned options.
     options = { user_id: userid, consider_dlr: true }
     response_data = api_instance.request(api.almaws_v1_bibs.mms_id_request_options, :get, params.merge(options))
     has_pickup_option = false

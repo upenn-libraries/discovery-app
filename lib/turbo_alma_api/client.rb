@@ -71,6 +71,28 @@ module TurboAlmaApi
       end
     end
 
+    # get title-level request options
+    # @param [String] mms_id
+    def self.request_options(mms_id)
+      request_url = "#{BASE_URL}/v1/bibs/#{mms_id}/request_options"
+      response = api_get_request request_url
+      parsed_response = Oj.load response.body
+      options = {}
+      raise RequestFailed, "Problem getting request options for MMS ID: #{mms_id}" if parsed_response['errorsExist']
+
+      parsed_response['request_option'].each do |option|
+        option_name = if option.key? 'general_electronic_service_details'
+                        option.dig 'general_electronic_service_details', 'code'
+                      elsif option.key? 'rs_broker_details'
+                        option.dig 'rs_broker_details', 'code'
+                      else
+                        option.dig 'type', 'value'
+                      end
+        options[option_name] = option.dig 'request_url'
+      end
+      options
+    end
+
     # Perform a get request with the usual Alma API request headers
     # @param [String] url
     # @param [Hash] headers

@@ -23,4 +23,10 @@ class RequestsController < ApplicationController
   end
 
   def submit; end
+
+  private
+
+  def ill_openurl_from_alma(mms_id, holding_id, item_id)
+
+  end
 end

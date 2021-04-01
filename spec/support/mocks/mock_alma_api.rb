@@ -113,6 +113,13 @@ module MockAlmaApi
   #     'alma/large_bib_items_get_partial.json'
   #   )
   # end
+  def stub_bib_request_options
+    stub(
+      :get,
+      'https://api-na.hosted.exlibrisgroup.com/almaws/v1/bibs/1234/request_options',
+      'alma/bib_request_options.json'
+    )
+  end
 
   private
 
