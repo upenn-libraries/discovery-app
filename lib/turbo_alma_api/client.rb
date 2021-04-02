@@ -51,7 +51,7 @@ module TurboAlmaApi
                                headers: DEFAULT_REQUEST_HEADERS,
                                params: query,
                                body: body
-      if response['errorsExist']
+      if response.dig 'web_service_result', 'errorsExist'
         raise RequestFailed, 'Alma Request submission failed' # TODO: error message details
         # boo, get error code
         # 401890 User with identifier X of type Y was not found.
@@ -73,12 +73,12 @@ module TurboAlmaApi
 
     # get title-level request options
     # @param [String] mms_id
-    def self.request_options(mms_id)
-      request_url = "#{BASE_URL}/v1/bibs/#{mms_id}/request_options"
+    def self.request_options(mms_id, user_id = 'GUEST')
+      request_url = "#{BASE_URL}/v1/bibs/#{mms_id}/request-options?user_id=#{user_id}"
       response = api_get_request request_url
       parsed_response = Oj.load response.body
       options = {}
-      raise RequestFailed, "Problem getting request options for MMS ID: #{mms_id}" if parsed_response['errorsExist']
+      raise RequestFailed, "Problem getting request options for MMS ID: #{mms_id}" if parsed_response.dig 'web_service_result', 'errorsExist'
 
       parsed_response['request_option'].each do |option|
         option_name = if option.key? 'general_electronic_service_details'

@@ -2,19 +2,6 @@ function populateItemDebugWell(selectedItem) {
     $('#selected-item-debug').show().text('Debug Info: ' + JSON.stringify(selectedItem, null, 4));
 }
 
-function updateModalHeader($modal, format) {
-    var text;
-    switch(format) {
-        case 'print':
-            text = "Confirm Print Request";
-            break;
-        case 'electronic':
-            text = "Confirm Electronic Request";
-            break;
-    }
-    $modal.find('.modal-title').text(text);
-}
-
 function enableRequestButtons() {
     $('.request-button').prop('disabled', false);
 }
@@ -83,7 +70,6 @@ $(document).ready(function() {
             var $modal = $(this);
             var $formatButton = e.relatedTarget;
             var format = $formatButton.val();
-            updateModalHeader($modal, format);
 
             var urlPart;
             var params = { mms_id: mmsId, holding_id: selectedItem.holding_id };
@@ -107,7 +93,8 @@ $(document).ready(function() {
 
             // load modal HTML via ajax
             $.get('/request/confirm/' + urlPart, params, function(html) {
-                $modal.find('.modal-body').empty().html(html);
+                // $modal.find('.modal-body').empty().html(html);
+                $modal.empty().html(html);
 
                 // set hidden fields
                 $modal.find('#requestItemPid').val(selectedItem.id);

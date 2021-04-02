@@ -116,7 +116,7 @@ module MockAlmaApi
   def stub_bib_request_options
     stub(
       :get,
-      'https://api-na.hosted.exlibrisgroup.com/almaws/v1/bibs/1234/request_options',
+      'https://api-na.hosted.exlibrisgroup.com/almaws/v1/bibs/1234/request-options',
       'alma/bib_request_options.json'
     )
   end

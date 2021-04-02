@@ -3,15 +3,13 @@
 # Requesting actions
 class RequestsController < ApplicationController
   def confirm
-
     partial = case params[:type].to_sym
               when :circulate
                 params[:available] ? 'circulate' : 'ill'
               when :electronic
                 'electronic'
               when :ill
-                # TODO: get OpenURL from Alma GES?
-                # ill_url = get_ill_openurl_from_alma params[:mms_id], params[:holding_id], params[:item_id] ??
+                @ill_url = ill_openurl_from_alma params[:mms_id]
                 'ill'
               when :aeon
                 'aeon'
@@ -26,7 +24,8 @@ class RequestsController < ApplicationController
 
   private
 
-  def ill_openurl_from_alma(mms_id, holding_id, item_id)
-
+  def ill_openurl_from_alma(mms_id)
+    options = TurboAlmaApi::Client.request_options mms_id, current_user
+    options.dig('ILLIAD') || ill_request_form_url_for(mms_id)
   end
 end

@@ -1,8 +1,19 @@
-<%= render 'requests/confirm/online_access' %>
-
-<p>
-  This item is currently unavailable in print from Penn Libraries. Try electronic access or you may use the link below
-  to submit an Interlibrary loan request:
-</p>
-
-<%= link_to 'ILL Request', ill_request_form_url_for(params[:mms_id]), target: '_blank' %>
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-title" id="exampleModalLabel">Confirm Request</div>
+    </div>
+    <div class="modal-body">
+      <%= render 'requests/confirm/online_access' %>
+      <p>
+        This item is currently unavailable in print from Penn Libraries. You may use the link below
+        to submit an Interlibrary loan request.
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal">Go Back</button>
+      <%= link_to 'ILL Request Form', @ill_url, target: '_blank', class: 'btn btn-primary' %>
+    </div>
+  </div>
+</div>

@@ -1,41 +1,55 @@
-<%= render 'requests/confirm/online_access' %>
-
 <%= bootstrap_form_tag url: request_submit_path, method: :post do |f| %>
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-title" id="exampleModalLabel">Confirm Scanning Request</div>
+    </div>
+    <div class="modal-body">
 
-  <%= f.hidden_field :item_pid, id: 'requestItemPid' %>
-  <%= f.hidden_field :holding_id, id: 'requestHoldingId' %>
-  <%= f.hidden_field :mms_id, id: 'requestMmsId' %>
-  <%= f.hidden_field :delivery_method, id: 'requestDeliveryMethod' %>
+      <%= render 'requests/confirm/online_access' %>
 
-  <%= t('requests.delivery_messages.digi_html') %>
+        <%= f.hidden_field :item_pid, id: 'requestItemPid' %>
+        <%= f.hidden_field :holding_id, id: 'requestHoldingId' %>
+        <%= f.hidden_field :mms_id, id: 'requestMmsId' %>
+        <%= f.hidden_field :delivery_method, id: 'requestDeliveryMethod' %>
 
-  <%= f.text_field :selection,
-                   label: 'Selection',
-                   disabled: true %>
-  <%= f.text_field :section_title,
-                   label: t('requests.fields.section_title'),
-                   help: t('requests.help.section_title'),
-                   required: true %>
-  <%= f.text_field :section_author,
-                   label: t('requests.fields.section_author'),
-                   help: t('requests.help.section_author'),
-                   required: true %>
-  <%= f.text_field :section_pages,
-                   label: t('requests.fields.section_pages'),
-                   help: t('requests.help.section_pages') %>
-  <%= f.text_field :section_volume,
-                   label: t('requests.fields.section_volume'),
-                   help: t('requests.help.section_volume'),
-                   value: params[:volume] %>
-  <%= f.text_field :section_issue,
-                   label: t('requests.fields.section_issue'),
-                   help: t('requests.help.section_issue'),
-                   value: params[:issue] %>
+        <%= t('requests.delivery_messages.digi_html') %>
 
-  <a href="#" id="toggle-proxy-input">Proxy Request?</a>
 
-  <div class="proxy-input hidden">
-    <%= f.text_field :deliver_to, label: 'Deliver To' %>
+      <%= f.text_field :selection,
+                       label: 'Selection',
+                       disabled: true %>
+      <%= f.text_field :section_title,
+                       label: t('requests.fields.section_title'),
+                       help: t('requests.help.section_title'),
+                       required: true %>
+      <%= f.text_field :section_author,
+                       label: t('requests.fields.section_author'),
+                       help: t('requests.help.section_author'),
+                       required: true %>
+      <%= f.text_field :section_pages,
+                       label: t('requests.fields.section_pages'),
+                       help: t('requests.help.section_pages') %>
+      <%= f.text_field :section_volume,
+                       label: t('requests.fields.section_volume'),
+                       help: t('requests.help.section_volume'),
+                       value: params[:volume] %>
+      <%= f.text_field :section_issue,
+                       label: t('requests.fields.section_issue'),
+                       help: t('requests.help.section_issue'),
+                       value: params[:issue] %>
+
+      <a href="#" id="toggle-proxy-input">Proxy Request?</a>
+
+      <div class="proxy-input hidden">
+        <%= f.text_field :deliver_to, label: 'Deliver To' %>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal">Go Back</button>
+      <%= f.submit 'Submit Request', class: 'btn btn-primary' %>
+    </div>
   </div>
-
+</div>
 <% end %>
