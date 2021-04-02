@@ -23,16 +23,18 @@ module TurboAlmaApi
 
     # Get a single Item
     # @return [TurboAlmaApi::Bib::PennItem]
-    # @param [Hash] identifiers
-    def self.item_for(identifiers)
-      unless identifiers[:mms_id].present? && identifiers[:holding_id].present? && identifiers[:item_pid].present?
+    # @param [String] mms_id
+    # @param [String] holding_id
+    # @param [String] item_pid
+    def self.item_for(mms_id:, holding_id:, item_pid:)
+      unless mms_id && holding_id && item_pid
         raise ArgumentError, 'Insufficient identifiers set'
       end
 
-      item_url = "#{BASE_URL}/v1/bibs/#{identifiers[:mms_id]}/holdings/#{identifiers[:holding_id]}/items/#{identifiers[:item_pid]}"
+      item_url = "#{BASE_URL}/v1/bibs/#{mms_id}/holdings/#{holding_id}/items/#{item_pid}"
       response = api_get_request item_url
       parsed_response = Oj.load response.body
-      raise ItemNotFound, "Item can't be found for: #{identifiers[:item_pid]}" if parsed_response['errorsExist']
+      raise ItemNotFound, "Item can't be found for: #{item_pid}" if parsed_response['errorsExist']
 
       TurboAlmaApi::Bib::PennItem.new parsed_response
     end

@@ -9,7 +9,11 @@ class RequestsController < ApplicationController
   end
 
   def submit
-    # TODO: call submission service
+    item = TurboAlmaApi::Client.item_for mms_id: params[:mms_id].to_s,
+                                         holding_id: params[:holding_id].to_s,
+                                         item_pid: params[:item_pid].to_s
+    request = TurboAlmaApi::Request.new current_user, item, params
+    @response = RequestSubmissionService.submit request
     render 'requests/done', layout: false
   end
 
