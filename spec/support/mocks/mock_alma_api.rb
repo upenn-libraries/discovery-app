@@ -85,7 +85,7 @@ module MockAlmaApi
   def stub_turbo_item_get_canary
     stub(
       :get,
-      'https://api-na.hosted.exlibrisgroup.com/almaws/v1/bibs/1234/holdings/ALL/items?direction=asc&limit=1&order_by=description',
+      'https://api-na.hosted.exlibrisgroup.com/almaws/v1/bibs/1234/holdings/ALL/items?direction=asc&expand=due_date,due_date_policy&limit=1&order_by=description',
       'alma/turbo_item_get_canary.json'
     )
   end
@@ -93,7 +93,7 @@ module MockAlmaApi
   def stub_turbo_item_get_full
     stub(
       :get,
-      'https://api-na.hosted.exlibrisgroup.com/almaws/v1/bibs/1234/holdings/ALL/items?direction=asc&limit=100&offset=0&order_by=description',
+      'https://api-na.hosted.exlibrisgroup.com/almaws/v1/bibs/1234/holdings/ALL/items?direction=asc&expand=due_date,due_date_policy&limit=100&offset=0&order_by=description',
       'alma/turbo_item_get_full.json'
     )
   end
@@ -113,10 +113,11 @@ module MockAlmaApi
   #     'alma/large_bib_items_get_partial.json'
   #   )
   # end
+
   def stub_bib_request_options
     stub(
       :get,
-      'https://api-na.hosted.exlibrisgroup.com/almaws/v1/bibs/1234/request-options',
+      'https://api-na.hosted.exlibrisgroup.com/almaws/v1/bibs/1234/request-options?user_id=GUEST',
       'alma/bib_request_options.json'
     )
   end
