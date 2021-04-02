@@ -57,14 +57,21 @@ $(document).ready(function() {
             $("#confirm-modal").modal('show', $(this));
         });
 
-        $('body').on('click', '.delivery-option-radio', function(e) {
-            var $radio = $(this);
-            if($radio.val() === 'mail') {
-                $('#bbm_validation_checkbox').prop('disabled', false).focus();
-            } else {
-                $('#bbm_validation_checkbox').prop('disabled', true);
-            }
-        });
+        $('body')
+            .on('click', '.delivery-option-radio', function(e) {
+                var $radio = $(this);
+                if($radio.val() === 'mail') {
+                    $('#bbm_validation_checkbox').prop('disabled', false).focus();
+                } else {
+                    $('#bbm_validation_checkbox').prop('disabled', true);
+                }
+            })
+            .on('ajax:beforeSend', '#confirm-modal form', function() {
+                $('#confirm-modal .modal-body').empty().addClass('spinner')
+            })
+            .on('ajax:success', '#confirm-modal form', function(e, data){
+                $("#confirm-modal").empty().removeClass('spinner').html(data);
+            });
 
         $('#confirm-modal').on('show.bs.modal', function(e) {
             var $modal = $(this);

@@ -1,5 +1,5 @@
 module RequestsHelper
-  # TODO: do a better job of setting OpenURL params, or get from Alma request options API :/
+  # A backup in case we can't get the nice link from Alma
   # @param [String] mms_id
   def ill_request_form_url_for(mms_id)
     "https://franklin.library.upenn.edu/redir/ill?bibid=#{mms_id}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com"
