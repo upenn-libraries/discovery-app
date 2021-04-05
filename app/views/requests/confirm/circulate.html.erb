@@ -40,6 +40,12 @@
             <% end %>
           </li>
         </ul>
+      <div id="comments-area">
+        <a href="#" id="show-comment-input">Add Comments</a>
+        <div id="comment-input" style="display: none;">
+          <%= f.text_area :comments %>
+        </div>
+      </div>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-default" data-dismiss="modal">Go Back</button>

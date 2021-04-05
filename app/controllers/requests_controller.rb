@@ -2,6 +2,8 @@
 
 # Requesting actions
 class RequestsController < ApplicationController
+  before_action :set_item, only: :submit
+
   def confirm
     partial = partial_for_request_type params
     set_ill_url if partial == 'ill'
@@ -9,15 +11,18 @@ class RequestsController < ApplicationController
   end
 
   def submit
-    item = TurboAlmaApi::Client.item_for mms_id: params[:mms_id].to_s,
-                                         holding_id: params[:holding_id].to_s,
-                                         item_pid: params[:item_pid].to_s
-    request = TurboAlmaApi::Request.new current_user, item, params
+    request = build_request current_user, @item, params
     @response = RequestSubmissionService.submit request
     render 'requests/done', layout: false
   end
 
   private
+
+  def set_item
+    @item = TurboAlmaApi::Client.item_for mms_id: params[:mms_id].to_s,
+                                          holding_id: params[:holding_id].to_s,
+                                          item_pid: params[:item_pid].to_s
+  end
 
   # Set the ILL URL for use in the ILL confirmation partial
   # @return [String]
@@ -25,7 +30,7 @@ class RequestsController < ApplicationController
     @ill_url = ill_openurl_from_alma params[:mms_id].to_s
   end
 
-  # Determine partial for modal dialogue based on request params
+  # Determine partial for modal dialog based on request params
   # @param [ActionController::Parameters] params
   def partial_for_request_type(params)
     case params[:type].to_sym
@@ -45,5 +50,22 @@ class RequestsController < ApplicationController
   def ill_openurl_from_alma(mms_id)
     options = TurboAlmaApi::Client.request_options mms_id, current_user
     options.dig('ILLIAD') || ill_request_form_url_for(mms_id)
+  end
+
+  # @param [String] user
+  # @param [TurboAlmaApi::Bib::PennItem] item
+  # @param [ActionController::Parameters] params
+  def build_request(item, params)
+    if params[:delivery].in? %w[mail scandeliver]
+      :illiad # TODO:
+    elsif params[:delivery].in? %w[pickup]
+      TurboAlmaApi::Request.new user_id, item, params
+    end
+  end
+
+  # because current_user is useless
+  # @return [String]
+  def user_id
+    session['id']
   end
 end

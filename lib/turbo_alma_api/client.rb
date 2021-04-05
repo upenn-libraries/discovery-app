@@ -42,7 +42,12 @@ module TurboAlmaApi
     # see: https://developers.exlibrisgroup.com/alma/apis/docs/bibs/UE9TVCAvYWxtYXdzL3YxL2JpYnMve21tc19pZH0vcmVxdWVzdHM=/
     def self.submit_title_request(request); end
 
-    # @param [LocalRequest] request
+    # Submits a HOLD request to Alma
+    # -Request- object must respond to:
+    #  * pickup location
+    #  * comments
+    #  * mms_id, holding_id, item_pid
+    # @param [Request] request
     def self.submit_request(request)
       query = { user_id: request.user.id, user_id_type: 'all_unique' }
       body = { request_type: 'HOLD', pickup_location_type: 'LIBRARY',

@@ -18,7 +18,7 @@ class RequestSubmissionService
   def self.submission_response_for(request)
     case request.target_system
     when :alma
-      # alma_request request
+      alma_request request
     when :illiad
       # illiad_transaction request
     else
@@ -40,12 +40,12 @@ class RequestSubmissionService
   # end
 
   # @param [TurboAlmaApi::Request] request
-  # @param [AlmaApiClient] api
-  # def self.alma_request(request, api = AlmaApiClient.new)
-  #   api.create_item_request request
-  # rescue StandardError => e
-  #   raise RequestFailed => e.message
-  # end
+  # @param [TurboAlmaApi::Client] api
+  def self.alma_request(request, api = TurboAlmaApi::Client)
+    api.submit_request request
+  rescue StandardError => e
+    raise RequestFailed, e.message
+  end
 
   # @param [TurboAlmaApi::Request] request
   # @return [Hash] data for Alma API

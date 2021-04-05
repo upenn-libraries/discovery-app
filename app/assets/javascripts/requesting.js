@@ -71,7 +71,13 @@ $(document).ready(function() {
             })
             .on('ajax:success', '#confirm-modal form', function(e, data){
                 $("#confirm-modal").empty().removeClass('spinner').html(data);
+            })
+            .on('click', '#show-comment-input', function(e) {
+                e.preventDefault();
+                $(this).hide();
+                $("#comment-input").show();
             });
+
 
         $('#confirm-modal').on('show.bs.modal', function(e) {
             var $modal = $(this);
