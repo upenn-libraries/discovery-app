@@ -52,7 +52,6 @@ class RequestsController < ApplicationController
     options.dig('ILLIAD') || ill_request_form_url_for(mms_id)
   end
 
-  # @param [String] user
   # @param [TurboAlmaApi::Bib::PennItem] item
   # @param [ActionController::Parameters] params
   def build_request(item, params)

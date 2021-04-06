@@ -87,15 +87,19 @@ module TurboAlmaApi
       options = {}
       raise RequestFailed, "Problem getting request options for MMS ID: #{mms_id}" if parsed_response.dig 'web_service_result', 'errorsExist'
 
-      parsed_response['request_option'].each do |option|
-        option_name = if option.key? 'general_electronic_service_details'
-                        option.dig 'general_electronic_service_details', 'code'
-                      elsif option.key? 'rs_broker_details'
-                        option.dig 'rs_broker_details', 'code'
-                      else
-                        option.dig 'type', 'value'
-                      end
-        options[option_name] = option.dig 'request_url'
+      if parsed_response.dig 'request_options'
+        parsed_response['request_option']&.each do |option|
+          option_name = if option.key? 'general_electronic_service_details'
+                          option.dig 'general_electronic_service_details', 'code'
+                        elsif option.key? 'rs_broker_details'
+                          option.dig 'rs_broker_details', 'code'
+                        else
+                          option.dig 'type', 'value'
+                        end
+          options[option_name] = option.dig 'request_url'
+        end
+      else
+        raise RequestFailed, "No requesting options returned for MMS ID: #{mms_id}"
       end
       options
     end
