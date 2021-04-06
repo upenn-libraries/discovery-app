@@ -7,9 +7,14 @@ class RequestSubmissionService
 
   # @param [TurboAlmaApi::Request] request
   def self.submit(request)
-    response = submission_response_for request
-    { status: :success,
-      message: "Submission successful. Confirmation number is #{response}" }
+    if Rails.env.development?
+      response = submission_response_for request
+      { status: :success,
+        message: "Submission successful. Confirmation number is #{response}" }
+    else
+      { status: :success,
+        message: 'Submission is disabled in this environment!' }
+    end
   rescue StandardError => e
     { status: :failure, message: e.message }
   end
