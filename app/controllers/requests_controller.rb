@@ -11,7 +11,7 @@ class RequestsController < ApplicationController
   end
 
   def submit
-    request = build_request current_user, @item, params
+    request = build_request @item, params
     @response = RequestSubmissionService.submit request
     render 'requests/done', layout: false
   end
@@ -48,7 +48,7 @@ class RequestsController < ApplicationController
   # Get ILL URL from Alma API client
   # @param [String] mms_id
   def ill_openurl_from_alma(mms_id)
-    options = TurboAlmaApi::Client.request_options mms_id, current_user
+    options = TurboAlmaApi::Client.request_options mms_id, user_id
     options.dig('ILLIAD') || ill_request_form_url_for(mms_id)
   end
 
