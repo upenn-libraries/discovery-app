@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Illiad::Client, type: :model do
+RSpec.describe Illiad::ApiClient, type: :model do
   include MockIlliadApi
   let(:api) { described_class.new }
   context 'api book request submit' do
@@ -72,17 +72,17 @@ RSpec.describe Illiad::Client, type: :model do
         # end
       end
       context 'failure' do
-        it 'raises an InvalidRequest exception if user data is invalid' do
+        # it 'raises an InvalidRequest exception if user data is invalid' do
           # expect {
           #   api.create_user({})
           # }.to raise_error IlliadApiClient::InvalidRequest
-        end
-        it 'raises an InvalidRequest exception if response code indicates invalidity' do
+        # end
+        # it 'raises an InvalidRequest exception if response code indicates invalidity' do
           # stub_illiad_user_post_failure
           # expect {
           #   api.create_user({ "Username": "test" })
           # }.to raise_error IlliadApiClient::InvalidRequest
-        end
+        # end
       end
     end
   end

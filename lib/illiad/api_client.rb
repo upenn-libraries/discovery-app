@@ -2,7 +2,7 @@
 
 module Illiad
   # ILLiad API client
-  class Api
+  class ApiClient
     include HTTParty
 
     class UserNotFound < StandardError; end
