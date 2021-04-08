@@ -24,7 +24,7 @@
 
 <div class="navbar-form col-sm-3">
   <% if current_page?(controller: 'advanced') %>
-    <%= link_to 'Switch to basic search', search_catalog_path + '#catalog', class: 'btn btn-default'%>
+    <%= link_to 'Basic search', search_catalog_path + '#catalog', class: 'btn btn-default'%>
   <% else %>
     <%= link_to 'Advanced', blacklight_advanced_search_engine.advanced_search_path(search_state.to_h), class: 'advanced_search btn btn-default'%>
   <% end %>

@@ -560,10 +560,10 @@ header {
   #user-util-collapse {
     .navbar-right {
         .nav.navbar-nav {
-          li .dropdown {
+          li .dropdown-menu.dropdown-help {
               opacity: 0;
               visibility: hidden;
-              @media (min-width: 900px) {
+              &.visible {
                 opacity: 1;
                 visibility: visible;
               }
@@ -954,13 +954,52 @@ h3.ongray {
 
 }
 /*  xxxxxxxxxxx   NEW SEARCH  805-971  xxxxxxxxxxxxx  */
+
+
+
+.navbar-default .navbar-form,
+.navbar-form.col-sm-3 {
+    border-color: transparent;
+    border: none !important;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: inset none;
+    
+    a {
+      position: relative;
+      z-index: 3005; 
+      cursor: pointer;
+      top: 1rem;
+      @media (min-width: 555px) {
+        left: 1rem;
+        top: -1rem;
+      }
+      @media (min-width: 768px) {
+        top: 0;
+      }
+    }
+}
+.blacklight-advanced {
+  h1.franklin-title {
+    float:none;
+    @media (min-width: 850px) {
+      float: none;
+    }
+    @media (min-width: 900px) {
+      float: left;
+    }
+  }
+}
 h1.franklin-title {
     width: 15.3rem!important;
     height: 3.2rem!important;
     background-image: asset-url('franklin-title18.svg');
     background-repeat: no-repeat;
     background-size: 85%;
-    float: left;
+    float:none;
+    @media (min-width: 850px) {
+      float: left;
+    }
     font-family: Perpetua, 'Gentium Basic', 'Times New Roman', serif;
     color: #fff;
     font-size: 42px;
@@ -970,6 +1009,68 @@ h1.franklin-title {
     }
     padding: 0;
 }
+
+.blacklight-advanced #search-navbar .tab-content  {
+  #catalog-search-navbar,
+  #databases-search-navbar {
+    @media (min-width: 850px) {
+      height: 6rem;
+    }
+    @media (min-width: 900px) {
+      width: 86rem;
+      margin: 0 auto;
+      height: 3.5rem;
+    }
+    form.search-query-form.navbar-form {
+      max-width: 90%;
+      width: 33rem;
+      @media (min-width: 670px) {
+        width: 45rem;
+      }
+      .input-group-addon {
+        max-width: 15rem;
+      }
+    }
+    .navbar-form.col-sm-3 {
+      clear:both;
+      @media (min-width: 555px) {
+        clear:none;
+      }
+    }
+  }
+}
+#catalog-search-navbar,
+#databases-search-navbar {
+  @media (min-width: 768px) {
+    .input-group-addon.for-search-field {
+       width: 15rem;
+    }
+  }
+  .search-query-form {
+    margin-bottom: 1rem;
+  }
+  @media (min-width: 560px) {
+    h1.franklin-title {
+      margin: .7rem 0rem 0 0;
+    }
+  }
+  .navbar-form .input-group {
+    margin-top: .5rem;
+    > .form-control {
+      /*width: 27rem;*/
+    }
+  }
+  .navbar-form {
+    margin-top: .5rem;
+
+  }
+}
+#articles-search-navbar {
+  height: 4.6rem;
+}
+
+
+
 /*light gradient*/
 #search-navbar {
   background: #799bba; 
@@ -985,22 +1086,43 @@ h1.franklin-title {
 /*search forms*/
   .tab-content {
       padding: 1.5rem;
+      
       .tab-pane {
         margin: 0 auto;
       }
-      #bento-search-navbar {}
+      
       #bento-search-navbar {
         max-width: 70rem;
+        height: 7.5rem;
+        @media (min-width: 850px) {
+          height: 3.5rem;
+        }
       }
       #catalog-search-navbar,
       #databases-search-navbar {
         max-width: 84rem;
+        height: 10rem;
+        @media (min-width: 555px) {
+          height: 6rem;
+        }
+        @media (min-width: 850px) {
+          height: 3.5rem;
+        }
         form.search-query-form.navbar-form {
-          /*width: 52.9rem; */
-          width: 66%;
           float:left;
           padding: 0;
           margin: 0;
+          position: relative; 
+          z-index: 3000;
+          width: 100%; 
+          
+          @media (min-width: 555px) {
+            width: 40rem;
+          }
+          @media (min-width: 700px) {
+            width: 66%;
+          }
+          
           .input-group {
             /*width: 49rem;*/
             width: 100%;
@@ -1012,6 +1134,13 @@ h1.franklin-title {
       }
       #articles-search-navbar {
         max-width: 80rem;
+        height: 15rem;
+        @media (min-width: 768px) {
+          height: 10rem;
+        }
+        @media (min-width: 850px) {
+          height: 6.5rem;
+        }
         form.summon-form .limit-options  .checkbox label {
           color: #f2f2f2;
         }
@@ -1052,50 +1181,24 @@ h1.franklin-title {
       }
   }
 }
-/*breakbpoints for tabs*/
-/*#search-navbar div.container .franklin-search ul.nav.nav-tabs li {
-    width: 50%;
-    margin: 0;
-}
-@media (min-width: 42rem) {
-  #search-navbar div.container .franklin-search ul.nav.nav-tabs li {
-    width: 33.2%;
-  }       
-}
-@media (min-width: 800px) {
-  #search-navbar div.container .franklin-search ul.nav.nav-tabs li {
-    width: 12.7rem;
-    min-width: 12.7rem;
-    margin: .5rem .17rem 0;
-  }        
-}
-@media (min-width: 900px) {
-  body #search-navbar div.container .franklin-search ul.nav.nav-tabs li {
-    margin: .5rem .5rem 0;
-  }          
-}
-@media (min-width: 960px) {
-  #search-navbar div.container .franklin-search ul.nav.nav-tabs li {
-    width: 14rem;
-    min-width: 14rem;
-  }          
-}*/
+
 body #search-navbar div.container {
   /*the tabs*/
   width: 100%;
   .franklin-search {
-    height: 19.5rem;
+    padding-top: 2rem;
+    height: 13rem;
     @media (min-width: 420px) {
-      height: 17rem;
+      height: 10rem;
     }
     @media (min-width: 455px) {
-      height: 12.5rem;
+      height: 10rem;
     }
     @media (min-width: 768px) {
-      height: 11.2rem;
+      height: 10rem;
     }
     @media (min-width: 800px) {
-      height: 7.7rem;
+      height: 6.5rem;
     }
     
     position: relative;
@@ -1120,10 +1223,16 @@ body #search-navbar div.container {
         li.active,
         li {
           .franklin-tab {
+            &.bento a, &.bento a:hover, &.bento a:visited, &.bento a:visited:hover,
             a.tab-bento, a.tab-bento:hover, a.tab-bento:visited, a.tab-bento:visited:hover {
-              background-image: asset-url('bento.png');
+              background-image: asset-url('bento.png')!important;
               background-repeat: no-repeat;
               background-position: .5rem .5rem;
+              background-repeat: no-repeat;
+              padding:.8rem 1.2rem 0 4.7rem;
+              width: 100%;
+              height: 4rem;
+              font-weight: normal;
             }
           }
         } 
@@ -1177,16 +1286,7 @@ body #search-navbar div.container {
                   text-decoration: none;
                   border-radius: 0;
                 }
-                &.tab-bento,
-                &.tab-bento:hover {
-                  background-image: asset-url('bento.png');
-                  background-repeat: no-repeat;
-                  background-position: .5rem .5rem;
-                  padding:.8rem 1.2rem 0 4.7rem;
-                  width: 100%;
-                  height: 4rem;
-                  font-weight: normal;
-                }
+                
               }
             }
         }
@@ -1706,4 +1806,10 @@ button.btn-request-options {
 .request-option-wrapper.highlighted {
   border: 2px solid #337ab7;
   padding: 0px;
+}
+.sticky-chat {
+  position: fixed;
+  right: 2rem;
+  bottom: 2rem;
+  z-index: 99999;
 }

@@ -20,32 +20,32 @@
 
 <div class="franklin-search">
   <ul class="nav nav-tabs ezproxy-login-status" role="tablist">
-    <li role="presentation" class="<%= active_tab_classes('bento') %>">
-      <div class="franklin-tab">
+    <li class="<%= active_tab_classes('bento') %>">
+      <div class="franklin-tab bento">
         <%= render_tab_link('bento', " Everything", '#bento', bento_path(q: params[:q]), '#bento-main, #bento-search-navbar') %>
       </div>
     </li>
-    <li role="presentation" class="<%= active_tab_classes('catalog') %>">
+    <li class="<%= active_tab_classes('catalog') %>">
       <div class="franklin-tab">
         <%= render_tab_link('catalog', "Catalog", '#catalog', search_catalog_path(q: params[:q], search_field: 'keyword'), '#catalog-main, #catalog-search-navbar') %>
       </div>
     </li>
-    <li role="presentation" class="ezproxy-show-not-logged-in">
+    <li class="ezproxy-show-not-logged-in">
       <div class="franklin-tab">
         <%= render_tab_link('articles', 'Articles+', '#articles', summon_url(params[:q]), '#articles-main, #articles-search-navbar') %>
       </div>
     </li>
-    <li role="presentation" class="<%= active_tab_classes('databases') %>">
+    <li class="<%= active_tab_classes('databases') %>">
       <div class="franklin-tab">
         <%= link_to 'Databases', databases_results_path(params[:q]) %>
       </div>
     </li>
-    <li role="presentation" class="<%= active_tab_classes('colenda') %>">
+    <li class="<%= active_tab_classes('colenda') %>">
       <div class="franklin-tab">
         <%= render_tab_link('colenda', 'Colenda', '#colenda', colenda_search_results_url(params[:q]), '#colenda-main, #colenda-search-navbar') %>
       </div>
     </li>
-    <li role="presentation" class="<%= active_tab_classes('website') %>">
+    <li class="<%= active_tab_classes('website') %>">
       <div class="franklin-tab">
         <%= render_tab_link('website', 'Website', '#website', google_site_search_results_url(params[:q]), '#website-main, #website-search-navbar') %>
       </div>
