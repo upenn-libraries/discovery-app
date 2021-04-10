@@ -306,11 +306,29 @@ header {
       left: -1rem;
       clear: none;
       float: left;
-      width: 42rem;
-      height: 1.5rem;
+      width: auto;
+      height: 2rem;
+      >li#chooselibrarylink {
+        display:none; 
+      }
+
+      @media (min-width: 320px) {
+        width: 31rem;
+        height: 1.5rem;
+      }
+      @media (min-width: 440px) {
+        width: 42rem;
+        >li#chooselibrarylink {
+          display: inline-block;
+        }
+      }
+      
       margin-top: 1.2rem;
       @media (min-width: 1000px) {
         width: 55rem;
+      }
+      .chooselibrarylink {
+        display:none;
       }
       > li {
         font-family: "Open Sans",sans-serif;
@@ -560,9 +578,10 @@ header {
   #user-util-collapse {
     .navbar-right {
         .nav.navbar-nav {
-          li .dropdown-menu.dropdown-help {
+          li .dropdown-help.dropdown-menu {
               opacity: 0;
               visibility: hidden;
+              display:block;
               &.visible {
                 opacity: 1;
                 visibility: visible;
