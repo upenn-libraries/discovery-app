@@ -4,26 +4,28 @@
     <% if ENV['SHOW_KNOWN_ISSUES'] == 'true' %>
     <li><a style="color:red" href="<%= known_issues_url %>">Known Issues</a></li>
     <% end %>
-    <li class="dropdown">
-         <!-- <a  href="https://guides.library.upenn.edu/franklinaccount" id="mobile-franklin-help">
-            Franklin Help</span>
-          </a> -->
+    <li class="dropdown" id="li-desktop-franklin-help">
           <a  id="desktop-franklin-help"  class="dropdown-toggle" data-toggle="dropdown"  aria-haspopup="true" aria-expanded="false">
             Franklin Help<span class="precaret"> &nbsp;</span><span class="caret"></span>
           </a>
           <button tabindex="0" class="accessibility_button expand_button">show submenu</button>
       
-      <div class="dropdown-menu dropdown-help">
-          <ul >
-            <li><a tabindex="-1" href="https://guides.library.upenn.edu/franklinaccount">Your Library Account</a></li>
-            
-            <li><a tabindex="-1" href="https://guides.library.upenn.edu/franklincatalog">Using Franklin Catalog</a></li>
-            
-            <li><a tabindex="-1" href="https://guides.library.upenn.edu/articlesplus">Using Franklin Articles+</a></li>
-            
-            <li><a tabindex="-1" href="https://guides.library.upenn.edu/usingeresources">Accessing E-Resources</a></li>
-        </ul>
-      </div>
+          <div class="dropdown-menu dropdown-help">
+              <ul >
+                <li><a tabindex="-1" href="https://guides.library.upenn.edu/franklinaccount">Your Library Account</a></li>
+                
+                <li><a tabindex="-1" href="https://guides.library.upenn.edu/franklincatalog">Using Franklin Catalog</a></li>
+                
+                <li><a tabindex="-1" href="https://guides.library.upenn.edu/articlesplus">Using Franklin Articles+</a></li>
+                
+                <li><a tabindex="-1" href="https://guides.library.upenn.edu/usingeresources">Accessing E-Resources</a></li>
+            </ul>
+          </div>
+    </li>
+    <li id="li-mobile-franklin-help">
+       <a id="mobile-franklin-help" href="https://guides.library.upenn.edu/franklinaccount" id="mobile-franklin-help">
+            Franklin Help</span>
+        </a>
     </li>
     <li>
         <a href="https://faq.library.upenn.edu/ask">

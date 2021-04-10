@@ -460,8 +460,13 @@ header {
           &:last-child {
             @include box-shadow(0 2px 2px rgba(0, 0, 0, 0.3)) 
           }
+          &#li-desktop-franklin-help {
+            display:none;
+          }
         }
-        a {
+        
+        a,
+        a#mobile-franklin-help {
           font-size: 2rem;
           font-weight: 300;
           letter-spacing: .05rem;
@@ -469,11 +474,13 @@ header {
           color: #000 !important;
           text-align: left;
           padding: 0.5em 1em;
+          cursor: pointer;
           &:hover, &:focus {
             color: #900!important;
             text-decoration: underline;
             border-bottom: none;
             text-decoration-color: #900;
+
             
           }
           .caret,
@@ -489,6 +496,13 @@ header {
         @media (min-width: 900px) {
           
           > li {
+            &#li-mobile-franklin-help {
+              display:none;
+            }
+            &#li-desktop-franklin-help {
+              display:inline-block;
+            }
+
             width: auto;
             background-color: transparent;
             border-bottom: none;
@@ -511,18 +525,21 @@ header {
                 width: 18.3rem;
               }
             }
-            &:nth-child(2) {
+            &:nth-child(3) {
               width: 13.3rem;
               @media (min-width: 920px) {
                 width: 13.8rem;
               } 
             }
-            &:nth-child(3) {
+            &:nth-child(4) {
               width: 20.5rem;
               @media (min-width: 920px) {
                 width: 21rem;
               }
             } 
+            
+            
+            a#desktop-franklin-help,
             a {
               text-decoration: none;
               text-align: left;
@@ -532,7 +549,7 @@ header {
               color: #fff!important;
               letter-spacing: .05rem;
               padding: 1.5rem 0 2rem;
-              
+              cursor:pointer;
               .caret,
               .precaret {
                   @include inline-block;
@@ -549,12 +566,18 @@ header {
                 text-decoration: none;
               }
               &:hover {
-                border-bottom: solid 2px #900;
-                color: #900 !important;
-                .caret,
-                .precaret {
-                    display:none;
-                }
+                border-bottom: solid 2px #fff;
+                color: #fff !important;
+              }
+              &#desktop-franklin-help:hover {
+                
+                  border-bottom: solid 2px #900;
+                  color: #900 !important;
+                  .caret,
+                  .precaret {
+                      display:none;
+                  }
+                
 
               }
               &:focus {
@@ -581,7 +604,9 @@ header {
           li .dropdown-help.dropdown-menu {
               opacity: 0;
               visibility: hidden;
-              display:block;
+              @media (min-width: 900px) {
+                display:block;
+              }
               &.visible {
                 opacity: 1;
                 visibility: visible;
@@ -1001,7 +1026,7 @@ h3.ongray {
 .blacklight-advanced {
   h1.franklin-title {
     float:none;
-    @media (min-width: 850px) {
+    @media (min-width: 800px) {
       float: none;
     }
     @media (min-width: 900px) {
