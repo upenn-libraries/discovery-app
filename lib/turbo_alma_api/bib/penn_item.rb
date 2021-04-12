@@ -17,6 +17,11 @@ module TurboAlmaApi
         item_data.dig 'pid'
       end
 
+      # @return [Hash]
+      def bib(field)
+        self['bib_data'].dig field
+      end
+
       # Determine, based on various response attributes, if this Item is
       # able to be circulated.
       # @return [TrueClass, FalseClass]

@@ -64,7 +64,7 @@ module Illiad
     # @param [String] username
     def get_or_create_illiad_user(username)
       _user = get_user username
-    rescue UserNotFound => _e
+    rescue UserNotFound => _e # TODO: rethink exception as flow control
       create_user illiad_data_from username
     end
 
