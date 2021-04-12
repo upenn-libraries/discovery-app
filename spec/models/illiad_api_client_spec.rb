@@ -48,41 +48,41 @@ RSpec.describe Illiad::ApiClient, type: :model do
     end
     context 'lookup' do
       context 'success' do
-        # it 'returns user info' do
-        #   stub_illiad_user_get_success
-        #   response = api.get_user 'testuser'
-        #   expect(response&.keys).to include :username, :emailaddress
-        # end
+        it 'returns user info' do
+          stub_illiad_user_get_success
+          response = api.get_user 'testuser'
+          expect(response&.keys).to include :username, :emailaddress
+        end
       end
       context 'failure' do
-        # it 'raises an exception' do
-        #   stub_illiad_user_get_failure
-        #   expect {
-        #     api.get_user 'irrealuser'
-        #   }.to raise_error IlliadApiClient::UserNotFound
-        # end
+        it 'raises an exception' do
+          stub_illiad_user_get_failure
+          expect {
+            api.get_user 'irrealuser'
+          }.to raise_error Illiad::ApiClient::UserNotFound
+        end
       end
     end
     context 'create' do
       context 'success' do
-        # it 'returns newly created user info' do
-        #   stub_illiad_user_post_success
-        #   response = api.create_user user_info
-        #   expect(response&.dig(:username)).to eq 'testuser'
-        # end
+        it 'returns newly created user info' do
+          stub_illiad_user_post_success
+          response = api.create_user user_info
+          expect(response&.dig(:username)).to eq 'testuser'
+        end
       end
       context 'failure' do
-        # it 'raises an InvalidRequest exception if user data is invalid' do
-          # expect {
-          #   api.create_user({})
-          # }.to raise_error IlliadApiClient::InvalidRequest
-        # end
-        # it 'raises an InvalidRequest exception if response code indicates invalidity' do
-          # stub_illiad_user_post_failure
-          # expect {
-          #   api.create_user({ "Username": "test" })
-          # }.to raise_error IlliadApiClient::InvalidRequest
-        # end
+        it 'raises an InvalidRequest exception if user data is invalid' do
+          expect {
+            api.create_user({})
+          }.to raise_error Illiad::ApiClient::InvalidRequest
+        end
+        it 'raises an InvalidRequest exception if response code indicates invalidity' do
+          stub_illiad_user_post_failure
+          expect {
+            api.create_user({ "Username": "test" })
+          }.to raise_error Illiad::ApiClient::InvalidRequest
+        end
       end
     end
   end
