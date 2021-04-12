@@ -54,9 +54,10 @@ class RequestsController < ApplicationController
 
   # @param [TurboAlmaApi::Bib::PennItem] item
   # @param [ActionController::Parameters] params
+  # @return [TurboAlmaApi::Request, Illiad::Request]
   def build_request(item, params)
     if params[:delivery].in? %w[mail scandeliver]
-      :illiad # TODO:
+      Illiad::Request.new user_id, item, params
     elsif params[:delivery].in? %w[pickup]
       TurboAlmaApi::Request.new user_id, item, params
     end

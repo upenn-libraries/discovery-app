@@ -5,7 +5,7 @@
 class RequestSubmissionService
   class RequestFailed < StandardError; end
 
-  # @param [TurboAlmaApi::Request] request
+  # @param [TurboAlmaApi::Request, Illiad::Request] request
   def self.submit(request)
     if Rails.env.development?
       response = submission_response_for request
@@ -19,30 +19,29 @@ class RequestSubmissionService
     { status: :failure, message: e.message }
   end
 
-  # @param [TurboAlmaApi::Request] request
+  # @param [TurboAlmaApi::Request, Illiad::Request] request
   def self.submission_response_for(request)
-    case request.target_system
-    when :alma
+    case request
+    when TurboAlmaApi::Request
       alma_request request
-    when :illiad
-      # illiad_transaction request
+    when Illiad::Request
+      illiad_transaction request
     else
       raise ArgumentError,
-            "Unsupported submission target system: #{request.target_system}"
+            "No configured submission logic for a #{request.class.name}"
     end
   end
 
-  # @param [TurboAlmaApi::Request] request
-  # @param [Object] alma_user
-  # @param [IlliadApiClient] api
-  # def self.illiad_transaction(request, api = IlliadApiClient.new)
-  #   recipient_user = request.recipient_user || request.user
-  #   api.get_or_create_illiad_user recipient_user
-  #   data = illiad_transaction_data_from request
-  #   api.transaction data
-  # rescue StandardError => e
-  #   raise RequestFailed, e.message
-  # end
+  # @param [Illiad::Request] request
+  # @param [Illiad::ApiClient] api
+  def self.illiad_transaction(request, api = Illiad::ApiClient.new)
+    recipient_username = request.recipient_username || request.username
+    api.get_or_create_illiad_user recipient_username
+    data = illiad_transaction_data_from request
+    api.transaction data
+  rescue StandardError => e
+    raise RequestFailed, e.message
+  end
 
   # @param [TurboAlmaApi::Request] request
   # @param [TurboAlmaApi::Client] api
@@ -52,9 +51,9 @@ class RequestSubmissionService
     raise RequestFailed, e.message
   end
 
-  # @param [TurboAlmaApi::Request] request
-  # @return [Hash] data for Alma API
+  # @param [Illiad::Request] request
+  # @return [Hash] data for Illiad API
   def self.illiad_transaction_data_from(request)
-    # request.for_illiad
+    request.to_h
   end
 end
