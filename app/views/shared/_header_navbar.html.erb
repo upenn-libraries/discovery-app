@@ -1,13 +1,13 @@
 <header>
-  
+
 
   <div id="navandidbar" class="clearfix">
       <h2 class="visually-hidden">Login, libraries-wide information</h2>
-     
+
       <!-- LOGIN -->
       <% if has_user_authentication_provider? %>
           <ul class="nav navbar-nav">
-            
+
             <% if current_user %>
                 <li class="nameuser">
                     <a href="<%= my_library_card_url %>"><% if session['first_name'].present? %><span class="user-first-name"><%= session['first_name'] %> - </span><% end %>PennKey Library Account</a>
@@ -27,13 +27,13 @@
                       <li class="small"><a href="https://guides.library.upenn.edu/franklinaccount#s-lg-box-19646803">Subscribed alumni and courtesy user login</a></li>
                     </ul>
                   </div>
-                  
+
                   <%# = link_to t('blacklight.header_links.login'), new_user_session_path %>
                 </li>
             <% end %>
           </ul>
       <% end %>
-      <!-- END LOGIN --> 
+      <!-- END LOGIN -->
       <ul class="top-nav">
 
         <li id="chooselibrarylink"><!-- 2 -->
@@ -41,27 +41,27 @@
         </li>
         <li><a href="https://www.library.upenn.edu/about/locations">Libraries &amp; hours</a></li>
         <li><a href="//libcal.library.upenn.edu/appointments">Make an appointment</a></li>
-       
+
       </ul>
   </div>
   <!-- END NAVANDIDBAR  -->
   <div id="header-navbar" class="navbar navbar-inverse navbar-static-top" role="navigation">
     <div class="<%= container_classes %>">
         <!-- hamburger -->
-        <button type="button" class="navbar-toggle btn collapsed" data-toggle="collapse" data-target="#user-util-collapse">
+        <button type="button" class="navbar-toggle btn collapsed" data-toggle="collapse" data-target="#user-util-collapse" aria-expanded="false">
             <span class="sr-only">Toggle navigation</span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-       
+
         <div class="navbar-header">
            <a class="navbar-brand" href="http://www.library.upenn.edu"><span class="visually-hidden">Libraries homepage</span></a>
         </div><!-- end navbar header -->
 
 
 
-        <div class="collapse navbar-collapse" id="user-util-collapse">
+        <div class="collapse" id="user-util-collapse">
           <%= render :partial=>'/user_util_links' %>
         </div>
       </div><!-- end container -->
@@ -69,7 +69,7 @@
   <div id="search-navbar" class="navbar navbar-default navbar-static-top" role="navigation">
 
     <div class="<%= container_classes %>">
-      
+
       <%= render_search_bar  %>
     </div>
   </div>
