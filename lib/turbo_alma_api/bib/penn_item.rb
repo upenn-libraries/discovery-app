@@ -17,7 +17,7 @@ module TurboAlmaApi
         item_data.dig 'pid'
       end
 
-      # @return [Hash]
+      # @return [String]
       def bib(field)
         self['bib_data'].dig field
       end

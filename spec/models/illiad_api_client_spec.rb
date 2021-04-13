@@ -4,18 +4,19 @@ RSpec.describe Illiad::ApiClient, type: :model do
   include MockIlliadApi
   let(:api) { described_class.new }
   context 'api book request submit' do
-    # context 'success' do
-    #   item = instance_double TurboAlmaApi::Bib::PennItem
-    #   before do
-    #     allow(item).to(respond_to(:title)).and_return('Title')
-    #   end
-    #   it 'returns a transaction number' do
-    #     stub_transaction_post_success
-    #     body = Illiad::Request.new('testuser', item, {}).to_h
-    #     response = api.transaction body
-    #     expect(response).to eq '123456'
-    #   end
-    # end
+    context 'success' do
+      let(:transaction_body) do
+        { 'Username' => 'testuser',
+          'ProcessType' => 'Borrowing',
+          'LoanAuthor' => 'Test Author',
+          'LoanTitle' => 'Test Title' }
+      end
+      it 'returns a transaction number' do
+        stub_transaction_post_success
+        response = api.transaction transaction_body
+        expect(response).to eq '123456'
+      end
+    end
     context 'failure' do
       it 'fails' do
         stub_transaction_post_failure
