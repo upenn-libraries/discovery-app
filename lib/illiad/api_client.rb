@@ -61,25 +61,31 @@ module Illiad
       respond_to self.class.post('/users', options)
     end
 
-    # @param [AlmaUser] alma_user
-    def get_or_create_illiad_user(alma_user)
-      _user = get_user alma_user.pennkey
-    rescue UserNotFound => _e
-      create_user illiad_data_from alma_user
+    # @param [String] username
+    def get_or_create_illiad_user(username)
+      _user = get_user username
+    rescue UserNotFound => _e # TODO: rethink exception as flow control
+      create_user illiad_data_from username
     end
 
     # Sufficient mapped data to create an ILLiad user
-    # @param [AlmaUser] alma_user
-    def illiad_data_from(alma_user)
+    # @param [String] username
+    def illiad_data_from(username)
+      # TODO: how to grab these attributes? for a logged-in user (via SSO)
+      #       some of these attributes will be in the session. others will require
+      #       calling back to the Alma User API....or....?
+      #       Just call the user API for now...
+      #       I could save all the required values from below to the session?
+      alma_user = TurboAlmaApi::User.new username
       {
-        'Username' => alma_user.pennkey,
+        'Username' => username,
         'LastName' => alma_user.last_name,
         'FirstName' => alma_user.first_name,
         'EMailAddress' => alma_user.email,
         'NVTGC' => 'VPL',
         'Status' => alma_user.user_group,
         'Department' => alma_user.affiliation,
-        'PlainTextPassword' => Illiad::DEFAULT_PASSWORD,
+        'PlainTextPassword' => ENV['ILLIAD_USER_PASSWORD'],
         'Address' => '', # TODO: get it from alma_user preferred address
         # from here on, just setting things that we've normally set. many of these could be frivolous
         'DeliveryMethod' => 'Mail to Address',
