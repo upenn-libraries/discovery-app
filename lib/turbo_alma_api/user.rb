@@ -2,6 +2,7 @@ module TurboAlmaApi
   # sort the wheat from the chaff in Alma's User API response
   class User
     class Timeout < StandardError; end
+    class UserNotFound < StandardError; end
 
     attr_reader :pennkey, :id, :name, :first_name, :last_name, :email,
                 :user_group, :affiliation, :organization, :active
@@ -20,6 +21,9 @@ module TurboAlmaApi
       @affiliation = affiliation_from user_record
       @organization = organization_from user_record
       @active = active_from user_record
+    rescue StandardError => _e
+      raise UserNotFound,
+            "Username '#{user_id}' cannot be found. Are you sure the Pennkey is valid?"
     end
 
     # @return [Hash{Symbol->Unknown}]
@@ -32,7 +36,10 @@ module TurboAlmaApi
 
     # @param [String] user_id
     def get_user(user_id)
-      Alma::User.find user_id
+      Alma::User.find user_id, expand: ''
+    rescue Alma::ResponseError => e
+      # TODO: username probably does not exist in Alma
+      raise e
     rescue Net::OpenTimeout => e
       raise AlmaUser::Timeout, "Problem with Alma API: #{e.message}"
     end

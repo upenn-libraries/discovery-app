@@ -72,10 +72,11 @@ $(document).ready(function() {
             .on('ajax:success', '#confirm-modal form', function(e, data){
                 $("#confirm-modal").empty().removeClass('spinner').html(data);
             })
-            .on('click', '#show-comment-input', function(e) {
+            .on('click', '.input-toggleable', function(e) {
                 e.preventDefault();
-                $(this).hide();
-                $("#comment-input").show();
+                var $this = $(this);
+                $this.hide();
+                $this.siblings('.toggle-field').show();
             });
 
 

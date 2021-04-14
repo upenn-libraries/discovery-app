@@ -40,11 +40,20 @@
                        help: t('requests.help.section_issue'),
                        value: params[:issue] %>
 
-      <a href="#" id="toggle-proxy-input">Proxy Request?</a>
-
-      <div class="proxy-input hidden">
-        <%= f.text_field :deliver_to, label: 'Deliver To' %>
+      <div id="comments-area">
+        <a class="input-toggleable" href="#">Add Comments</a>
+        <div class="toggle-field" style="display: none;">
+          <%= f.text_area :comments, label: 'Comments' %>
+        </div>
       </div>
+
+      <div id="proxy-area">
+        <a class="input-toggleable" href="#">Proxy Request?</a>
+        <div class="toggle-field" style="display: none;">
+          <%= f.text_field :deliver_to, label: 'Deliver To' %>
+        </div>
+      </div>
+
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-default" data-dismiss="modal">Go Back</button>

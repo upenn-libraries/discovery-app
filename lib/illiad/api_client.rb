@@ -5,7 +5,6 @@ module Illiad
   class ApiClient
     include HTTParty
 
-    class UserNotFound < StandardError; end
     class RequestFailed < StandardError; end
     class InvalidRequest < StandardError; end
 
@@ -47,7 +46,8 @@ module Illiad
     # @param [String] username
     # @return [Hash, nil] parsed response
     def get_user(username)
-      respond_to self.class.get("/users/#{username}", @default_options), UserNotFound
+      user_response = self.class.get("/users/#{username}", @default_options)
+      Oj.load user_response.body if user_response.code == 200
     end
 
     # Create an Illiad user with a username, at least
@@ -63,14 +63,17 @@ module Illiad
 
     # @param [String] username
     def get_or_create_illiad_user(username)
-      _user = get_user username
-    rescue UserNotFound => _e # TODO: rethink exception as flow control
-      create_user illiad_data_from username
+      user = get_user username
+      return user if user.present?
+
+      create_user illiad_data_for username
+    rescue StandardError => e
+      raise RequestFailed, e.message
     end
 
     # Sufficient mapped data to create an ILLiad user
     # @param [String] username
-    def illiad_data_from(username)
+    def illiad_data_for(username)
       # TODO: how to grab these attributes? for a logged-in user (via SSO)
       #       some of these attributes will be in the session. others will require
       #       calling back to the Alma User API....or....?
@@ -101,7 +104,7 @@ module Illiad
     def respond_to(response, exception_class = RequestFailed)
       raise(exception_class, response.body) unless response.code == 200
 
-      JSON.parse(response.body).transform_keys { |k| k.downcase.to_sym }
+      Oj.load(response.body).transform_keys { |k| k.downcase.to_sym }
     end
 
     # Checks if user_info includes minimum required Illiad API fields
