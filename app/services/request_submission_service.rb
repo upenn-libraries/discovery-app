@@ -35,8 +35,7 @@ class RequestSubmissionService
   # @param [Illiad::Request] request
   # @param [Illiad::ApiClient] api
   def self.illiad_transaction(request, api = Illiad::ApiClient.new)
-    recipient_username = request.recipient_username || request.username
-    api.get_or_create_illiad_user recipient_username
+    api.get_or_create_illiad_user request.recipient_username
     data = illiad_transaction_data_from request
     api.transaction data
   rescue StandardError => e
