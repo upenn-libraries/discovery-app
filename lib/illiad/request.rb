@@ -45,7 +45,7 @@ module Illiad
         ISSN: item.bib('isbn'),
         # ESPNumber: data['pmid'],
         Notes: data[:comments],
-        # CitedIn: data['sid'],
+        # CitedIn: data['sid'], TODO: populate this!!! but what is 'sid'?
         # ItemInfo1: data['delivery_option']
       }
       return body unless @data[:delivery] == 'bbm'
@@ -71,7 +71,7 @@ module Illiad
         PhotoArticleAuthor: data[:section_author],
         PhotoArticleTitle: data[:section_title],
         Notes: data['comments'],
-        # CitedIn: data['sid']
+        # CitedIn: data['sid'] TODO: populate this!!! but what is 'sid'?
       }
     end
   end

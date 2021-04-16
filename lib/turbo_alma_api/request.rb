@@ -18,11 +18,7 @@ module TurboAlmaApi
       @holding_id = params[:holding_id]
       @item_pid = params[:item_pid]
       @comments = params[:comments]
-      @pickup_location = params[:pickup_location]
-    end
-
-    def target_system
-      :alma
+      @pickup_location = params[:pickup_location] || 'VanPeltLib'
     end
   end
 end

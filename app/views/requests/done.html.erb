@@ -5,7 +5,31 @@
       <div class="modal-title" id="exampleModalLabel">Request Submitted</div>
     </div>
     <div class="modal-body">
-      <pre>
+      <% if @response.dig(:status) == :success %>
+      <strong>Your Request is Complete!</strong>
+      <dl>
+        <dd>
+          <%= 'Title' %>
+        </dd>
+        <dt>
+          <%= @response.dig :title %>
+        </dt>
+        <dd>
+          <%= 'Confirmation Number' %>
+        </dd>
+        <dt>
+          <%= @response.dig :confirmation_number %>
+        </dt>
+      </dl>
+      <% else %>
+      <strong>Oh no! Your Request failed!</strong>
+      <p>
+        <%= @response.dig(:message) %>
+      </p>
+      <% end %>
+    </div>
+    <div class="debug-info">
+        <pre>
         <%= params %>
       </pre>
       <pre>

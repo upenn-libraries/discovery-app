@@ -9,8 +9,10 @@ class RequestSubmissionService
   def self.submit(request)
     if Rails.env.development?
       response = submission_response_for request
+      send_confirmation_emails(response)
       { status: :success,
-        message: "Submission successful. Confirmation number is #{response}" }
+        confirmation_number: response[:confirmation_number],
+        title: response[:title] }
     else
       { status: :success,
         message: 'Submission is disabled in this environment!' }
@@ -54,5 +56,9 @@ class RequestSubmissionService
   # @return [Hash] data for Illiad API
   def self.illiad_transaction_data_from(request)
     request.to_h
+  end
+
+  def self.send_confirmation_emails(response)
+
   end
 end
