@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Franklin Request Confirmation</title>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+  <h1>Your Franklin request has been submitted</h1>
+  <p>
+    You have successfully submitted a request for: <%= @info[:title] %>
+  </p>
+  <p>
+    Your confirmation number is <strong><%= @info[:confirmation_number] %></strong>. Please reference it when inquiring about your request status or about any other issues.
+  </p>
+  <p>
+    For questions regarding your request, please contact <a href="#">TBD</a>
+  </p>
+  </body>
+</html>

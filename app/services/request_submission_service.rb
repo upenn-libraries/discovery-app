@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 # Send requests to a service
-# TODO: confirmation emails?
 class RequestSubmissionService
   class RequestFailed < StandardError; end
 
@@ -9,8 +8,11 @@ class RequestSubmissionService
   def self.submit(request)
     if Rails.env.development?
       response = submission_response_for request
+      RequestMailer.confirmation_email(response, request.submitter_email)
+                   .deliver_later
       { status: :success,
-        message: "Submission successful. Confirmation number is #{response}" }
+        confirmation_number: response[:confirmation_number],
+        title: response[:title] }
     else
       { status: :success,
         message: 'Submission is disabled in this environment!' }
@@ -55,4 +57,5 @@ class RequestSubmissionService
   def self.illiad_transaction_data_from(request)
     request.to_h
   end
+
 end

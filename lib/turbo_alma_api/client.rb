@@ -49,17 +49,19 @@ module TurboAlmaApi
     #  * mms_id, holding_id, item_pid
     # @param [Request] request
     def self.submit_request(request)
-      query = { user_id: request.user.id, user_id_type: 'all_unique' }
-      body = { request_type: 'HOLD', pickup_location_type: 'LIBRARY',
-               pickup_location_library: request.pickup_location,
-               comment: request.comments }
+      query = { user_id: request.user_id, user_id_type: 'all_unique' }
+      body = { 'request_type' => 'HOLD', 'pickup_location_type' => 'LIBRARY',
+               'pickup_location_library' => request.pickup_location,
+               'comment' => request.comments }
       request_url = "#{BASE_URL}/v1/bibs/#{request.mms_id}/holdings/#{request.holding_id}/items/#{request.item_pid}/requests"
       response = Typhoeus.post request_url,
                                headers: DEFAULT_REQUEST_HEADERS,
                                params: query,
-                               body: body
-      if response.dig 'web_service_result', 'errorsExist'
-        raise RequestFailed, 'Alma Request submission failed' # TODO: error message details
+                               body: Oj.dump(body)
+      parsed_response = Oj.load response.body
+      if parsed_response.key?('web_service_response') || parsed_response.key?('errorsExist')
+        first_error_message = parsed_response['errorList']['error'].first['errorMessage']
+        raise RequestFailed, first_error_message # TODO: better error message details
         # boo, get error code
         # 401890 User with identifier X of type Y was not found.
         # 401129 No items can fulfill the submitted request.
@@ -73,8 +75,8 @@ module TurboAlmaApi
         # 401652 General Error - An error has occurred while processing the request.
       else
         # TODO: get confirmation code/request id
-        true
-        # hooray!
+        { title: parsed_response['title'],
+          confirmation_number: parsed_response['request_id'].prepend('ALMA') }
       end
     end
 

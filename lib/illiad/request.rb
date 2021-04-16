@@ -3,13 +3,15 @@
 module Illiad
   # Represent an Illiad request
   class Request
-    attr_accessor :recipient_username
+    attr_accessor :recipient_username, :submitter_email
 
     # @param [String] user_id
+    # @param [String] user_email
     # @param [TurboAlmaApi::Bib::PennItem] item
     # @param [ActionController::Parameters] params
-    def initialize(user_id, item, params)
+    def initialize(user_id, user_email, item, params)
       @recipient_username = params[:deliver_to].presence || user_id
+      @submitter_email = user_email
       @item = item
       @data = params
     end
@@ -45,7 +47,7 @@ module Illiad
         ISSN: item.bib('isbn'),
         # ESPNumber: data['pmid'],
         Notes: data[:comments],
-        # CitedIn: data['sid'],
+        # CitedIn: data['sid'], TODO: populate this!!! but what is 'sid'?
         # ItemInfo1: data['delivery_option']
       }
       return body unless @data[:delivery] == 'bbm'
@@ -71,7 +73,7 @@ module Illiad
         PhotoArticleAuthor: data[:section_author],
         PhotoArticleTitle: data[:section_title],
         Notes: data['comments'],
-        # CitedIn: data['sid']
+        # CitedIn: data['sid'] TODO: populate this!!! but what is 'sid'?
       }
     end
   end

@@ -57,9 +57,9 @@ class RequestsController < ApplicationController
   # @return [TurboAlmaApi::Request, Illiad::Request]
   def build_request(item, params)
     if params[:delivery].in? %w[mail scandeliver]
-      Illiad::Request.new user_id, item, params
+      Illiad::Request.new user_id, user_email, item, params
     elsif params[:delivery].in? %w[pickup]
-      TurboAlmaApi::Request.new user_id, item, params
+      TurboAlmaApi::Request.new user_id, user_email, item, params
     end
   end
 
@@ -67,5 +67,10 @@ class RequestsController < ApplicationController
   # @return [String]
   def user_id
     session['id']
+  end
+
+  # @return [String]
+  def user_email
+    session['email']
   end
 end
