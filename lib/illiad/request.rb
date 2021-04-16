@@ -3,13 +3,15 @@
 module Illiad
   # Represent an Illiad request
   class Request
-    attr_accessor :recipient_username
+    attr_accessor :recipient_username, :submitter_email
 
     # @param [String] user_id
+    # @param [String] user_email
     # @param [TurboAlmaApi::Bib::PennItem] item
     # @param [ActionController::Parameters] params
-    def initialize(user_id, item, params)
+    def initialize(user_id, user_email, item, params)
       @recipient_username = params[:deliver_to].presence || user_id
+      @submitter_email = user_email
       @item = item
       @data = params
     end

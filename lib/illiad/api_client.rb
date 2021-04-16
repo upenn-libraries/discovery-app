@@ -39,8 +39,10 @@ module Illiad
         raise RequestFailed, "Illiad transaction submission failed: #{response.message}"
       end
 
-      { title: (transaction_data[:LoanTitle] || transaction_data[:PhotoJournalTitle]),
-        confirmation_number: parsed_response['TransactionNumber'].prepend('I') }
+      { title:
+          (transaction_data[:LoanTitle] || transaction_data[:PhotoJournalTitle]),
+        confirmation_number:
+          parsed_response['TransactionNumber'].to_s.prepend('ILLIAD') }
     end
 
     # Get user info from Illiad
@@ -48,7 +50,9 @@ module Illiad
     # @return [Hash, nil] parsed response
     def get_user(username)
       user_response = self.class.get("/users/#{username}", @default_options)
-      Oj.load user_response.body if user_response.code == 200
+      return Oj.load(user_response.body) if user_response.code == 200
+
+      nil
     end
 
     # Create an Illiad user with a username, at least

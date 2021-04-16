@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 # Send requests to a service
-# TODO: confirmation emails?
 class RequestSubmissionService
   class RequestFailed < StandardError; end
 
@@ -9,7 +8,8 @@ class RequestSubmissionService
   def self.submit(request)
     if Rails.env.development?
       response = submission_response_for request
-      send_confirmation_emails(response)
+      RequestMailer.confirmation_email(response, request.submitter_email)
+                   .deliver_later
       { status: :success,
         confirmation_number: response[:confirmation_number],
         title: response[:title] }
@@ -58,7 +58,4 @@ class RequestSubmissionService
     request.to_h
   end
 
-  def self.send_confirmation_emails(response)
-
-  end
 end

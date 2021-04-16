@@ -76,7 +76,7 @@ module TurboAlmaApi
       else
         # TODO: get confirmation code/request id
         { title: parsed_response['title'],
-          confirmation_number: parsed_response['request_id'].prepend('A') }
+          confirmation_number: parsed_response['request_id'].prepend('ALMA') }
       end
     end
 
