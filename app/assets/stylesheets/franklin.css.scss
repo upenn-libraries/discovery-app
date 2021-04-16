@@ -2,6 +2,30 @@
 @import 'base/globals.css.scss';
 @import 'base/colors.css.scss';
 @import 'base/mixins.css.scss';
+#skip-link {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  height: 0;
+  li {
+    list-style-type: none;
+    a {
+      opacity: 0;
+      background-color: #fff;
+      width: 25rem;
+      height: 6rem;
+      padding: 2rem;
+      position: fixed;
+      z-index: 99999;
+      text-align: center;
+      pointer-events: none;
+      top: 0;
+      &:focus {
+          opacity: 1;
+      }
+    }
+  }
+}
 
 
 @media (min-width: 992px) and (max-width: 1199px) {
@@ -40,7 +64,14 @@ body {
 h1, h2, h3 {
   color: $upenn-blue;
 }
-
+.nav > li > a:hover, 
+.nav > li > a:focus {
+    background-color: transparent;
+    border: dotted 1px #eee;
+}
+.nav > li.nameuser > a:hover {
+    border: none;
+}
 span.site-name {
   position: relative;
   top: 20px;
@@ -308,27 +339,17 @@ header {
       float: left;
       width: auto;
       height: 2rem;
-      >li#chooselibrarylink {
-        display:none;
-      }
-
-      @media (min-width: 320px) {
-        width: 31rem;
-      }
+      display:none;
       @media (min-width: 440px) {
         width: 43rem;
-        >li#chooselibrarylink {
-          display: inline-block;
-        }
+        display: block;
       }
 
       margin-top: 1.2rem;
       @media (min-width: 1000px) {
         width: 55rem;
       }
-      .chooselibrarylink {
-        display:none;
-      }
+      
       > li {
         font-family: "Open Sans",sans-serif;
         font-size: 1.2rem;
@@ -357,13 +378,18 @@ header {
 
 
 /*xxxxxxxxxxxxxxxxxxxx*/
-@media (min-width: 800px) {
-  body header #search-navbar div.container {width: 100% !important;}
+body header #search-navbar div.container {
+  @media (min-width: 800px) {
+    width: 100% !important;
+  }
 }
 #header-navbar {
 
   background-color: #011f5b;
-  padding: 2rem 2rem 0;
+  padding: 0 2rem;
+  @media (min-width: 900px) {
+    padding: 1rem 2rem 0;
+  }
   margin-top: .5rem;
   .container {
     width: 100%;
@@ -375,10 +401,20 @@ header {
     /* position: relative;*/
     position: static;
     float: left;
-    width: 30.5rem;
-    height: 6.5rem;
+    width: 19rem;
+    height: 5.8rem;
     margin: 0;
-    padding-right: 4.3rem;
+    padding-right: 0;
+    @media (min-width: 900px) {
+      width: 24rem;
+      height: 5.8rem;
+      padding-right: 4.3rem;
+    }
+    @media (min-width: 1150px) {
+      width: 32.5rem;
+      height: 6.5rem;
+      padding-right: 6rem;
+    }
     a.navbar-brand {
       display: block;
       background-image: asset-url('logo-2020-whitetite.svg');
@@ -388,13 +424,19 @@ header {
       top: 0;
       left: 0;
       height: 100%;
-      width: 100%;
+      width: 19rem;
       margin: 0;
       text-indent: 0;
       padding: 0;
       float: none;
       line-height:1.6;
       margin-left: 0;
+      @media (min-width: 900px) {
+        width: 24rem;
+      }
+      @media (min-width: 1150px) {
+        width: 100%;
+      }
     }
   }
   &.nav-expanded {
@@ -518,7 +560,7 @@ header {
             margin: 0;
             color: #fff;
             font-family: "Gentium Basic",serif;
-            &:nth-child(1) {
+            &#li-desktop-franklin-help {
               width: 17.8rem;
               @media (min-width: 920px) {
                 width: 18.3rem;
@@ -559,10 +601,7 @@ header {
 
                   border-bottom: solid 2px #900;
                   color: #900 !important;
-                  .caret,
-                  .precaret {
-                    display:none;
-                  }
+                  
               }
               &:focus {
                 outline: 1px dotted #82afd3;
@@ -609,7 +648,7 @@ header {
               /*on mouseover*/
               position: absolute;
               width: 100% !important;
-              top: 10.2rem;
+              top: 9.2rem;
               left: 0;
               height: 6.6rem;
               min-height: 6.6rem;
@@ -627,7 +666,7 @@ header {
                   border-right: dotted 1px #999;
                   height: 3.6rem;
                   padding: 0 1rem;
-                  &:nth-child(4) {
+                  &:last-child {
                     border-right: none;
                   }
                   a {
@@ -1239,6 +1278,7 @@ body #search-navbar div.container {
         height: 4rem;
         width: 100%;
         max-width: 79rem;
+
         @media (min-width: 800px) {
           height: 7.5rem;
         }
@@ -1251,8 +1291,8 @@ body #search-navbar div.container {
         li.active,
         li {
           .franklin-tab {
-            &.bento a, &.bento a:hover, &.bento a:visited, &.bento a:visited:hover,
-            a.tab-bento, a.tab-bento:hover, a.tab-bento:visited, a.tab-bento:visited:hover {
+            &.bento a, &.bento a:hover, &.bento a:visited, &.bento a:visited:hover, &.bento a:focus,
+            a.tab-bento, a.tab-bento:hover, a.tab-bento:visited, a.tab-bento:visited:hover, a.tab-bento:focus {
               background-image: asset-url('bento.png')!important;
               background-repeat: no-repeat;
               background-position: .5rem .5rem;
@@ -1261,6 +1301,12 @@ body #search-navbar div.container {
               width: 100%;
               height: 4rem;
               font-weight: normal;
+            }
+            &:focus {
+                outline: #005 auto 1px;
+                outline-color: #005;
+                outline-style: auto;
+                outline-width: 1px;
             }
           }
         }

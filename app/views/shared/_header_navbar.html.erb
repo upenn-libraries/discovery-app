@@ -1,3 +1,11 @@
+<ul id="skip-link">
+    <li><a href="#login-button" class="element-invisible element-focusable">Franklin Login</a></li>
+    <li><a href="#logout-button" class="element-invisible element-focusable">Log out</a></li>
+    <li><a href="#a-search" class="element-invisible element-focusable">Active search</a></li>
+    <li><a href="#search-options" class="element-invisible element-focusable">Search options</a></li>
+    <li><a href="#main-container" class="element-invisible element-focusable">Main content</a></li>
+    <li><a href="#footer" class="element-invisible element-focusable">Footer menu</a></li>
+</ul>
 <header>
 
 
@@ -13,12 +21,12 @@
                     <a href="<%= my_library_card_url %>"><% if session['first_name'].present? %><span class="user-first-name"><%= session['first_name'] %> - </span><% end %>PennKey Library Account</a>
                 </li>
                 <li class="destroysession">
-                    <button type="button" class="btn btn-default btn-sm"><%= link_to t('blacklight.header_links.logout'), destroy_user_session_path %></button>
+                    <button id="logout-button" type="button" class="btn btn-default btn-sm"><%= link_to t('blacklight.header_links.logout'), destroy_user_session_path %></button>
                 </li>
             <% else %>
                 <li class="loginbutton">
                   <div class="navbar-btn-group btn-group">
-                    <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button id="login-button" type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       Login <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu">
