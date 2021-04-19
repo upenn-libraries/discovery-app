@@ -60,6 +60,7 @@ Rails.application.routes.draw do
 
   # New Requesting Actions
   get 'request/confirm/:type', to: 'requests#confirm'
+  get 'request/options', to: 'requests#options'
   post 'request/submit', to: 'requests#submit'
 
   get 'alma/availability' => 'franklin_alma#availability'
