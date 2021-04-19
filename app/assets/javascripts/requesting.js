@@ -127,10 +127,10 @@ $(document).ready(function() {
 
         $.getJSON('/request/options?mms_id=' + mmsId, function(data) {
             var $showTools = $('.show-tools .panel-body ul.nav');
-            var aeres_url = data['AERES'];
+            var ares_url = data['ARES'];
             var enhance_url = data['ENHANCED'];
-            if(aeres_url) {
-                $showTools.append($('<li><a target="_blank" href="'+ aeres_url +'">Place on Course Reserve</a></li>'));
+            if(ares_url) {
+                $showTools.append($('<li><a target="_blank" href="'+ ares_url +'">Place on Course Reserve</a></li>'));
             }
             if(enhance_url) {
                 $showTools.append($('<li><a target="_blank" href="'+ enhance_url +'">Report Cataloging Error</a></li>'));
