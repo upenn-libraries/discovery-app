@@ -47,8 +47,7 @@ module Illiad
         ISSN: item.bib('isbn'),
         # ESPNumber: data['pmid'],
         Notes: data[:comments],
-        # CitedIn: data['sid'], TODO: populate this!!! but what is 'sid'?
-        # ItemInfo1: data['delivery_option']
+        CitedIn: cited_in_value
       }
       return body unless @data[:delivery] == 'bbm'
 
@@ -73,8 +72,12 @@ module Illiad
         PhotoArticleAuthor: data[:section_author],
         PhotoArticleTitle: data[:section_title],
         Notes: data['comments'],
-        # CitedIn: data['sid'] TODO: populate this!!! but what is 'sid'?
+        CitedIn: cited_in_value
       }
+    end
+
+    def cited_in_value
+      'info:sid/primo.exlibrisgroup.com'
     end
   end
 end
