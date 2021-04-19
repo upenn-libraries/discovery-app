@@ -14,7 +14,7 @@ RSpec.describe Illiad::ApiClient, type: :model do
       it 'returns a transaction number' do
         stub_transaction_post_success
         response = api.transaction transaction_body
-        expect(response).to eq '123456'
+        expect(response[:confirmation_number]).to eq 'ILLIAD123456'
       end
     end
     context 'failure' do
@@ -33,14 +33,13 @@ RSpec.describe Illiad::ApiClient, type: :model do
         it 'returns user info' do
           stub_illiad_user_get_success
           response = api.get_user 'testuser'
-          expect(response&.keys).to include :username, :emailaddress
+          expect(response&.keys).to include 'UserName', 'EMailAddress'
         end
       end
       context 'failure' do
         it 'raises an exception' do
           stub_illiad_user_get_failure
-          expect { api.get_user 'irrealuser' }
-            .to raise_error Illiad::ApiClient::UserNotFound
+          expect(api.get_user('irrealuser')).to be_nil
         end
       end
     end
