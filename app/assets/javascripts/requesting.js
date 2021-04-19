@@ -2,8 +2,11 @@ function populateItemDebugWell(selectedItem) {
     $('#selected-item-debug').show().text('Debug Info: ' + JSON.stringify(selectedItem, null, 4));
 }
 
-function enableRequestButtons() {
-    $('.request-button').prop('disabled', false);
+function enableRequestButtons(selectedItem) {
+    $('#print-request-button').prop('disabled', false);
+    if(selectedItem.scannable) {
+        $('#electronic-request-button').prop('disabled', false);
+    }
 }
 
 $(document).ready(function() {
@@ -29,7 +32,7 @@ $(document).ready(function() {
                 if(responseData.length === 1) {
                     $widget.closest('.form-group').hide();
                     selectedItem = responseData[0];
-                    enableRequestButtons();
+                    enableRequestButtons(selectedItem);
                     populateItemDebugWell(selectedItem);
                 } else {
                     $widget.select2({
@@ -40,13 +43,13 @@ $(document).ready(function() {
                     }).on('select2:open', function(e) {
                         $('.select2-search__field').attr('placeholder', 'Start typing to filter the list');
                     }).on('select2:select', function(e) {
-                        enableRequestButtons();
                         selectedItemId = this.value;
                         selectedItem = responseData.find(function(item, index) {
                             if(item.id === selectedItemId) {
                                 return item;
                             }
                         });
+                        enableRequestButtons(selectedItem);
                         populateItemDebugWell(selectedItem);
                     });
                 }
@@ -78,7 +81,6 @@ $(document).ready(function() {
                 $this.hide();
                 $this.siblings('.toggle-field').show();
             });
-
 
         $('#confirm-modal').on('show.bs.modal', function(e) {
             var $modal = $(this);

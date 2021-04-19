@@ -6,7 +6,7 @@
     <div class="panel-body spinner">
       <form id="request-form">
         <div class="form-group">
-            <label for="request-item">Selection</label>
+            <label for="request-item-select">Selection</label>
             <select name="request-item" id="request-item-select" class="form-control" data-mmsid="<%= document.alma_mms_id %>">
               <option value=""></option>
             </select>
@@ -20,6 +20,7 @@
               <% fulltext_link_label = link_object['linktext'] %>
             <% end %>
             <% if current_user %>
+
             <button type="submit" id="print-request-button" class="btn btn-default request-button" value="print" disabled>In Print</button>
             <button type="submit" id="electronic-request-button" class="btn btn-default request-button"
                     value="electronic"<% if link_object %> data-fulltext-url="<%= fulltext_link_url %>" data-fulltext-label="<%= fulltext_link_label %>"<% end %> disabled>
