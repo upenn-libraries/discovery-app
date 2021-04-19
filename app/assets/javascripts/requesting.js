@@ -82,49 +82,50 @@ $(document).ready(function() {
                 $this.siblings('.toggle-field').show();
             });
 
-        $.getJSON('/request/options?mms_id=' + mmsId, function(data) {
-            $('#confirm-modal').on('show.bs.modal', function(e) {
-                var $modal = $(this);
-                var $formatButton = e.relatedTarget;
-                var format = $formatButton.val();
+        $('#confirm-modal').on('show.bs.modal', function(e) {
+            var $modal = $(this);
+            var $formatButton = e.relatedTarget;
+            var format = $formatButton.val();
 
-                var urlPart;
-                var params = { mms_id: mmsId, holding_id: selectedItem.holding_id };
-                var fulltextUrl = $('#electronic-request-button').data('fulltext-url');
-                if(format === 'electronic') {
-                    params.volume = selectedItem.volume;
-                    params.issue = selectedItem.issue;
-                    urlPart = 'electronic';
+            var urlPart;
+            var params = { mms_id: mmsId, holding_id: selectedItem.holding_id };
+            var fulltextUrl = $('#electronic-request-button').data('fulltext-url');
+            if(format === 'electronic') {
+                params.volume = selectedItem.volume;
+                params.issue = selectedItem.issue;
+                urlPart = 'electronic';
+            } else {
+                if(selectedItem.circulate) {
+                    params.available = selectedItem.in_place;
+                    urlPart = 'circulate';
                 } else {
-                    if(selectedItem.circulate) {
-                        params.available = selectedItem.in_place;
-                        urlPart = 'circulate';
+                    if(selectedItem.aeon_requestable) {
+                        urlPart = 'aeon';
                     } else {
-                        if(selectedItem.aeon_requestable) {
-                            urlPart = 'aeon';
-                        } else {
-                            urlPart = 'ill';
-                        }
+                        urlPart = 'ill';
                     }
                 }
+            }
 
-                // load modal HTML via ajax
-                $.get('/request/confirm/' + urlPart, params, function(html) {
-                    // $modal.find('.modal-body').empty().html(html);
-                    $modal.empty().html(html);
+            // load modal HTML via ajax
+            $.get('/request/confirm/' + urlPart, params, function(html) {
+                // $modal.find('.modal-body').empty().html(html);
+                $modal.empty().html(html);
 
-                    // set hidden fields
-                    $modal.find('#requestItemPid').val(selectedItem.id);
-                    $modal.find('#requestHoldingId').val(selectedItem.holding_id);
-                    $modal.find('#requestMmsId').val(mmsId);
+                // set hidden fields
+                $modal.find('#requestItemPid').val(selectedItem.id);
+                $modal.find('#requestHoldingId').val(selectedItem.holding_id);
+                $modal.find('#requestMmsId').val(mmsId);
 
-                    // set Item details TODO: what if description is empty? :(
-                    $('#selection').val(selectedItem.description);
+                // set Item details TODO: what if description is empty? :(
+                $('#selection').val(selectedItem.description);
 
-                    // set Fulltext link if possible
-                    if(fulltextUrl) { $('#fulltext-link').attr('href', fulltextUrl).closest('div#online-access-div').show(); }
-                });
+                // set Fulltext link if possible
+                if(fulltextUrl) { $('#fulltext-link').attr('href', fulltextUrl).closest('div#online-access-div').show(); }
             });
+        });
+
+        $.getJSON('/request/options?mms_id=' + mmsId, function(data) {
             var $showTools = $('.show-tools .panel-body ul.nav');
             var aeres_url = data['AERES'];
             var enhance_url = data['ENHANCED'];
