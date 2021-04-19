@@ -72,7 +72,7 @@ $(document).ready(function() {
             .on('ajax:beforeSend', '#confirm-modal form', function() {
                 $('#confirm-modal .modal-body').empty().addClass('spinner')
             })
-            .on('ajax:success', '#confirm-modal form', function(e, data){
+            .on('ajax:success', '#confirm-modal form', function(e, data) {
                 $("#confirm-modal").empty().removeClass('spinner').html(data);
             })
             .on('click', '.input-toggleable', function(e) {
@@ -123,6 +123,18 @@ $(document).ready(function() {
                 // set Fulltext link if possible
                 if(fulltextUrl) { $('#fulltext-link').attr('href', fulltextUrl).closest('div#online-access-div').show(); }
             });
+        });
+
+        $.getJSON('/request/options?mms_id=' + mmsId, function(data) {
+            var $showTools = $('.show-tools .panel-body ul.nav');
+            var ares_url = data['ARES'];
+            var enhance_url = data['ENHANCED'];
+            if(ares_url) {
+                $showTools.append($('<li><a target="_blank" href="'+ ares_url +'">Place on Course Reserve</a></li>'));
+            }
+            if(enhance_url) {
+                $showTools.append($('<li><a target="_blank" href="'+ enhance_url +'">Report Cataloging Error</a></li>'));
+            }
         });
     }
 })
