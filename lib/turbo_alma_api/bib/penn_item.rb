@@ -6,6 +6,12 @@ module TurboAlmaApi
     class PennItem < Alma::BibItem
       ETAS_TEMPORARY_LOCATION = 'ETAS No Loans No Requests'
 
+      # Rudimentary list of material types unsuitable for Scan & Deliver
+      UNSCANNABLE_MATERIAL_TYPES = %w[
+        RECORD DVD CDROM BLURAY BLURAYDVD LP FLOPPY_DISK DAT GLOBE
+        AUDIOCASSETTE VIDEOCASSETTE HEAD LRDSC CALC
+      ].freeze
+
       def identifiers
         { item_pid: pid,
           holding_id: holding_data['holding_id'],
@@ -36,6 +42,13 @@ module TurboAlmaApi
       # Penn uses "Non-circ" in Alma
       def non_circulating?
         circulation_policy.include?('Non-circ')
+      end
+
+      # Is the item able to be Scan&Deliver'd?
+      # @return [TrueClass, FalseClass]
+      def scannable?
+        !item_data.dig('physical_material_type', 'value')
+                  .in? UNSCANNABLE_MATERIAL_TYPES
       end
 
       # @return [String]
@@ -144,7 +157,8 @@ module TurboAlmaApi
           'aeon_requestable' => aeon_requestable?,
           'volume' => volume,
           'issue' => issue,
-          'in_place' => in_place?
+          'in_place' => in_place?,
+          'scannable' => scannable?
         }
       end
     end
