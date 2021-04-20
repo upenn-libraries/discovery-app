@@ -1,6 +1,6 @@
 include:
   - project: "devops/gitlab/ci-templates/docker"
-    ref: "master"
+    ref: "speed-up-builds"
     file: ".build_docker_image.yml"
   - project: "devops/gitlab/ci-templates/docker"
     ref: "master"
