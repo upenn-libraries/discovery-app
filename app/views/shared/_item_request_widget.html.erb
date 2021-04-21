@@ -19,14 +19,16 @@
               <% fulltext_link_url = link_object['linkurl'] %>
               <% fulltext_link_label = link_object['linktext'] %>
             <% end %>
-            <% if current_user %>
-
-            <button type="submit" id="print-request-button" class="btn btn-default request-button" value="print" disabled>In Print</button>
-            <button type="submit" id="electronic-request-button" class="btn btn-default request-button"
+            <button type="submit" id="print-request-button" class="btn btn-default request-button" value="print" style="display: none;" disabled>In Print</button>
+            <button type="submit" id="aeon-request-button" class="btn btn-default request-button" value="aeon" style="display: none;" disabled>Request to View</button>
+            <button type="submit" id="electronic-request-button" class="btn btn-default request-button" style="display: none;"
                     value="electronic"<% if link_object %> data-fulltext-url="<%= fulltext_link_url %>" data-fulltext-label="<%= fulltext_link_label %>"<% end %> disabled>
               Electronic
             </button>
+            <% if current_user %>
+              <div id="requesting-logged-in" data-value="true"></div>
             <% else %>
+              <div id="requesting-logged-in" data-value="false"></div>
               <div class="btn-group">
                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Login to See Requesting Options <span class="caret"></span>

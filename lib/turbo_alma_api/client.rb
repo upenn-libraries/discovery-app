@@ -21,6 +21,13 @@ module TurboAlmaApi
       Bib::PennItemSet.new mms_id, username
     end
 
+    # @param [String] mms_id
+    # @return [Hash]
+    def self.all_holdings_for(mms_id)
+      response = api_get_request "#{BASE_URL}/v1/bibs/#{mms_id}/holdings"
+      Oj.load response.body
+    end
+
     # Get a single Item
     # @return [TurboAlmaApi::Bib::PennItem]
     # @param [String] mms_id
