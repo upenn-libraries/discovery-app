@@ -1,6 +1,14 @@
 module MockAlmaApi
   include JsonFixtures
 
+  def stub_holdings_get_success
+    stub(
+      :get,
+      'https://api-na.hosted.exlibrisgroup.com/almaws/v1/bibs/1234/holdings',
+      'alma/holdings_get_success.json'
+    )
+  end
+
   def stub_alma_user_get_success
     stub(
       :get,

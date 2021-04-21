@@ -24,6 +24,11 @@ module TurboAlmaApi
       end
 
       # @return [String]
+      def holding_id
+        holding_data['holding_id']
+      end
+
+      # @return [String]
       def bib(field)
         self['bib_data'].dig field
       end
@@ -47,8 +52,8 @@ module TurboAlmaApi
       # Is the item able to be Scan&Deliver'd?
       # @return [TrueClass, FalseClass]
       def scannable?
-        !item_data.dig('physical_material_type', 'value')
-                  .in? UNSCANNABLE_MATERIAL_TYPES
+        aeon_requestable? || !item_data.dig('physical_material_type', 'value')
+                                       .in?(UNSCANNABLE_MATERIAL_TYPES)
       end
 
       # @return [String]
@@ -84,16 +89,23 @@ module TurboAlmaApi
         label_info.reject(&:blank?).join(' - ')
       end
 
-      # Label text for Item radio button
+      # Label text for select2
       # @return [String]
       def label_for_select
-        label_info = [
-          description,
-          physical_material_type['desc'],
-          public_note,
-          user_policy_display(user_due_date_policy),
-          location_name,
-        ]
+        label_info = if item_data.present?
+                       [
+                         description,
+                         physical_material_type['desc'],
+                         public_note,
+                         user_policy_display(user_due_date_policy),
+                         location_name
+                       ]
+                     else # no item data case - holding as item...
+                       [
+                         'Restricted Access',
+                         holding_data['location']['desc']
+                       ]
+                     end
         label_info.reject(&:blank?).join(' - ')
       end
 
@@ -139,12 +151,17 @@ module TurboAlmaApi
       # TODO: is this right? AlmaAvailability parses availability XML and gets a location_code
       def aeon_requestable?
         aeon_site_codes = PennLib::BlacklightAlma::CodeMappingsSingleton.instance.code_mappings.aeon_site_codes
-        item_data['location']['value'].in? aeon_site_codes
+        location = if item_data.dig('location', 'value')
+                     item_data['location']['value']
+                   else
+                     holding_data['location']['value']
+                   end
+        location.in? aeon_site_codes
       end
 
       def for_select(_options = {})
         {
-          'id' => item_data['pid'],
+          'id' => item_data.dig('pid') || 'no-item',
           'text' => label_for_select,
           'title' => self['bib_data']['title'],
           'description' => description,

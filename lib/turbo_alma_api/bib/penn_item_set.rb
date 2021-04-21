@@ -24,12 +24,32 @@ module TurboAlmaApi
         )
         parsed_response = Oj.load first_items_response.body
         @total_count = parsed_response['total_record_count']
-        # TODO: no items case?
         @items = if @total_count == 1
                    Array.wrap PennItem.new parsed_response['item'].first
                  else
                    bulk_retrieve_items
                  end
+        # But wait! Penn might have holdings with no items! Of course!
+        holdings = TurboAlmaApi::Client.all_holdings_for @mms_id
+        items_and_empty_holdings holdings # TODO: improve integration of this edge case - run in paralell?
+      end
+
+      # iterate through holdings, skip if corresponding item found (with holding_id)
+      # for the remainder, add an pseudo-item???
+      # @param [Hash] holdings
+      def items_and_empty_holdings(holdings)
+        item_holding_ids = @items.collect(&:holding_id).uniq
+        holdings['holding'].each do |holding|
+          next if holding['holding_id'].in? item_holding_ids
+
+          @items << TurboAlmaApi::Bib::PennItem.new(
+            # fake an item, ugh
+            { 'holding_data' => holding,
+              'bib_data' => holdings['bib_data'],
+              'item_data' => {} }
+          )
+        end
+        @items
       end
 
       def to_json(_options = {})

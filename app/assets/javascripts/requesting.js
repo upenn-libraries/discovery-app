@@ -2,11 +2,35 @@ function populateItemDebugWell(selectedItem) {
     $('#selected-item-debug').show().text('Debug Info: ' + JSON.stringify(selectedItem, null, 4));
 }
 
-function enableRequestButtons(selectedItem) {
-    $('#print-request-button').prop('disabled', false);
+function showAndEnableRequestButtons(selectedItem) {
+    $('#print-request-button').prop('disabled', false).show();
     if(selectedItem.scannable) {
-        $('#electronic-request-button').prop('disabled', false);
+        $('#electronic-request-button').prop('disabled', false).show();
     }
+    $('#aeon-request-button').prop('disabled', true).hide();
+}
+
+function showAndEnablePublicAeonButton() {
+    $('#print-request-button').prop('disabled', true).hide();
+    $('#electronic-request-button').prop('disabled', true).hide();
+    $('#aeon-request-button').prop('disabled', false).show();
+}
+
+function hideRequestButtons() {
+    $('.request-button').prop('disabled', true).hide();
+}
+
+function displayButtons(selectedItem, logged_in) {
+    if(!selectedItem.aeon_requestable) {
+        if(logged_in) {
+            showAndEnableRequestButtons(selectedItem);
+        } else {
+            hideRequestButtons();
+        }
+    } else {
+        showAndEnablePublicAeonButton();
+    }
+    populateItemDebugWell(selectedItem);
 }
 
 $(document).ready(function() {
@@ -14,46 +38,43 @@ $(document).ready(function() {
     var $panel = $('#item-request-widget .panel');
     var $requestForm = $panel.find('#request-form')
     var $widget = $('#request-item-select');
+    var logged_in =$('#requesting-logged-in').data('value')
     if($widget.length > 0) {
         var mmsId = $widget.data('mmsid');
         var responseData;
         var selectedItem;
         var selectedItemId;
         $requestForm.hide();
-
         $.ajax({
             url: '/alma/items/' + mmsId + '/all',
             dataType: 'json'
-        })
-            .done(function(data) {
-                $panel.find('.panel-body').removeClass('spinner');
-                $requestForm.show();
-                responseData = data
-                if(responseData.length === 1) {
-                    $widget.closest('.form-group').hide();
-                    selectedItem = responseData[0];
-                    enableRequestButtons(selectedItem);
-                    populateItemDebugWell(selectedItem);
-                } else {
-                    $widget.select2({
-                        theme: 'bootstrap',
-                        placeholder: "Click here to make a selection",
-                        width: "100%",
-                        data: responseData
-                    }).on('select2:open', function(e) {
-                        $('.select2-search__field').attr('placeholder', 'Start typing to filter the list');
-                    }).on('select2:select', function(e) {
-                        selectedItemId = this.value;
-                        selectedItem = responseData.find(function(item, index) {
-                            if(item.id === selectedItemId) {
-                                return item;
-                            }
-                        });
-                        enableRequestButtons(selectedItem);
-                        populateItemDebugWell(selectedItem);
+        }).done(function(data) {
+            $panel.find('.panel-body').removeClass('spinner');
+            $requestForm.show();
+            responseData = data
+            if(responseData.length === 1) {
+                $widget.closest('.form-group').hide();
+                selectedItem = responseData[0];
+                displayButtons(selectedItem, logged_in);
+            } else {
+                $widget.select2({
+                    theme: 'bootstrap',
+                    placeholder: "Click here to make a selection",
+                    width: "100%",
+                    data: responseData
+                }).on('select2:open', function(e) {
+                    $('.select2-search__field').attr('placeholder', 'Start typing to filter the list');
+                }).on('select2:select', function(e) {
+                    selectedItemId = this.value;
+                    selectedItem = responseData.find(function(item, index) {
+                        if(item.id === selectedItemId) {
+                            return item;
+                        }
                     });
-                }
-            });
+                    displayButtons(selectedItem, logged_in);
+                });
+            }
+        });
 
         $('.request-button').on('click', function(e) {
             e.preventDefault();

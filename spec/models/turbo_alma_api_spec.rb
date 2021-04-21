@@ -12,6 +12,7 @@ RSpec.describe TurboAlmaApi::Client, type: :model do
 
   context 'item retrieval' do
     before do
+      stub_holdings_get_success
       stub_item_get_success
       stub_turbo_item_get_canary
       stub_turbo_item_get_full
