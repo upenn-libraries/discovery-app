@@ -116,6 +116,7 @@ $(document).ready(function() {
                 { "visible": false, "targets": [0,6,7] },
                 { "orderable": false, "targets": 5 }
             ],
+            "autoWidth": false,
             "order": [],
             "language": {
               "search": "Filter records:",
@@ -156,6 +157,9 @@ $(document).ready(function() {
                 else {
                   $('#requestOptions-' + mmsid + '_paginate').hide();
                 }
+
+                // resize table columns
+                table.columns.adjust();
             },
             "initComplete": function(settings, json) {
                 var table = $('#requestOptions-' + mmsid).DataTable();
