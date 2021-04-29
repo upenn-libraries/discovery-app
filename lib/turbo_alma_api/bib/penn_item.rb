@@ -79,6 +79,7 @@ module TurboAlmaApi
       end
 
       # Label text for Item radio button
+      # TODO: defunct?
       # @return [String]
       def label_for_radio_button
         label_info = [
@@ -90,6 +91,7 @@ module TurboAlmaApi
       end
 
       # Label text for select2
+      # TODO: rename to to_s
       # @return [String]
       def label_for_select
         label_info = if item_data.present?
@@ -159,6 +161,7 @@ module TurboAlmaApi
         location.in? aeon_site_codes
       end
 
+      # TODO: use to_h here?
       def for_select(_options = {})
         {
           'id' => item_data.dig('pid') || 'no-item',

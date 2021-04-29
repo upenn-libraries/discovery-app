@@ -9,7 +9,7 @@ class RequestSubmissionService
     if Rails.env.development?
       response = submission_response_for request
       RequestMailer.confirmation_email(response, request.submitter_email)
-                   .deliver_later
+                   .deliver_now
       { status: :success,
         confirmation_number: response[:confirmation_number],
         title: response[:title] }
