@@ -39,8 +39,6 @@ en:
       invalid_request: "Request is invalid. See errors below."
       invalid_deliver_to: "PennKey specified for delivery is not valid"
     fields:
-      affiliation: "Affiliation"
-      delivery_method: "Method"
       deliver_to: "Deliver To"
       comment: "Comments"
       title: "Title"
