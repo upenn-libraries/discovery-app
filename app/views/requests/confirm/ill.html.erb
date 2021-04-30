@@ -2,18 +2,17 @@
   <div class="modal-content">
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-      <div class="modal-title" id="exampleModalLabel">Confirm Request</div>
+      <div class="modal-title" id="exampleModalLabel"><%= t('requests.modal_titles.confirm.ill') %></div>
     </div>
     <div class="modal-body">
       <%= render 'requests/confirm/online_access' %>
       <p>
-        This item is currently unavailable in print from Penn Libraries. You may use the link below
-        to submit an Interlibrary loan request.
+        <%= t('requests.messages.unavailable_prompt', ill_turnaround: 'TBD') %>
       </p>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-default" data-dismiss="modal">Go Back</button>
-      <%= link_to 'ILL Request Form', @ill_url, target: '_blank', class: 'btn btn-primary' %>
+      <button type="button" class="btn btn-default" data-dismiss="modal"><%= t('requests.buttons.go_back') %></button>
+      <%= link_to t('requests.buttons.ill_request'), @ill_url, target: '_blank', class: 'btn btn-primary' %>
     </div>
   </div>
 </div>
