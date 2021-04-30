@@ -2,7 +2,7 @@ en:
   requests:
     widget:
       title: "Get It"
-      placeholder: "Click here to make a selection"
+      placeholder: "Click here to select an item"
       filter_placeholder: "Start typing to filter the list"
     modal_titles:
       submitted: "Request Submitted"
@@ -20,7 +20,7 @@ en:
       submit: "Submit Request"
       close: "Close"
       ill_request: "ILL Request Form"
-      go_back: "Go Back"
+      go_back: "Cancel"
       request_to_view: "Request to View"
     delivery_messages:
       bbm_html: "<strong>IMPORTANT!</strong> Users must <a href='https://upenn.libwizard.com/f/books-by-mail'>register for Books by Mail</a> before submitting requests. Please do not submit Books by Mail requests without registering. These requests will be canceled."
@@ -28,7 +28,7 @@ en:
       digi_html: "<strong>IMPORTANT!</strong> We are unable to scan entire works. Please specify chapter or article title and author information..."
     messages:
       aeon_explanation: "This item is available for viewing in the special collections reading room by submitting a viewing request in the Aeon Special Collections system. You will need to create an account and request an appointment time to view the item in the reading room."
-      unavailable_prompt: "This item is currently unavailable in print from Penn Libraries. You may use the link below to submit an Interlibrary loan request."
+      unavailable_prompt: "Use the link below to place an interlibrary loan request. Requested items usually arrive within %{ill_turnaround} days"
       request_complete: "Your Request is Complete!"
       request_failed: "Oh no! Your Request failed!"
       invalid_confirm_partial: "Could not determine a request type for confirmation"
