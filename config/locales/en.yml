@@ -2,8 +2,6 @@ en:
   requests:
     widget:
       title: "Get It"
-      placeholder: "Click here to select an item"
-      filter_placeholder: "Start typing to filter the list"
     modal_titles:
       submitted: "Request Submitted"
       confirm:
@@ -60,8 +58,6 @@ en:
       mail_delivery: "Mail Delivery"
       pickup: "Pickup at Penn"
       registered_bbm: "I am a registered Books by Mail user"
-      place_on_reserve: "Place on Course Reserve"
-      report_cataloging_error: "Report Cataloging Error"
     help:
       deliver_to: "PennKey of recipient for electronic materials."
       section_title: "Article Title or Chapter Title (or Chapter Number, if there is no title) to be digitized."

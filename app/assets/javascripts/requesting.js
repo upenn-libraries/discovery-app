@@ -59,11 +59,11 @@ $(document).ready(function() {
             } else {
                 $widget.select2({
                     theme: 'bootstrap',
-                    placeholder: "<%= I18n.t('requests.widget.placeholder') %>",
+                    placeholder: "Click here to select an item",
                     width: "100%",
                     data: responseData
                 }).on('select2:open', function(e) {
-                    $('.select2-search__field').attr('placeholder', '<%= I18n.t('requests.widget.filter_placeholder') %>');
+                    $('.select2-search__field').attr('placeholder', "Start typing to filter the list");
                 }).on('select2:select', function(e) {
                     selectedItemId = this.value;
                     selectedItem = responseData.find(function(item, index) {
@@ -151,10 +151,10 @@ $(document).ready(function() {
             var ares_url = data['ARES'];
             var enhance_url = data['ENHANCED'];
             if(ares_url) {
-                $showTools.append($('<li><a target="_blank" href="'+ ares_url +'"><%= I18n.t('requests.labels.place_on_reserve') %></a></li>'));
+                $showTools.append($('<li><a target="_blank" href="'+ ares_url +'">Place on Course Reserve</a></li>'));
             }
             if(enhance_url) {
-                $showTools.append($('<li><a target="_blank" href="'+ enhance_url +'"><%= I18n.t('requests.labels.report_cataloging_error') %></a></li>'));
+                $showTools.append($('<li><a target="_blank" href="'+ enhance_url +'">Report Cataloging Error</a></li>'));
             }
         });
     }
