@@ -1,12 +1,12 @@
 <section id="item-request-widget">
   <div class="panel panel-default">
     <div class="panel-heading">
-      Get It
+      <%= t('requests.widget_title') %>
     </div>
     <div class="panel-body spinner">
       <form id="request-form">
         <div class="form-group">
-            <label for="request-item-select">Selection</label>
+            <label for="request-item-select"><%= t('requests.fields.selection') %></label>
             <select name="request-item" id="request-item-select" class="form-control" data-mmsid="<%= document.alma_mms_id %>">
               <option value=""></option>
             </select>
@@ -19,11 +19,11 @@
               <% fulltext_link_url = link_object['linkurl'] %>
               <% fulltext_link_label = link_object['linktext'] %>
             <% end %>
-            <button type="submit" id="print-request-button" class="btn btn-default request-button" value="print" style="display: none;" disabled>In Print</button>
-            <button type="submit" id="aeon-request-button" class="btn btn-default request-button" value="aeon" style="display: none;" disabled>Request to View</button>
+            <button type="submit" id="print-request-button" class="btn btn-default request-button" value="print" style="display: none;" disabled><%= t('requests.buttons.print_request') %></button>
+            <button type="submit" id="aeon-request-button" class="btn btn-default request-button" value="aeon" style="display: none;" disabled><%= t('requests.buttons.request_to_view') %></button>
             <button type="submit" id="electronic-request-button" class="btn btn-default request-button" style="display: none;"
                     value="electronic"<% if link_object %> data-fulltext-url="<%= fulltext_link_url %>" data-fulltext-label="<%= fulltext_link_label %>"<% end %> disabled>
-              Electronic
+              <%= t('requests.buttons.electronic_request') %>
             </button>
             <% if current_user %>
               <div id="requesting-logged-in" data-value="true"></div>

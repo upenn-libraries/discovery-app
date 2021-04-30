@@ -2,28 +2,28 @@
   <div class="modal-content">
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-      <div class="modal-title" id="exampleModalLabel">Request Submitted</div>
+      <div class="modal-title" id="submittedModalLabel"><%= t('requests.modal_titles.submitted') %></div>
     </div>
     <div class="modal-body">
       <% if @response.dig(:status) == :success %>
-      <strong>Your Request is Complete!</strong>
+      <strong><%= t('requests.messages.request_complete') %></strong>
       <br>
       <dl>
         <dt>
-          <%= 'Title' %>
+          <%= t('requests.fields.title') %>
         </dt>
         <dd>
           <%= @response.dig :title %>
         </dd>
         <dt>
-          <%= 'Confirmation Number' %>
+          <%= t('requests.fields.confirmation_number') %>
         </dt>
         <dd>
           <%= @response.dig :confirmation_number %>
         </dd>
       </dl>
       <% else %>
-      <strong>Oh no! Your Request failed!</strong>
+      <strong><%= t('requests.messages.request_failed') %></strong>
       <p>
         <%= @response.dig(:message) %>
       </p>
@@ -38,7 +38,7 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+      <button type="button" class="btn btn-primary" data-dismiss="modal"><%= t('requests.buttons.close') %></button>
     </div>
   </div>
 </div>
