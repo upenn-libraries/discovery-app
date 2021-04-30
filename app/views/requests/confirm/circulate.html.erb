@@ -3,53 +3,64 @@
   <div class="modal-content">
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-      <div class="modal-title" id="exampleModalLabel">Confirm Print Request</div>
+      <div class="modal-title" id="exampleModalLabel">
+        <%= t('requests.modal_titles.confirm.circulate') %>
+      </div>
     </div>
     <div class="modal-body">
       <%= render 'requests/confirm/online_access' %>
-        <%= f.hidden_field :item_pid, id: 'requestItemPid' %>
-        <%= f.hidden_field :holding_id, id: 'requestHoldingId' %>
-        <%= f.hidden_field :mms_id, id: 'requestMmsId' %>
 
-        <%= f.text_field :selection,
-                         label: 'Selection',
-                         disabled: true %>
+      <%= f.hidden_field :item_pid, id: 'requestItemPid' %>
+      <%= f.hidden_field :holding_id, id: 'requestHoldingId' %>
+      <%= f.hidden_field :mms_id, id: 'requestMmsId' %>
 
-        <ul class="list-group">
-          <li class="list-group-item">
-            <h3 class="list-group-item-heading">
-              <label>
-                <input type="radio" name="delivery" value="pickup" id="pickup-radio" class="delivery-option-radio" checked /> Pickup at Penn</label>
-            </h3>
-            <p class="list-group-item-text"><%= t('requests.delivery_messages.pap_html') %></p>
-            <%# for future use, in the after-times %>
-            <%#= f.select :pap_location, ['Van Pelt Library'], { label: 'Pickup Location' }, { disabled: false } %>
-          </li>
-          <li class="list-group-item">
-            <h3 class="list-group-item-heading">
-              <label>
-                <input type="radio" name="delivery" value="mail" id="mail-radio" class="delivery-option-radio" /> Mail Delivery</label>
-            </h3>
-            <p class="list-group-item-text"><%= t('requests.delivery_messages.bbm_html') %></p>
-            <%= f.form_group :bbm_confirm do %>
-              <%= f.check_box :bbm_confirm,
-                              id: 'bbm_validation_checkbox',
-                              label: 'I am a registered Books by Mail user',
-                              disabled: true,
-                              required: true %>
-            <% end %>
-          </li>
-        </ul>
+      <%= f.text_field :selection,
+                       label: t('requests.fields.selection'),
+                       disabled: true %>
+
+      <ul class="list-group">
+        <li class="list-group-item">
+          <h3 class="list-group-item-heading">
+            <label>
+              <input type="radio" name="delivery" value="pickup" id="pickup-radio" class="delivery-option-radio" checked /> <%= t('requests.labels.pickup') %></label>
+          </h3>
+          <p class="list-group-item-text">
+            <%= t('requests.delivery_messages.pap_html') %>
+          </p>
+          <%# for future use, in the after-times %>
+          <%#= f.select :pap_location, ['Van Pelt Library'], { label: t('requests.fields.pickup_location') }, { disabled: false } %>
+        </li>
+        <li class="list-group-item">
+          <h3 class="list-group-item-heading">
+            <label>
+              <input type="radio" name="delivery" value="mail" id="mail-radio" class="delivery-option-radio" /> <%= t('requests.labels.mail_delivery') %></label>
+          </h3>
+          <p class="list-group-item-text">
+            <%= t('requests.delivery_messages.bbm_html') %>
+          </p>
+          <%= f.form_group :bbm_confirm do %>
+            <%= f.check_box :bbm_confirm,
+                            id: 'bbm_validation_checkbox',
+                            label: t('requests.labels.registered_bbm'),
+                            disabled: true,
+                            required: true %>
+          <% end %>
+        </li>
+      </ul>
       <div id="comments-area">
-        <a href="#" id="show-comment-input">Add Comments</a>
+        <a href="#" id="show-comment-input">
+          <%= t('requests.labels.add_comments') %>
+        </a>
         <div id="comment-input" style="display: none;">
           <%= f.text_area :comments %>
         </div>
       </div>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-default" data-dismiss="modal">Go Back</button>
-      <%= f.submit 'Submit Request', class: 'btn btn-primary' %>
+      <button type="button" class="btn btn-default" data-dismiss="modal">
+        <%= t('requests.buttons.go_back') %>
+      </button>
+      <%= f.submit t('requests.buttons.submit'), class: 'btn btn-primary' %>
     </div>
   </div>
 </div>

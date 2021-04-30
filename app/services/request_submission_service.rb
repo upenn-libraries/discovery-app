@@ -29,8 +29,9 @@ class RequestSubmissionService
     when Illiad::Request
       illiad_transaction request
     else
-      raise ArgumentError,
-            "No configured submission logic for a #{request.class.name}"
+      raise ArgumentError, I18n.t('requests.messages.unsupported_submission_logic',
+                                  request_class: request.class.name)
+
     end
   end
 

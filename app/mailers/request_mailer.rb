@@ -6,6 +6,6 @@ class RequestMailer < ApplicationMailer
   # @param [String] to recipient
   def confirmation_email(info, to)
     @info = info
-    mail(to: to, subject: 'Franklin Request confirmation')
+    mail(to: to, subject: I18n.t('requests.email.confirmation.subject'))
   end
 end

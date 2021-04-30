@@ -59,11 +59,11 @@ $(document).ready(function() {
             } else {
                 $widget.select2({
                     theme: 'bootstrap',
-                    placeholder: "Click here to make a selection",
+                    placeholder: "Click here to select an item",
                     width: "100%",
                     data: responseData
                 }).on('select2:open', function(e) {
-                    $('.select2-search__field').attr('placeholder', 'Start typing to filter the list');
+                    $('.select2-search__field').attr('placeholder', "Start typing to filter the list");
                 }).on('select2:select', function(e) {
                     selectedItemId = this.value;
                     selectedItem = responseData.find(function(item, index) {

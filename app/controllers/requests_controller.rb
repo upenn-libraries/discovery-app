@@ -48,7 +48,7 @@ class RequestsController < ApplicationController
     when :aeon then 'aeon'
     else
       # TODO: better error
-      raise ArgumentError, 'Could not determine a request type for confirmation'
+      raise ArgumentError, I18n.t('requests.messages.invalid_confirm_partial')
     end
   end
 
