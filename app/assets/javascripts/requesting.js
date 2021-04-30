@@ -139,7 +139,11 @@ $(document).ready(function() {
                 $modal.find('#requestMmsId').val(mmsId);
 
                 // set Item details TODO: what if description is empty? :(
-                $('#selection').val(selectedItem.description);
+                if(selectedItem.description) {
+                    $('#selection').val(selectedItem.description);
+                } else {
+                    $('#selection').closest('.form-group').hide();
+                }
 
                 // set Fulltext link if possible
                 if(fulltextUrl) { $('#fulltext-link').attr('href', fulltextUrl).closest('div#online-access-div').show(); }
