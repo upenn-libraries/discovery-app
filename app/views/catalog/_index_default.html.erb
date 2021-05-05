@@ -8,8 +8,8 @@
       <% end -%>
   <% end %>
 
-  <% if show_availability_on_index_view? && document.alma_mms_id.present? %>
-    <%= render partial: 'status_location_field', locals: { document: document } %>
-    <%= render partial: 'alma_availability', locals: { document: document, collapsed: true } %>
+  <% if document.alma_mms_id.present? && !atom_request? %>
+    <%= render 'status_location_field', document: document if document.has_any_holdings? %>
+    <%= render 'alma_availability', document: document, collapsed: true %>
   <% end %>
 </dl>

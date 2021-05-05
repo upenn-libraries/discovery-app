@@ -1,9 +1,8 @@
-
 <% doc_presenter = show_presenter(document) %>
 <%= detect_nocirc(document) %>
 <%# default partial to display solr document fields in catalog show view -%>
 <dl class="dl-horizontal  dl-invert">
-  <%= render partial: 'show_expanded', locals: { document: document } %>
+  <%= render 'show_expanded', document: document %>
   <% document_show_fields(document).each do |field_name, field| -%>
       <% if should_render_show_field? document, field %>
           <dt class="blacklight-<%= field_name.parameterize %>"><%= render_document_show_field_label document, field: field_name %></dt>
@@ -16,10 +15,10 @@
 <a name="franklin-availability"></a>
 
 <% if document.alma_mms_id.present? %>
-  <% if document[:access_a].include? 'At the library' %>
+  <% if document.show_requesting_widget? %>
     <%= render 'shared/item_request_widget', document: document %>
   <% else %>
-    <%= render partial: 'alma_availability', locals: { document: document, collapsed: false } %>
+    <%= render 'alma_availability', document: document, collapsed: false %>
   <% end %>
 <% end %>
 

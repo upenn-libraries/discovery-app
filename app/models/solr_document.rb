@@ -184,4 +184,9 @@ class SolrDocument
   def print_holdings?
     self['hld_count_isort']&.positive?
   end
+
+  # @return [TrueClass, FalseClass]
+  def show_requesting_widget?
+    print_holdings?
+  end
 end
