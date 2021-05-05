@@ -6,10 +6,7 @@
       <div class="modal-title" id="confirmModalLabel"><%= t('requests.modal_titles.confirm.electronic') %></div>
     </div>
     <div class="modal-body">
-
-      <%= render 'requests/confirm/online_access' %>
-
-        <%= f.hidden_field :item_pid, id: 'requestItemPid' %>
+       <%= f.hidden_field :item_pid, id: 'requestItemPid' %>
         <%= f.hidden_field :holding_id, id: 'requestHoldingId' %>
         <%= f.hidden_field :mms_id, id: 'requestMmsId' %>
         <%= f.hidden_field :delivery, value: 'scandeliver' %>

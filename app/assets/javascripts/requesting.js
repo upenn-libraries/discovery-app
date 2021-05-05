@@ -144,9 +144,6 @@ $(document).ready(function() {
                 } else {
                     $('#selection').closest('.form-group').hide();
                 }
-
-                // set Fulltext link if possible
-                if(fulltextUrl) { $('#fulltext-link').attr('href', fulltextUrl).closest('div#online-access-div').show(); }
             });
         });
 

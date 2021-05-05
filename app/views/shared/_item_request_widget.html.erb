@@ -13,16 +13,10 @@
         </div>
         <div class="form-group">
           <div class="btn-toolbar" aria-label="Get It Options">
-            <% if document['full_text_link_text_a']&.any? %>
-              <%# TODO: what if multiple links?  %>
-              <% link_object = JSON.parse(document['full_text_link_text_a'].first).first %>
-              <% fulltext_link_url = link_object['linkurl'] %>
-              <% fulltext_link_label = link_object['linktext'] %>
-            <% end %>
             <button type="submit" id="print-request-button" class="btn btn-default request-button" value="print" style="display: none;" disabled><%= t('requests.buttons.print_request') %></button>
             <button type="submit" id="aeon-request-button" class="btn btn-default request-button" value="aeon" style="display: none;" disabled><%= t('requests.buttons.request_to_view') %></button>
             <button type="submit" id="electronic-request-button" class="btn btn-default request-button" style="display: none;"
-                    value="electronic"<% if link_object %> data-fulltext-url="<%= fulltext_link_url %>" data-fulltext-label="<%= fulltext_link_label %>"<% end %> disabled>
+                    value="electronic" disabled>
               <%= t('requests.buttons.electronic_request') %>
             </button>
             <% if current_user %>
