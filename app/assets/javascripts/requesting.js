@@ -110,7 +110,6 @@ $(document).ready(function() {
 
             var urlPart;
             var params = { mms_id: mmsId, holding_id: selectedItem.holding_id };
-            var fulltextUrl = $('#electronic-request-button').data('fulltext-url');
             if(format === 'electronic') {
                 params.volume = selectedItem.volume;
                 params.issue = selectedItem.issue;
