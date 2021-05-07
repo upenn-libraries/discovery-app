@@ -187,6 +187,6 @@ class SolrDocument
 
   # @return [TrueClass, FalseClass]
   def show_requesting_widget?
-    print_holdings?
+    print_holdings? || self[:physical_holdings_json].present?
   end
 end

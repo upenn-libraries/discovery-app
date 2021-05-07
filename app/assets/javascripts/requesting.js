@@ -1,5 +1,5 @@
 function populateItemDebugWell(selectedItem) {
-    $('#selected-item-debug').show().text('Debug Info: ' + JSON.stringify(selectedItem, null, 4));
+    $('.selected-item-debug').show().text('Debug Info: ' + JSON.stringify(selectedItem, null, 4));
 }
 
 function showAndEnableRequestButtons(selectedItem) {
@@ -33,12 +33,11 @@ function displayButtons(selectedItem, logged_in) {
     populateItemDebugWell(selectedItem);
 }
 
-$(document).ready(function() {
-    $('#selected-item-debug').hide();
-    var $panel = $('#item-request-widget .panel');
-    var $requestForm = $panel.find('#request-form')
-    var $widget = $('#request-item-select');
-    var logged_in =$('#requesting-logged-in').data('value')
+function initializeRequestingWidget($panel, context) {
+    $('.selected-item-debug').hide();
+    var $requestForm = $panel.find('.request-form')
+    var $widget = $panel.find('.request-item-select');
+    var logged_in = $('#requesting-logged-in').data('value')
     if($widget.length > 0) {
         var mmsId = $widget.data('mmsid');
         var responseData;
@@ -147,16 +146,38 @@ $(document).ready(function() {
             });
         });
 
-        $.getJSON('/request/options?mms_id=' + mmsId, function(data) {
-            var $showTools = $('.show-tools .panel-body ul.nav');
-            var ares_url = data['ARES'];
-            var enhance_url = data['ENHANCED'];
-            if(ares_url) {
-                $showTools.append($('<li><a target="_blank" href="'+ ares_url +'">Place on Course Reserve</a></li>'));
-            }
-            if(enhance_url) {
-                $showTools.append($('<li><a target="_blank" href="'+ enhance_url +'">Report Cataloging Error</a></li>'));
-            }
+        if(context === 'show') {
+            $.getJSON('/request/options?mms_id=' + mmsId, function(data) {
+                var $showTools = $('.show-tools .panel-body ul.nav');
+                var ares_url = data['ARES'];
+                var enhance_url = data['ENHANCED'];
+                if(ares_url) {
+                    $showTools.append($('<li><a target="_blank" href="'+ ares_url +'">Place on Course Reserve</a></li>'));
+                }
+                if(enhance_url) {
+                    $showTools.append($('<li><a target="_blank" href="'+ enhance_url +'">Report Cataloging Error</a></li>'));
+                }
+            });
+        }
+
+    }
+}
+
+$(document).ready(function() {
+    // index or show page?
+    // if show, activate widget
+    // else, await a trigger
+    var context;
+    if(document.body.classList.contains("blacklight-catalog-show")) {
+        var $panel = $('.item-request-widget .panel');
+        context = 'show';
+        initializeRequestingWidget($panel, context);
+    } else if(document.body.classList.contains("blacklight-catalog-index")) {
+        $('body').on('click', '.btn-request-options', function(e){
+            var $clickedPanel = $(this).parent('div').find('.item-request-widget');
+            $clickedPanel.toggle();
+            initializeRequestingWidget($clickedPanel, context);
         });
+        context = 'index';
     }
 })

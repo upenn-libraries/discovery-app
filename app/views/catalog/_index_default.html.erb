@@ -7,9 +7,11 @@
           <dd class="blacklight-<%= field_name.parameterize %>"><%= doc_presenter.field_value field_name %></dd>
       <% end -%>
   <% end %>
-
   <% if document.alma_mms_id.present? && !atom_request? %>
     <%= render 'status_location_field', document: document if document.has_any_holdings? %>
-    <%= render 'alma_availability', document: document, collapsed: true %>
   <% end %>
 </dl>
+
+<% if document.alma_mms_id.present? && !atom_request? %>
+  <%= render 'alma_availability', document: document, collapsed: true %>
+<% end  %>

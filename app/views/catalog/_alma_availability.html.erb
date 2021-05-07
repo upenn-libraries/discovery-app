@@ -3,7 +3,7 @@
   <button class='toggle btn btn-request-options' data-mmsid='<%= document.alma_mms_id %>'><span class="avail-label">Options</span></button>
 <% end %>
 <% if document.show_requesting_widget? %>
-  <%= render 'shared/item_request_widget', document: document %>
+  <%= render 'shared/item_request_widget', document: document, hide: true %>
 <% else %>
   <div id="table-wrapper-<%= document.alma_mms_id %>" <%= table_style %> >
     <table id="requestOptions-<%= document.alma_mms_id %>" class="request-options-load" data-mmsid="<%= document.alma_mms_id %>" style="width:100%">
