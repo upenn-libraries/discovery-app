@@ -14,8 +14,6 @@
 
 <a name="franklin-availability"></a>
 
-<div id="requesting-logged-in" data-value="<%= current_user ? 'true' : 'false' %>"></div>
-
 <% if document.alma_mms_id.present? %>
   <% if document.show_requesting_widget? %>
     <%= render 'shared/item_request_widget', document: document, hide: false %>

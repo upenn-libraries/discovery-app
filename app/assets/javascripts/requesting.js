@@ -1,36 +1,37 @@
-function populateItemDebugWell(selectedItem) {
-    $('.selected-item-debug').show().text('Debug Info: ' + JSON.stringify(selectedItem, null, 4));
+function populateItemDebugWell($panel, selectedItem) {
+    $panel.find('.selected-item-debug').show().text('Debug Info: ' + JSON.stringify(selectedItem, null, 4));
 }
 
-function showAndEnableRequestButtons(selectedItem) {
-    $('#print-request-button').prop('disabled', false).show();
+function showAndEnableRequestButtons($panel, selectedItem) {
+    $panel.find('.print-request-button').prop('disabled', false).show();
     if(selectedItem.scannable) {
-        $('#electronic-request-button').prop('disabled', false).show();
+        $panel.find('.electronic-request-button').prop('disabled', false).show();
     }
-    $('#aeon-request-button').prop('disabled', true).hide();
+    $panel.find('.aeon-request-button').prop('disabled', true).hide();
 }
 
-function showAndEnablePublicAeonButton() {
-    $('#print-request-button').prop('disabled', true).hide();
-    $('#electronic-request-button').prop('disabled', true).hide();
-    $('#aeon-request-button').prop('disabled', false).show();
+function showAndEnablePublicAeonButton($panel) {
+    $panel.find('.print-request-button').prop('disabled', true).hide();
+    $panel.find('.electronic-request-button').prop('disabled', true).hide();    // index or show page?
+    $panel.find('.aeon-request-button').prop('disabled', false).show();
 }
 
-function hideRequestButtons() {
-    $('.request-button').prop('disabled', true).hide();
+function hideRequestButtons($panel) {
+    $panel.find('.request-button').prop('disabled', true).hide();
 }
 
-function displayButtons(selectedItem, logged_in) {
+function displayButtons($panel, selectedItem, logged_in) {
     if(!selectedItem.aeon_requestable) {
         if(logged_in) {
-            showAndEnableRequestButtons(selectedItem);
+            showAndEnableRequestButtons($panel, selectedItem);
         } else {
-            hideRequestButtons();
+            hideRequestButtons($panel);
         }
     } else {
-        showAndEnablePublicAeonButton();
+        showAndEnablePublicAeonButton($panel);
     }
-    populateItemDebugWell(selectedItem);
+
+    if (context === 'show') { populateItemDebugWell($panel, selectedItem) }
 }
 
 function initializeRequestingWidget($panel, context) {
@@ -54,7 +55,7 @@ function initializeRequestingWidget($panel, context) {
             if(responseData.length === 1) {
                 $widget.closest('.form-group').hide();
                 selectedItem = responseData[0];
-                displayButtons(selectedItem, logged_in);
+                displayButtons($panel, selectedItem, logged_in, context);
             } else {
                 $widget.select2({
                     theme: 'bootstrap',
@@ -70,9 +71,10 @@ function initializeRequestingWidget($panel, context) {
                             return item;
                         }
                     });
-                    displayButtons(selectedItem, logged_in);
+                    displayButtons($panel, selectedItem, logged_in, context);
                 });
             }
+            $panel.addClass('loaded');
         });
 
         $('.request-button').on('click', function(e) {
@@ -104,12 +106,12 @@ function initializeRequestingWidget($panel, context) {
 
         $('#confirm-modal').on('show.bs.modal', function(e) {
             var $modal = $(this);
+            $modal.empty();
             var $formatButton = e.relatedTarget;
             var format = $formatButton.val();
 
             var urlPart;
             var params = { mms_id: mmsId, holding_id: selectedItem.holding_id };
-            var fulltextUrl = $('#electronic-request-button').data('fulltext-url');
             if(format === 'electronic') {
                 params.volume = selectedItem.volume;
                 params.issue = selectedItem.issue;
@@ -129,9 +131,7 @@ function initializeRequestingWidget($panel, context) {
 
             // load modal HTML via ajax
             $.get('/request/confirm/' + urlPart, params, function(html) {
-                // $modal.find('.modal-body').empty().html(html);
-                $modal.empty().html(html);
-
+                $modal.html(html)
                 // set hidden fields
                 $modal.find('#requestItemPid').val(selectedItem.id);
                 $modal.find('#requestHoldingId').val(selectedItem.holding_id);
@@ -164,20 +164,19 @@ function initializeRequestingWidget($panel, context) {
 }
 
 $(document).ready(function() {
-    // index or show page?
-    // if show, activate widget
-    // else, await a trigger
     var context;
     if(document.body.classList.contains("blacklight-catalog-show")) {
         var $panel = $('.item-request-widget .panel');
         context = 'show';
         initializeRequestingWidget($panel, context);
     } else if(document.body.classList.contains("blacklight-catalog-index")) {
+        context = 'index';
         $('body').on('click', '.btn-request-options', function(e){
             var $clickedPanel = $(this).parent('div').find('.item-request-widget');
             $clickedPanel.toggle();
-            initializeRequestingWidget($clickedPanel, context);
+            if(!$clickedPanel.hasClass('loaded')) {
+                initializeRequestingWidget($clickedPanel, context);
+            }
         });
-        context = 'index';
     }
 })
