@@ -308,7 +308,7 @@ class FranklinAlmaController < ApplicationController
                      .each_with_index
                      .map do |p, i|
                        link_text = p['collection'] || 'Online'
-                       link = "<a target='_blank' href='https://upenn.alma.exlibrisgroup.com/view/uresolver/01UPENN_INST/openurl?Force_direct=true&portfolio_pid=#{p['portfolio_pid']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com&u.ignore_date_coverage=true'>#{link_text}</a>"
+                       link = "<a target='_blank' href='https://upenn.alma.exlibrisgroup.com/view/uresolver/01UPENN_INST/openurl?Force_direct=true&test_access=true&portfolio_pid=#{p['portfolio_pid']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com&u.ignore_date_coverage=true'>#{link_text}</a>"
                        [
                          i,
                          link,

@@ -21,6 +21,10 @@ test:
   <<: *default
   database: db/test.sqlite3
 
+# In a production deployment, this configuration is overridden by the
+# presence of a DATABASE_URL environment variable. In doing so, we use
+# the mysql2 adapter.
+# See https://guides.rubyonrails.org/v4.2.7/configuring.html#configuring-a-database
 production:
   <<: *default
   database: db/production.sqlite3
