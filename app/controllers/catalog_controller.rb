@@ -30,8 +30,6 @@ class CatalogController < ApplicationController
   FACET_PAGINATION_THRESHOLD = 50
   before_action :limit_facet_pagination, only: :facet
 
-  SECONDS_PER_DAY = 86_400
-
   configure_blacklight do |config|
     # default advanced config values
     config.advanced_search ||= Blacklight::OpenStructWithHashAccess.new
@@ -413,10 +411,10 @@ class CatalogController < ApplicationController
     config.add_facet_field 'classification_f', label: 'Classification', limit: 5, collapse: false, :ex => 'orig_q', solr_params: MINCOUNT
     config.add_facet_field 'genre_f', label: 'Form/Genre', limit: 5, :ex => 'orig_q', solr_params: MINCOUNT
     config.add_facet_field 'recently_added_f', label: 'Recently added', solr_params: MINCOUNT, :query => {
-        :within_90_days => { label: 'Within 90 days', fq: "{!ex=orig_q}recently_added_isort:[#{PennLib::Util.today_midnight - (90 * SECONDS_PER_DAY) } TO *]" },
-        :within_60_days => { label: 'Within 60 days', fq: "{!ex=orig_q}recently_added_isort:[#{PennLib::Util.today_midnight - (60 * SECONDS_PER_DAY) } TO *]" },
-        :within_30_days => { label: 'Within 30 days', fq: "{!ex=orig_q}recently_added_isort:[#{PennLib::Util.today_midnight - (30 * SECONDS_PER_DAY) } TO *]" },
-        :within_15_days => { label: 'Within 15 days', fq: "{!ex=orig_q}recently_added_isort:[#{PennLib::Util.today_midnight - (15 * SECONDS_PER_DAY) } TO *]" },
+        :within_90_days => { label: 'Within 90 days', fq: "{!ex=orig_q}recently_added_isort:[#{Time.current.midnight.days_ago(90).to_i} TO *]" },
+        :within_60_days => { label: 'Within 60 days', fq: "{!ex=orig_q}recently_added_isort:[#{Time.current.midnight.days_ago(60).to_i} TO *]" },
+        :within_30_days => { label: 'Within 30 days', fq: "{!ex=orig_q}recently_added_isort:[#{Time.current.midnight.days_ago(30).to_i} TO *]" },
+        :within_15_days => { label: 'Within 15 days', fq: "{!ex=orig_q}recently_added_isort:[#{Time.current.midnight.days_ago(15).to_i} TO *]" },
     }
 
     #config.add_facet_field 'example_pivot_field', label: 'Pivot Field', :pivot => ['format_f', 'language_f']
