@@ -16,8 +16,10 @@ function showAndEnablePublicAeonButton($panel) {
     $panel.find('.aeon-request-button').prop('disabled', false).show();
 }
 
-function hideRequestButtons($panel) {
-    $panel.find('.request-button').prop('disabled', true).hide();
+function showDisabledRequestButtons($panel) {
+    $panel.find('.print-request-button').prop('disabled', true).show();
+    $panel.find('.electronic-request-button').prop('disabled', true).show();
+    $panel.find('.aeon-request-button').prop('disabled', false).hide();
 }
 
 function displayButtons($panel, selectedItem, logged_in, context) {
@@ -25,7 +27,7 @@ function displayButtons($panel, selectedItem, logged_in, context) {
         if(logged_in) {
             showAndEnableRequestButtons($panel, selectedItem);
         } else {
-            hideRequestButtons($panel);
+            showDisabledRequestButtons($panel);
         }
     } else {
         showAndEnablePublicAeonButton($panel);
