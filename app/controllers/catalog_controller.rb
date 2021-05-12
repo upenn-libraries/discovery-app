@@ -1001,4 +1001,8 @@ class CatalogController < ApplicationController
     false
   end
 
+  def show_requesting_widget?(_config, options = {})
+    options[:document].show_requesting_widget?
+  end
+
 end

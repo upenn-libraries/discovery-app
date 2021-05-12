@@ -12,7 +12,7 @@ function showAndEnableRequestButtons($panel, selectedItem) {
 
 function showAndEnablePublicAeonButton($panel) {
     $panel.find('.print-request-button').prop('disabled', true).hide();
-    $panel.find('.electronic-request-button').prop('disabled', true).hide();    // index or show page?
+    $panel.find('.electronic-request-button').prop('disabled', true).hide();
     $panel.find('.aeon-request-button').prop('disabled', false).show();
 }
 
@@ -20,7 +20,7 @@ function hideRequestButtons($panel) {
     $panel.find('.request-button').prop('disabled', true).hide();
 }
 
-function displayButtons($panel, selectedItem, logged_in) {
+function displayButtons($panel, selectedItem, logged_in, context) {
     if(!selectedItem.aeon_requestable) {
         if(logged_in) {
             showAndEnableRequestButtons($panel, selectedItem);
@@ -171,12 +171,16 @@ $(document).ready(function() {
         initializeRequestingWidget($panel, context);
     } else if(document.body.classList.contains("blacklight-catalog-index")) {
         context = 'index';
-        $('body').on('click', '.btn-request-options', function(e){
-            var $clickedPanel = $(this).parent('div').find('.item-request-widget');
-            $clickedPanel.toggle();
-            if(!$clickedPanel.hasClass('loaded')) {
-                initializeRequestingWidget($clickedPanel, context);
+        $('body').on('click', '.btn-get-it', function(e){
+            var mms_id = $(this).data('mms-id');
+            if(mms_id) {
+                var $widget = $('#item-request-widget-for-' + mms_id);
+                if($widget && !$widget.hasClass('loaded')) {
+                    initializeRequestingWidget($widget, context);
+                }
+                $widget.toggle();
             }
+
         });
     }
 })
