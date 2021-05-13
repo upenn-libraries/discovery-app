@@ -64,7 +64,7 @@ $(document).ready(function() {
             if (holding['activation_status'] == 'Available') {
                 var url = null;
                 if (holding['portfolio_pid']) {
-                    url = "https://<%= ENV['ALMA_DELIVERY_DOMAIN'] %>/view/uresolver/<%= ENV['ALMA_INSTITUTION_CODE'] %>/openurl?Force_direct=true&test_access=true&portfolio_pid=" +
+                    url = "https://<%= ENV['ALMA_DELIVERY_DOMAIN'] %>/view/uresolver/<%= ENV['ALMA_INSTITUTION_CODE'] %>/openurl?Force_direct=true&test_access=true&&portfolio_pid=" +
                         holding['portfolio_pid'] + "&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com&u.ignore_date_coverage=true"
                 }
 
@@ -116,7 +116,6 @@ $(document).ready(function() {
                 { "visible": false, "targets": [0,6,7] },
                 { "orderable": false, "targets": 5 }
             ],
-            "autoWidth": false,
             "order": [],
             "language": {
               "search": "Filter records:",
@@ -144,9 +143,6 @@ $(document).ready(function() {
                     }
                 }
 
-                // Initiate AJAX calls for portfolio details - new rows might be displayed!
-                Franklin.prototype.loadPortfolioDetailsInDataTable();
-
                 if(tableLen <= 10) {
                   $('#requestOptions-' + mmsid + '_length').hide();
                 }
@@ -160,9 +156,6 @@ $(document).ready(function() {
                 else {
                   $('#requestOptions-' + mmsid + '_paginate').hide();
                 }
-
-                // resize table columns
-                table.columns.adjust();
             },
             "initComplete": function(settings, json) {
                 var table = $('#requestOptions-' + mmsid).DataTable();
@@ -203,39 +196,37 @@ $(document).ready(function() {
                         }
                     });
                 });
+
+                $('.load-portfolio-details').each(function(idx, element) {
+                    var mmsid = $(element).data("mmsid");
+                    var portfoliopid = $(element).data("portfoliopid");
+                    var collectionid = $(element).data("collectionid");
+                    var coverage = $(element).data("coverage");
+                    var publicnote = $(element).data("publicnote");
+
+                    // "standalone" portfolios have no collection_id, and so we should skip this lookup
+                    if(!collectionid) {
+                        $(element).removeClass('load-portfolio-details').html('');
+                        return;
+                    }
+
+                    var url = "/alma/portfolio_details?mms_id="+mmsid+"&portfolio_pid="+portfoliopid+"&collection_id="+collectionid+"&coverage="+coverage+"&public_note="+publicnote
+                    $.ajax({
+                        url: url,
+                        success: function(data, textStatus, jqXHR) {
+                            $(element).removeClass('load-portfolio-details');
+                            $(element).html('');
+                            $(element).append(coverage);
+                            var notes = [data['public_note'], data['authentication_note']]
+                                .filter(function(obj) { return obj }) // compact
+                                .join('<br>')
+                            $('#notes-' + portfoliopid).append(notes)
+                        }
+                    });
+                });
             }
         });
     };
-
-    Franklin.prototype.loadPortfolioDetailsInDataTable = function() {
-        $('.load-portfolio-details').each(function(idx, element) {
-            var mmsid = $(element).data("mmsid");
-            var portfoliopid = $(element).data("portfoliopid");
-            var collectionid = $(element).data("collectionid");
-            var coverage = $(element).data("coverage");
-            var publicnote = $(element).data("publicnote");
-
-            // "standalone" portfolios have no collection_id, and so we should skip this lookup
-            if(!collectionid) {
-                $(element).removeClass('load-portfolio-details').html('');
-                return;
-            }
-
-            var url = "/alma/portfolio_details?mms_id="+mmsid+"&portfolio_pid="+portfoliopid+"&collection_id="+collectionid+"&coverage="+coverage+"&public_note="+publicnote
-            $.ajax({
-                url: url,
-                success: function(data, textStatus, jqXHR) {
-                    $(element).removeClass('load-portfolio-details');
-                    $(element).html('');
-                    $(element).append(coverage);
-                    var notes = [data['public_note'], data['authentication_note']]
-                        .filter(function(obj) { return obj }) // compact
-                        .join('<br>')
-                    $('#notes-' + portfoliopid).append(notes)
-                }
-            });
-        });
-    }
 
     Franklin.prototype.loadRequestOptionListAjax = function(mmsid, request_context) {
         request_context.pickupable = globaldata[mmsid]["pickupable"];
