@@ -94,14 +94,9 @@ module ApplicationHelper
     content_tag('a', tab_label, attrs)
   end
 
-  # return true if availability info HTML should be rendered (and loaded dynamically in-page)
-  def show_availability?(document)
-    # TODO: env var check should be removed eventually
-    (ENV['SUPPRESS_AVAILABILITY'] != 'true') && document.has_any_holdings?
-  end
-
-  def show_availability_on_index_view?
-    params[:format] != 'atom'
+  # @return [TrueClass, FalseClass]
+  def atom_request?
+    params[:format] == 'atom'
   end
 
   def display_alma_fulfillment_iframe?(document)

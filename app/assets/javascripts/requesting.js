@@ -1,44 +1,46 @@
-function populateItemDebugWell(selectedItem) {
-    $('#selected-item-debug').show().text('Debug Info: ' + JSON.stringify(selectedItem, null, 4));
+function populateItemDebugWell($panel, selectedItem) {
+    $panel.find('.selected-item-debug').show().text('Debug Info: ' + JSON.stringify(selectedItem, null, 4));
 }
 
-function showAndEnableRequestButtons(selectedItem) {
-    $('#print-request-button').prop('disabled', false).show();
+function showAndEnableRequestButtons($panel, selectedItem) {
+    $panel.find('.print-request-button').prop('disabled', false).show();
     if(selectedItem.scannable) {
-        $('#electronic-request-button').prop('disabled', false).show();
+        $panel.find('.electronic-request-button').prop('disabled', false).show();
     }
-    $('#aeon-request-button').prop('disabled', true).hide();
+    $panel.find('.aeon-request-button').prop('disabled', true).hide();
 }
 
-function showAndEnablePublicAeonButton() {
-    $('#print-request-button').prop('disabled', true).hide();
-    $('#electronic-request-button').prop('disabled', true).hide();
-    $('#aeon-request-button').prop('disabled', false).show();
+function showAndEnablePublicAeonButton($panel) {
+    $panel.find('.print-request-button').prop('disabled', true).hide();
+    $panel.find('.electronic-request-button').prop('disabled', true).hide();
+    $panel.find('.aeon-request-button').prop('disabled', false).show();
 }
 
-function hideRequestButtons() {
-    $('.request-button').prop('disabled', true).hide();
+function showDisabledRequestButtons($panel) {
+    $panel.find('.print-request-button').prop('disabled', true).show();
+    $panel.find('.electronic-request-button').prop('disabled', true).show();
+    $panel.find('.aeon-request-button').prop('disabled', false).hide();
 }
 
-function displayButtons(selectedItem, logged_in) {
+function displayButtons($panel, selectedItem, logged_in, context) {
     if(!selectedItem.aeon_requestable) {
         if(logged_in) {
-            showAndEnableRequestButtons(selectedItem);
+            showAndEnableRequestButtons($panel, selectedItem);
         } else {
-            hideRequestButtons();
+            showDisabledRequestButtons($panel);
         }
     } else {
-        showAndEnablePublicAeonButton();
+        showAndEnablePublicAeonButton($panel);
     }
-    populateItemDebugWell(selectedItem);
+
+    if (context === 'show') { populateItemDebugWell($panel, selectedItem) }
 }
 
-$(document).ready(function() {
-    $('#selected-item-debug').hide();
-    var $panel = $('#item-request-widget .panel');
-    var $requestForm = $panel.find('#request-form')
-    var $widget = $('#request-item-select');
-    var logged_in =$('#requesting-logged-in').data('value')
+function initializeRequestingWidget($panel, context) {
+    $('.selected-item-debug').hide();
+    var $requestForm = $panel.find('.request-form')
+    var $widget = $panel.find('.request-item-select');
+    var logged_in = $('#requesting-logged-in').data('value')
     if($widget.length > 0) {
         var mmsId = $widget.data('mmsid');
         var responseData;
@@ -55,7 +57,7 @@ $(document).ready(function() {
             if(responseData.length === 1) {
                 $widget.closest('.form-group').hide();
                 selectedItem = responseData[0];
-                displayButtons(selectedItem, logged_in);
+                displayButtons($panel, selectedItem, logged_in, context);
             } else {
                 $widget.select2({
                     theme: 'bootstrap',
@@ -71,9 +73,10 @@ $(document).ready(function() {
                             return item;
                         }
                     });
-                    displayButtons(selectedItem, logged_in);
+                    displayButtons($panel, selectedItem, logged_in, context);
                 });
             }
+            $panel.addClass('loaded');
         });
 
         $('.request-button').on('click', function(e) {
@@ -105,6 +108,7 @@ $(document).ready(function() {
 
         $('#confirm-modal').on('show.bs.modal', function(e) {
             var $modal = $(this);
+            $modal.empty();
             var $formatButton = e.relatedTarget;
             var format = $formatButton.val();
 
@@ -129,9 +133,7 @@ $(document).ready(function() {
 
             // load modal HTML via ajax
             $.get('/request/confirm/' + urlPart, params, function(html) {
-                // $modal.find('.modal-body').empty().html(html);
-                $modal.empty().html(html);
-
+                $modal.html(html)
                 // set hidden fields
                 $modal.find('#requestItemPid').val(selectedItem.id);
                 $modal.find('#requestHoldingId').val(selectedItem.holding_id);
@@ -146,16 +148,41 @@ $(document).ready(function() {
             });
         });
 
-        $.getJSON('/request/options?mms_id=' + mmsId, function(data) {
-            var $showTools = $('.show-tools .panel-body ul.nav');
-            var ares_url = data['ARES'];
-            var enhance_url = data['ENHANCED'];
-            if(ares_url) {
-                $showTools.append($('<li><a target="_blank" href="'+ ares_url +'">Place on Course Reserve</a></li>'));
+        if(context === 'show') {
+            $.getJSON('/request/options?mms_id=' + mmsId, function(data) {
+                var $showTools = $('.show-tools .panel-body ul.nav');
+                var ares_url = data['ARES'];
+                var enhance_url = data['ENHANCED'];
+                if(ares_url) {
+                    $showTools.append($('<li><a target="_blank" href="'+ ares_url +'">Place on Course Reserve</a></li>'));
+                }
+                if(enhance_url) {
+                    $showTools.append($('<li><a target="_blank" href="'+ enhance_url +'">Report Cataloging Error</a></li>'));
+                }
+            });
+        }
+
+    }
+}
+
+$(document).ready(function() {
+    var context;
+    if(document.body.classList.contains("blacklight-catalog-show")) {
+        var $panel = $('.item-request-widget .panel');
+        context = 'show';
+        initializeRequestingWidget($panel, context);
+    } else if(document.body.classList.contains("blacklight-catalog-index")) {
+        context = 'index';
+        $('body').on('click', '.btn-get-it', function(e){
+            var mms_id = $(this).data('mms-id');
+            if(mms_id) {
+                var $widget = $('#item-request-widget-for-' + mms_id);
+                if($widget && !$widget.hasClass('loaded')) {
+                    initializeRequestingWidget($widget, context);
+                }
+                $widget.toggle();
             }
-            if(enhance_url) {
-                $showTools.append($('<li><a target="_blank" href="'+ enhance_url +'">Report Cataloging Error</a></li>'));
-            }
+
         });
     }
 })

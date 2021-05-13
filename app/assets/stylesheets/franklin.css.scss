@@ -192,9 +192,9 @@ table[id^="requestOptions"] td, table[id^="holdingItems"] td {
   border-bottom: 1px dashed #d2d2d2;
 }
 
-.documents-list .document:nth-child(even) {
-  background: #ececec;
-}
+//.documents-list .document:nth-child(even) {
+//  background: #ececec;
+//}
 
 #documents .document .document-title-heading {
   line-height: 1.42857143;
@@ -980,6 +980,12 @@ h4, .facets .facets-heading, .h4 {
 }
 
 /* Requests */
+
+button.btn-get-it {
+  margin-left: 5px;
+  background-color: $upenn-blue;
+  border: 1px solid black;
+}
 
 button.btn-request-options {
   margin-left: 12px;
