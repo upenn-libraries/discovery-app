@@ -11,8 +11,8 @@ class RequestsController < ApplicationController
   end
 
   def submit
-    request = build_request @item, params
-    @response = RequestSubmissionService.submit request
+    request = AbstractRequest.new @item, user_data, params
+    @response = request.submit
     render 'requests/done', layout: false
   end
 
@@ -59,18 +59,12 @@ class RequestsController < ApplicationController
     options.dig('ILLIAD') || ill_request_form_url_for(mms_id)
   end
 
-  # @param [TurboAlmaApi::Bib::PennItem] item
-  # @param [ActionController::Parameters] params
-  # @return [TurboAlmaApi::Request, Illiad::Request]
-  def build_request(item, params)
-    if params[:delivery].in? %w[mail scandeliver]
-      Illiad::Request.new user_id, user_email, item, params
-    elsif params[:delivery].in? %w[pickup]
-      TurboAlmaApi::Request.new user_id, user_email, item, params
-    end
+  # because current_user is useless
+  # @return [Hash{Symbol->String}]
+  def user_data
+    { id: user_id, email: user_email }
   end
 
-  # because current_user is useless
   # @return [String]
   def user_id
     session['id']

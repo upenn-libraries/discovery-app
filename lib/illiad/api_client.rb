@@ -28,7 +28,7 @@ module Illiad
 
     # Submit a transaction request and return transaction number if successful
     # @param [Hash] transaction_data
-    # @return [Hash, nil]
+    # @return [Hash]
     # @raise RequestFailed
     def transaction(transaction_data)
       options = @default_options

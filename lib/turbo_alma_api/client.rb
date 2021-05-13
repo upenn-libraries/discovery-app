@@ -49,6 +49,14 @@ module TurboAlmaApi
     # see: https://developers.exlibrisgroup.com/alma/apis/docs/bibs/UE9TVCAvYWxtYXdzL3YxL2JpYnMve21tc19pZH0vcmVxdWVzdHM=/
     def self.submit_title_request(request); end
 
+    # @param [PennItem] item
+    # @param [Hash] user
+    # @param [Hash] params
+    def self.item_request(item, user, params)
+      request = TurboAlmaApi::Request.new user, item, params
+      submit_request request
+    end
+
     # Submits a HOLD request to Alma
     # -Request- object must respond to:
     #  * pickup location
