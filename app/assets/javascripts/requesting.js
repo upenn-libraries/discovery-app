@@ -1,45 +1,45 @@
-function populateItemDebugWell($panel, selectedItem) {
-    $panel.find('.selected-item-debug').show().text('Debug Info: ' + JSON.stringify(selectedItem, null, 4));
+function populateItemDebugWell($panelBody, selectedItem) {
+    $panelBody.find('.selected-item-debug').show().text('Debug Info: ' + JSON.stringify(selectedItem, null, 4));
 }
 
-function showAndEnableRequestButtons($panel, selectedItem) {
-    $panel.find('.print-request-button').prop('disabled', false).show();
+function showAndEnableRequestButtons($panelBody, selectedItem) {
+    $panelBody.find('.print-request-button').prop('disabled', false).show();
     if(selectedItem.scannable) {
-        $panel.find('.electronic-request-button').prop('disabled', false).show();
+        $panelBody.find('.electronic-request-button').prop('disabled', false).show();
     }
-    $panel.find('.aeon-request-button').prop('disabled', true).hide();
+    $panelBody.find('.aeon-request-button').prop('disabled', true).hide();
 }
 
-function showAndEnablePublicAeonButton($panel) {
-    $panel.find('.print-request-button').prop('disabled', true).hide();
-    $panel.find('.electronic-request-button').prop('disabled', true).hide();
-    $panel.find('.aeon-request-button').prop('disabled', false).show();
+function showAndEnablePublicAeonButton($panelBody) {
+    $panelBody.find('.print-request-button').prop('disabled', true).hide();
+    $panelBody.find('.electronic-request-button').prop('disabled', true).hide();
+    $panelBody.find('.aeon-request-button').prop('disabled', false).show();
 }
 
-function showDisabledRequestButtons($panel) {
-    $panel.find('.print-request-button').prop('disabled', true).show();
-    $panel.find('.electronic-request-button').prop('disabled', true).show();
-    $panel.find('.aeon-request-button').prop('disabled', false).hide();
+function showDisabledRequestButtons($panelBody) {
+    $panelBody.find('.print-request-button').prop('disabled', true).show();
+    $panelBody.find('.electronic-request-button').prop('disabled', true).show();
+    $panelBody.find('.aeon-request-button').prop('disabled', false).hide();
 }
 
-function displayButtons($panel, selectedItem, logged_in, context) {
+function displayButtons($panelBody, selectedItem, logged_in, context) {
     if(!selectedItem.aeon_requestable) {
         if(logged_in) {
-            showAndEnableRequestButtons($panel, selectedItem);
+            showAndEnableRequestButtons($panelBody, selectedItem);
         } else {
-            showDisabledRequestButtons($panel);
+            showDisabledRequestButtons($panelBody);
         }
     } else {
-        showAndEnablePublicAeonButton($panel);
+        showAndEnablePublicAeonButton($panelBody);
     }
 
-    if (context === 'show') { populateItemDebugWell($panel, selectedItem) }
+    if (context === 'show') { populateItemDebugWell($panelBody, selectedItem) }
 }
 
-function initializeRequestingWidget($panel, context) {
+function initializeRequestingWidget($panelBody, context) {
     $('.selected-item-debug').hide();
-    var $requestForm = $panel.find('.request-form')
-    var $widget = $panel.find('.request-item-select');
+    var $requestForm = $panelBody.find('.request-form')
+    var $widget = $panelBody.find('.request-item-select');
     var logged_in = $('#requesting-logged-in').data('value')
     if($widget.length > 0) {
         var mmsId = $widget.data('mmsid');
@@ -50,7 +50,7 @@ function initializeRequestingWidget($panel, context) {
             url: '/alma/items/' + mmsId + '/all',
             dataType: 'json'
         }).done(function(data) {
-            $panel.find('.panel-body').removeClass('spinner');
+            $panelBody.removeClass('spinner');
             $requestForm.show();
             responseData = data
             if(responseData.length === 1) {
@@ -58,7 +58,7 @@ function initializeRequestingWidget($panel, context) {
                 $widget.closest('.form-group').hide();
                 selectedItem = responseData[0];
                 $widget.data(selectedItem);
-                displayButtons($panel, selectedItem, logged_in, context);
+                displayButtons($panelBody, selectedItem, logged_in, context);
             } else {
                 $widget.select2({
                     theme: 'bootstrap',
@@ -69,10 +69,10 @@ function initializeRequestingWidget($panel, context) {
                     $('.select2-search__field').attr('placeholder', "Start typing to filter the list");
                 }).on('select2:select', function(e) {
                     selectedItem = e.params.data;
-                    displayButtons($panel, selectedItem, logged_in, context);
+                    displayButtons($panelBody, selectedItem, logged_in, context);
                 });
             }
-            $panel.addClass('loaded');
+            $panelBody.addClass('loaded');
         });
 
         if(context === 'show') {
@@ -92,14 +92,15 @@ function initializeRequestingWidget($panel, context) {
 }
 
 $(document).ready(function() {
+    var $body = $('body');
     var context;
     if(document.body.classList.contains("blacklight-catalog-show")) {
-        var $panel = $('.item-request-widget .panel');
+        var $panelBody = $('.item-request-widget .panel-body');
         context = 'show';
-        initializeRequestingWidget($panel, context);
+        initializeRequestingWidget($panelBody, context);
     } else if(document.body.classList.contains("blacklight-catalog-index")) {
         context = 'index';
-        $('body').on('click', '.btn-get-it', function(e){
+        $body.on('click', '.btn-get-it', function(e){
             var mms_id = $(this).data('mms-id');
             if(mms_id) {
                 var id = '#item-request-widget-for-' + mms_id;
@@ -109,14 +110,11 @@ $(document).ready(function() {
                 }
                 var $otherWidgets = $('.item-request-widget:not(' + id + ')');
                 $otherWidgets.hide();
-                $widget.toggle();
+                $widget.slideToggle(200);
             }
 
         });
     }
-
-    // bindings for request modal window activities
-
 
     // trigger display of modal upon clicking a request button
     $('.request-button').on('click', function(e) {
@@ -125,7 +123,7 @@ $(document).ready(function() {
     });
 
     // bind events to dynamically created elements
-    $('body')
+    $body
         .on('click', '.delivery-option-radio', function(e) {
             var $radio = $(this);
             if($radio.val() === 'mail') {
@@ -151,15 +149,16 @@ $(document).ready(function() {
     $('#confirm-modal').on('show.bs.modal', function(e) {
         var selectedItem;
         var $modal = $(this);
+        $modal.empty();
         var triggeringButton = e.relatedTarget;
         var $widget = triggeringButton.closest('form').find('.request-item-select')
+        // get selected item from 'widget'
         if($widget.hasClass('select2-hidden-accessible')) {
             selectedItem = $widget.select2('data')[0];
         } else {
             selectedItem = $widget.data();
         }
         var mmsId = $widget.data('mmsid');
-        $modal.empty();
         var format = triggeringButton.val();
         var urlPart;
         var params = { mms_id: mmsId, holding_id: selectedItem.holding_id };

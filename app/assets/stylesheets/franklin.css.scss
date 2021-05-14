@@ -64,10 +64,10 @@ dd.btn-group.unauthenticated {
   margin-left: 0px;
 }
 
-div[id^="table-wrapper"] {
-  border: 1px solid #77F;
-  padding: 6px;
-}
+//div[id^="table-wrapper"] {
+//  border: 1px solid #77F;
+//  padding: 6px;
+//}
 
 div.backbutton-top {
   margin-bottom: 10px;
@@ -980,17 +980,6 @@ h4, .facets .facets-heading, .h4 {
 }
 
 /* Requests */
-
-button.btn-get-it {
-  margin-left: 5px;
-  background-color: $upenn-blue;
-  border: 1px solid black;
-}
-
-button.btn-request-options {
-  margin-left: 12px;
-  border: 1px solid #204d74;
-}
 
 .request-option-link {
   cursor: pointer;

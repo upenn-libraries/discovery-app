@@ -1,39 +1,25 @@
 <% table_style='style=display:none;' if collapsed %>
-<% if document.show_requesting_widget? %>
-  <%= render 'shared/item_request_widget', document: document, hide: true %>
-<% else %>
-  <% if collapsed %>
-    <button class='toggle btn btn-request-options' data-mmsid='<%= document.alma_mms_id %>'><span class="avail-label">Options</span></button>
-  <% end %>
-  <div id="table-wrapper-<%= document.alma_mms_id %>" <%= table_style %> >
-    <table id="requestOptions-<%= document.alma_mms_id %>" class="request-options-load" data-mmsid="<%= document.alma_mms_id %>" style="width:100%">
-      <thead>
-      <tr>
-        <th></th>
-        <th>Location</th>
-        <th id="requestOptionsAvailability-<%= document.alma_mms_id %>"></th>
-        <th>Notes</th>
-        <th>Your Loan Policy</th>
-        <th></th>
-        <th></th>
-        <th></th>
-      </tr>
-      </thead>
-    </table>
-    <table id="holdingItems-<%= document.alma_mms_id %>" class="holding-items-load" style="width:100%">
-      <thead>
-      <tr>
-        <th></th>
-        <th>Description</th>
-        <th>Status</th>
-        <th>Barcode</th>
-        <th>Your Loan Policy</th>
-        <th></th>
-        <th></th>
-      </tr>
-      </tr>
-      </thead>
-    </table>
-    <%= render 'alma_request_options', document: document %>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <a href="#" class='toggle btn-request-options' data-mmsid='<%= document.alma_mms_id %>'><span class="avail-label">See Options</span></a>
   </div>
-<% end %>
+  <div class="panel-body" <%= table_style %>>
+    <div id="table-wrapper-<%= document.alma_mms_id %>" <%= table_style %> >
+      <table id="requestOptions-<%= document.alma_mms_id %>" class="request-options-load" data-mmsid="<%= document.alma_mms_id %>" style="width:100%">
+        <thead>
+        <tr>
+          <th></th>
+          <th>Location</th>
+          <th id="requestOptionsAvailability-<%= document.alma_mms_id %>"></th>
+          <th>Notes</th>
+          <th>Your Loan Policy</th>
+          <th></th>
+          <th></th>
+          <th></th>
+        </tr>
+        </thead>
+      </table>
+      <%= render 'alma_request_options', document: document %>
+    </div>
+  </div>
+</div>

@@ -310,8 +310,9 @@ $(document).ready(function() {
             }
             else {
                 $('.toggle[data-mmsid=' + mmsid + ']').each(function() {
-                    $(this).one("click", function() {
-                        Franklin.prototype.loadRequestOptionsAjax(mmsid);
+                    var $this = $(this);
+                    $this.one("click", function() {
+                        $this.closest('.panel').find('.panel-body').slideDown(200);                        Franklin.prototype.loadRequestOptionsAjax(mmsid);
                         Franklin.prototype.initializeItemsDataTable(mmsid);
                         $('#table-wrapper-' + mmsid).toggle();
 
