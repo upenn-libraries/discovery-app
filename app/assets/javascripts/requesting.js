@@ -45,7 +45,6 @@ function initializeRequestingWidget($panel, context) {
         var mmsId = $widget.data('mmsid');
         var responseData;
         var selectedItem;
-        var selectedItemId;
         $requestForm.hide();
         $.ajax({
             url: '/alma/items/' + mmsId + '/all',
@@ -55,8 +54,10 @@ function initializeRequestingWidget($panel, context) {
             $requestForm.show();
             responseData = data
             if(responseData.length === 1) {
+                // single iem case - avoid instantiating select2 widget
                 $widget.closest('.form-group').hide();
                 selectedItem = responseData[0];
+                $widget.data(selectedItem);
                 displayButtons($panel, selectedItem, logged_in, context);
             } else {
                 $widget.select2({
@@ -67,85 +68,11 @@ function initializeRequestingWidget($panel, context) {
                 }).on('select2:open', function(e) {
                     $('.select2-search__field').attr('placeholder', "Start typing to filter the list");
                 }).on('select2:select', function(e) {
-                    selectedItemId = this.value;
-                    selectedItem = responseData.find(function(item, index) {
-                        if(item.id === selectedItemId) {
-                            return item;
-                        }
-                    });
+                    selectedItem = e.params.data;
                     displayButtons($panel, selectedItem, logged_in, context);
                 });
             }
             $panel.addClass('loaded');
-        });
-
-        $('.request-button').on('click', function(e) {
-            e.preventDefault();
-            $("#confirm-modal").modal('show', $(this));
-        });
-
-        $('body')
-            .on('click', '.delivery-option-radio', function(e) {
-                var $radio = $(this);
-                if($radio.val() === 'mail') {
-                    $('#bbm_validation_checkbox').prop('disabled', false).focus();
-                } else {
-                    $('#bbm_validation_checkbox').prop('disabled', true);
-                }
-            })
-            .on('ajax:beforeSend', '#confirm-modal form', function() {
-                $('#confirm-modal .modal-body').empty().addClass('spinner')
-            })
-            .on('ajax:success', '#confirm-modal form', function(e, data) {
-                $("#confirm-modal").empty().removeClass('spinner').html(data);
-            })
-            .on('click', '.input-toggleable', function(e) {
-                e.preventDefault();
-                var $this = $(this);
-                $this.hide();
-                $this.siblings('.toggle-field').show();
-            });
-
-        $('#confirm-modal').on('show.bs.modal', function(e) {
-            var $modal = $(this);
-            $modal.empty();
-            var $formatButton = e.relatedTarget;
-            var format = $formatButton.val();
-
-            var urlPart;
-            var params = { mms_id: mmsId, holding_id: selectedItem.holding_id };
-            if(format === 'electronic') {
-                params.volume = selectedItem.volume;
-                params.issue = selectedItem.issue;
-                urlPart = 'electronic';
-            } else {
-                if(selectedItem.circulate) {
-                    params.available = selectedItem.in_place;
-                    urlPart = 'circulate';
-                } else {
-                    if(selectedItem.aeon_requestable) {
-                        urlPart = 'aeon';
-                    } else {
-                        urlPart = 'ill';
-                    }
-                }
-            }
-
-            // load modal HTML via ajax
-            $.get('/request/confirm/' + urlPart, params, function(html) {
-                $modal.html(html)
-                // set hidden fields
-                $modal.find('#requestItemPid').val(selectedItem.id);
-                $modal.find('#requestHoldingId').val(selectedItem.holding_id);
-                $modal.find('#requestMmsId').val(mmsId);
-
-                // set Item details TODO: what if description is empty? :(
-                if(selectedItem.description) {
-                    $('#selection').val(selectedItem.description);
-                } else {
-                    $('#selection').closest('.form-group').hide();
-                }
-            });
         });
 
         if(context === 'show') {
@@ -161,7 +88,6 @@ function initializeRequestingWidget($panel, context) {
                 }
             });
         }
-
     }
 }
 
@@ -176,13 +102,97 @@ $(document).ready(function() {
         $('body').on('click', '.btn-get-it', function(e){
             var mms_id = $(this).data('mms-id');
             if(mms_id) {
-                var $widget = $('#item-request-widget-for-' + mms_id);
+                var id = '#item-request-widget-for-' + mms_id;
+                var $widget = $(id);
                 if($widget && !$widget.hasClass('loaded')) {
                     initializeRequestingWidget($widget, context);
                 }
+                var $otherWidgets = $('.item-request-widget:not(' + id + ')');
+                $otherWidgets.hide();
                 $widget.toggle();
             }
 
         });
     }
+
+    // bindings for request modal window activities
+
+
+    // trigger display of modal upon clicking a request button
+    $('.request-button').on('click', function(e) {
+        e.preventDefault();
+        $("#confirm-modal").modal('show', $(this));
+    });
+
+    // bind events to dynamically created elements
+    $('body')
+        .on('click', '.delivery-option-radio', function(e) {
+            var $radio = $(this);
+            if($radio.val() === 'mail') {
+                $('#bbm_validation_checkbox').prop('disabled', false).focus();
+            } else {
+                $('#bbm_validation_checkbox').prop('disabled', true);
+            }
+        })
+        .on('ajax:beforeSend', '#confirm-modal form', function() {
+            $('#confirm-modal .modal-body').empty().addClass('spinner')
+        })
+        .on('ajax:success', '#confirm-modal form', function(e, data) {
+            $("#confirm-modal").empty().removeClass('spinner').html(data);
+        })
+        .on('click', '.input-toggleable', function(e) {
+            e.preventDefault();
+            var $this = $(this);
+            $this.hide();
+            $this.siblings('.toggle-field').show();
+        });
+
+    // do stuff upon display of modal window
+    $('#confirm-modal').on('show.bs.modal', function(e) {
+        var selectedItem;
+        var $modal = $(this);
+        var triggeringButton = e.relatedTarget;
+        var $widget = triggeringButton.closest('form').find('.request-item-select')
+        if($widget.hasClass('select2-hidden-accessible')) {
+            selectedItem = $widget.select2('data')[0];
+        } else {
+            selectedItem = $widget.data();
+        }
+        var mmsId = $widget.data('mmsid');
+        $modal.empty();
+        var format = triggeringButton.val();
+        var urlPart;
+        var params = { mms_id: mmsId, holding_id: selectedItem.holding_id };
+        if(format === 'electronic') {
+            params.volume = selectedItem.volume;
+            params.issue = selectedItem.issue;
+            urlPart = 'electronic';
+        } else {
+            if(selectedItem.circulate) {
+                params.available = selectedItem.in_place;
+                urlPart = 'circulate';
+            } else {
+                if(selectedItem.aeon_requestable) {
+                    urlPart = 'aeon';
+                } else {
+                    urlPart = 'ill';
+                }
+            }
+        }
+        // load modal HTML via ajax
+        $.get('/request/confirm/' + urlPart, params, function(html) {
+            $modal.html(html)
+            // set hidden fields
+            $modal.find('#requestItemPid').val(selectedItem.id);
+            $modal.find('#requestHoldingId').val(selectedItem.holding_id);
+            $modal.find('#requestMmsId').val(mmsId);
+
+            // set Item details
+            if(selectedItem.description) {
+                $('#selection').val(selectedItem.description);
+            } else {
+                $('#selection').closest('.form-group').hide();
+            }
+        });
+    });
 })
