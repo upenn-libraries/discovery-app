@@ -6,35 +6,35 @@
       <div class="modal-title" id="confirmModalLabel"><%= t('requests.modal_titles.confirm.electronic') %></div>
     </div>
     <div class="modal-body">
-       <%= f.hidden_field :item_pid, id: 'requestItemPid' %>
-        <%= f.hidden_field :holding_id, id: 'requestHoldingId' %>
-        <%= f.hidden_field :mms_id, id: 'requestMmsId' %>
-        <%= f.hidden_field :delivery, value: 'scandeliver' %>
+      <%= f.hidden_field :item_pid, id: 'requestItemPid' %>
+      <%= f.hidden_field :holding_id, id: 'requestHoldingId' %>
+      <%= f.hidden_field :mms_id, id: 'requestMmsId' %>
+      <%= f.hidden_field :delivery, value: 'scandeliver' %>
 
+      <div class="alert alert-danger" role="alert">
         <%= t('requests.delivery_messages.digi_html') %>
+      </div>
 
+      <%= f.text_field :title,
+                       label: t('requests.fields.title'),
+                       disabled: true %>
 
       <%= f.text_field :selection,
-                       label: 'Selection',
+                       label: t('requests.fields.selection'),
                        disabled: true %>
       <%= f.text_field :section_title,
                        label: t('requests.fields.section_title'),
-                       help: t('requests.help.section_title'),
                        required: true %>
       <%= f.text_field :section_author,
                        label: t('requests.fields.section_author'),
-                       help: t('requests.help.section_author'),
                        required: true %>
       <%= f.text_field :section_pages,
-                       label: t('requests.fields.section_pages'),
-                       help: t('requests.help.section_pages') %>
+                       label: t('requests.fields.section_pages') %>
       <%= f.text_field :section_volume,
                        label: t('requests.fields.section_volume'),
-                       help: t('requests.help.section_volume'),
                        value: params[:volume] %>
       <%= f.text_field :section_issue,
                        label: t('requests.fields.section_issue'),
-                       help: t('requests.help.section_issue'),
                        value: params[:issue] %>
 
       <div id="comments-area">

@@ -187,10 +187,11 @@ $(document).ready(function() {
             $modal.find('#requestMmsId').val(mmsId);
 
             // set Item details
+            $modal.find('#title').val(selectedItem.title);
             if(selectedItem.description) {
-                $('#selection').val(selectedItem.description);
+                $modal.find('#selection').val(selectedItem.description);
             } else {
-                $('#selection').closest('.form-group').hide();
+                $modal.find('#selection').closest('.form-group').hide();
             }
         });
     });
