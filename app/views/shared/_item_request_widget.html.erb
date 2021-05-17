@@ -1,9 +1,9 @@
 <section class="item-request-section">
   <div class="panel panel-default">
     <div class="panel-heading">
-      <a href="#" class="btn-get-it" data-mms-id="<%= document.alma_mms_id %>" role="button" aria-expanded="false" aria-controls="item-request-widget-for-<%= document.alma_mms_id %>">
+      <button class="btn btn-sm btn-link btn-get-it" data-mms-id="<%= document.alma_mms_id %>" role="button" aria-expanded="false" aria-controls="item-request-widget-for-<%= document.alma_mms_id %>">
         <span class="glyphicon glyphicon-book"></span> <%= t('requests.widget.title') %>
-      </a>
+      </button>
     </div>
     <div class="item-request-widget panel-body spinner" id="item-request-widget-for-<%= document.alma_mms_id %>" <%= hide ? 'style=display:none;' : "" %>>
       <form class="request-form">

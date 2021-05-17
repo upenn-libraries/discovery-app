@@ -95,12 +95,13 @@ $(document).ready(function() {
     var $body = $('body');
     var context;
     if(document.body.classList.contains("blacklight-catalog-show")) {
-        var $panelBody = $('.item-request-widget .panel-body');
+        var $panelBody = $('.item-request-widget');
         context = 'show';
         initializeRequestingWidget($panelBody, context);
     } else if(document.body.classList.contains("blacklight-catalog-index")) {
         context = 'index';
         $body.on('click', '.btn-get-it', function(e){
+            e.preventDefault();
             var mms_id = $(this).data('mms-id');
             if(mms_id) {
                 var id = '#item-request-widget-for-' + mms_id;

@@ -1,10 +1,12 @@
 <% table_style='style=display:none;' if collapsed %>
 <div class="panel panel-default">
   <div class="panel-heading">
-    <a href="#" class='toggle btn-request-options' data-mmsid='<%= document.alma_mms_id %>'><span class="avail-label">See Options</span></a>
+    <button class='btn btn-link btn-sm toggle' role="button" data-mmsid='<%= document.alma_mms_id %>'>
+      <span class="glyphicon glyphicon-th-list"></span> Options
+    </button>
   </div>
   <div class="panel-body" <%= table_style %>>
-    <div id="table-wrapper-<%= document.alma_mms_id %>" <%= table_style %> >
+    <div id="table-wrapper-<%= document.alma_mms_id %>">
       <table id="requestOptions-<%= document.alma_mms_id %>" class="request-options-load" data-mmsid="<%= document.alma_mms_id %>" style="width:100%">
         <thead>
         <tr>

@@ -311,13 +311,12 @@ $(document).ready(function() {
             else {
                 $('.toggle[data-mmsid=' + mmsid + ']').each(function() {
                     var $this = $(this);
-                    $this.one("click", function() {
+                    $this.one("click", function(e) {
+                        e.preventDefault();
                         $this.closest('.panel').find('.panel-body').slideDown(200);                        Franklin.prototype.loadRequestOptionsAjax(mmsid);
                         Franklin.prototype.initializeItemsDataTable(mmsid);
-                        $('#table-wrapper-' + mmsid).toggle();
-
                         $(this).click(function() {
-                            $('#table-wrapper-' + mmsid).toggle();
+                            $('#table-wrapper-' + mmsid).closest('.panel-body').slideToggle(200);
                         });
                     });
                 });

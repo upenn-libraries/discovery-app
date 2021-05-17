@@ -46,11 +46,9 @@
         </li>
       </ul>
       <div id="comments-area">
-        <a href="#" id="show-comment-input">
-          <%= t('requests.labels.add_comments') %>
-        </a>
-        <div id="comment-input" style="display: none;">
-          <%= f.text_area :comments %>
+        <a class="input-toggleable" href="#"><%= t('requests.labels.add_comments') %></a>
+        <div class="toggle-field" style="display: none;">
+          <%= f.text_area :comments, label: t('requests.fields.comment') %>
         </div>
       </div>
     </div>
