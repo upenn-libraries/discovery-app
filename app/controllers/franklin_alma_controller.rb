@@ -11,26 +11,19 @@ class FranklinAlmaController < ApplicationController
     response_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id, :get, params)
 
     xml = Nokogiri(response_data.body)
-    holding_details = xml.xpath('//datafield[@tag="866"]/subfield[@code="a"]').map { |field|
-                        field.text
-                      }
+    holding_details = xml.xpath('//datafield[@tag="866"]/subfield[@code="a"]').map(&:text)
 
-    note_details = xml.xpath('//datafield[@tag="852"]/subfield[@code="z"]').map { |field|
-                     field.text
-                   }
+    note_details = xml.xpath('//datafield[@tag="852"]/subfield[@code="z"]').map(&:text)
     note_details.unshift('Public Notes:') unless note_details.empty?
 
-    supplemental_details = xml.xpath('//datafield[@tag="867"]/subfield[@code="a"]').map { |field|
-                             field.text
-                           }
+    supplemental_details = xml.xpath('//datafield[@tag="867"]/subfield[@code="a"]').map(&:text)
     supplemental_details.unshift('Supplemental:') unless supplemental_details.empty?
 
-    index_details = xml.xpath('//datafield[@tag="868"]/subfield[@code="a"]').map { |field|
-                      field.text
-                    }
+    index_details = xml.xpath('//datafield[@tag="868"]/subfield[@code="a"]').map(&:text)
     index_details.unshift('Indexes:') unless index_details.empty?
 
-    render json: { "holding_details": holding_details.join("<br/>").html_safe, "notes": (note_details + supplemental_details + index_details).join("<br/>").html_safe }
+    render json: { "holding_details": holding_details.join('<br/>').html_safe,
+                   "notes": (note_details + supplemental_details + index_details).join('<br/>').html_safe }
 
   end
 
@@ -105,9 +98,9 @@ class FranklinAlmaController < ApplicationController
     inventory_type = ''
 
     # check if any holdings have more than one item
-    has_holding_info = has_holding_info?(bib_data, mmsid)
+    has_holding_info = holding_info?(bib_data, mmsid)
     # check if portfolio information is present
-    has_portfolio_info = has_portfolio_info?(bib_data, mmsid)
+    has_portfolio_info = portfolio_info?(bib_data, mmsid)
 
     metadata = check_requestable
 
@@ -152,7 +145,7 @@ class FranklinAlmaController < ApplicationController
           link = "<a target='_blank' href='#{link_url}'>#{link_text}</a>"
           public_note_content = collection_response['public_note'].present? ? ['Public Notes: ', collection_response['public_note']] : []
           authentication_note_content = collection_response['authentication_note'].present? ? ['Authentication Notes: ', collection_response['authentication_note']] : []
-          notes = ('<span>' + (public_note_content + authentication_note_content).join("<br/>") + '</span>').html_safe
+          notes = ('<span>' + (public_note_content + authentication_note_content).join('<br/>') + '</span>').html_safe
           [
             i,
             link,
@@ -212,7 +205,7 @@ class FranklinAlmaController < ApplicationController
                          i,
                          h['location'],
                          h['availability'],
-                         (has_holding_info ? "" : "<span class='load-holding-details' data-mmsid='#{mmsid}' data-holdingid='#{h['holding_id']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/>") + "</span><span id='notes-#{h['holding_id']}'></span>",
+                         (has_holding_info ? '' : "<span class='load-holding-details' data-mmsid='#{mmsid}' data-holdingid='#{h['holding_id']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/>") + "</span><span id='notes-#{h['holding_id']}'></span>",
                          policy || h['due_date_policy'],
                          h['links'],
                          h['holding_id'],
@@ -265,8 +258,8 @@ class FranklinAlmaController < ApplicationController
     # table_data here is used to compose the columns in the availability DataTable
     table_data = response_data['item'].map do |item|
       data = item['item_data']
-      unless policies.has_key?(data['policy']['value']) ||
-             data['base_status']['desc'] != "Item in place" || userid.nil?
+      unless policies.key?(data['policy']['value']) ||
+             data['base_status']['desc'] != 'Item in place' || userid.nil?
         policies[data['policy']['value']] = nil
         pids_to_check << [data['pid'], data['policy']['value']]
       end
@@ -292,7 +285,7 @@ class FranklinAlmaController < ApplicationController
       )
       table_data += response_data['item'].map do |item|
         data = item['item_data']
-        unless policies.has_key?(data['policy']['value']) || data['base_status']['desc'] != "Item in place" || userid.nil?
+        unless policies.key?(data['policy']['value']) || data['base_status']['desc'] != 'Item in place' || userid.nil?
           policies[data['policy']['value']] = nil
           pids_to_check << [data['pid'], data['policy']['value']]
         end
@@ -442,7 +435,7 @@ class FranklinAlmaController < ApplicationController
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
 
-    if !params['mms_id'].present?
+    unless params['mms_id'].present?
       render 'catalog/bad_request'
       return
     end
@@ -483,20 +476,20 @@ class FranklinAlmaController < ApplicationController
                   #"Museum Library" => "MuseumLib",
                   #"Ormandy Music and Media Center" => "MusicLib",
                   #"Pennsylvania Hospital Library" => "PAHospLib",
-                  "Van Pelt Library" => "VanPeltLib"
+                  'Van Pelt Library' => 'VanPeltLib'
                   #"Veterinary Library - New Bolton Center" => "VetNBLib",
                   #"Veterinary Library - Penn Campus" => "VetPennLib"
                 }
 
     if params['item_pid'].present?
-      api_response = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items_item_pid, :get, params.merge({format: 'json'}))
+      api_response = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items_item_pid, :get, params.merge({ format: 'json' }))
       bib_data, holding_data, item_data = ['bib_data', 'holding_data', 'item_data'].map { |d| api_response[d] }
     else
-      api_response = api_instance.request(api.almaws_v1_bibs, :get, params.merge({format: 'json'}))
+      api_response = api_instance.request(api.almaws_v1_bibs, :get, params.merge({ format: 'json' }))
       bib_data, holding_data, item_data = api_response.dig('bib', 0), {}, {}
     end
 
-    render 'catalog/request', locals: {bib_data: bib_data, holding_data: holding_data, item_data: item_data, libraries: libraries} unless performed?
+    render 'catalog/request', locals: { bib_data: bib_data, holding_data: holding_data, item_data: item_data, libraries: libraries } unless performed?
   end
 
   def create_request
@@ -534,8 +527,8 @@ class FranklinAlmaController < ApplicationController
 
     url += "?user_id=#{userid}&user_id_type=all_unique&apikey=#{ENV['ALMA_API_KEY']}"
     headers = { 'Content-Type' => 'application/json' }
-    body = { request_type: "HOLD",
-             pickup_location_type: "LIBRARY",
+    body = { request_type: 'HOLD',
+             pickup_location_type: 'LIBRARY',
              pickup_location_library: params['pickup_location'],
              comment: params['comments'] }.to_json
 
@@ -598,7 +591,7 @@ class FranklinAlmaController < ApplicationController
   # @param [Object] api_mms_data
   # @param [Object] mmsid
   # @return [TrueClass, FalseClass]
-  def has_holding_info?(api_mms_data, mmsid)
+  def holding_info?(api_mms_data, mmsid)
     # check if any holdings have more than one item
     api_mms_data['availability'][mmsid]['holdings'].map(&:keys).reduce([], &:+).member?('holding_info') ||
       api_mms_data['availability'][mmsid]['holdings'].any? { |hld| hld['total_items'].to_i > 1 || hld['availability'] == 'check_holdings' }
@@ -607,7 +600,7 @@ class FranklinAlmaController < ApplicationController
   # @param [Object] api_mms_data
   # @param [Object] mmsid
   # @return [TrueClass, FalseClass]
-  def has_portfolio_info?(api_mms_data, mmsid)
+  def portfolio_info?(api_mms_data, mmsid)
     api_mms_data['availability'][mmsid]['holdings'].map(&:keys).reduce([], &:+).member?('portfolio_pid')
   end
 
@@ -654,7 +647,7 @@ class FranklinAlmaController < ApplicationController
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
     userid = session['id'].presence || 'GUEST'
-    options = {user_id: userid, format: 'json', consider_dlr: true}
+    options = { user_id: userid, format: 'json', consider_dlr: true }
 
     response_data = api_instance.request(api.almaws_v1_bibs.mms_id_request_options, :get, params.merge(options))
 
@@ -668,7 +661,7 @@ class FranklinAlmaController < ApplicationController
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
     userid = session['id'].presence || 'GUEST'
-    options = {user_id: userid, format: 'json'}
+    options = { user_id: userid, format: 'json' }
 
     response_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items_item_pid_request_options, :get, params.merge(options))
 
