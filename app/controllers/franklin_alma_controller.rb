@@ -1,9 +1,7 @@
-require 'json'
+# frozen_string_literal: true
 
-#class FranklinAlmaController < BlacklightAlma::AlmaController
+# handle Alma-related actions
 class FranklinAlmaController < ApplicationController
-
-  include BlacklightAlma::Availability
 
   #TODO: Move result ordering logic to concern?
   @@toplist = {'collection' => {}, 'interface' => {}}
@@ -47,7 +45,7 @@ class FranklinAlmaController < ApplicationController
     score_b = -[@@toplist['collection'][collection_b] || 0, @@toplist['interface'][interface_b] || 0].max
     score_b = [@@bottomlist['collection'][collection_b] || 0, @@bottomlist['interface'][interface_b] || 0].max if score_b == 0
 
-    return (score_a == score_b ? collection_a <=> collection_b : score_a <=> score_b)
+    (score_a == score_b ? collection_a <=> collection_b : score_a <=> score_b)
   end
 
   def cmpHoldingLocations(holding_a, holding_b)
@@ -57,7 +55,7 @@ class FranklinAlmaController < ApplicationController
     score_a = lib_a == 'Libra' ? 1 : 0
     score_b = lib_b == 'Libra' ? 1 : 0
 
-    return (score_a == score_b ? lib_a <=> lib_b : score_a <=> score_b)
+    (score_a == score_b ? lib_a <=> lib_b : score_a <=> score_b)
   end
 
   def cmpRequestOptions(option_a, option_b)
@@ -67,11 +65,7 @@ class FranklinAlmaController < ApplicationController
     score_b = -(@@topoptionslist[option_b[:option_name]] || 0)
     score_b = (@@bottomoptionslist[option_b[:option_name]] || 0) if score_b == 0
 
-    return score_a <=> score_b
-  end
-
-  def alma_api_class
-    PennLib::BlacklightAlma::AvailabilityApi
+    score_a <=> score_b
   end
 
   def holding_details
@@ -100,7 +94,7 @@ class FranklinAlmaController < ApplicationController
                     }
     index_details.unshift('Indexes:') unless index_details.empty?
 
-    render :json => { "holding_details": holding_details.join("<br/>").html_safe, "notes": (note_details + supplemental_details + index_details).join("<br/>").html_safe }
+    render json: { "holding_details": holding_details.join("<br/>").html_safe, "notes": (note_details + supplemental_details + index_details).join("<br/>").html_safe }
 
   end
 
@@ -159,16 +153,6 @@ class FranklinAlmaController < ApplicationController
                    public_note: public_note, authentication_note: authentication_note }
   end
 
-  def has_holding_info?(api_mms_data, mmsid)
-    # check if any holdings have more than one item
-    api_mms_data['availability'][mmsid]['holdings'].map(&:keys).reduce([], &:+).member?('holding_info') ||
-      api_mms_data['availability'][mmsid]['holdings'].any? { |hld| hld['total_items'].to_i > 1 || hld['availability'] == 'check_holdings' }
-  end
-
-  def has_portfolio_info?(api_mms_data, mmsid)
-    api_mms_data['availability'][mmsid]['holdings'].map(&:keys).reduce([], &:+).member?('portfolio_pid')
-  end
-
   def single_availability
     availability_status = { 'available' => 'Available',
                             'check_holdings' => 'Requestable' }
@@ -189,7 +173,7 @@ class FranklinAlmaController < ApplicationController
     # check if portfolio information is present
     has_portfolio_info = has_portfolio_info?(bib_data, mmsid)
 
-    metadata = check_requestable(has_holding_info)
+    metadata = check_requestable
 
     # Load holding information for monographs. Monographs do not have
     # a 'holding_info' value.
@@ -324,32 +308,6 @@ class FranklinAlmaController < ApplicationController
     render json: { "metadata": metadata, "data": table_data }
   end
 
-  def check_requestable(has_holding_info = false)
-    api_instance = BlacklightAlma::BibsApi.instance
-    api = api_instance.ezwadl_api[0]
-    request_data = api_instance.request(api.almaws_v1_bibs.mms_id_requests, :get, params)
-    result = {}
-    requestable = false
-
-    if request_data.dig('total_record_count') != '0'
-      [request_data.dig('user_requests', 'user_request')].flatten.reject(&:nil?).each do |req|
-        item_pid = req.dig('item_id').presence
-        request_type = req.dig('request_sub_type', '__content__').presence
-        result[item_pid] ||= []
-        result[item_pid] << request_type
-      end
-    end
-
-    userid = session['id'].presence
-    usergroup = session['user_group'].presence
-    mmsid = params[:mms_id]
-
-    result[mmsid] = {:facultyexpress => usergroup == 'Faculty Express', :group => usergroup}
-
-    return result
-
-  end
-
   def holding_items
     userid = session['id'].presence || nil
     due_date_policy = 'Please log in for loan and request information' if userid.nil?
@@ -440,15 +398,6 @@ class FranklinAlmaController < ApplicationController
     end
 
     render json: { "data": table_data }
-  end
-
-  def suppress_bbm(ctx)
-    # temporary NOTE: only 80% confident (initially) that we want to filter on `pickupable` here
-    # this should be set in/returned from `single_availablity` method, and will be `true` if any
-    # holding has a raw `holding['availability']` property of `available`
-    return true unless ctx['pickupable'] != false
-    return true if ctx['items_nocirc'] == 'all'
-    false
   end
 
   def request_options
@@ -553,32 +502,6 @@ class FranklinAlmaController < ApplicationController
     render json: results
   end
 
-  def request_title?
-    api_instance = BlacklightAlma::BibsApi.instance
-    api = api_instance.ezwadl_api[0]
-    userid = session['id'].presence || 'GUEST'
-    options = {:user_id => userid, :format => 'json', :consider_dlr => true}
-
-    response_data = api_instance.request(api.almaws_v1_bibs.mms_id_request_options, :get, params.merge(options))
-
-    return (response_data['request_option'] || []).map { |option|
-      option['type']['value']
-    }.member?('HOLD')
-  end
-
-  def request_item?
-    api_instance = BlacklightAlma::BibsApi.instance
-    api = api_instance.ezwadl_api[0]
-    userid = session['id'].presence || 'GUEST'
-    options = {:user_id => userid, :format => 'json'}
-
-    response_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items_item_pid_request_options, :get, params.merge(options))
-
-    return (response_data['request_option'] || []).map { |option|
-      option['type']['value']
-    }.member?('HOLD')
-  end
-
   def load_request
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
@@ -630,14 +553,14 @@ class FranklinAlmaController < ApplicationController
                 }
 
     if params['item_pid'].present?
-      api_response = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items_item_pid, :get, params.merge({:format => 'json'}))
+      api_response = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items_item_pid, :get, params.merge({format: 'json'}))
       bib_data, holding_data, item_data = ['bib_data', 'holding_data', 'item_data'].map { |d| api_response[d] }
     else
-      api_response = api_instance.request(api.almaws_v1_bibs, :get, params.merge({:format => 'json'}))
+      api_response = api_instance.request(api.almaws_v1_bibs, :get, params.merge({format: 'json'}))
       bib_data, holding_data, item_data = api_response.dig('bib', 0), {}, {}
     end
 
-    render 'catalog/request', locals: {:bib_data => bib_data, :holding_data => holding_data, :item_data => item_data, :libraries => libraries} unless performed?
+    render 'catalog/request', locals: {bib_data: bib_data, holding_data: holding_data, item_data: item_data, libraries: libraries} unless performed?
   end
 
   def create_request
@@ -675,12 +598,12 @@ class FranklinAlmaController < ApplicationController
 
     url += "?user_id=#{userid}&user_id_type=all_unique&apikey=#{ENV['ALMA_API_KEY']}"
     headers = { 'Content-Type' => 'application/json' }
-    body = { :request_type => "HOLD",
-             :pickup_location_type => "LIBRARY",
-             :pickup_location_library => params['pickup_location'],
-             :comment => params['comments'] }.to_json
+    body = { request_type: "HOLD",
+             pickup_location_type: "LIBRARY",
+             pickup_location_library: params['pickup_location'],
+             comment: params['comments'] }.to_json
 
-    api_response = HTTParty.post(url, :headers => headers, :body => body)
+    api_response = HTTParty.post(url, headers: headers, body: body)
 
     render 'catalog/request_created' unless performed?
 
@@ -723,9 +646,98 @@ class FranklinAlmaController < ApplicationController
     end
   end
 
+  private
+
+  # @return [Class<PennLib::BlacklightAlma::AvailabilityApi>]
+  def alma_api_class
+    PennLib::BlacklightAlma::AvailabilityApi
+  end
+
   # API key param for appending to Alma API request URLs
   # @return [String]
   def api_key_param
     "apikey=#{ENV['ALMA_API_KEY']}"
+  end
+
+  # @param [Object] api_mms_data
+  # @param [Object] mmsid
+  # @return [TrueClass, FalseClass]
+  def has_holding_info?(api_mms_data, mmsid)
+    # check if any holdings have more than one item
+    api_mms_data['availability'][mmsid]['holdings'].map(&:keys).reduce([], &:+).member?('holding_info') ||
+      api_mms_data['availability'][mmsid]['holdings'].any? { |hld| hld['total_items'].to_i > 1 || hld['availability'] == 'check_holdings' }
+  end
+
+  # @param [Object] api_mms_data
+  # @param [Object] mmsid
+  # @return [TrueClass, FalseClass]
+  def has_portfolio_info?(api_mms_data, mmsid)
+    api_mms_data['availability'][mmsid]['holdings'].map(&:keys).reduce([], &:+).member?('portfolio_pid')
+  end
+
+  # @return [Hash]
+  def check_requestable
+    api_instance = BlacklightAlma::BibsApi.instance
+    api = api_instance.ezwadl_api[0]
+    request_data = api_instance.request(api.almaws_v1_bibs.mms_id_requests, :get, params)
+    result = {}
+
+    if request_data.dig('total_record_count') != '0'
+      [request_data.dig('user_requests', 'user_request')].flatten.reject(&:nil?).each do |req|
+        item_pid = req.dig('item_id').presence
+        request_type = req.dig('request_sub_type', '__content__').presence
+        result[item_pid] ||= []
+        result[item_pid] << request_type
+      end
+    end
+
+    usergroup = session['user_group'].presence
+    mmsid = params[:mms_id]
+
+    result[mmsid] = { facultyexpress: usergroup == 'Faculty Express',
+                      group: usergroup }
+
+    result
+  end
+
+  # temporary NOTE: only 80% confident (initially) that we want to filter on `pickupable` here
+  # this should be set in/returned from `single_availablity` method, and will be `true` if any
+  # holding has a raw `holding['availability']` property of `available`
+  # @param [Hash] ctx
+  # @return [FalseClass, TrueClass]
+  def suppress_bbm(ctx)
+    return true unless ctx['pickupable'] != false
+
+    return true if ctx['items_nocirc'] == 'all'
+
+    false
+  end
+
+  # @return [TrueClass, FalseClass]
+  def request_title?
+    api_instance = BlacklightAlma::BibsApi.instance
+    api = api_instance.ezwadl_api[0]
+    userid = session['id'].presence || 'GUEST'
+    options = {user_id: userid, format: 'json', consider_dlr: true}
+
+    response_data = api_instance.request(api.almaws_v1_bibs.mms_id_request_options, :get, params.merge(options))
+
+    (response_data['request_option'] || []).map { |option|
+      option['type']['value']
+    }.member?('HOLD')
+  end
+
+  # @return [TrueClass, FalseClass]
+  def request_item?
+    api_instance = BlacklightAlma::BibsApi.instance
+    api = api_instance.ezwadl_api[0]
+    userid = session['id'].presence || 'GUEST'
+    options = {user_id: userid, format: 'json'}
+
+    response_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items_item_pid_request_options, :get, params.merge(options))
+
+    (response_data['request_option'] || []).map { |option|
+      option['type']['value']
+    }.member?('HOLD')
   end
 end
