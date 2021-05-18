@@ -2,71 +2,7 @@
 
 # handle Alma-related actions
 class FranklinAlmaController < ApplicationController
-
-  #TODO: Move result ordering logic to concern?
-  @@toplist = {'collection' => {}, 'interface' => {}}
-  @@toplist['collection']['Publisher website'] = 8
-  @@toplist['interface']['Highwire Press'] = 7
-  @@toplist['interface']['HighWire'] = 6
-  @@toplist['interface']['Elsevier ScienceDirect'] = 5
-  @@toplist['interface']['Elsevier ClinicalKey'] = 4
-  @@toplist['collection']['Vogue Magazine Archive'] = 3
-  @@toplist['interface']['Nature'] = 2
-  @@toplist['collection']['Academic OneFile'] = 1
-
-  @@bottomlist = {'collection' => {}, 'interface' => {}}
-  @@bottomlist['interface']['JSTOR'] = 1
-  @@bottomlist['interface']['EBSCO Host'] = 2
-  @@bottomlist['interface']['EBSCOhost'] = 3
-  @@bottomlist['collection']['LexisNexis Academic'] = 4
-  @@bottomlist['collection']['Factiva'] = 5
-  @@bottomlist['collection']['Gale Cengage GreenR'] = 6
-  @@bottomlist['collection']['Nature Free'] = 7
-  @@bottomlist['collection']['DOAJ Directory of Open Access Journals'] = 8
-  @@bottomlist['collection']['Highwire Press Free'] = 9
-  @@bottomlist['collection']['Biography In Context'] = 10
-
-  @@topoptionslist = {}
-  @@topoptionslist['Request'] = 1
-
-  @@bottomoptionslist = {}
-  @@bottomoptionslist['Suggest Fix / Enhance Record'] = 1
-  @@bottomoptionslist['Place on Course Reserve'] = 2
-
-  def cmpOnlineServices(service_a, service_b)
-    collection_a = service_a['collection'] || ''
-    interface_a = service_a['interface_name'] || ''
-    collection_b = service_b['collection'] || ''
-    interface_b = service_b['interface_name'] || ''
-
-    score_a = -[@@toplist['collection'][collection_a] || 0, @@toplist['interface'][interface_a] || 0].max
-    score_a = [@@bottomlist['collection'][collection_a] || 0, @@bottomlist['interface'][interface_a] || 0].max if score_a == 0
-
-    score_b = -[@@toplist['collection'][collection_b] || 0, @@toplist['interface'][interface_b] || 0].max
-    score_b = [@@bottomlist['collection'][collection_b] || 0, @@bottomlist['interface'][interface_b] || 0].max if score_b == 0
-
-    (score_a == score_b ? collection_a <=> collection_b : score_a <=> score_b)
-  end
-
-  def cmpHoldingLocations(holding_a, holding_b)
-    lib_a = holding_a['library_code'] || ''
-    lib_b = holding_b['library_code'] || ''
-
-    score_a = lib_a == 'Libra' ? 1 : 0
-    score_b = lib_b == 'Libra' ? 1 : 0
-
-    (score_a == score_b ? lib_a <=> lib_b : score_a <=> score_b)
-  end
-
-  def cmpRequestOptions(option_a, option_b)
-    score_a = -(@@topoptionslist[option_a[:option_name]] || 0)
-    score_a = (@@bottomoptionslist[option_a[:option_name]] || 0) if score_a == 0
-
-    score_b = -(@@topoptionslist[option_b[:option_name]] || 0)
-    score_b = (@@bottomoptionslist[option_b[:option_name]] || 0) if score_b == 0
-
-    score_a <=> score_b
-  end
+  include AlmaOptionOrdering
 
   def holding_details
     api_instance = BlacklightAlma::BibsApi.instance
@@ -269,7 +205,7 @@ class FranklinAlmaController < ApplicationController
       policy = 'Please log in for loan and request information' if userid == 'GUEST'
       table_data = bib_data['availability'][mmsid]['holdings']
                      .select { |h| h['inventory_type'] == 'physical' }
-                     .sort { |a, b| cmpHoldingLocations(a, b) }
+                     .sort { |a, b| compare_holdings(a, b) }
                      .each_with_index
                      .map do |h, i|
                        [
@@ -287,7 +223,7 @@ class FranklinAlmaController < ApplicationController
       if table_data.empty?
         table_data = bib_data['availability'][mmsid]['holdings']
                      .select { |h| h['inventory_type'] == 'electronic' }
-                     .sort { |a, b| cmpOnlineServices(a, b) }
+                     .sort { |a, b| compare_services(a, b) }
                      .reject { |p| p['activation_status'] == 'Not Available' }
                      .each_with_index
                      .map do |p, i|
@@ -468,7 +404,7 @@ class FranklinAlmaController < ApplicationController
     end
 
     # .uniq required due to request options API bug returning duplicate options
-    results = results.compact.uniq.sort { |a, b| cmpRequestOptions(a, b) }
+    results = results.compact.uniq.sort { |a, b| compare_request_options(a, b) }
 
     # TODO: Remove when GES is updated in Alma & request option API is fixed (again)
     results.reject! do |option|
@@ -623,13 +559,13 @@ class FranklinAlmaController < ApplicationController
         ) == 'electronic'
           response_data['availability'].keys.each do |mmsid|
             response_data['availability'][mmsid]['holdings'].sort! do |a, b|
-              cmpOnlineServices(a, b)
+              compare_services(a, b)
             end
           end
         else
           response_data['availability'].keys.each do |mmsid|
             response_data['availability'][mmsid]['holdings'].sort! do |a, b|
-              cmpHoldingLocations(a, b)
+              compare_holdings(a, b)
             end
           end
         end
