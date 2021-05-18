@@ -4,6 +4,10 @@
 class FranklinAlmaController < ApplicationController
   include AlmaOptionOrdering
 
+  PERMITTED_REQUEST_OPTIONS = ['Interlibrary Loan', 'Request Digital Delivery',
+                               'Place on Course Reserve',
+                               'Report Cataloging Error'].freeze
+
   def holding_details
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
@@ -329,106 +333,58 @@ class FranklinAlmaController < ApplicationController
     render json: { "data": table_data }
   end
 
+  # @note this is no longer used for print holdings, only in the datatable
+  # widget for e-holdings. for print holdings, see RequestsController
+  # @note this code is strongly coupled with Alma's General Electronic
+  # Services (Fulfillment) configuration. modification to that configuration
+  # can break or otherwise cause bugs in this code.
   def request_options
     userid = session['id'].presence || nil
-    usergroup = session['user_group'].presence
-    ctx = JSON.parse(params['request_context'])
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
-    # consider_dlr here tell the API to look at Alma's configured Discovery display logic rules
+
+    # consider_dlr here tells the API to look at Alma's configured Discovery display logic rules
     # defined in the Alma configuration. it will limit returned options.
-    options = { user_id: userid, consider_dlr: true }
-    response_data = api_instance.request(api.almaws_v1_bibs.mms_id_request_options, :get, params.merge(options))
-    has_pickup_option = false
-    results = response_data['request_option'].map do |option|
-      request_url = option['request_url']
-      details = option['general_electronic_service_details'] || option['rs_broker_details'] || {}
-      if request_url.nil?
-        nil
-      else
-        case option['type']['value']
-        when 'HOLD'
-          has_pickup_option = true
-          {
-            option_name: 'PickUp@Penn',
-            # option_url: option['request_url'],
-            option_url: "/alma/request?mms_id=#{params['mms_id']}",
-            avail_for_physical: true,
-            avail_for_electronic: true,
-            highlightable: true
-          }
-        when 'GES'
-          option_url = option['request_url']
-          option_url += if option_url.index('?')
-                          '&'
-                        else
-                          '?'
-                        end
-          {
-            option_name: details['public_name'],
-            # Remove appended mmsid when SF case #00584311 is resolved
-            option_url: option_url + "bibid=#{params['mms_id']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com",
-            avail_for_physical: details['avail_for_physical'],
-            avail_for_electronic: details['avail_for_electronic'],
-            highlightable: ['SCANDEL'].member?(details['code'])
-          }
-        when 'RS_BROKER'
-          option_url = option['request_url']
-          option_url += if option_url.index('?')
-                          '&'
-                        else
-                          '?'
-                        end
-          # explicitly set requesttype to book if we are working with a monograph
-          # this will ensure the ILL "Book" request form is loaded
-          option_url += 'requesttype=book&' if ctx['monograph']
-          {
-            option_name: details['name'],
-            # Remove appended mmsid when SF case #00584311 is resolved
-            option_url: option_url + "bibid=#{params['mms_id']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com",
-            avail_for_physical: true,
-            avail_for_electronic: true,
-            highlightable: true
-          }
-        else
-          nil
-        end
-      end
-    end
+    response_data = api_instance.request(
+      api.almaws_v1_bibs.mms_id_request_options, :get,
+      params.merge({ user_id: userid, consider_dlr: true })
+    )
 
-    # .uniq required due to request options API bug returning duplicate options
-    results = results.compact.uniq.sort { |a, b| compare_request_options(a, b) }
+    options = response_data['request_option'].map do |option|
+      details = option['general_electronic_service_details'] ||
+                option['rs_broker_details'] || {}
+      return nil unless option.dig 'request_url'
 
-    # TODO: Remove when GES is updated in Alma & request option API is fixed (again)
-    results.reject! do |option|
-      ['Send Penn Libraries a question', 'Books By Mail'].member?(option[:option_name]) ||
-        (option[:option_name] == 'FacultyEXPRESS' && usergroup != 'Faculty Express')
-    end
-
-    # TODO: Remove when GES is updated in Alma
-    results.each do |option|
-      if option[:option_name] == 'Suggest Fix / Enhance Record'
-        option[:option_name] = 'Report Cataloging Error'
-      end
-    end
-
-    if ['Associate', 'Athenaeum Staff', 'Faculty', 'Faculty Express',
-        'Faculty Spouse', 'Grad Student', 'Library Staff', 'Medical Center Staff',
-        'Retired Library Staff', 'Staff', 'Undergraduate Student']
-       .member?(session['user_group']) && (has_pickup_option || !suppress_bbm(ctx))
-      # NOTE: has_pickup_option==true overrides any suppression of bbm by possibly-out-of-date (indexed) info in ctx
-      results.append(
+      case option.dig 'type', 'value'
+      when 'GES' # Cataloging error, ScanDeliver, etc.
         {
-          option_name: 'Books By Mail',
-          option_url: "https://franklin.library.upenn.edu/redir/booksbymail?bibid=#{params['mms_id']}",
+          option_name: details['public_name'],
+          option_url: add_bib_rfr_id_params_to(option['request_url'],
+                                               params['mms_id']),
+          avail_for_physical: details['avail_for_physical'],
+          avail_for_electronic: details['avail_for_electronic'],
+          highlightable: details['code'] == 'SCANDEL'
+        }
+      when 'RS_BROKER' # ILL
+        {
+          option_name: details['name'],
+          option_url: add_bib_rfr_id_params_to(option['request_url'],
+                                               params['mms_id']),
           avail_for_physical: true,
-          avail_for_electronic: false,
+          avail_for_electronic: true,
           highlightable: true
         }
-      )
+      else
+        nil
+      end
     end
 
-    render json: results
+    # only allow permitted request options by name
+    options = options.compact.uniq.select do |option|
+      option[:option_name].in? PERMITTED_REQUEST_OPTIONS
+    end
+
+    render json: options
   end
 
   def load_request
@@ -668,5 +624,14 @@ class FranklinAlmaController < ApplicationController
     (response_data['request_option'] || []).map { |option|
       option['type']['value']
     }.member?('HOLD')
+  end
+
+  # @note this could be added in the Alma configuration
+  # @param [String] original_url
+  # @param [ActionController::Parameter] mms_id
+  # @return [String]
+  def add_bib_rfr_id_params_to(original_url, mms_id)
+    original_url += original_url.index('?') ? '&' : '?'
+    original_url + "bibid=#{mms_id}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com"
   end
 end

@@ -35,10 +35,6 @@ module AlmaOptionOrdering
     }
   }.freeze
 
-  TOP_OPTIONS = { 'Request' => 1 }.freeze
-  BOTTOM_OPTIONS = { 'Suggest Fix / Enhance Record' => 1,
-                     'Place on Course Reserve' => 2 }.freeze
-
   # @param [Hash] service_a
   # @param [Hash] service_b
   # @return [Fixnum]
@@ -69,18 +65,4 @@ module AlmaOptionOrdering
 
     (score_a == score_b ? lib_a <=> lib_b : score_a <=> score_b)
   end
-
-  # @param [Hash] option_a
-  # @param [Hash] option_b
-  # @return [Fixnum]
-  def compare_request_options(option_a, option_b)
-    score_a = -(TOP_OPTIONS[option_a[:option_name]] || 0)
-    score_a = (BOTTOM_OPTIONS[option_a[:option_name]] || 0) if score_a.zero?
-
-    score_b = -(TOP_OPTIONS[option_b[:option_name]] || 0)
-    score_b = (BOTTOM_OPTIONS[option_b[:option_name]] || 0) if score_b.zero?
-
-    score_a <=> score_b
-  end
-
 end
