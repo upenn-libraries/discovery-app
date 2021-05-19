@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This module overrides Blacklight's mail-sending methods to only
 # actually send an email if there are documents selected and user
 # is logged in

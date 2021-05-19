@@ -96,8 +96,7 @@ $(document).ready(function() {
     };
 
     Franklin.prototype.loadRequestOptionsAjax = function(mmsid) {
-        var request_context = get_request_context(mmsid);
-        var url = "/alma/single_availability.json?mms_id=" + encodeURIComponent(mmsid) + "&request_context=" + encodeURIComponent(JSON.stringify(request_context));
+        var url = "/alma/single_availability.json?mms_id=" + encodeURIComponent(mmsid);
 
         $('#requestOptions-' + mmsid).on('error.dt', function(e, settings, techNote, message) {
             $(this).dataTable().fnSettings().oLanguage.sEmptyTable = 'An error has occurred.';
@@ -108,7 +107,7 @@ $(document).ready(function() {
                 $.get(url, function(data) {
                     globaldata = $.extend({}, globaldata, data["metadata"]);
                     callback({"data": data["data"]});
-                    Franklin.prototype.loadRequestOptionListAjax(mmsid, request_context);
+                    Franklin.prototype.loadRequestOptionListAjax(mmsid);
                 });
             },
             "processing": true,
@@ -131,9 +130,9 @@ $(document).ready(function() {
                 if(tableLen > 0 && globaldata != null) {
                     data = table.data();
                     for(var i = 0; i < tableLen; i++) {
-                        if(data[i][7] in globaldata && renderdata[mmsid].indexOf(data[i][7]) == -1) {
+                        if(data[i][7] in globaldata && renderdata[mmsid].indexOf(data[i][7]) === -1) {
                             var requests = globaldata[data[i][7]];
-                            if(validRequestTypes.indexOf(requests[0]) != -1) {
+                            if(validRequestTypes.indexOf(requests[0]) !== -1) {
                                 renderdata[mmsid].push(data[i][7]);
                                 // TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
                                 data[i][5][0] = "<a target='_blank' href='/alma/request?mms_id=" + mmsid + "&holding_id=" + data[i][6] + "&item_pid=" + data[i][7] + "'>PickUp@Penn</a>";
@@ -160,15 +159,11 @@ $(document).ready(function() {
             "initComplete": function(settings, json) {
                 var table = $('#requestOptions-' + mmsid).DataTable();
 
-                if(globaldata[mmsid]['inventory_type'] == 'electronic') {
+                if(globaldata[mmsid]['inventory_type'] === 'electronic') {
                     table.column(4).visible(false);
                     $(table.column(2).header()).text("");
                 }
 
-                var dataLen = json.data.length;
-                if(dataLen == 0) {
-                    //$('#table-wrapper-' + mmsid).hide();
-                }
                 // Reference: https://stackoverflow.com/a/15458987
                 // Check if the location of the first holding is an HTML element,
                 // indicating this is for a serial
@@ -228,73 +223,29 @@ $(document).ready(function() {
         });
     };
 
-    Franklin.prototype.loadRequestOptionListAjax = function(mmsid, request_context) {
-        request_context.pickupable = globaldata[mmsid]["pickupable"];
+    Franklin.prototype.loadRequestOptionListAjax = function(mmsid) {
         $.ajax({
-            url: "/alma/request_options.json?mms_id="+mmsid+"&request_context="+encodeURIComponent(JSON.stringify(request_context)),
+            url: "/alma/request_options.json?mms_id="+mmsid,
             success: function(data, textStatus, jqXHR) {
                 var optionList = $('#requestOptionList-' + mmsid);
-
-                var openUrlTemplate = null; // grab openUrl params from here if necessary
-                var templateFromILL = false; // determine whether we keep looking for ILL, as the "ideal" source of the OpenURL template
-                var booksByMailOption = null;
-                for(var i = 0; i < data.length && (openUrlTemplate === null || booksByMailOption === null || !templateFromILL); i++) {
-                    var requestOption = data[i];
-                    switch (requestOption['option_name']) {
-                        case 'Interlibrary Loan':
-                            openUrlTemplate = requestOption['option_url'];
-                            templateFromILL = true;
-                            break;
-                        case 'Request Digital Delivery':
-                            if (openUrlTemplate === null) {
-                                // provisionally grab openUrl from here, but prefer from ILL if present for consistency
-                                openUrlTemplate = requestOption['option_url'];
-                            }
-                            break;
-                        case 'Books By Mail':
-                            booksByMailOption = requestOption;
-                            break;
-                    }
-                }
-                if (booksByMailOption != null) {
-                    // assume first querystring param is 'requesttype=[...]' -- subsequent options (preceded by '&') should be openUrl params
-                    var startOpenUrlParams = openUrlTemplate === null ? -1 : openUrlTemplate.indexOf('&');
-                    if (startOpenUrlParams < 0) {
-                        appendOpenUrlParams = '';
-                    } else {
-                        appendOpenUrlParams = openUrlTemplate.slice(startOpenUrlParams);
-                    }
-                    if (booksByMailOption != null) {
-                        // NOTE: we're conjuring an ILL link that would normally be generated by Alma, but is not now (COVID-19) because
-                        // ILL-proper is disabled. Despite appearances, 80% confident that requesttype should always be "book" (e.g., even
-                        // for "journals"), because "book" differentiates from things like reprographic requests, _not_ actually based on
-                        // bibliographic material type. 'deliverytype=bbm' is handled in the ill form (franklinforms) to prepend "BBM " to
-                        // otherwise-normal ILL requests (saving staff manually doing so); such ILL requests are then handled as BBM requests.
-                        booksByMailOption['option_url'] = 'https://franklin.library.upenn.edu/forms/ill?requesttype=book&deliverytype=bbm' + appendOpenUrlParams;
-                    }
-                }
-
-                // Remove once request option API is fixed
-                if(globaldata[mmsid]["inventory_type"] == "electronic") {
-                    for(i = 0; i < data.length; i++) {
-                        if(data[i]['option_name'] == 'Books By Mail') {
-                            data.splice(i,1);
-                            break;
-                        }
-                    }
-                }
-
+                var optionCodesForToolPanel = ['ARES', 'ENHANCED']
+                // draw request buttons
                 data.forEach(function(element) {
-                    var containingdiv = $('<div class="request-option-wrapper"></div>');
-                    var highlightable = element['highlightable'] ? ' highlightable' : ''
-                    var link = $('<a>').attr({
-                                     class: 'btn btn-default btn-request-option' + highlightable,
-                                     text: element['option_name'],
-                                     href: element["option_url"],
-                                     target: '_blank'
-                                 }).text(element['option_name']);
-                   link.appendTo(containingdiv);
-                   containingdiv.appendTo(optionList);
+                    var $showTools = $('.show-tools .panel-body ul.nav');
+                    if($showTools.length > 0 && optionCodesForToolPanel.includes(element['option_code'])) {
+                        // append non-requesty options to tools panel
+                        $showTools.append($('<li><a target="_blank" href="'+ element['option_url'] +'">' + element['option_name'] + '</a></li>'));
+                    } else if(!optionCodesForToolPanel.includes(element['option_code'])) {
+                        var containingdiv = $('<div class="request-option-wrapper"></div>');
+                        var highlightable = element['highlightable'] ? ' highlightable' : ''
+                        var link = $('<a>').attr({
+                            class: 'btn btn-default btn-request-option' + highlightable,
+                            href: element["option_url"],
+                            target: '_blank'
+                        }).text(element['option_name']);
+                        link.appendTo(containingdiv);
+                        containingdiv.appendTo(optionList);
+                    }
                 });
                 $('#request-options-spinner-' + mmsid).remove();
             }
@@ -313,8 +264,9 @@ $(document).ready(function() {
                     var $this = $(this);
                     $this.one("click", function(e) {
                         e.preventDefault();
-                        $this.closest('.panel').find('.panel-body').slideDown(200);                        Franklin.prototype.loadRequestOptionsAjax(mmsid);
+                        $this.closest('.panel').find('.panel-body').slideDown(200);
                         Franklin.prototype.initializeItemsDataTable(mmsid);
+                        Franklin.prototype.loadRequestOptionsAjax(mmsid);
                         $(this).click(function() {
                             $('#table-wrapper-' + mmsid).closest('.panel-body').slideToggle(200);
                         });
@@ -344,7 +296,6 @@ $(document).ready(function() {
                 "emptyTable": "No item data available"
             },
             "drawCallback": function(settings) {
-                var request_context = get_request_context(mmsid);
                 var table = $('#holdingItems-' + mmsid).DataTable();
                 var pageSize = table.settings()[0]['_iDisplayLength'];
                 var tableLen = table.data().length;
@@ -352,9 +303,9 @@ $(document).ready(function() {
                 if(tableLen > 0) {
                     data = table.data();
                     for(var i = 0; i < tableLen; i++) {
-                        if(data[i][0] in globaldata && renderdata[mmsid].indexOf(data[i][0]) == -1 && data[i][5].length == 0) {
+                        if(data[i][0] in globaldata && renderdata[mmsid].indexOf(data[i][0]) === -1 && data[i][5].length === 0) {
                             var requests = globaldata[data[i][0]];
-                            if(validRequestTypes.indexOf(requests[0]) != -1) {
+                            if(validRequestTypes.indexOf(requests[0]) !== -1) {
                                 renderdata[mmsid].push(data[i][0]);
                                 // TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
                                 data[i][5].push("<a target='_blank' href='/alma/request?mms_id=" + data[i][6] + "&holding_id=" + data[i][7] + "&item_pid=" + data[i][0] + "'>PickUp@Penn</a>");
@@ -418,13 +369,3 @@ function swapDataTables(mmsid) {
     $('#requestOptions-' + mmsid + '_wrapper').toggle();
     $('#holdingItems-' + mmsid + '_wrapper').toggle();
 }
-/*
-$(function() {
-    $('.toggle').each(function() {
-        var mmsid = $(this).data('mmsid');
-        $(this).click(function() {
-            $('#table-wrapper-' + mmsid).toggle();
-        });
-    });
-});
-*/
