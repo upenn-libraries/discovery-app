@@ -4,9 +4,7 @@
 class FranklinAlmaController < ApplicationController
   include AlmaOptionOrdering
 
-  PERMITTED_REQUEST_OPTIONS = ['Interlibrary Loan', 'Request Digital Delivery',
-                               'Place on Course Reserve',
-                               'Report Cataloging Error'].freeze
+  PERMITTED_REQUEST_OPTION_CODES = %w[ILLIAD ARES ENHANCED].freeze
 
   def holding_details
     api_instance = BlacklightAlma::BibsApi.instance
@@ -225,7 +223,7 @@ class FranklinAlmaController < ApplicationController
                      .each_with_index
                      .map do |p, i|
                        link_text = p['collection'] || 'Online'
-                       link = "<a target='_blank' href='https://upenn.alma.exlibrisgroup.com/view/uresolver/01UPENN_INST/openurl?Force_direct=true&portfolio_pid=#{p['portfolio_pid']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com&u.ignore_date_coverage=true'>#{link_text}</a>"
+                       link = "<a target='_blank' href='https://upenn.alma.exlibrisgroup.com/view/uresolver/01UPENN_INST/openurl?Force_direct=true&portfolio_pid=#{p['portfolio_pid']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com&u.ignore_date_coverage=true' class='btn btn-default'>#{link_text}</a>"
                        [
                          i,
                          link,
@@ -358,6 +356,7 @@ class FranklinAlmaController < ApplicationController
       case option.dig 'type', 'value'
       when 'GES' # Cataloging error, ScanDeliver, etc.
         {
+          option_code: details['code'],
           option_name: details['public_name'],
           option_url: add_bib_rfr_id_params_to(option['request_url'],
                                                params['mms_id']),
@@ -367,6 +366,7 @@ class FranklinAlmaController < ApplicationController
         }
       when 'RS_BROKER' # ILL
         {
+          option_code: details['code'],
           option_name: details['name'],
           option_url: add_bib_rfr_id_params_to(option['request_url'],
                                                params['mms_id']),
@@ -381,7 +381,7 @@ class FranklinAlmaController < ApplicationController
 
     # only allow permitted request options by name
     options = options.compact.uniq.select do |option|
-      option[:option_name].in? PERMITTED_REQUEST_OPTIONS
+      option[:option_code].in? PERMITTED_REQUEST_OPTION_CODES
     end
 
     render json: options

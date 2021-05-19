@@ -227,23 +227,25 @@ $(document).ready(function() {
         $.ajax({
             url: "/alma/request_options.json?mms_id="+mmsid,
             success: function(data, textStatus, jqXHR) {
-                // we want no more tha 3 option to be drawn here:
-                // 1. ILL (In Print)
-                // 2. ScanDeliver (Electronic)
                 var optionList = $('#requestOptionList-' + mmsid);
-
+                var optionCodesForToolPanel = ['ARES', 'ENHANCED']
                 // draw request buttons
                 data.forEach(function(element) {
-                    var containingdiv = $('<div class="request-option-wrapper"></div>');
-                    var highlightable = element['highlightable'] ? ' highlightable' : ''
-                    var link = $('<a>').attr({
-                                     class: 'btn btn-default btn-request-option' + highlightable,
-                                     text: element['option_name'],
-                                     href: element["option_url"],
-                                     target: '_blank'
-                                 }).text(element['option_name']);
-                   link.appendTo(containingdiv);
-                   containingdiv.appendTo(optionList);
+                    var $showTools = $('.show-tools .panel-body ul.nav');
+                    if($showTools.length > 0 && optionCodesForToolPanel.includes(element['option_code'])) {
+                        // append non-requesty options to tools panel
+                        $showTools.append($('<li><a target="_blank" href="'+ element['option_url'] +'">' + element['option_name'] + '</a></li>'));
+                    } else if(!optionCodesForToolPanel.includes(element['option_code'])) {
+                        var containingdiv = $('<div class="request-option-wrapper"></div>');
+                        var highlightable = element['highlightable'] ? ' highlightable' : ''
+                        var link = $('<a>').attr({
+                            class: 'btn btn-default btn-request-option' + highlightable,
+                            href: element["option_url"],
+                            target: '_blank'
+                        }).text(element['option_name']);
+                        link.appendTo(containingdiv);
+                        containingdiv.appendTo(optionList);
+                    }
                 });
                 $('#request-options-spinner-' + mmsid).remove();
             }
