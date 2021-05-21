@@ -953,9 +953,34 @@ module PennLib
       results.select { |value| value.present? }
     end
 
+    def get_itm_count(rec)
+      fields = rec.fields(EnrichedMarc::TAG_ITEM)
+      fields.empty? ? nil : fields.size
+    end
+
     def get_hld_count(rec)
       fields = rec.fields(EnrichedMarc::TAG_HOLDING)
       fields.empty? ? nil : fields.size
+    end
+
+    def get_empty_hld_count(rec)
+      holding_ids_from_items = Set.new
+      rec.each_by_tag(EnrichedMarc::TAG_ITEM) do |field|
+        holding_id_subfield = field.find do |subfield|
+          subfield.code == 'r'
+        end
+        holding_ids_from_items.add(holding_id_subfield.value) if holding_id_subfield
+      end
+      empty_holding_count = 0
+      rec.each_by_tag(EnrichedMarc::TAG_HOLDING) do |field|
+        id_subfield = field.find do |subfield|
+          subfield.code == '8'
+        end
+        unless holding_ids_from_items.include?(id_subfield&.value)
+          empty_holding_count += 1
+        end
+      end
+      empty_holding_count
     end
 
     def get_prt_count(rec)
