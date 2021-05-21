@@ -76,8 +76,8 @@ class FranklinIndexer < BaseIndexer
       store 'writer_class_name', 'PennLib::FranklinSolrJsonWriter'
 
       # uncomment these lines to write to a file
-      store "writer_class_name", "Traject::JsonWriter"
-      store 'output_file', "traject_output.json"
+      # store "writer_class_name", "Traject::JsonWriter"
+      # store 'output_file', "traject_output.json"
 
       if defined? JRUBY_VERSION
         # 'store' overrides existing settings, 'provide' does not
