@@ -9,7 +9,8 @@ module TurboAlmaApi
       # Rudimentary list of material types unsuitable for Scan & Deliver
       UNSCANNABLE_MATERIAL_TYPES = %w[
         RECORD DVD CDROM BLURAY BLURAYDVD LP FLOPPY_DISK DAT GLOBE
-        AUDIOCASSETTE VIDEOCASSETTE HEAD LRDSC CALC
+        AUDIOCASSETTE VIDEOCASSETTE HEAD LRDSC CALC KEYS RECORD
+        LPTOP EQUIP OTHER AUDIOVM
       ].freeze
 
       def identifiers
