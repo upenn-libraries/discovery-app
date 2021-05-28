@@ -16,9 +16,12 @@ module TurboAlmaApi
     # Get all Items from the Alma API for a record without waiting too much
     # @return [TurboAlmaApi::Bib::ItemSet]
     # @param [String] mms_id
-    # @param [String, nil] username
-    def self.all_items_for(mms_id, username = nil)
-      Bib::PennItemSet.new mms_id, username
+    # @param [Hash] options
+    # @option [String] username
+    # @option [Integer] item_count
+    # @option [Integer] empty_holding_count
+    def self.all_items_for(mms_id, options = {})
+      Bib::PennItemSet.new mms_id, options
     end
 
     # @param [String] mms_id

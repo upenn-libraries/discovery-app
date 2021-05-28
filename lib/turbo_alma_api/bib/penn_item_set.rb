@@ -15,23 +15,36 @@ module TurboAlmaApi
       def_delegators :@items, :each, :length, :[], :first, :sort_by
 
       # @param [String] mms_id
-      # @param [String, nil] username
-      def initialize(mms_id, username = nil)
+      # @param [Hash] options
+      # @option [String] username
+      # @option [Integer] item_count
+      # @option [Integer] empty_holding_count
+      def initialize(mms_id, options = {})
         @mms_id = mms_id
-        @alma_username = username
-        first_items_response = TurboAlmaApi::Client.api_get_request(
-          items_url(username: username, limit: 1)
-        )
-        parsed_response = Oj.load first_items_response.body
-        @total_count = parsed_response['total_record_count']
-        @items = if @total_count == 1
-                   Array.wrap PennItem.new parsed_response['item'].first
-                 else
-                   bulk_retrieve_items
-                 end
-        # But wait! Penn might have holdings with no items! Of course!
-        holdings = TurboAlmaApi::Client.all_holdings_for @mms_id
-        items_and_empty_holdings holdings # TODO: improve integration of this edge case - run in paralell?
+        @alma_username = options.dig :username
+        # TODO: clean this up
+        if options.dig(:item_count) && options.dig(:item_count) > 1
+          @total_count = options[:item_count]
+          @items = bulk_retrieve_items
+        else
+          first_items_response = TurboAlmaApi::Client.api_get_request(
+            items_url(username: options.dig(:username), limit: 1)
+          )
+          parsed_response = Oj.load first_items_response.body
+          @total_count = parsed_response['total_record_count']
+          @items = if @total_count > 1
+                     bulk_retrieve_items
+                   else
+                     Array.wrap PennItem.new parsed_response['item'].first
+                   end
+        end
+        # add items representing empty holdings if needed
+        if options[:empty_holding_count]&.positive?
+          holdings = TurboAlmaApi::Client.all_holdings_for @mms_id
+          items_and_empty_holdings holdings
+        else
+          @items
+        end
       end
 
       # iterate through holdings, skip if corresponding item found (with holding_id)

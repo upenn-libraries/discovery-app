@@ -46,8 +46,22 @@ function initializeRequestingWidget($panelBody, context) {
         var responseData;
         var selectedItem;
         $requestForm.hide();
+        var itemCount = $widget.data('item_count');
+        var emptyHoldingCount = $widget.data('empty_holding_count');
+        // TODO: move to function, e.g.:
+        // var itemRequestUrl = calculateItemRequestUrl(itemCount, emptyHoldingCount)
+        var itemRequestUrl = '/alma/items/' + mmsId + '/all';
+        if(itemCount || emptyHoldingCount) {
+            itemRequestUrl += '?'
+        }
+        if(itemCount) {
+            itemRequestUrl += $.param({ item_count: itemCount })
+        }
+        if(emptyHoldingCount) {
+            itemRequestUrl += $.param({ empty_holding_count: emptyHoldingCount })
+        }
         $.ajax({
-            url: '/alma/items/' + mmsId + '/all',
+            url: itemRequestUrl,
             dataType: 'json'
         }).done(function(data) {
             $panelBody.removeClass('spinner');

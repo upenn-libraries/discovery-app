@@ -185,6 +185,16 @@ class SolrDocument
     self['hld_count_isort']&.positive?
   end
 
+  # @return [String, nil]
+  def item_count
+    fetch('itm_count_isort', nil)
+  end
+
+  # @return [String, nil]
+  def empty_holding_count
+    fetch('empty_hld_count_isort', nil)
+  end
+
   # @return [TrueClass, FalseClass]
   def show_requesting_widget?
     print_holdings? || self[:physical_holdings_json].present?
