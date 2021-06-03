@@ -23,8 +23,8 @@ module TurboAlmaApi
         @mms_id = mms_id
         @alma_username = options.dig :username
         # TODO: clean this up
-        if options.dig(:item_count) && options.dig(:item_count) > 1
-          @total_count = options[:item_count]
+        if options.dig(:item_count) && options.dig(:item_count).to_i > 1
+          @total_count = options[:item_count].to_i
           @items = bulk_retrieve_items
         else
           first_items_response = TurboAlmaApi::Client.api_get_request(

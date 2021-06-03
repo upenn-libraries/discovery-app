@@ -46,8 +46,8 @@ function initializeRequestingWidget($panelBody, context) {
         var responseData;
         var selectedItem;
         $requestForm.hide();
-        var itemCount = $widget.data('item_count');
-        var emptyHoldingCount = $widget.data('empty_holding_count');
+        var itemCount = $widget.data('itemCount');
+        var emptyHoldingCount = $widget.data('emptyHoldingCount');
         // TODO: move to function, e.g.:
         // var itemRequestUrl = calculateItemRequestUrl(itemCount, emptyHoldingCount)
         var itemRequestUrl = '/alma/items/' + mmsId + '/all';
