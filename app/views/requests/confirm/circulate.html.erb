@@ -43,6 +43,12 @@
                             disabled: true,
                             required: true %>
           <% end %>
+          <div id="proxy-area">
+            <a class="input-toggleable" href="#"><%= t('requests.labels.proxy_request') %></a>
+            <div class="toggle-field" style="display: none;">
+              <%= f.text_field :deliver_to, label: t('requests.fields.deliver_to') %>
+            </div>
+          </div>
         </li>
       </ul>
       <div id="comments-area">
