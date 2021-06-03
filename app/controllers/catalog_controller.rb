@@ -22,7 +22,7 @@ class CatalogController < ApplicationController
   before_action :block_invalid_sort_params, only: :index
 
   # establish an effective "record depth" beyond which pagination is not supported
-  PAGINATION_THRESHOLD = 1000
+  PAGINATION_THRESHOLD = 10_000
   before_action :limit_index_pagination, only: :index
   before_action :limit_show_pagination, only: :show
 
