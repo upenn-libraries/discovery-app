@@ -5,7 +5,6 @@
       <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
       <div class="modal-title" id="exampleModalLabel">
         <%= circulate_modal_title %>
-        <%# t('requests.modal_titles.confirm.circulate') %>
       </div>
     </div>
     <div class="modal-body">
@@ -50,6 +49,15 @@
               <%= f.text_field :deliver_to, label: t('requests.fields.deliver_to') %>
             </div>
           </div>
+        </li>
+        <li class="list-group-item">
+          <h3 class="list-group-item-heading">
+            <label>
+              <input type="radio" name="delivery" value="campus" id="campus-radio" class="campus-option-radio" /> <%= t('requests.labels.campus_delivery') %></label>
+          </h3>
+          <p class="list-group-item-text">
+            <%= t('requests.delivery_messages.campus_html') %>
+          </p>
         </li>
       </ul>
       <div id="comments-area">
