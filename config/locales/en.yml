@@ -8,6 +8,7 @@ en:
         ill: "Confirm Request"
         electronic: "Confirm Scanning Request"
         circulate: "Confirm Print Request"
+        facex: "Confirm FacultyEXPRESS Request"
         aeon: "Confirm Special Collection Viewing Request"
     email:
       confirmation:

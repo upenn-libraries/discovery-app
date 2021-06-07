@@ -12,4 +12,12 @@ module RequestsHelper
   def aeon_request_form_url_for(mms_id, holding_id)
     "https://franklin.library.upenn.edu/redir/aeon?bibid=#{mms_id}&hldid=#{holding_id}"
   end
+
+  def circulate_modal_title
+    if session[:user_group] == 'Faculty Express'
+      t('requests.modal_titles.confirm.facex')
+    else
+      t('requests.modal_titles.confirm.circulate')
+    end
+  end
 end
