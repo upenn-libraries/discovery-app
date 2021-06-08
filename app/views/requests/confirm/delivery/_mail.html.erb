@@ -1,0 +1,22 @@
+<li class="list-group-item">
+  <h3 class="list-group-item-heading">
+    <label>
+      <input type="radio" name="delivery" value="mail" id="mail-radio" class="delivery-option-radio" /> <%= t('requests.labels.mail_delivery') %></label>
+  </h3>
+  <p class="list-group-item-text">
+    <%= t('requests.delivery_messages.bbm_html') %>
+  </p>
+  <%= f.form_group :bbm_confirm do %>
+    <%= f.check_box :bbm_confirm,
+                    id: 'bbm_validation_checkbox',
+                    label: t('requests.labels.registered_bbm'),
+                    disabled: true,
+                    required: true %>
+  <% end %>
+  <div id="proxy-area">
+    <a class="input-toggleable" href="#"><%= t('requests.labels.proxy_request') %></a>
+    <div class="toggle-field" style="display: none;">
+      <%= f.text_field :deliver_to, label: t('requests.fields.deliver_to') %>
+    </div>
+  </div>
+</li>
