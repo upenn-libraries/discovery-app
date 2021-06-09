@@ -3,7 +3,7 @@
 # abstract Request, wrapping creation and submission of either a:
 # TurboAlmaApi::Request or a Illiad::Request
 class AbstractRequest
-  ILLIAD_DELIVERY_OPTIONS = %w[mail scandeliver].freeze
+  ILLIAD_DELIVERY_OPTIONS = %w[mail scandeliver campus].freeze
   ALMA_DELIVERY_OPTIONS = %w[pickup].freeze
 
   class RequestFailed < StandardError; end
@@ -46,8 +46,9 @@ class AbstractRequest
       illiad_api.get_or_create_illiad_user @request.recipient_username
       illiad_api.transaction @request.to_h
     else
-      raise ArgumentError, I18n.t('requests.messages.unsupported_submission_logic',
-                                  request_class: request.class.name)
+      raise ArgumentError,
+            I18n.t('requests.messages.unsupported_submission_logic',
+                   request_class: @request.class.name)
     end
   rescue StandardError => e
     raise RequestFailed, e.message

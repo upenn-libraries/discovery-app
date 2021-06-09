@@ -8,8 +8,9 @@ module Illiad
     class RequestFailed < StandardError; end
     class InvalidRequest < StandardError; end
 
-    # Illiad API documentation states that _only_ Username is required. User create
-    # requests fail, though, with an empty 400 response if NVTGC is not also specified.
+    # Illiad API documentation states that _only_ Username is required. User
+    # create requests fail, though, with an empty 400 response if NVTGC is
+    # not also specified.
     CREATE_USER_REQUIRED_FIELDS = %w[Username NVTGC].freeze
 
     base_uri ENV['ILLIAD_API_BASE_URI']

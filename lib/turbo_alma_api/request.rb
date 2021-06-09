@@ -9,7 +9,7 @@ module TurboAlmaApi
 
     # @param [Hash] user
     # @param [TurboAlmaApi::Bib::PennItem] item
-    # @param [ActionController::Parameters] params
+    # @param [Hash] params
     def initialize(user, item = nil, params = {})
       @user = user
       @item = item
