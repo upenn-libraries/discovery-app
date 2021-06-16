@@ -22,6 +22,16 @@ GIT
       json (~> 1.8)
 
 GIT
+  remote: https://github.com/mksndz/resync-client
+  revision: 0f21e19ea970adcd79b31139ba6a773a49634792
+  branch: support_arbitrary_http_headers
+  specs:
+    resync-client (0.4.7)
+      promise (~> 0.3, >= 0.3.1)
+      resync (~> 0.4, >= 0.4.6)
+      rubyzip (~> 1.1)
+
+GIT
   remote: https://github.com/upenn-libraries/bento_search
   revision: 3f45d1c286ae19146aa51dc7b54b5a5a6b7c3dd0
   branch: search_controller_engine_params
@@ -228,6 +238,7 @@ GEM
       scrub_rb (~> 1.0)
     orm_adapter (0.5.0)
     parslet (2.0.0)
+    promise (0.3.1)
     public_suffix (4.0.6)
     rack (1.6.13)
     rack-test (0.6.3)
@@ -265,8 +276,14 @@ GEM
     responders (2.4.1)
       actionpack (>= 4.2.0, < 6.0)
       railties (>= 4.2.0, < 6.0)
+    resync (0.4.6)
+      mime-types (~> 3.0)
+      typesafe_enum (~> 0.1, >= 0.1.5)
+      xml-mapping (~> 0.10)
+      xml-mapping_extensions (~> 0.4, >= 0.4.8)
     rsolr (1.1.2)
       builder (>= 2.1.2)
+    rubyzip (1.3.0)
     sass (3.7.4)
       sass-listen (~> 4.0.0)
     sass-listen (4.0.0)
@@ -312,6 +329,7 @@ GEM
       actionpack (>= 3.1)
       jquery-rails
       railties (>= 3.1)
+    typesafe_enum (0.2.2)
     tzinfo (1.2.7)
       thread_safe (~> 0.1)
     tzinfo-data (1.2017.2)
@@ -328,6 +346,11 @@ GEM
       binding_of_caller (>= 0.7.2)
       railties (>= 4.0)
       sprockets-rails (>= 2.0, < 4.0)
+    xml-mapping (0.10.1)
+    xml-mapping_extensions (0.4.9)
+      mime-types (~> 3.0)
+      typesafe_enum (~> 0.1, >= 0.1.8)
+      xml-mapping (~> 0.10)
     yell (2.2.2)
 
 PLATFORMS
@@ -357,6 +380,7 @@ DEPENDENCIES
   mysql2 (~> 0.4.10)
   nokogiri (~> 1.10.0)
   rails (~> 4.2.0)
+  resync-client!
   rsolr (= 1.1.2)
   sass-rails (= 5.0.6)
   sdoc (= 0.4.2)

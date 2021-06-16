@@ -140,4 +140,53 @@ namespace :pennlib do
 
   end
 
+  namespace :pod do
+    desc 'This task will pull the latest POD Normalized MARCXML data dump files
+          down to the defined POD data location, ?overwrite any existing data?'
+    task pull_normalized_xml: :environment do |_t, _args|
+      rs_http = Resync::Client::HTTPHelper.new(
+        user_agent: 'Penn POD aggregator',
+        additional_headers: { 'Authorization' => "Bearer #{ENV['POD_ACCESS_TOKEN']}" }
+      )
+      rs_client = Resync::Client.new helper: rs_http
+      orgs_normalized_marcxml = rs_client.get_and_parse(
+        'https://pod.stanford.edu/organizations/normalized_resourcelist/marcxml'
+      )
+      # iterate through default streams set for each POD institution
+      orgs_normalized_marcxml.resources.each do |package|
+        org_resourcelist_uri = package.uri
+        org = org_resourcelist_uri.to_s.match(%r{organizations/(.*?)/streams})[1]
+        stream_id = org_resourcelist_uri.to_s.match(%r{streams/(.*?)/})[1]
+        begin
+          org_resourcelist = rs_client.get_and_parse org_resourcelist_uri
+        rescue ArgumentError => e
+          puts "Cannot parse #{org_resourcelist_uri}: Error: #{e.message}"
+          next
+        end
+        puts "Found #{org_resourcelist.resources.length} resources for #{org}"
+        org_resourcelist.resources.each do |resource|
+          # skip removed resource since it seems problematic
+          if resource.uri.to_s.include? 'removed_since_previous_stream'
+            puts "Ignoring #{resource.uri}"
+          end
+
+          pod_file = PennLib::Pod::NormalizedMarcFile.new resource, org, stream_id
+          puts "Considering resource: #{resource.uri} for download"
+          FileUtils.mkdir_p pod_file.location unless Dir.exist? pod_file.location
+
+          puts "Downloading #{pod_file.filename} to #{pod_file.location}"
+          if pod_file.download_and_save && pod_file.valid_checksum?
+            puts "Downloaded #{pod_file.saved_filename} successfully"
+          end
+        end
+      end
+    end
+
+    desc 'This task will attempt to sync the existing POD data in the defined
+          POD data location'
+    task sync: :environment do |_t, _args|
+      # TODO: is this possible at this time given the data lake's RS endpoints? i could compare timestamps to files downloaded above and only pull changes
+    end
+  end
+
 end
