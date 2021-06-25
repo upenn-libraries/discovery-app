@@ -34,6 +34,11 @@ This destroys the Solr container.
 bundle exec rake franklin:clean
 ```
 
+#### Indexing some sample record
+Use the defaults or add some JSON to `sample_index_data.json`
+```
+bundle exec rake franklin:load_sample_data
+```
 
 ## Old School Installation
 

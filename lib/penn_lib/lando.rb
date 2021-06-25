@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module PennLib
   # helper methods for interacting with Lando for development
   module Lando
@@ -46,6 +48,11 @@ module PennLib
       # @return [TrueClass, FalseClass, nil]
       def copy_config(name)
         solr_run "cp -r /app/tmp/solr_conf/#{name} /opt/solr/server/solr/configsets/#{name}"
+      end
+
+      def load_json_data(json_file)
+        status = Open3.capture2e "curl -sX POST 'http://franklin.solr.lndo.site:8983/solr/franklin-dev/update/json?commit=true' --data-binary @#{json_file} -H 'Content-type:application/json'"
+        puts status.join
       end
 
       # Check if collections exist in solr container

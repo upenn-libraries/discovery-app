@@ -37,6 +37,11 @@ namespace :franklin do
     system('lando destroy -y')
   end
 
+  desc 'Load sample data into development collection'
+  task :load_sample_data do
+    PennLib::Lando.load_json_data 'sample_index_data.json'
+  end
+
   desc 'Update Solr config from repo and recreate Solr collections'
   task :solrconfig do
     solr_config_path = File.join Rails.root, 'tmp', 'solr_conf'
