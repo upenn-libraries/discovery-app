@@ -25,7 +25,7 @@ class AbstractRequest
     end
 
     response = perform_request
-    RequestMailer.confirmation_email(response, @request.submitter_email)
+    RequestMailer.confirmation_email(response, @request.email)
                  .deliver_now
     { status: :success,
       confirmation_number: response[:confirmation_number],
@@ -43,7 +43,7 @@ class AbstractRequest
       TurboAlmaApi::Client.submit_request @request
     elsif illiad_fulfillment?
       @request = Illiad::Request.new @user, @item, @params
-      illiad_api.get_or_create_illiad_user @request.recipient_username
+      illiad_api.get_or_create_illiad_user @request.username
       illiad_api.transaction @request.to_h
     else
       raise ArgumentError,

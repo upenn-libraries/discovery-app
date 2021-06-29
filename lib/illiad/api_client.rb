@@ -121,7 +121,7 @@ module Illiad
     end
 
     def headers
-      { 'ApiKey' => ENV['ILLIAD_API_KEY'],
+      { 'ApiKey' => ENV.fetch('ILLIAD_API_KEY'),
         'Accept' => 'application/json; version=1' }
     end
   end

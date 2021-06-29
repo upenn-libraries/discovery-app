@@ -3,7 +3,7 @@
 module Illiad
   # Represent an Illiad request
   class Request
-    attr_accessor :recipient_username, :submitter_email, :submitter_username
+    attr_accessor :username, :email
 
     CAMPUS_DELIVERY = 'campus'
     MAIL_DELIVERY = 'bbm'
@@ -13,9 +13,8 @@ module Illiad
     # @param [TurboAlmaApi::Bib::PennItem] item
     # @param [Hash] params
     def initialize(user, item, params)
-      @recipient_username = params[:deliver_to].presence || user[:id]
-      @submitter_username = user[:id]
-      @submitter_email = user[:email]
+      @username = user[:id]
+      @email = user[:email]
       @item = item
       @data = params
     end
@@ -23,14 +22,11 @@ module Illiad
     # for POSTing to API
     # @return [Hash]
     def to_h
-      body = if scan_deliver?
-               scandelivery_request_body @recipient_username, @item, @data
-             else
-               book_request_body @recipient_username, @item, @data
-             end
-      return body unless proxied?
-
-      append_proxy_info_to_comments body
+      if scan_deliver?
+        scandelivery_request_body @username, @item, @data
+      else
+        book_request_body @username, @item, @data
+      end
     end
 
     private
@@ -93,18 +89,6 @@ module Illiad
         # likewise for campus delivery
         body[:ItemInfo1] = 'campus'
       end
-      body
-    end
-
-    # @return [TrueClass, FalseClass]
-    def proxied?
-      @recipient_username != @submitter_username
-    end
-
-    # @param [Hash] body
-    # @return [Hash]
-    def append_proxy_info_to_comments(body)
-      body['Notes'] += "\nProxy request submitted by #{@submitter_username}"
       body
     end
   end
