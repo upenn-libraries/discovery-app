@@ -22,15 +22,13 @@ class CatalogController < ApplicationController
   before_action :block_invalid_sort_params, only: :index
 
   # establish an effective "record depth" beyond which pagination is not supported
-  PAGINATION_THRESHOLD = 1000
+  PAGINATION_THRESHOLD = 10_000
   before_action :limit_index_pagination, only: :index
   before_action :limit_show_pagination, only: :show
 
   # and also for facets
   FACET_PAGINATION_THRESHOLD = 50
   before_action :limit_facet_pagination, only: :facet
-
-  SECONDS_PER_DAY = 86_400
 
   configure_blacklight do |config|
     # default advanced config values
@@ -405,20 +403,20 @@ class CatalogController < ApplicationController
     config.add_facet_field 'language_f', label: 'Language', limit: 5, collapse: false, :ex => 'orig_q', solr_params: MINCOUNT
     config.add_facet_field 'library_f', label: 'Library', limit: 5, collapse: false, :ex => 'orig_q', solr_params: MINCOUNT
     config.add_facet_field 'specific_location_f', label: 'Specific location', limit: 5, :ex => 'orig_q', solr_params: MINCOUNT
-    config.add_facet_field 'recently_published', label: 'Recently published', collapse: false, :ex => 'orig_q',
+    config.add_facet_field 'recently_published', label: 'Recently published', collapse: false,
         solr_params: MINCOUNT, :query => {
-        :last_5_years => { label: 'Last 5 years', fq: "pub_max_dtsort:[#{Date.current.year - 4}-01-01T00:00:00Z TO *]" },
-        :last_10_years => { label: 'Last 10 years', fq: "pub_max_dtsort:[#{Date.current.year - 9}-01-01T00:00:00Z TO *]" },
-        :last_15_years => { label: 'Last 15 years', fq: "pub_max_dtsort:[#{Date.current.year - 14}-01-01T00:00:00Z TO *]" },
+        :last_5_years => { label: 'Last 5 years', fq: "{!ex=orig_q}pub_max_dtsort:[#{Date.current.year - 4}-01-01T00:00:00Z TO *]" },
+        :last_10_years => { label: 'Last 10 years', fq: "{!ex=orig_q}pub_max_dtsort:[#{Date.current.year - 9}-01-01T00:00:00Z TO *]" },
+        :last_15_years => { label: 'Last 15 years', fq: "{!ex=orig_q}pub_max_dtsort:[#{Date.current.year - 14}-01-01T00:00:00Z TO *]" },
     }
     config.add_facet_field 'publication_date_f', label: 'Publication date', limit: 5, :ex => 'orig_q', solr_params: MINCOUNT
     config.add_facet_field 'classification_f', label: 'Classification', limit: 5, collapse: false, :ex => 'orig_q', solr_params: MINCOUNT
     config.add_facet_field 'genre_f', label: 'Form/Genre', limit: 5, :ex => 'orig_q', solr_params: MINCOUNT
     config.add_facet_field 'recently_added_f', label: 'Recently added', solr_params: MINCOUNT, :query => {
-        :within_90_days => { label: 'Within 90 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (90 * SECONDS_PER_DAY) } TO *]" },
-        :within_60_days => { label: 'Within 60 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (60 * SECONDS_PER_DAY) } TO *]" },
-        :within_30_days => { label: 'Within 30 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (30 * SECONDS_PER_DAY) } TO *]" },
-        :within_15_days => { label: 'Within 15 days', fq: "recently_added_isort:[#{PennLib::Util.today_midnight - (15 * SECONDS_PER_DAY) } TO *]" },
+        :within_90_days => { label: 'Within 90 days', fq: "{!ex=orig_q}recently_added_isort:[#{Time.current.midnight.days_ago(90).to_i} TO *]" },
+        :within_60_days => { label: 'Within 60 days', fq: "{!ex=orig_q}recently_added_isort:[#{Time.current.midnight.days_ago(60).to_i} TO *]" },
+        :within_30_days => { label: 'Within 30 days', fq: "{!ex=orig_q}recently_added_isort:[#{Time.current.midnight.days_ago(30).to_i} TO *]" },
+        :within_15_days => { label: 'Within 15 days', fq: "{!ex=orig_q}recently_added_isort:[#{Time.current.midnight.days_ago(15).to_i} TO *]" },
     }
 
     #config.add_facet_field 'example_pivot_field', label: 'Pivot Field', :pivot => ['format_f', 'language_f']

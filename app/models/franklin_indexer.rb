@@ -76,8 +76,8 @@ class FranklinIndexer < BaseIndexer
       store 'writer_class_name', 'PennLib::FranklinSolrJsonWriter'
 
       # uncomment these lines to write to a file
-      #store "writer_class_name", "Traject::JsonWriter"
-      #store 'output_file', "traject_output.json"
+      # store "writer_class_name", "Traject::JsonWriter"
+      # store 'output_file', "traject_output.json"
 
       if defined? JRUBY_VERSION
         # 'store' overrides existing settings, 'provide' does not
@@ -302,6 +302,16 @@ class FranklinIndexer < BaseIndexer
 
     to_field 'hld_count_isort' do |rec, acc|
       val = pennlibmarc.get_hld_count(rec)
+      acc << val if val
+    end
+
+    to_field 'itm_count_isort' do |rec, acc|
+      val = pennlibmarc.get_itm_count(rec)
+      acc << val if val
+    end
+
+    to_field 'empty_hld_count_isort' do |rec, acc|
+      val = pennlibmarc.get_empty_hld_count(rec)
       acc << val if val
     end
 

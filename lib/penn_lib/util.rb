@@ -42,11 +42,6 @@ module PennLib
         end
       end
 
-      # returns seconds since unix epoch, for midnight of the current day
-      def today_midnight
-        Time.now.to_i - (Time.now.to_i % 86400)
-      end
-
     end
 
   end
