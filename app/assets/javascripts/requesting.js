@@ -33,7 +33,7 @@ function displayButtons($panelBody, selectedItem, logged_in, context) {
         showAndEnablePublicAeonButton($panelBody);
     }
 
-    if (context === 'show') { populateItemDebugWell($panelBody, selectedItem) }
+    // if (context === 'show') { populateItemDebugWell($panelBody, selectedItem) }
 }
 
 function initializeRequestingWidget($panelBody, context) {
