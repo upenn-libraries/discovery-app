@@ -139,15 +139,19 @@ module TurboAlmaApi
 
       # @param [String] raw_policy
       def user_policy_display(raw_policy)
-        case raw_policy
-        when 'Not loanable'
+        if raw_policy == 'Not loanable'
           'Restricted Access'
-        when 'End of Year'
-          'Return by End of Year'
-        when 'End of Term'
-          'Return by End of Term'
+        elsif !checkoutable?
+          'Currently Unavailable'
         else
-          raw_policy
+          case raw_policy
+          when 'End of Year'
+            'Return by End of Year'
+          when 'End of Term'
+            'Return by End of Term'
+          else
+            raw_policy
+          end
         end
       end
 
