@@ -6,15 +6,10 @@
     </div>
     <div class="modal-body">
       <% if @response.dig(:status) == :success %>
-      <strong><%= t('requests.messages.request_complete') %></strong>
-      <br>
+        <div class="alert alert-success" role="alert">
+          <%= t('requests.messages.request_complete') %>
+        </div>
       <dl>
-        <dt>
-          <%= t('requests.fields.title') %>
-        </dt>
-        <dd>
-          <%= @response.dig :title %>
-        </dd>
         <dt>
           <%= t('requests.fields.confirmation_number') %>
         </dt>
@@ -23,19 +18,21 @@
         </dd>
       </dl>
       <% else %>
-      <strong><%= t('requests.messages.request_failed') %></strong>
-      <p>
-        <%= @response.dig(:message) %>
-      </p>
-      <% end %>
-      <div class="debug-info">
+        <div class="alert alert-danger" role="alert">
+          <%= t('requests.messages.request_failed') %>
+        </div>
       <pre>
-        <%= params %>
+        <%= @response.dig(:message) %>
       </pre>
-        <pre>
-        <%= @response %>
-      </pre>
-      </div>
+      <% end %>
+<!--      <div class="debug-info">-->
+<!--      <pre>-->
+        <%#= params %>
+<!--      </pre>-->
+<!--        <pre>-->
+        <%#= @response %>
+<!--      </pre>-->
+<!--      </div>-->
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-primary" data-dismiss="modal"><%= t('requests.buttons.close') %></button>
