@@ -514,11 +514,11 @@ class CatalogController < ApplicationController
     #       so that only fields containing non-blank values are displayed.
 
     add_fields.call(config, 'show', [
-        { dynamic_name: 'author_display', label: 'Author/Creator', helper_method: 'render_linked_values' },
-        { dynamic_name: 'standardized_title_display', label: 'Standardized Title', helper_method: 'render_linked_values' },
+        { dynamic_name: 'author_display', label: 'Author/Creator', helper_method: 'render_linked_values', top_field: true },
+        { dynamic_name: 'standardized_title_display', label: 'Standardized Title', helper_method: 'render_linked_values', top_field: true },
         { dynamic_name: 'other_title_display', label: 'Other Title' },
         { dynamic_name: 'edition_display', label: 'Edition' },
-        { dynamic_name: 'publication_display', label: 'Publication' },
+        { dynamic_name: 'publication_display', label: 'Publication', top_field: true },
         { dynamic_name: 'production_display', label: 'Production' },
         { dynamic_name: 'distribution_display', label: 'Distribution' },
         { dynamic_name: 'manufacture_display', label: 'Manufacture' },
