@@ -481,7 +481,8 @@ class CatalogController < ApplicationController
 
     # solr fields to be displayed in the index (search results) view
     #   The ordering of the field names is the order of the display
-    add_fields.call(config, 'index', [
+    add_fields.call(
+      config, 'index', [
         { name: 'author_creator_a', label: 'Author/Creator', helper_method: 'render_author_with_880' },
         { name: 'standardized_title_a', label: 'Standardized Title' },
         { name: 'edition', label: 'Edition' },
@@ -496,7 +497,8 @@ class CatalogController < ApplicationController
         # in this view, 'Online resource' is full_text_link; note that
         # 'Online resource' is deliberately different here from what's on show view
         { dynamic_name: 'full_text_links_for_cluster_display', label: 'Online resource', helper_method: 'render_online_resource_display_for_index_view' },
-    ])
+      ]
+    )
 
     # Most show field values are generated dynamically from MARC stored in Solr.
     # This is because there's sometimes complex logic for extracting granular bits
@@ -512,19 +514,30 @@ class CatalogController < ApplicationController
     #       helper_method is used to render values for presentation.
     #   if: if dynamic, defaults to 'is_field_present' lambda if not specified,
     #       so that only fields containing non-blank values are displayed.
+    #   top_field: boolean, defaults to false - tell BL to render this metadata
+    #       element "above the fold" - above the availability info area
 
-    add_fields.call(config, 'show', [
-        { dynamic_name: 'author_display', label: 'Author/Creator', helper_method: 'render_linked_values', top_field: true },
-        { dynamic_name: 'standardized_title_display', label: 'Standardized Title', helper_method: 'render_linked_values', top_field: true },
-        { dynamic_name: 'other_title_display', label: 'Other Title' },
-        { dynamic_name: 'edition_display', label: 'Edition' },
+    add_fields.call(
+      config, 'show', [
+        { dynamic_name: 'author_display', label: 'Author/Creator',
+          helper_method: 'render_linked_values', top_field: true },
         { dynamic_name: 'publication_display', label: 'Publication', top_field: true },
-        { dynamic_name: 'production_display', label: 'Production' },
-        { dynamic_name: 'distribution_display', label: 'Distribution' },
-        { dynamic_name: 'manufacture_display', label: 'Manufacture' },
-        { dynamic_name: 'conference_display', label: 'Conference Name', helper_method: 'render_linked_values' },
-        { dynamic_name: 'series_display', label: 'Series', helper_method: 'render_linked_values' },
-        { dynamic_name: 'format_display', label: 'Format/Description' },
+        { dynamic_name: 'format_display', label: 'Format/Description', top_field: true },
+        { dynamic_name: 'edition_display', label: 'Edition', top_field: true },
+        { dynamic_name: 'conference_display', label: 'Conference Name',
+          helper_method: 'render_linked_values', top_field: true },
+        { dynamic_name: 'series_display', label: 'Series',
+          helper_method: 'render_linked_values', top_field: true },
+        { dynamic_name: 'production_display', label: 'Production', top_field: true },
+        { dynamic_name: 'distribution_display', label: 'Distribution', top_field: true },
+        { dynamic_name: 'manufacture_display', label: 'Manufacture', top_field: true },
+        { dynamic_name: 'contained_in_display', label: 'Contained In', top_field: true },
+        # 'Online' corresponds to the right-side box labeled 'Online' in DLA Franklin
+        { dynamic_name: 'full_text_links_for_cluster_display', label: 'Online',
+          helper_method: 'render_online_display_for_show_view', top_field: true },
+        { dynamic_name: 'standardized_title_display', label: 'Standardized Title',
+          helper_method: 'render_linked_values' },
+        { dynamic_name: 'other_title_display', label: 'Other Title' },
         { dynamic_name: 'cartographic_display', label: 'Cartographic Data' },
         { dynamic_name: 'fingerprint_display', label: 'Fingerprint' },
         { dynamic_name: 'arrangement_display', label: 'Arrangement' },
@@ -564,7 +577,6 @@ class CatalogController < ApplicationController
         { dynamic_name: 'related_work_display', label: 'Related Work' },
         { dynamic_name: 'contains_display', label: 'Contains' },
         { dynamic_name: 'other_edition_display', label: 'Other Edition', helper_method: 'render_linked_values' },
-        { dynamic_name: 'contained_in_display', label: 'Contained In' },
         { dynamic_name: 'constituent_unit_display', label: 'Constituent Unit' },
         { dynamic_name: 'has_supplement_display', label: 'Has Supplement' },
         { dynamic_name: 'other_format_display', label: 'Other format' },
@@ -575,10 +587,9 @@ class CatalogController < ApplicationController
         { dynamic_name: 'web_link_display', label: 'Web link', helper_method: 'render_web_link_display' },
         { dynamic_name: 'access_restriction_display', label: 'Access Restriction' },
         { dynamic_name: 'bound_with_display', label: 'Bound with' },
-        # 'Online' corresponds to the right-side box labeled 'Online' in DLA Franklin
-        { dynamic_name: 'full_text_links_for_cluster_display', label: 'Online', helper_method: 'render_online_display_for_show_view' },
     #{ name: 'electronic_holdings_json', label: 'Online resource', helper_method: 'render_electronic_holdings' },
-    ])
+      ]
+    )
 
     # "fielded" search configuration. Used by pulldown among other places.
     # For supported keys in hash, see rdoc for Blacklight::SearchFields
