@@ -28,7 +28,7 @@
 body {
   color: $text-black;
   font-family: $font-family;
-  background-color: #F4F8FF;
+  background-color: $background;
 }
 
 .sr-only.application-heading {
@@ -93,7 +93,7 @@ table[id^="requestOptions"] td, table[id^="holdingItems"] td {
 }
 
 .user-first-name {
-  color: #c60;
+  color: #faa755;
 }
 
 .navbar-nav > li > div > a {
@@ -144,8 +144,11 @@ table[id^="requestOptions"] td, table[id^="holdingItems"] td {
 }
 
 .btn-primary {
-  background-color: $upenn-red;
-  border-color: $upenn-blue;
+  background-color: $upenn-lighter-blue;
+}
+
+.btn-primary:hover {
+  background-color: $upenn-blue;
 }
 
 .inline {
@@ -155,7 +158,7 @@ table[id^="requestOptions"] td, table[id^="holdingItems"] td {
 
 .landing-content .heading {
   font-weight: bold;
-  color: #900;
+  color: $upenn-red;
   font-size: 1.17em;
 }
 
@@ -816,7 +819,7 @@ h3.expert-heading {
 
 .databases-landing-content .heading {
   font-weight: bold;
-  color: #900;
+  color: $upenn-red;
   font-size: 1.17em;
 }
 
