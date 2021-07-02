@@ -157,6 +157,10 @@ namespace :pennlib do
         org_resourcelist_uri = package.uri
         org = org_resourcelist_uri.to_s.match(%r{organizations/(.*?)/streams})[1]
         stream_id = org_resourcelist_uri.to_s.match(%r{streams/(.*?)/})[1]
+
+        # skip large sets....
+        # next if org.in? %w[brown chicago cornell duke princeton stanford]
+
         begin
           org_resourcelist = rs_client.get_and_parse org_resourcelist_uri
         rescue ArgumentError => e
@@ -168,6 +172,7 @@ namespace :pennlib do
           # skip removed resource since it seems problematic
           if resource.uri.to_s.include? 'removed_since_previous_stream'
             puts "Ignoring #{resource.uri}"
+            next
           end
 
           pod_file = PennLib::Pod::NormalizedMarcFile.new resource, org, stream_id
