@@ -8,6 +8,7 @@
 //
 $(document).ready(function() {
 
+  var timeout;
   function toggleMenuOn() {
     $('.dropdown-help').addClass('visible');
     $('#header-navbar').addClass('nav-expanded');
@@ -26,7 +27,15 @@ $(document).ready(function() {
     $('.accessibility_button.expand_button').removeClass('button_expanded');
   }
 
-  $('#li-desktop-franklin-help').hover(toggleMenuOn, toggleMenuOff);
+  $('#li-desktop-franklin-help').hover(function(){
+        clearTimeout(timeout);
+        toggleMenuOn();
+    },
+      function() {
+        timeout = setTimeout(function(){
+          toggleMenuOff();
+        }, 500);
+    });
 
   $('.accessibility_button.expand_button').on("click", function() {
     if($(this).hasClass('button_expanded')) {

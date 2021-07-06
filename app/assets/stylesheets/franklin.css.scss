@@ -64,7 +64,7 @@ body {
 h1, h2, h3 {
   color: $upenn-blue;
 }
-.nav > li > a:hover, 
+.nav > li > a:hover,
 .nav > li > a:focus {
     background-color: transparent;
     border: dotted 1px #eee;
@@ -349,7 +349,7 @@ header {
       @media (min-width: 1000px) {
         width: 55rem;
       }
-      
+
       > li {
         font-family: "Open Sans",sans-serif;
         font-size: 1.2rem;
@@ -487,7 +487,7 @@ body header #search-navbar div.container {
       float: none !important;
       margin: 0;
       ul.nav.navbar-nav {
-        float:none;
+        float: right;
         margin: 0;
         /*hamburger-triggered menu*/
 
@@ -601,7 +601,7 @@ body header #search-navbar div.container {
 
                   border-bottom: solid 2px #900;
                   color: #900 !important;
-                  
+
               }
               &:focus {
                 outline: 1px dotted #82afd3;
@@ -1297,10 +1297,12 @@ body #search-navbar div.container {
               background-repeat: no-repeat;
               background-position: .5rem .5rem;
               background-repeat: no-repeat;
-              padding:.8rem 1.2rem 0 4.7rem;
               width: 100%;
               height: 4rem;
               font-weight: normal;
+              @media (min-width: 800px) {
+                padding:.8rem 1.2rem 0 4.7rem;
+              }
             }
             &:focus {
                 outline: #005 auto 1px;

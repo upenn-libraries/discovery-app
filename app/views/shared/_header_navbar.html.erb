@@ -1,10 +1,12 @@
 <ul id="skip-link">
-    <li><a href="#login-button" class="element-invisible element-focusable">Franklin Login</a></li>
+    <% if current_user %>
     <li><a href="#logout-button" class="element-invisible element-focusable">Log out</a></li>
+    <% else %>
+    <li><a href="#login-button" class="element-invisible element-focusable">Franklin login</a></li>
+    <% end %>
     <li><a href="#a-search" class="element-invisible element-focusable">Active search</a></li>
     <li><a href="#search-options" class="element-invisible element-focusable">Search options</a></li>
     <li><a href="#main-container" class="element-invisible element-focusable">Main content</a></li>
-    <li><a href="#footer" class="element-invisible element-focusable">Footer menu</a></li>
 </ul>
 <header>
 
