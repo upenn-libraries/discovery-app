@@ -47,7 +47,7 @@ span.site-name {
 span.site-name, span.site-name a {
   font-size: 40px;
   color: $text-white;
-  font-family: 'Gentium Book Basic';
+  font-family: 'Gentium Book Basic', serif;
   text-shadow: 2px 2px 2px #000000;
 }
 
@@ -236,7 +236,7 @@ table[id^="requestOptions"] td, table[id^="holdingItems"] td {
 }
 
 .footer {
-  font-family: "Source Sans Pro","Arial Unicode MS",Helvetica,sans-serif;
+  font-family: "Open Sans", sans-serif;
   background-color: #dfdfdf;
   background-image: asset-url('footerboxshadow.png');
   background-repeat: repeat-x;
@@ -585,7 +585,7 @@ h3.ongray {
 }
 
 .bento-box h3 {
-  font-family: "Helvetica Neue", "Arial", sans-serif;
+  font-family: "Open Sans", sans-serif;
   padding: 0px 10px;
   margin-top: 15px;
 }
