@@ -90,8 +90,9 @@ table[id^="requestOptions"] td, table[id^="holdingItems"] td {
 #header-navbar {
   background: $upenn-blue asset-url('orrerybg.jpg') top left repeat-x;
   .navbar-brand {
+    width: 190px;
     background-image: asset-url('logo.png');
-    margin-top: 20px;
+    margin-top: 27px;
     margin-left: 10px;
   }
 }
