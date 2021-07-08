@@ -34,6 +34,14 @@ class SearchBuilder < Blacklight::SearchBuilder
     if_value && unless_value
   end
 
+  class DummyConfig
+    attr_reader :if, :unless
+    def initialize(if_condition, unless_condition)
+      @if = if_condition
+      @unless = unless_condition
+    end
+  end
+
   ##
   # Add appropriate Solr facetting directives in, including
   # taking account of our facet paging/'more'.  This is not
@@ -43,15 +51,18 @@ class SearchBuilder < Blacklight::SearchBuilder
     # BL param, it's useful to support this at the BL level; esp. because I think `facet=false`
     # in Solr does not disable "JSON Facet API" faceting!
     return if blacklight_params[:facet] == false # default true, so distinguish from falsey `nil`
+    return if blacklight_params[:action] == 'facet' # any faceting should be added by add_facet_paging_to_solr
     facet_fields_to_include_in_request.each do |field_name, facet|
-      next if blacklight_params[:action] == 'facet' && blacklight_params[:id] != field_name
       next unless evaluate_if_unless_configuration(facet, blacklight_params)
       solr_parameters[:facet] ||= true
 
-      if facet.json_facet
-        json_facet = (solr_parameters[:'json.facet'] ||= [])
-        json_facet << facet.json_facet.to_json
-        next
+      sort = facet.sort
+      limit = facet_limit_with_pagination(field_name)
+      json_facet = add_json_facet(solr_parameters, facet, limit, 0, sort, nil)
+      next if json_facet == true || json_facet.nil?
+      if json_facet
+        # if json_facet is not explicitly "false", it represents the fallback sort value
+        sort = json_facet
       end
 
       if facet.pivot
@@ -62,8 +73,8 @@ class SearchBuilder < Blacklight::SearchBuilder
         solr_parameters.append_facet_fields with_ex_local_param(facet.ex, facet.field)
       end
 
-      if facet.sort
-        solr_parameters[:"f.#{facet.field}.facet.sort"] = facet.sort
+      if sort
+        solr_parameters[:"f.#{facet.field}.facet.sort"] = sort
       end
 
       if facet.solr_params
@@ -72,9 +83,85 @@ class SearchBuilder < Blacklight::SearchBuilder
         end
       end
 
-      limit = facet_limit_with_pagination(field_name)
       solr_parameters[:"f.#{facet.field}.facet.limit"] = limit if limit
     end
+  end
+
+  def add_json_facet(solr_params, facet_config, limit = nil, offset = nil, sort = nil, prefix = nil)
+    limit ||= facet_config.limit
+    offset ||= 0
+    sort ||= facet_config.sort
+    json_facet_config = facet_config.json_facet
+    return false unless json_facet_config # no json_facet key configured
+    condition = lambda { |if_condition, unless_condition|
+      evaluate_if_unless_configuration(DummyConfig.new(if_condition, unless_condition), blacklight_params)
+    }
+    json_facet_spec = json_facet_config.get_json_facet_request(facet_config.key, facet_config.field, limit, offset, sort, prefix, condition)
+    if json_facet_spec.nil?
+      return false # fallback to legacy facets
+    elsif json_facet_spec[:request]
+      # we have a spec and a request, so add request and return true, bypassing legacy processing
+      (solr_params[:'json.facet'] ||= []) << json_facet_spec[:request]
+      return true
+    else
+      fallback = json_facet_spec[:fallback] # must be present
+      # nil return value shortcircuits this facet field. Nothing will be added to the request
+      return nil unless evaluate_if_unless_configuration(DummyConfig.new(fallback[:if], fallback[:unless]), blacklight_params)
+      map_sort = fallback[:map_sort]
+      return false unless map_sort
+      map_sort.call(sort, blacklight_params)
+    end
+  end
+
+  def add_facet_paging_to_solr(solr_params)
+    return unless facet.present?
+
+    facet_config = blacklight_config.facet_fields[facet]
+
+    # Now override with our specific things for fetching facet values
+    facet_ex = facet_config.respond_to?(:ex) ? facet_config.ex : nil
+
+    limit = if scope.respond_to?(:facet_list_limit)
+              scope.facet_list_limit.to_s.to_i
+            elsif solr_params["facet.limit"]
+              solr_params["facet.limit"].to_i
+            else
+              facet_config.fetch(:more_limit, 20)
+            end
+
+    page = blacklight_params.fetch(request_keys[:page], 1).to_i
+    offset = (page - 1) * limit
+
+    sort = blacklight_params[request_keys[:sort]]
+    prefix = blacklight_params[request_keys[:prefix]]
+
+    json_facet = add_json_facet(solr_params, facet_config, limit + 1, offset, sort, prefix)
+    return if json_facet == true || json_facet.nil?
+    if json_facet
+      # if json_facet is not explicitly "false", it represents the fallback sort value
+      sort = json_facet
+    end
+
+    solr_params[:"facet.field"] = with_ex_local_param(facet_ex, facet_config.field)
+
+    # Need to set as f.facet_field.facet.* to make sure we
+    # override any field-specific default in the solr request handler.
+    solr_params[:"f.#{facet_config.field}.facet.limit"] = limit + 1
+    solr_params[:"f.#{facet_config.field}.facet.offset"] = offset
+    if blacklight_params[request_keys[:sort]]
+      solr_params[:"f.#{facet_config.field}.facet.sort"] = sort
+    end
+    if blacklight_params[request_keys[:prefix]]
+      solr_params[:"f.#{facet_config.field}.facet.prefix"] = prefix
+    end
+
+    if facet_config.solr_params
+      facet_config.solr_params.each do |k, v|
+        solr_params[:"f.#{facet_config.field}.#{k}"] = v
+      end
+    end
+
+    solr_params[:rows] = 0
   end
 
   # override #with to massage params before this SearchBuilder

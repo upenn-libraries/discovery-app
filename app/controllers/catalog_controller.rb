@@ -177,8 +177,7 @@ class CatalogController < ApplicationController
       :format_f => ['Database & Article Index']
     }.freeze
 
-    actionable_filters = lambda { |a, b, c|
-      params = a.params
+    params_actionable_filters = lambda { |params|
       return true if params[:q].present?
       f = params[:f]
       return false if f.nil?
@@ -192,6 +191,21 @@ class CatalogController < ApplicationController
       end
       return false
     }
+
+    actionable_filters = lambda { |a, b, c|
+      params_actionable_filters.call(a.params)
+    }
+
+    conditional_sort_options = lambda { |params|
+      return nil unless ENABLE_SUBJECT_CORRELATION # fallback to legacy/default behavior
+      if params_actionable_filters.call(params)
+        ['index', 'count', 'r1 desc']
+      else
+        ['index', 'count']
+      end
+    }
+
+    relatedness_sort_applied = lambda { |display_facet| display_facet.sort == 'r1 desc' }
 
     search_field_accept = lambda { |field_names, other_conditions = []|
       return lambda { |a, b, c|
@@ -280,23 +294,53 @@ class CatalogController < ApplicationController
 
     MINCOUNT = { 'facet.mincount' => 1 }.freeze
 
-    SUBJECT_CORRELATION = {
-      subject_correlation: {
+    CORRELATION_JSON_FACET = lambda { |field, limit, offset, sort, prefix|
+      return nil unless ENABLE_SUBJECT_CORRELATION && sort == 'r1 desc'
+      if field == 'subject_f'
+        overRequestRatio = 0.7 # default is 0.1
+        overRefineRatio = 6 # often based on number of shards
+        overrequest = (limit * overRequestRatio).to_i + 4 # based on the default forumula
+        ## overrefine = ((offset + limit) * 0.1).to_i + 4 # the default
+        # essentially, we want to refine *everything* that comes back from the
+        # initial requests, because we're dealing with high-cardinality and
+        # correspondingly low-frequency/unevently distributed fields/values.
+        overrefine = ((offset + limit + overrequest) * overRefineRatio).to_i + 4
+      else
+        overrequest = -1
+        overrefine = -1
+      end
+      {
         type: 'query',
         domain: {
           query: '{!query v=$cluster}'
         },
         q: '{!query tag=REFINE v=$correlation_domain}',
+        blacklight_options: {
+          parse: {
+            delegate: lambda { |subs| subs[:correlation] }
+          }
+        },
         facet: {
           correlation:{
             type: 'terms',
-            field: 'subject_f',
+            field: field,
             # NOTE: mincount pre-filters vals that could not possibly match min_pop
             mincount: 3, # guarantee fgSize >= 3
-            limit: 25,
-            refine: true,
-            sort: {r1: 'desc'},
+            limit: limit,
+            offset: offset,
+            overrequest: overrequest,
+            overrefine: overrefine,
+            refine: 'simple',
+            cacheDf: -1, # disable caching; only affects refinement. esp. important b/c of extent of overrefining
+            sort: sort,
+            blacklight_options: {
+              parse: {
+                filter: lambda { |bucket| bucket[:r1][:relatedness] > 0 },
+                get_hits: lambda { |bucket| bucket[:fg_filtered_count][:count] }
+              }
+            },
             facet: {
+              processEmpty: true,
               r1: {
                 type: 'func',
                 min_popularity: 0.0000002, # lower bound n/bgSize to guarantee fgCount>=n (here, n==2)
@@ -335,17 +379,49 @@ class CatalogController < ApplicationController
                            :facet_type => :database, solr_params: MINCOUNT
     # NOTE: set facet_type=nil below, to bypass normal facet display
     config.add_facet_field 'subject_specialists', label: 'Subject Area Correlation', collapse: true, :facet_type => nil,
-        :json_facet => PennLib::SubjectSpecialists::QUERIES, :if => actionable_filters
+        :json_facet => PennLib::JsonFacet::Config.new(PennLib::SubjectSpecialists::QUERIES), :if => actionable_filters
 
-    config.add_facet_field 'subject_correlation',
-                           label: 'Subject Correlation',
+    config.add_facet_field 'subject_f',
+                           label: 'Subject',
                            collapse: false,
-                           partial: 'blacklight/hierarchy/facet_relatedness',
-                           json_facet: SUBJECT_CORRELATION,
-                           :facet_type => lambda { |params|
+                           limit: 5,
+                           index_range: 'A'..'Z',
+                           solr_params: MINCOUNT,
+                           sort_options: conditional_sort_options,
+                           render_empty?: relatedness_sort_applied,
+                           always_show_more_link?: relatedness_sort_applied,
+                           sort: 'r1 desc', # 'r1 desc', 'count', or 'index'
+                           #partial: 'catalog/json_facet_limit',
+                           json_facet: PennLib::JsonFacet::Config.new(CORRELATION_JSON_FACET, {
+                             if: actionable_filters,
+                             fallback: {
+                               map_sort: lambda { |sort, blacklight_params| sort == 'r1 desc' ? 'count' : sort }
+                             }
+                           }),
+                           facet_type: lambda { |params|
                              params[:search_field] == 'subject_correlation' ? :first_class : :default
-                           },
-                           :if => actionable_filters if ENABLE_SUBJECT_CORRELATION
+                           }
+
+    config.add_facet_field 'author_creator_f',
+                           label: 'Author/Creator',
+                           collapse: false,
+                           limit: 5,
+                           index_range: 'A'..'Z',
+                           solr_params: MINCOUNT,
+                           sort_options: conditional_sort_options,
+                           render_empty?: relatedness_sort_applied,
+                           always_show_more_link?: relatedness_sort_applied,
+                           sort: 'r1 desc', # 'r1 desc', 'count', or 'index'
+                           #partial: 'catalog/json_facet_limit',
+                           json_facet: PennLib::JsonFacet::Config.new(CORRELATION_JSON_FACET, {
+                             if: actionable_filters,
+                             fallback: {
+                               map_sort: lambda { |sort, blacklight_params| sort == 'r1 desc' ? 'count' : sort }
+                             }
+                           }),
+                           facet_type: lambda { |params|
+                             params[:search_field] == 'author_creator_correlation' ? :first_class : :default
+                           }
 
     config.add_facet_field 'azlist', label: 'A-Z List', collapse: false, single: :manual, :facet_type => :header,
                            options: {:layout => 'horizontal_facet_list'}, solr_params: { 'facet.mincount' => 0 },
@@ -393,11 +469,7 @@ class CatalogController < ApplicationController
         'Penn' => { :label => 'Penn', :fq => "{!term f=record_source_f v=Penn}"},
     }
     config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false, :ex => 'orig_q', solr_params: MINCOUNT
-    config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z', collapse: false,
-        :ex => 'orig_q', solr_params: MINCOUNT
     #config.add_facet_field 'subject_taxonomy', label: 'Subject Taxonomy', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy', :json_facet => SUBJECT_TAXONOM, :helper_method => :render_subcategories
-    config.add_facet_field 'subject_f', label: 'Subject', limit: 5, index_range: 'A'..'Z', collapse: false,
-        :ex => 'orig_q', solr_params: MINCOUNT
     config.add_facet_field 'language_f', label: 'Language', limit: 5, collapse: false, :ex => 'orig_q', solr_params: MINCOUNT
     config.add_facet_field 'library_f', label: 'Library', limit: 5, collapse: false, :ex => 'orig_q', solr_params: MINCOUNT
     config.add_facet_field 'specific_location_f', label: 'Specific location', limit: 5, :ex => 'orig_q', solr_params: MINCOUNT

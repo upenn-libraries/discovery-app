@@ -11,6 +11,9 @@ en:
       errors:
         request_error: "Franklin is having trouble executing your search. Please try again."
         invalid_solr_id: "The requested record was not found."
+      facets:
+        sort:
+          'r1 desc': 'Correlation Sort'
     tools:
       librarian_view: "Staff View"
       login_for_email: "Login to Email"
