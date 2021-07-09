@@ -143,6 +143,11 @@ table[id^="requestOptions"] td, table[id^="holdingItems"] td {
   }
 }
 
+// add more padding to default btn class
+.btn {
+  padding: 8px 18px;
+}
+
 .btn-primary {
   background-color: $upenn-red;
   border-color: $upenn-blue;
