@@ -1,3 +1,4 @@
+@import 'base/colors.css.scss';
 
 // spinner stuff from:
 // https://codeburst.io/how-to-create-a-simple-css-loading-spinner-make-it-accessible-e5c83c2e464c
@@ -20,7 +21,7 @@
   &::before {
     animation: 2s linear infinite spinner;
     border: solid 3px #eee;
-    border-bottom-color: #091f54;
+    border-bottom-color: $upenn-blue;
     border-radius: 50%;
     content: "";
     height: 40px;
