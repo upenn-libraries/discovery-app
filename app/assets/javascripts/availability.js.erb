@@ -41,17 +41,17 @@ $(document).ready(function() {
         if (holding['inventory_type'] === 'physical') {
             var availability = "Unknown";
             if (holding['availability'] === 'check_holdings') {
-                availability = "<span class='label label-warning'>See options</span>";
+                availability = "<span class='label label-availability label-warning'>See options</span>";
             } else if (holding['availability'] === 'unavailable') {
                 // pre-COVID-19 always mapped to "See request options";
                 if (holding['link_to_aeon']) {
                     // Aeon materials show as "unavailable", but not in the sense of being unviewable.
-                    availability = holding['location_code'] === 'vanpNocirc' ? "<span class='label label-info'>Use online access — print restricted</span>" : "<span class='label label-warning'>See request options</span>";
+                    availability = holding['location_code'] === 'vanpNocirc' ? "<span class='label label-availability label-info'>Use online access — print restricted</span>" : "<span class='label label-availability label-warning'>See request options</span>";
                 } else {
-                    availability = "<span class='label label-danger'>Unavailable</span>";
+                    availability = "<span class='label label-availability label-danger'>Unavailable</span>";
                 }
             } else if (holding['availability'] === 'available') {
-                availability = holding['location_code'] === 'vanpNocirc' ? "<span class='label label-info'>Use online access — print restricted</span>" : "<span class='label label-success'>Available</span>";
+                availability = holding['location_code'] === 'vanpNocirc' ? "<span class='label label-availability label-info'>Use online access — print restricted</span>" : "<span class='label label-availability label-success'>Available</span>";
             }
             // TODO: pass in format to shelfLocatorLink() somehow
             return [availability, holding['location'], holding['call_number'], $.shelfLocatorLink(mms_id, holding, "TODO"), constructAeonLink(mms_id, holding)]
