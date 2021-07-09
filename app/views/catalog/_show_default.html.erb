@@ -1,26 +1,44 @@
 <% doc_presenter = show_presenter(document) %>
 <%= detect_nocirc(document) %>
 <%# default partial to display solr document fields in catalog show view -%>
-<dl class="dl-horizontal  dl-invert">
+<dl class="dl-horizontal dl-invert">
   <%= render 'show_expanded', document: document %>
   <% document_show_fields(document).each do |field_name, field| -%>
+    <% next unless field[:top_field] %>
+
       <% if should_render_show_field? document, field %>
           <dt class="blacklight-<%= field_name.parameterize %>"><%= render_document_show_field_label document, field: field_name %></dt>
           <dd class="blacklight-<%= field_name.parameterize %>"><%= doc_presenter.field_value field_name %></dd>
       <% end -%>
   <% end -%>
-  <%= render partial: 'status_location_field', locals: { document: document } %>
+  <%= render partial: 'status_location_field', locals: { document: document } if document.has_any_holdings? %>
 </dl>
 
 <a name="franklin-availability"></a>
 
 <% if document.alma_mms_id.present? %>
+  <hr>
   <% if document.show_requesting_widget? %>
     <%= render 'shared/item_request_widget', document: document, hide: false %>
   <% else %>
     <%= render 'alma_availability', document: document, collapsed: false %>
   <% end %>
+  <hr>
 <% end %>
+
+<div class="bottom-fields">
+  <h2>Details</h2>
+  <dl class="dl-horizontal dl-invert">
+    <% document_show_fields(document).each do |field_name, field| -%>
+      <% next if field[:top_field] %>
+
+      <% if should_render_show_field? document, field %>
+        <dt class="blacklight-<%= field_name.parameterize %>"><%= render_document_show_field_label document, field: field_name %></dt>
+        <dd class="blacklight-<%= field_name.parameterize %>"><%= doc_presenter.field_value field_name %></dd>
+      <% end -%>
+    <% end -%>
+  </dl>
+</div>
 
 <%#= render partial: 'alma_availability_iframe', locals: { document: document } %>
 
