@@ -15,6 +15,39 @@ class CatalogController < ApplicationController
 
   ENABLE_SUBJECT_CORRELATION = ENV['ENABLE_SUBJECT_CORRELATION']&.downcase == 'true'
 
+  # explicitly define solr fields to be returned, since we have to explicitly include *_isort
+  # fields that aren't returned when using *
+  SOLR_FIELDLIST_PARAM = %w{
+    id
+    cluster_id
+    alma_mms_id
+    score
+    format_a
+    full_text_link_text_a
+    isbn_isxn
+    language_a
+    title
+    title_880_a
+    author_creator_a
+    author_880_a
+    standardized_title_a
+    edition
+    conference_a
+    series
+    publication_a
+    contained_within_a
+    physical_holdings_json
+    electronic_holdings_json
+    bound_with_ids_a
+    marcrecord_text
+    recently_added_isort
+    hld_count_isort
+    prt_count_isort
+    empty_hld_count_isort
+    itm_count_isort
+    nocirc_a
+  }.join(',')
+
   # expire session if needed
   before_action :expire_session
 
@@ -60,36 +93,7 @@ class CatalogController < ApplicationController
         #combo: '{!query v=$q}',
         # this list is annoying to maintain, but this avoids hard-coding a field list
         # in the search request handler in solrconfig.xml
-        fl: %w{
-        id
-        cluster_id
-        alma_mms_id
-        score
-        format_a
-        full_text_link_text_a
-        isbn_isxn
-        language_a
-        title
-        title_880_a
-        author_creator_a
-        author_880_a
-        standardized_title_a
-        edition
-        conference_a
-        series
-        publication_a
-        contained_within_a
-        physical_holdings_json
-        electronic_holdings_json
-        bound_with_ids_a
-        marcrecord_text
-        recently_added_isort
-        hld_count_isort
-        prt_count_isort
-        empty_hld_count_isort
-        itm_count_isort
-        nocirc_a
-      }.join(','),
+        fl: SOLR_FIELDLIST_PARAM,
         'facet.threads': 2,
         'facet.mincount': 0,
         #      fq: '{!tag=cluster}{!collapse field=cluster_id nullPolicy=expand size=5000000 min=record_source_id}',
@@ -120,9 +124,10 @@ class CatalogController < ApplicationController
     ## Default parameters to send on single-document requests to Solr. These settings are the Blackligt defaults (see SearchHelper#solr_doc_params) or
     ## parameters included in the Blacklight-jetty document requestHandler.
     config.default_document_solr_params = {
-        expand: 'true',
-        'expand.field': 'cluster_id',
-        'expand.q': '*:*',
+      expand: 'true',
+      'expand.field': 'cluster_id',
+      'expand.q': '*:*',
+      'fl': SOLR_FIELDLIST_PARAM
     }
 
     # solr field configuration for search results/index views
