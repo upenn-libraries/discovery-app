@@ -2,6 +2,9 @@
 
 module PennLib
   module Pod
+
+    POD_FILES_BASE_LOCATION = File.join Rails.root, 'pod_data'
+
     # Represent file info about an available Normalized Marc XML file resource
     class NormalizedMarcFile
 
@@ -17,7 +20,7 @@ module PennLib
         @date = resource.modified_time
         @org = org
         @stream_id = stream_id
-        @location = File.join Rails.root, 'pod_data', org, stream_id
+        @location = File.join POD_FILES_BASE_LOCATION, org, stream_id
       end
 
       # @return [String]

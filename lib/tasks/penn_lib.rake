@@ -141,6 +141,31 @@ namespace :pennlib do
   end
 
   namespace :pod do
+    desc 'Print info about files currently held for institutions'
+    task report: :environment do |_t, _args|
+      Pathname.new(
+        PennLib::Pod::POD_FILES_BASE_LOCATION
+      ).children.each do |org_pn|
+        if org_pn.directory?
+          puts "Org folder: #{org_pn}"
+          org_pn.children.each do |stream_pn|
+            puts "  Org stream: #{stream_pn}"
+            if stream_pn.directory?
+              stream_pn.children.each do |file_pn|
+                puts "    Org file: #{file_pn}"
+                puts "      Size: #{file_pn.size}"
+                puts "      CTime: #{file_pn.ctime}"
+              end
+            else
+              puts "Unexplained file: #{stream_pn}"
+            end
+          end
+        else
+          puts "Unexplained file: #{org_pn}"
+        end
+      end
+    end
+
     desc 'This task will pull the latest POD Normalized MARCXML data dump files
           down to the defined POD data location, ?overwrite any existing data?'
     task pull_normalized_xml: :environment do |_t, _args|
