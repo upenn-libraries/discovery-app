@@ -5,8 +5,16 @@ module PennLib
 
     POD_FILES_BASE_LOCATION = File.join Rails.root, 'pod_data'
 
+    # @param [String] org
+    # @param [String] stream
+    # @return [TrueClass, FalseClass]
+    def self.existing_stream?(org, stream)
+      org_folder = File.join POD_FILES_BASE_LOCATION, org
+      Pathname.new(File.join(org_folder, stream)).directory?
+    end
+
     # Represent file info about an available Normalized Marc XML file resource
-    class NormalizedMarcFile
+    class RemoteNormalizedMarcFile
 
       attr_reader :resource, :location, :filename, :checksum, :date
 
@@ -47,6 +55,22 @@ module PennLib
         @downloaded = false
       end
 
+      # Compare to a file that's already present on the file system -
+      # @return [TrueClass, FalseClass]
+      def already_downloaded_ok?
+        # TODO: you just downloaded this file...calling this is silly
+        raise StandardError, 'You just downloaded this file...' if @downloaded
+
+        # is on the filesystem already? with matching size and checksum?
+        return false unless File.exist? saved_filename
+
+        # compare checksums - this should catch a file of the same name
+        # that overwrote a previous file in the aggregator (test)
+        return false unless md5_checksum(saved_filename) == @checksum
+
+        true
+      end
+
       # @return [TrueClass, FalseClass]
       def downloaded?
         @downloaded
@@ -56,7 +80,11 @@ module PennLib
       def valid_checksum?
         raise StandardError, 'File not yet downloaded' unless downloaded?
 
-        Digest::MD5.file(saved_filename).hexdigest == @checksum
+        checksum(saved_filename) == @checksum
+      end
+
+      def md5_checksum(file)
+        Digest::MD5.file(file).hexdigest
       end
     end
   end
