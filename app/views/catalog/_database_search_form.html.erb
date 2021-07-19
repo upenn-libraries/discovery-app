@@ -1,4 +1,3 @@
-  <a href="/"><h1 class="franklin-title"><span class="visually-hidden">Franklin</span></h1></a>
   <%= form_tag search_catalog_path, method: :get, class: 'search-query-form clearfix navbar-form', id: 'a-search', 'aria-label': 'search databases', role: 'search' do %>
   <%= render_hash_as_hidden_fields(search_state.params_for_search.except(:q, :search_field, :qt, :page, :utf8)) %>
   <div class="input-group">
@@ -28,3 +27,6 @@
     <%= link_to 'Advanced', blacklight_advanced_search_engine.advanced_search_path(search_state.to_h), class: 'advanced_search btn btn-default'%>
   <% end %>
 </div>
+<%= render_nav_actions do |config, action|%>
+        <div id="li-bookmarks"><%= action %></div>
+ <% end %>

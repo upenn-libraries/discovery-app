@@ -32,9 +32,9 @@
                       Login <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu">
-                      <li class="small"><a href="<%= accounts_login_url(next: request.original_url) %>">Current faculty, student, staff login</a></li>
+                      <li class="small"><a href="<%= accounts_login_url(next: request.original_url) %>"><span class="desktop">Current faculty, student, staff login</span><span class="mobile">PennKey patrons</span></a></li>
                       <li role="separator" class="divider"></li>
-                      <li class="small"><a href="https://guides.library.upenn.edu/franklinaccount#s-lg-box-19646803">Subscribed alumni and courtesy user login</a></li>
+                      <li class="small"><a href="https://guides.library.upenn.edu/franklinaccount#s-lg-box-19646803"><span class="desktop">Subscribed alumni and courtesy user login</span><span class="mobile">Subscribed patrons</span></a></li>
                     </ul>
                   </div>
 
@@ -44,36 +44,23 @@
           </ul>
       <% end %>
       <!-- END LOGIN -->
-      <ul class="top-nav">
-
-        <li id="chooselibrarylink"><!-- 2 -->
-          <a class="library-home-link" href="http://www.library.upenn.edu">Library Home</a>
-        </li>
-        <li><a href="https://www.library.upenn.edu/about/locations">Libraries &amp; hours</a></li>
-        <li><a href="//libcal.library.upenn.edu/appointments">Make an appointment</a></li>
-
-      </ul>
+ 
   </div>
   <!-- END NAVANDIDBAR  -->
   <div id="header-navbar" class="navbar navbar-inverse navbar-static-top" role="navigation">
     <div class="<%= container_classes %>">
-        <!-- hamburger -->
-        <button type="button" class="navbar-toggle btn collapsed" data-toggle="collapse" data-target="#user-util-collapse" aria-expanded="false">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-        </button>
+        
 
         <div class="navbar-header">
-           <a class="navbar-brand" href="http://www.library.upenn.edu"><span class="visually-hidden">Libraries homepage</span></a>
+            <div id="logobg">
+               <a href="https://www.library.upenn.edu" class="logolink lib"><%= image_tag("spacer.gif", :alt => "Penn Libraries home", :class => "logoimg lib") %></a>
+               <a href="/" class="logolink franklin"><%= image_tag("spacer.gif", :alt => "Franklin home", :class => "logoimg lib") %></a>
+            </div>
         </div><!-- end navbar header -->
 
 
 
-        <div class="collapse" id="user-util-collapse">
-          <%= render :partial=>'/user_util_links' %>
-        </div>
+        
       </div><!-- end container -->
   </div>
   <div id="search-navbar" class="navbar navbar-default navbar-static-top" role="navigation">

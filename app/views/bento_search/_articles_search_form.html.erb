@@ -1,4 +1,3 @@
-<a href="/"><h1 class="franklin-title" title="Franklin"><span class="visually-hidden">Franklin</span></h1></a>
 <%= form_tag '', method: :get, class: 'summon-form search-query-form clearfix navbar-form', id: 'a-search', 'aria-label': 'search articles',  role: 'search' do %>
     <div class="input-group">
       <label for="q2" class="sr-only"><%= t('blacklight.search.form.search.label') %></label>
@@ -27,3 +26,6 @@
       </div>
     </div>
 <% end %>
+<%= render_nav_actions do |config, action|%>
+        <div id="li-bookmarks"><%= action %></div>
+ <% end %>

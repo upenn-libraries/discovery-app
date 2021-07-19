@@ -1,5 +1,4 @@
 
-<a href="/"><h1 class="franklin-title"><span class="visually-hidden">Franklin</span></h1></a>
 <%= form_tag bento_url, method: :get, class: 'search-query-form clearfix navbar-form', id: 'a-search', 'aria-label': 'search everything', role: 'search' do %>
     <div class="input-group">
       <label for="q" class="sr-only"><%= t('blacklight.search.form.search.label') %></label>
@@ -12,3 +11,6 @@
     </div>
 <% end %>
 <!-- everything -->
+<%= render_nav_actions do |config, action|%>
+        <div id="li-bookmarks"><%= action %></div>
+<% end %>
