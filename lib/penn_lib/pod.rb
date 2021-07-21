@@ -5,30 +5,15 @@ module PennLib
 
     POD_FILES_BASE_LOCATION = File.join Rails.root, 'pod_data'
 
-    # @param [String] org
-    # @param [String] stream
-    # @return [TrueClass, FalseClass]
-    def self.empty_or_existing_stream?(org, stream)
-      org_folder = File.join POD_FILES_BASE_LOCATION, org
-      # return true if no stream folders for this inst
-      return true if Dir[org_folder].empty?
-
-      Pathname.new(File.join(org_folder, stream)).directory?
-    end
-
     # represent a POD Organization, and provide methods for working with
     # pulled data streams and indexing
     class Organization
-      attr_reader :name, :home, :latest_stream
+      attr_reader :name, :home, :newest_stream, :indexer
       def initialize(name)
         @name = name
         @home = File.join POD_FILES_BASE_LOCATION, name
         @newest_stream = find_newest_stream
-      end
-
-      # @return [Module]
-      def indexer
-        "#{@name.titleize}Indexer".constantize
+        @indexer = "#{@name.titleize}Indexer".constantize
       end
 
       # @return [TrueClass, FalseClass]
