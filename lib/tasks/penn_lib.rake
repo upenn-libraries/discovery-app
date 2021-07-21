@@ -36,6 +36,32 @@ namespace :pennlib do
       end
     end
 
+    desc 'Index MARC files from organizations POD folder using Traject'
+    task index_from_pod: :environment do |_t, args|
+      organizations = args.to_a.first.split(' ')
+      dryrun = organizations.delete 'dry-run'
+      organizations.each do |org_name|
+        organization = PennLib::Pod::Organization.new org_name
+        SolrMarc.indexer = organization.indexer.new
+        next unless organization.should_index?
+
+        organization.newest_stream_gzfiles.each do |file|
+          puts "File to index: #{file}"
+          if dryrun
+            puts 'Not indexing due to dry-run param'
+            next
+          end
+
+          File.open(file) do |f|
+            gz = Zlib::GzipReader.new(f)
+            SolrMarc.indexer.process gz
+            gz.close
+          end
+          puts "Finished indexing #{organization} at #{DateTime.now}"
+        end
+      end
+    end
+
     desc 'Index MARC data from stdin using Traject'
     task :index_from_stdin  => :environment do |t, args|
       SolrMarc.indexer =
