@@ -66,7 +66,7 @@ class CatalogController < ApplicationController
         alma_mms_id
         score
         format_a
-        full_text_link_text_a
+        full_text_link_a
         isbn_isxn
         language_a
         title
@@ -86,14 +86,17 @@ class CatalogController < ApplicationController
         recently_added_isort
         hld_count_isort
         prt_count_isort
-        nocirc_a
+        nocirc_stored_a
+        record_source_id
+        oclc_id
       }.join(','),
         'facet.threads': 2,
         'facet.mincount': 0,
         #      fq: '{!tag=cluster}{!collapse field=cluster_id nullPolicy=expand size=5000000 min=record_source_id}',
         # this approach needs expand.field=cluster_id
         #cluster: %q~NOT ({!join from=cluster_id to=cluster_id v='record_source_f:"Penn"'} AND record_source_f:"HathiTrust") NOT record_source_id:3~,
-        cluster: '{!bool filter=*:* must_not=\'{!bool filter=\\\'{!join from=cluster_id to=cluster_id v=record_source_id:1}\\\' filter=record_source_id:2}\'}',
+        # cluster: '{!bool filter=*:* must_not=\'{!bool filter=\\\'{!join from=cluster_id to=cluster_id v=record_source_id:1}\\\' filter=record_source_id:2}\'}',
+        cluster: '{!tieredDomainDedupe f=record_source_f joinField=cluster_id v=Penn,Brown,Chicago,Columbia,Cornell,Duke,Harvard,Princeton,Stanford,HathiTrust}',
         back: '{!query v=$correlation_domain}',
         # NOTE: correlation_domain is separately defined from correlation_domain_refine so that the latter may be applied
         # and selectively excluded (via excludeTags) for reporting counts over the full cluster domain, while calculating
@@ -491,9 +494,11 @@ class CatalogController < ApplicationController
         { dynamic_name: 'manufacture_display', label: 'Manufacture' },
         { name: 'contained_within_a', label: 'Contained in' },
         { name: 'format_a', label: 'Format/Description' },
+        { name: 'record_source_id', label: 'Source', helper_method: :record_source_map },
+        { name: 'oclc_id', label: 'OCLC' },
         # in this view, 'Online resource' is full_text_link; note that
         # 'Online resource' is deliberately different here from what's on show view
-        { dynamic_name: 'full_text_links_for_cluster_display', label: 'Online resource', helper_method: 'render_online_resource_display_for_index_view' },
+        # { dynamic_name: 'full_text_links_for_cluster_display', label: 'Online resource', helper_method: 'render_online_resource_display_for_index_view' },
     ])
 
     # Most show field values are generated dynamically from MARC stored in Solr.
