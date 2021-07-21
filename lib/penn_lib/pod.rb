@@ -8,8 +8,11 @@ module PennLib
     # @param [String] org
     # @param [String] stream
     # @return [TrueClass, FalseClass]
-    def self.existing_stream?(org, stream)
+    def self.empty_or_existing_stream?(org, stream)
       org_folder = File.join POD_FILES_BASE_LOCATION, org
+      # return true if no stream folders for this inst
+      return true if Dir[org_folder].empty?
+
       Pathname.new(File.join(org_folder, stream)).directory?
     end
 
@@ -58,7 +61,7 @@ module PennLib
       # Compare to a file that's already present on the file system -
       # @return [TrueClass, FalseClass]
       def already_downloaded_ok?
-        # TODO: you just downloaded this file...calling this is silly
+        # you just downloaded this file...calling this is silly
         raise StandardError, 'You just downloaded this file...' if @downloaded
 
         # is on the filesystem already? with matching size and checksum?
@@ -80,7 +83,7 @@ module PennLib
       def valid_checksum?
         raise StandardError, 'File not yet downloaded' unless downloaded?
 
-        checksum(saved_filename) == @checksum
+        md5_checksum(saved_filename) == @checksum
       end
 
       def md5_checksum(file)

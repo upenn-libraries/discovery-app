@@ -200,7 +200,7 @@ namespace :pennlib do
           end
 
           # is this a new stream ID for org?
-          unless PennLib::Pod.existing_stream? org, stream_id
+          unless PennLib::Pod.empty_or_existing_stream? org, stream_id
             puts "New stream found for #{org}: #{stream_id}. Manual intervention needed!"
           end
 
