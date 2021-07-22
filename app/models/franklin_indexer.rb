@@ -114,7 +114,7 @@ class FranklinIndexer < BaseIndexer
 
     define_cluster_id
 
-    define_full_text_link_text_a
+    define_full_text_link_a
 
     # do NOT use *_xml_stored_single because it uses a Str (max 32k) for storage
     to_field 'marcrecord_xml_stored_single_large', get_plain_marc_xml
@@ -291,7 +291,7 @@ class FranklinIndexer < BaseIndexer
       acc.concat(pennlibmarc.get_publication_values(rec))
     end
 
-    to_field 'contained_within_a'  do |rec, acc|
+    to_field 'contained_within_a' do |rec, acc|
       acc.concat(pennlibmarc.get_contained_within_values(rec))
     end
 
@@ -402,7 +402,7 @@ class FranklinIndexer < BaseIndexer
       acc << val if val
     end
 
-    to_field 'publication_date_f_stored' do |rec, acc, ctx|
+    to_field 'publication_date_f_stored_a' do |rec, acc, ctx|
       val = ctx.clipboard.dig(:dates, :pub_date_decade)
       acc << val if val
     end
@@ -417,9 +417,9 @@ class FranklinIndexer < BaseIndexer
       acc << val if val
     end
 
-    to_field "isbn_isxn_stored",  extract_marc(%W{020az 022alz}, :separator=>nil) do |rec, acc|
+    to_field 'isbn_isxn_stored_a', extract_marc(%W{020az 022alz}, separator: nil) do |rec, acc|
       orig = acc.dup
-      acc.map!{|x| StdNum::ISBN.allNormalizedValues(x)}
+      acc.map! { |x| StdNum::ISBN.allNormalizedValues(x) }
       acc << orig
       acc.flatten!
       acc.uniq!
@@ -550,8 +550,8 @@ class FranklinIndexer < BaseIndexer
     end
   end
 
-  def define_full_text_link_text_a
-    to_field 'full_text_link_text_a' do |rec, acc|
+  def define_full_text_link_a
+    to_field 'full_text_link_a' do |rec, acc|
       result = pennlibmarc.get_full_text_link_values(rec)
       if result.present?
         acc << result.to_json
