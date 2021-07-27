@@ -6,7 +6,7 @@
         <h2>Penn Libraries</h2>
 
         <ul class="footerlinks">
-          
+
           <li id="chooselibrarylink"><!-- 2 -->
             <a class="library-home-link" href="http://www.library.upenn.edu">Library Home</a>
           </li>
@@ -41,10 +41,11 @@
         <h2>CONTACT US</h2>
         <ul class="footerlinks">
           <li><a href="http://faq.library.upenn.edu/ask">Questions or comments</a></li>
-
-          <li id="footerchat">
-            <div id="libchat_424b3bc441c9bd760d26a2d0dd03c906"></div><script type="text/javascript" src="//v2.libanswers.com/load_chat.php?hash=424b3bc441c9bd760d26a2d0dd03c906"></script>
-          </li>
+          <% unless root_path %>
+            <li id="footerchat">
+              <div id="libchat_424b3bc441c9bd760d26a2d0dd03c906"></div><script type="text/javascript" src="//v2.libanswers.com/load_chat.php?hash=424b3bc441c9bd760d26a2d0dd03c906"></script>
+            </li>
+          <% end %>
 
         </ul>
 

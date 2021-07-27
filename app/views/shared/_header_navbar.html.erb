@@ -20,7 +20,7 @@
 
             <% if current_user %>
                 <li class="nameuser">
-                    <a href="<%= my_library_card_url %>"><% if session['first_name'].present? %><span class="user-first-name"><%= session['first_name'] %> - </span><% end %>PennKey Library Account</a>
+                    <a href="<%= my_library_card_url %>"><% if session['first_name'].present? %><span class="user-first-name"><%= session['first_name'] %> - </span><% end %>My Library Account</a>
                 </li>
                 <li class="destroysession">
                     <button id="logout-button" type="button" class="btn btn-default btn-sm"><%= link_to t('blacklight.header_links.logout'), destroy_user_session_path %></button>
@@ -44,12 +44,12 @@
           </ul>
       <% end %>
       <!-- END LOGIN -->
- 
+
   </div>
   <!-- END NAVANDIDBAR  -->
   <div id="header-navbar" class="navbar navbar-inverse navbar-static-top" role="navigation">
     <div class="<%= container_classes %>">
-        
+
 
         <div class="navbar-header">
             <div id="logobg">
@@ -60,7 +60,7 @@
 
 
 
-        
+
       </div><!-- end container -->
   </div>
   <div id="search-navbar" class="navbar navbar-default navbar-static-top" role="navigation">
