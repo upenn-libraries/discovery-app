@@ -422,22 +422,20 @@ body header #search-navbar div.container {
 }
 #header-navbar .navbar-header {
   #logobg {
-    background-image: asset-url('franklin-double-logo4.svg');
+    background-image: asset-url('franklin-double-logo5.svg');
     background-repeat: no-repeat;
     width: 100%;
-    max-width: 39.5rem;
+    max-width: 42.5rem;
     height: 6rem;
     margin: 0;
     background-size: 100% auto;
     background-position: 0 0;
     @media (min-width: 670px) {
-      width: 35rem;
-    }
-    @media (min-width: 800px) {
       width: 37.5rem;
     }
+    
     @media (min-width: 800px) {
-      width: 39rem;
+      width: 42rem;
     }
     .logolink {
       height: 5rem; 
