@@ -82,7 +82,7 @@ class CatalogController < ApplicationController
         physical_holdings_json
         electronic_holdings_json
         bound_with_ids_a
-        marcrecord_text
+        marcrecord_xml_stored_single_large
         recently_added_isort
         hld_count_isort
         prt_count_isort
