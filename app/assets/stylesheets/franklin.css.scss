@@ -442,7 +442,7 @@ body header #search-navbar div.container {
 }
 #header-navbar .navbar-header {
   #logobg {
-    background-image: asset-url('franklin-double-logo5.svg');
+    background-image: asset-url('franklin-double-logo6.svg');
     background-repeat: no-repeat;
     width: 100%;
     max-width: 42.5rem;
@@ -1775,3 +1775,110 @@ h4, .facets .facets-heading, .h4 {
   bottom: 2rem;
   z-index: 99999;
 }
+/*start font icons
+sample: <span class="icon icon-archive" aria-hidden="true"></span>*/
+@font-face {
+  font-family: 'icomoon';
+  src:  url('icomoon.eot');
+  src:  url('icomoon.eot?#iefix') format('embedded-opentype'),
+        url('icomoon.ttf') format('truetype'),
+        url('icomoon.woff') format('woff'),
+        url('icomoon.svg?#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="icon-"], 
+[class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  margin-right: 6px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/*from pul*/
+.facet-values .icon {
+    width: 22px;
+    height: 22px;
+    display: table-cell;
+    background-position: center;
+    background-size: contain;
+    padding-right: .5em;
+    font-size: 1.275em;
+    line-height: 1.4em;
+}
+.icon-archive:before {
+  content: "\e900";
+}
+.icon-book:before {
+  content: "\e901";
+}
+.icon-conference:before {
+  content: "\e902";
+}
+.icon-database:before {
+  content: "\e903";
+}
+.icon-dataset:before {
+  content: "\e904";
+}
+.icon-equipment:before {
+  content: "\e905";
+}
+.icon-gov-doc-bldg:before {
+  content: "\e906";
+}
+.icon-gov-doc-seal:before {
+  content: "\e907";
+}
+.icon-image:before {
+  content: "\e908";
+}
+.icon-journal:before {
+  content: "\e909";
+}
+.icon-map:before {
+  content: "\e90a";
+}
+.icon-microform:before {
+  content: "\e90b";
+}
+.icon-ms:before {
+  content: "\e90c";
+}
+.icon-music-score:before {
+  content: "\e90d";
+}
+.icon-newspaper:before {
+  content: "\e90e";
+}
+.icon-object:before {
+  content: "\e90f";
+}
+.icon-projector:before {
+  content: "\e910";
+}
+.icon-software:before {
+  content: "\e911";
+}
+.icon-sound:before {
+  content: "\e912";
+}
+.icon-thesis:before {
+  content: "\e913";
+}
+.icon-video:before {
+  content: "\e914";
+}
+.icon-website:before {
+  content: "\e915";
+}
+/*end font icons*/
