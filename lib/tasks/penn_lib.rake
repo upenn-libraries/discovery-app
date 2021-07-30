@@ -58,6 +58,7 @@ namespace :pennlib do
             gz.close
           end
           puts "Finished indexing #{organization} at #{DateTime.now}"
+          # TODO: commit to Solr index
         end
       end
     end

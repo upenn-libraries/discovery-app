@@ -13,7 +13,7 @@ module PennLib
         @name = name
         @home = File.join POD_FILES_BASE_LOCATION, name
         @newest_stream = find_newest_stream
-        @indexer = "#{@name.titleize}Indexer".constantize
+        @indexer = indexer_class
       end
 
       # @return [TrueClass, FalseClass]
@@ -23,10 +23,19 @@ module PennLib
 
       # @return [Array]
       def newest_stream_gzfiles
-        Dir.glob "#{@newest_stream}*.xml.gz"
+        # aggregator sometimes offers gzipped marcxml files as simply 'marcxml'
+        Dir.glob %W[#{@newest_stream}*.xml.gz #{@newest_stream}marcxml]
       end
 
       private
+
+      def indexer_class
+        if @name == 'penn'
+          FranklinIndexer
+        else
+          "#{@name.titleize}Indexer".constantize
+        end
+      end
 
       # @return [String, nil]
       def find_newest_stream
