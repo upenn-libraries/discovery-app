@@ -14,8 +14,8 @@ en:
       confirmation:
         subject: "Franklin Request confirmation"
     buttons:
-      print_request: "Request In Print"
-      electronic_request: "Request Scan"
+      print_request: "In Print"
+      electronic_request: "Electronic"
       submit: "Submit Request"
       close: "Close"
       ill_request: "ILL Request Form"
