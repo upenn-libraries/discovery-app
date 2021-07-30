@@ -1,17 +1,40 @@
 <% doc_presenter = index_presenter(document) %>
 <%= detect_nocirc(document) %>
-<dl class="document-metadata dl-horizontal dl-invert">
-  <% index_fields(document).each do |field_name, field| -%>
-      <% if should_render_index_field? document, field %>
-          <dt class="blacklight-<%= field_name.parameterize %>"><%= render_index_field_label document, field: field_name %></dt>
-          <dd class="blacklight-<%= field_name.parameterize %>"><%= doc_presenter.field_value field_name %></dd>
-      <% end -%>
-  <% end %>
-  <% if document.alma_mms_id.present? && !atom_request? %>
-    <%= render 'status_location_field', document: document if document.has_any_holdings? %>
-  <% end %>
-</dl>
 
+
+<div class="row">
+  <div class="col-xs-10">
+    <div class="documentHeader row">
+      <%# main title container for doc partial view
+          How many bootstrap columns need to be reserved
+          for bookmarks control depends on size.
+      -%>
+
+      <h3 class="index_title document-title-heading col-md-12">
+        <% if counter = document_counter_with_offset(document_counter) %>
+          <span class="document-counter">
+            <%= t('blacklight.search.documents.counter', counter: counter) %>
+          </span>
+        <% end %>
+        <%= link_to_document document, document_show_link_field(document), counter: counter %>
+      </h3>
+    </div>
+    <ul class="document-metadata dl-horizontal dl-invert">
+      <% index_fields(document).each do |field_name, field| -%>
+          <% if should_render_index_field? document, field %>
+              <li class="blacklight-<%= field_name.parameterize %>"><%= doc_presenter.field_value field_name %></li>
+          <% end -%>
+      <% end %>
+      <% if document.alma_mms_id.present? && !atom_request? %>
+        <%= render 'status_location_field', document: document if document.has_any_holdings? %>
+      <% end %>
+    </ul>
+  </div>
+  <div class="col-xs-2">
+    <%= render_index_doc_actions document %>
+    <span class="cover-image glyphicon glyphicon-book"></span>
+  </div>
+</div>
 <% if document.alma_mms_id.present? && !atom_request? %>
   <% if document.show_requesting_widget? %>
     <%= render 'shared/item_request_widget', document: document, hide: true %>

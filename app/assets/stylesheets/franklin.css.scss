@@ -2,6 +2,11 @@
 @import 'base/globals.css.scss';
 @import 'base/colors.css.scss';
 @import 'base/mixins.css.scss';
+
+body {
+  font-size: 15px;
+}
+
 #skip-link {
   margin: 0;
   padding: 0;
@@ -44,6 +49,7 @@
 
 .label-availability {
   padding: .4em .8em;
+  font-size: 14px;
 }
 
 .blacklight-availability {
@@ -537,10 +543,6 @@ body header #search-navbar div.container {
 //.documents-list .document:nth-child(even) {
 //  background: #ececec;
 //}
-
-#documents .document .document-title-heading {
-  line-height: 1.42857143;
-}
 
 .direct-link-trigger {
   cursor: pointer;
@@ -1789,7 +1791,7 @@ sample: <span class="icon icon-archive" aria-hidden="true"></span>*/
   font-display: block;
 }
 
-[class^="icon-"], 
+[class^="icon-"],
 [class*=" icon-"] {
   /* use !important to prevent issues with browser extensions that change fonts */
   font-family: 'icomoon' !important;

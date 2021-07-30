@@ -7,16 +7,18 @@ module DocumentRenderHelper
   # an array of values
   def render_values_with_breaks(options_or_values)
     values = options_or_values
+    separator = '<br/>'
     join = false
     if options_or_values.is_a?(Array)
       join = true
     else
       values = options_or_values[:value]
       if values.is_a?(Array)
+        separator = options_or_values[:config][:separator] if options_or_values[:config][:separator]
         join = true
       end
     end
-    join ? values.join('<br/>').html_safe : values
+    join ? values.join(separator).html_safe : values
   end
 
   def render_author_with_880(options)
