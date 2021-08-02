@@ -17,7 +17,7 @@ class CatalogController < ApplicationController
 
   # explicitly define solr fields to be returned, since we have to explicitly include *_isort
   # fields that aren't returned when using *
-  SOLR_FIELDLIST_PARAM = %w{
+  SOLR_FIELDLIST_PARAM = %w[
     id
     cluster_id
     alma_mms_id
@@ -46,7 +46,7 @@ class CatalogController < ApplicationController
     empty_hld_count_isort
     itm_count_isort
     nocirc_a
-  }.join(',')
+  ].join(',')
 
   # expire session if needed
   before_action :expire_session
@@ -438,7 +438,7 @@ class CatalogController < ApplicationController
                            :if => search_field_accept::(['subject_xfacet2'])
     config.add_facet_field 'title_xfacet', label: 'Title', limit: 20, show: false, solr_params: MINCOUNT,
                            xfacet: true, xfacet_view_type: 'rbrowse', :if => search_field_accept::(['title_xfacet']),
-                           xfacet_rbrowse_fields: %w(title author_creator_a standardized_title_a edition conference_a series contained_within_a publication_a format_a full_text_links_for_cluster_display availability)
+                           xfacet_rbrowse_fields: %w[title author_creator_a standardized_title_a edition conference_a series contained_within_a publication_a format_a full_text_links_for_cluster_display availability]
     #config.add_facet_field 'author_creator_xfacet', label: 'Author', limit: 20, show: false,
     #                       xfacet: true, xfacet_view_type: 'xbrowse', facet_for_filtering: 'author_creator_f'
     config.add_facet_field 'author_creator_xfacet2', label: 'Author', limit: 20, show: false, solr_params: MINCOUNT,
@@ -446,7 +446,7 @@ class CatalogController < ApplicationController
                            :if => search_field_accept::(['author_creator_xfacet2'])
     config.add_facet_field 'call_number_xfacet', label: 'Call number', limit: 20, show: false, solr_params: MINCOUNT,
                            xfacet: true, xfacet_view_type: 'rbrowse', :if => search_field_accept::(['call_number_xfacet']),
-                           xfacet_rbrowse_fields: %w(title author_creator_a standardized_title_a edition conference_a series contained_within_a publication_a format_a full_text_links_for_cluster_display availability)
+                           xfacet_rbrowse_fields: %w[title author_creator_a standardized_title_a edition conference_a series contained_within_a publication_a format_a full_text_links_for_cluster_display availability]
 
     # Have BL send all facet field names to Solr, which has been the default
     # previously. Simply remove these lines if you'd rather use Solr request
