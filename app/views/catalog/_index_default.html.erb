@@ -32,7 +32,7 @@
   </div>
   <div class="col-xs-2">
     <%= render_index_doc_actions document %>
-    <span class="cover-image glyphicon glyphicon-book"></span>
+    <span class="cover-image glyphicon <%= document.format_icon %>"></span>
   </div>
 </div>
 <% if document.alma_mms_id.present? && !atom_request? %>

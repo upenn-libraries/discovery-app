@@ -50,6 +50,8 @@ body {
 .label-availability {
   padding: .4em .8em;
   font-size: 14px;
+  line-height: 2.4;
+  letter-spacing: 0.04rem;
 }
 
 .blacklight-availability {
@@ -248,6 +250,14 @@ table[id^="holdingItems"] td {
 
 .btn-primary:hover {
   background-color: $upenn-blue;
+}
+
+.btn-get-it {
+  font-size: 14px;
+}
+
+.item-request-section {
+  padding: 0 45px;
 }
 /*  END HEADER?  */
 /*  NEW HEADER CSS 165-416  */

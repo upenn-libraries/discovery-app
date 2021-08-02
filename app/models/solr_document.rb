@@ -13,8 +13,8 @@ class SolrDocument
   use_extension( Blacklight::Solr::Document::Marc) do |document|
     document.key?( :marcrecord_text )
   end
-  
-  field_semantics.merge!(    
+
+  field_semantics.merge!(
                          :last_updated => "recently_added_isort",
                          :title => "title",
                          :author => "author_creator_a",
@@ -46,10 +46,10 @@ class SolrDocument
   )
 
   # self.unique_key = 'id'
-  
+
   # Email uses the semantic field mappings below to generate the body of an email.
   SolrDocument.use_extension( Blacklight::Document::Email )
-  
+
   # SMS uses the semantic field mappings below to generate the body of an SMS email.
   SolrDocument.use_extension( Blacklight::Document::Sms )
 
@@ -89,6 +89,60 @@ class SolrDocument
     @code_mappings ||= PennLib::CodeMappings.new(Rails.root.join('config').join('translation_maps'))
     @pennlibmarc ||= PennLib::Marc.new(@code_mappings)
   end
+
+  def format_icon
+    formats = fetch('format_a', [])
+    if !formats.empty?
+      first_format = formats.first
+      case first_format
+      when 'Book'
+        'icon-book'
+      when 'Government document'
+        'icon-gov-doc-bldg'
+      when 'Journal/Periodical'
+        'icon-journal'
+      when 'Microformat'
+        'icon-microform'
+      when 'Sound recording'
+        'icon-sound'
+      when 'Video'
+        'icon-video'
+      when 'Musical score'
+        'icon-music-score'
+      when 'Conference/Event'
+        'icon-conference'
+      when 'Manuscript'
+        'icon-ms'
+      when 'Thesis/Dissertation'
+        'icon-thesis'
+      when 'Newspaper'
+        'icon-newspaper'
+      when 'Datafile'
+        'icon-dataset'
+      when 'Map/Atlas'
+        'icon-map'
+      when 'Website/Database'
+        'icon-website'
+      when 'Image'
+        'icon-image'
+      when 'Archive'
+        'icon-archive'
+      when 'Other'
+        'icon-book'
+      when 'Database & Article Index'
+        'icon-database'
+      when '3D object'
+        'icon-object'
+      when 'Projected graphic'
+        'icon-projector'
+      else
+        'icon-book'
+      end
+    else
+      'icon-book'
+    end
+  end
+
 
   def format_display
     @format_display ||= [ fetch('format_a') ] + pennlibmarc.get_format_display(to_marc)
