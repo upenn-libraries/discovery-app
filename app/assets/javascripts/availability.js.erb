@@ -46,12 +46,12 @@ $(document).ready(function() {
                 // pre-COVID-19 always mapped to "See request options";
                 if (holding['link_to_aeon']) {
                     // Aeon materials show as "unavailable", but not in the sense of being unviewable.
-                    availability = holding['location_code'] === 'vanpNocirc' ? "<span class='label label-availability label-info'>Use online access — print restricted</span>" : "<span class='label label-availability label-default'>See request options</span>";
+                    availability = holding['location_code'] === 'vanpNocirc' ? "<span class='label label-availability label-default'>Use online access — print restricted</span>" : "<span class='label label-availability label-default'>See request options</span>";
                 } else {
                     availability = "<span class='label label-availability label-danger'>Unavailable</span>";
                 }
             } else if (holding['availability'] === 'available') {
-                availability = holding['location_code'] === 'vanpNocirc' ? "<span class='label label-availability label-info'>Use online access — print restricted</span>" : "<span class='label label-availability label-success'>Available</span>";
+                availability = holding['location_code'] === 'vanpNocirc' ? "<span class='label label-availability label-default'>Use online access — print restricted</span>" : "<span class='label label-availability label-success'>Available</span>";
             }
             // TODO: pass in format to shelfLocatorLink() somehow
             return [availability, holding['location'], holding['call_number'], $.shelfLocatorLink(mms_id, holding, "TODO"), constructAeonLink(mms_id, holding)]
@@ -69,9 +69,9 @@ $(document).ready(function() {
 
                 if (url !== null) {
                     var text = holding['collection'] || "Electronic resource";
-                    url = '<a href="' + url + '">' + text + '</a>';
+                    url = '<span class="label label-availability label-primary">Online access</span> <a href="' + url + '">' + text + '</a>';
                 } else {
-                    url = "Electronic Resource (no URL available)";
+                    url = "<span class='label label-availability label-default'>No URL available</span> Electronic Resource";
                 }
 
                 return [url, holding['coverage_statement'], holding['public_note']]

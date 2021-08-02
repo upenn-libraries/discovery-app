@@ -52,10 +52,15 @@ body {
   font-size: 14px;
   line-height: 2.4;
   letter-spacing: 0.04rem;
+  margin-right: 3px;
 }
 
 .blacklight-availability {
   line-height: 175%;
+}
+
+dd.blacklight-status-location, dt.blacklight-status-location {
+  margin-top: 10px;
 }
 
 .search_q {
@@ -103,10 +108,6 @@ span.site-name a {
   color: $text-white;
   font-family: 'Gentium Book Basic', serif;
   text-shadow: 2px 2px 2px #000;
-}
-
-button.toggle {
-  margin-bottom: 20px;
 }
 
 button.toggle span.avail-label::after {
@@ -237,6 +238,14 @@ table[id^="holdingItems"] td {
   #search-navbar .search-query-form {
     padding-left: 15px;
   }
+}
+
+.search-widgets > a {
+  font-size: 16px;
+}
+
+.page_links {
+  font-size: 16px;
 }
 
 // add more padding to default btn class
@@ -497,6 +506,7 @@ body header #search-navbar div.container {
 #li-bookmarks {
   float: left;
   width: 16rem;
+  margin-top: 2px;
 
   @media (min-width: 768px) {
     padding: 1.6rem 0 0 3rem;
@@ -1130,7 +1140,7 @@ h1.franklin-title {
       /*button*/
       #search {
         border-color: #ccc;
-        height: 3.4rem;
+        height: 3.8rem;
         width: 4rem;
         background: #3d5b7b;
         background: -moz-linear-gradient(top,  #4a7eb3 0%, #3d5b7b 100%);
@@ -1142,7 +1152,7 @@ h1.franklin-title {
 
           background-image: asset-url('mag-w1pt5.svg');
           background-repeat: no-repeat;
-          height: 3.4rem;
+          height: 3.8rem;
           width: 4rem;
           background-size: 26px auto;
           background-repeat: no-repeat;
@@ -1402,6 +1412,11 @@ body #search-navbar div.container {
 
 .bento-box dl {
   margin-bottom: 10px;
+}
+
+#document dl {
+  margin-top: 20px;
+  margin-left: 20px;
 }
 
 .view-all {

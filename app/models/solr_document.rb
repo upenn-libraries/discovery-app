@@ -143,6 +143,15 @@ class SolrDocument
     end
   end
 
+  def cover_id_attrs
+    markup = ''
+    isbn = fetch('isbn_a', [])
+    oclc = fetch('oclc_id', '')
+    markup += "data-isbn=#{isbn.first} " if !isbn.empty?
+    markup += "data-oclc=#{oclc}" if !oclc.empty?
+    markup
+  end
+
 
   def format_display
     @format_display ||= [ fetch('format_a') ] + pennlibmarc.get_format_display(to_marc)

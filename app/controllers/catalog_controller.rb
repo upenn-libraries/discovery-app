@@ -68,6 +68,8 @@ class CatalogController < ApplicationController
         format_a
         full_text_link_text_a
         isbn_isxn
+        isbn_a
+        oclc_id
         language_a
         title
         title_880_a

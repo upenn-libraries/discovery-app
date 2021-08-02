@@ -86,7 +86,7 @@ module DocumentRenderHelper
           url = @@HATHI_LOGIN_PREFIX + URI.encode_www_form_component(url)
           append = @@HATHI_INFO
         end
-        %Q{<a href="#{url}">#{text}</a>#{postfix}#{append}}
+        %Q{<span class="label label-availability label-primary">Online access</span> <a href="#{url}">#{text}</a>#{postfix}#{append}}
       end.compact.join('<br/>')
     end.join('<br/>')
     unless alma_mms_id.nil?

@@ -1,9 +1,15 @@
+@import 'base/colors.css.scss';
+
 #document, .document-metadata > li {
   list-style-type: none;
   font-size: 16px;
 }
 
-
+li.blacklight-format_a {
+  font-family: serif;
+  text-transform: uppercase;
+  font-size: 15px;
+}
 
 #documents .document .document-title-heading {
   line-height: 1.42857143;
@@ -11,10 +17,24 @@
 }
 
 .cover-image {
-  font-size: 75px;
+  font-size: 70px;
   padding-top: 15px;
+  margin-left: 10px
 }
 
 .label-warning {
   color: black;
+}
+
+.results-availability {
+  margin-top: 10px;
+}
+
+span.constraints-label{
+  font-size: 16px;
+  margin-right: 5px;
+}
+
+.catalog_startOverLink {
+  font-size: 14px;
 }
