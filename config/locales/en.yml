@@ -22,7 +22,7 @@ en:
       go_back: "Cancel"
       request_to_view: "Request to View"
     delivery_messages:
-      bbm_html: "Users must <a href='https://upenn.libwizard.com/f/books-by-mail'>register for Books by Mail</a> before submitting requests."
+      bbm_html: "Users must <a href='https://upenn.libwizard.com/f/books-by-mail' target='_blank'>register for Books by Mail</a> before submitting requests."
       campus_html: "An on-campus address is required..."
       pap_html: "The <a href='https://guides.library.upenn.edu/circulation/PickUpatPenn'>PickUp@Penn service</a> currently provides weekday pickup at Van Pelt-Dietrich Library Center, Ground Floor between 10AM and 2PM."
       digi_html: "We are unable to scan entire works. Please specify chapter or article title and author information for the portion of this work to be digitized and delivered to you."
