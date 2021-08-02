@@ -10,7 +10,12 @@
         <dd class="blacklight-<%= field_name.parameterize %>"><%= doc_presenter.field_value field_name %></dd>
     <% end -%>
   <% end -%>
-  <%= render partial: 'status_location_field', locals: { document: document } if document.has_any_holdings? %>
+  <% if document.has_any_holdings? %>
+        <dt class="blacklight-status-location">Status/Location:</dt>
+        <dd class="blacklight-status-location">
+          <%= render partial: 'status_location_field', locals: { document: document } %>
+        </dd>
+  <% end %>
 </dl>
 
 <a name="franklin-availability"></a>

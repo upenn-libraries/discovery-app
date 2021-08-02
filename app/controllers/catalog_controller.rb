@@ -68,6 +68,8 @@ class CatalogController < ApplicationController
         format_a
         full_text_link_text_a
         isbn_isxn
+        isbn_a
+        oclc_id
         language_a
         title
         title_880_a
@@ -483,8 +485,7 @@ class CatalogController < ApplicationController
     #   The ordering of the field names is the order of the display
     add_fields.call(
       config, 'index', [
-        { name: 'author_creator_a', label: 'Author/Creator', helper_method: 'render_author_with_880' },
-        { name: 'standardized_title_a', label: 'Standardized Title' },
+        { name: 'author_creator_a', label: 'Author/Creator' },
         { name: 'edition', label: 'Edition' },
         { name: 'conference_a', label: 'Conference name' },
         { name: 'series', label: 'Series' },
@@ -493,7 +494,7 @@ class CatalogController < ApplicationController
         { dynamic_name: 'distribution_display', label: 'Distribution' },
         { dynamic_name: 'manufacture_display', label: 'Manufacture' },
         { name: 'contained_within_a', label: 'Contained in' },
-        { name: 'format_a', label: 'Format/Description' },
+        { name: 'format_a', label: 'Format/Description', separator: ', '},
         # in this view, 'Online resource' is full_text_link; note that
         # 'Online resource' is deliberately different here from what's on show view
         { dynamic_name: 'full_text_links_for_cluster_display', label: 'Online resource', helper_method: 'render_online_resource_display_for_index_view' },
