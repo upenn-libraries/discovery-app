@@ -153,6 +153,12 @@ table[id^="holdingItems"] td {
   }
 }*/
 
+.show-document > .document h1,
+#documents h3
+{
+  font-family: 'Gentium Book Basic', serif !important;
+}
+
 .navbar-header {
   /* match height of bg image */
   height: 99px;
