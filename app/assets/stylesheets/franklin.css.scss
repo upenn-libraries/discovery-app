@@ -2,11 +2,6 @@
 @import 'base/globals.css.scss';
 @import 'base/colors.css.scss';
 @import 'base/mixins.css.scss';
-
-body {
-  font-size: 15px;
-}
-
 #skip-link {
   margin: 0;
   padding: 0;
@@ -49,18 +44,10 @@ body {
 
 .label-availability {
   padding: .4em .8em;
-  font-size: 14px;
-  line-height: 2.4;
-  letter-spacing: 0.04rem;
-  margin-right: 3px;
 }
 
 .blacklight-availability {
   line-height: 175%;
-}
-
-dd.blacklight-status-location, dt.blacklight-status-location {
-  margin-top: 10px;
 }
 
 .search_q {
@@ -108,6 +95,10 @@ span.site-name a {
   color: $text-white;
   font-family: 'Gentium Book Basic', serif;
   text-shadow: 2px 2px 2px #000;
+}
+
+button.toggle {
+  margin-bottom: 20px;
 }
 
 button.toggle span.avail-label::after {
@@ -240,14 +231,6 @@ table[id^="holdingItems"] td {
   }
 }
 
-.search-widgets > a {
-  font-size: 16px;
-}
-
-.page_links {
-  font-size: 16px;
-}
-
 // add more padding to default btn class
 .btn {
   padding: 8px 18px;
@@ -259,14 +242,6 @@ table[id^="holdingItems"] td {
 
 .btn-primary:hover {
   background-color: $upenn-blue;
-}
-
-.btn-get-it {
-  font-size: 14px;
-}
-
-.item-request-section {
-  padding: 0 45px;
 }
 /*  END HEADER?  */
 /*  NEW HEADER CSS 165-416  */
@@ -431,7 +406,6 @@ body header #search-navbar div.container {
   .container {
     width: 100%;
     margin: 0 auto;
-    max-width: 140rem;
   }
   /*brand*/
   .navbar-header {
@@ -506,7 +480,6 @@ body header #search-navbar div.container {
 #li-bookmarks {
   float: left;
   width: 16rem;
-  margin-top: 2px;
 
   @media (min-width: 768px) {
     padding: 1.6rem 0 0 3rem;
@@ -563,6 +536,10 @@ body header #search-navbar div.container {
 //.documents-list .document:nth-child(even) {
 //  background: #ececec;
 //}
+
+#documents .document .document-title-heading {
+  line-height: 1.42857143;
+}
 
 .direct-link-trigger {
   cursor: pointer;
@@ -1140,7 +1117,7 @@ h1.franklin-title {
       /*button*/
       #search {
         border-color: #ccc;
-        height: 3.8rem;
+        height: 3.4rem;
         width: 4rem;
         background: #3d5b7b;
         background: -moz-linear-gradient(top,  #4a7eb3 0%, #3d5b7b 100%);
@@ -1152,7 +1129,7 @@ h1.franklin-title {
 
           background-image: asset-url('mag-w1pt5.svg');
           background-repeat: no-repeat;
-          height: 3.8rem;
+          height: 3.4rem;
           width: 4rem;
           background-size: 26px auto;
           background-repeat: no-repeat;
@@ -1412,11 +1389,6 @@ body #search-navbar div.container {
 
 .bento-box dl {
   margin-bottom: 10px;
-}
-
-#document dl {
-  margin-top: 20px;
-  margin-left: 20px;
 }
 
 .view-all {
@@ -1802,35 +1774,38 @@ h4, .facets .facets-heading, .h4 {
   bottom: 2rem;
   z-index: 99999;
 }
+
+
 /*start font icons
-sample: <span class="icon icon-archive" aria-hidden="true"></span>*/
+samples: 
+<span class="icon icon-archive" aria-hidden="true"></span>
+
+<span class="icon icon-archiveb" aria-hidden="true"></span>
+*/
 @font-face {
   font-family: 'icomoon';
-  src:  url('icomoon.eot');
-  src:  url('icomoon.eot?#iefix') format('embedded-opentype'),
-        url('icomoon.ttf') format('truetype'),
-        url('icomoon.woff') format('woff'),
-        url('icomoon.svg?#icomoon') format('svg');
+  src:  url('icomoon.eot?a7lhg6');
+  src:  url('icomoon.eot?a7lhg6#iefix') format('embedded-opentype'),
+    url('icomoon.ttf?a7lhg6') format('truetype'),
+    url('icomoon.woff?a7lhg6') format('woff'),
+    url('icomoon.svg?a7lhg6#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
 }
-
-[class^="icon-"],
+[class^="icon-"], 
 [class*=" icon-"] {
   /* use !important to prevent issues with browser extensions that change fonts */
   font-family: 'icomoon' !important;
-  speak: none;
+  speak: never;
   font-style: normal;
   font-weight: normal;
   font-variant: normal;
   text-transform: none;
   line-height: 1;
-  margin-right: 6px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
 /*from pul*/
 .facet-values .icon {
     width: 22px;
@@ -1843,69 +1818,130 @@ sample: <span class="icon icon-archive" aria-hidden="true"></span>*/
     line-height: 1.4em;
 }
 .icon-archive:before {
-  content: "\e900";
+  content: "\ec15";
 }
 .icon-book:before {
-  content: "\e901";
+  content: "\ec16";
 }
 .icon-conference:before {
-  content: "\e902";
+  content: "\ec17";
 }
 .icon-database:before {
-  content: "\e903";
+  content: "\ec18";
 }
 .icon-dataset:before {
-  content: "\e904";
+  content: "\ec19";
 }
 .icon-equipment:before {
-  content: "\e905";
+  content: "\ec1a";
 }
 .icon-gov-doc-bldg:before {
-  content: "\e906";
-}
-.icon-gov-doc-seal:before {
-  content: "\e907";
+  content: "\ec1b";
 }
 .icon-image:before {
-  content: "\e908";
+  content: "\ec1c";
 }
 .icon-journal:before {
-  content: "\e909";
+  content: "\ec1d";
 }
 .icon-map:before {
-  content: "\e90a";
+  content: "\ec1e";
 }
 .icon-microform:before {
-  content: "\e90b";
+  content: "\ec1f";
 }
 .icon-ms:before {
-  content: "\e90c";
+  content: "\ec20";
 }
 .icon-music-score:before {
-  content: "\e90d";
+  content: "\ec21";
 }
 .icon-newspaper:before {
-  content: "\e90e";
+  content: "\ec22";
 }
 .icon-object:before {
-  content: "\e90f";
+  content: "\ec23";
 }
 .icon-projector:before {
-  content: "\e910";
+  content: "\ec24";
 }
 .icon-software:before {
-  content: "\e911";
+  content: "\ec25";
 }
 .icon-sound:before {
-  content: "\e912";
+  content: "\ec26";
 }
 .icon-thesis:before {
-  content: "\e913";
+  content: "\ec27";
 }
 .icon-video:before {
-  content: "\e914";
+  content: "\ec28";
 }
 .icon-website:before {
-  content: "\e915";
+  content: "\ec29";
+}
+/*big icons*/
+.icon-archiveb:before {
+  content: "\ec00";
+}
+.icon-bookb:before {
+  content: "\ec01";
+}
+.icon-conferenceb:before {
+  content: "\ec02";
+}
+.icon-datasetb:before {
+  content: "\ec03";
+}
+.icon-dbb:before {
+  content: "\ec04";
+}
+.icon-equipmentb:before {
+  content: "\ec05";
+}
+.icon-gov-docs-bldgb:before {
+  content: "\ec06";
+}
+.icon-imageb:before {
+  content: "\ec07";
+}
+.icon-journalb:before {
+  content: "\ec08";
+}
+.icon-mapb:before {
+  content: "\ec09";
+}
+.icon-microfilmb:before {
+  content: "\ec0a";
+}
+.icon-msb:before {
+  content: "\ec0b";
+}
+.icon-music-scoreb:before {
+  content: "\ec0c";
+}
+.icon-newspaperb:before {
+  content: "\ec0d";
+}
+.icon-objectb:before {
+  content: "\ec0e";
+}
+.icon-projectedb:before {
+  content: "\ec0f";
+}
+.icon-softwareb:before {
+  content: "\ec10";
+}
+.icon-soundb:before {
+  content: "\ec11";
+}
+.icon-thesisb:before {
+  content: "\ec12";
+}
+.icon-videob:before {
+  content: "\ec13";
+}
+.icon-websiteb:before {
+  content: "\ec14";
 }
 /*end font icons*/
