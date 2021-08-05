@@ -2755,7 +2755,7 @@ module PennLib
     end
 
     def get_full_text_link_values(rec)
-      acc = rec.fields('856')
+      rec.fields('856')
           .select { |f| (f.indicator1 == '4') && %w{0 1}.member?(f.indicator2) }
           .map do |field|
         linktext, linkurl = linktext_and_url(field)
@@ -2764,7 +2764,6 @@ module PennLib
           linkurl: linkurl
         }
       end
-      acc
     end
 
     # It's not clear whether Alma can suppress these auto-generated
