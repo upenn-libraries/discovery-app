@@ -1007,16 +1007,7 @@ module PennLib
           end
         end.compact
       end
-      acc << 'Online' if is_etas(rec)
       acc.uniq
-    end
-
-    def is_etas(rec)
-      rec.fields('977').any? do |f|
-        f.any? do |sf|
-          sf.code == 'e' && sf.value == 'ETAS'
-        end
-      end
     end
 
     # examines a 1xx datafield and constructs a string out of select
@@ -2773,20 +2764,7 @@ module PennLib
           linkurl: linkurl
         }
       end
-      add_etas_full_text(rec, acc) if is_etas(rec)
       acc
-    end
-
-    HATHI_POSTFIX = ' from HathiTrust during COVID-19'
-
-    def add_etas_full_text(rec, acc)
-      primary_oclc_id = get_oclc_id_values(rec).first
-      return unless primary_oclc_id # defensive (e.g., if hathi match based on subsequently deleted oclc id)
-      acc << {
-        linktext: 'Online access',
-        linkurl: 'http://catalog.hathitrust.org/api/volumes/oclc/' + primary_oclc_id + '.html',
-        postfix: HATHI_POSTFIX
-      }
     end
 
     # It's not clear whether Alma can suppress these auto-generated

@@ -546,7 +546,6 @@ class FranklinIndexer < BaseIndexer
   def define_record_source_facet
     to_field 'record_source_f' do |rec, acc|
       acc << 'Penn'
-      acc << 'HathiTrust' if pennlibmarc.is_etas(rec)
     end
   end
 
