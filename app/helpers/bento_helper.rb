@@ -49,10 +49,10 @@ module BentoHelper
   # Return a link for display as part of a catalog bento result with
   # details about electronic holdings
   # @param [SolrDocument] document
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [String, NilClass]
   def online_holding_info_for(document)
     online_links_arr = []
-    has_hathi_link = dedupe_hathi(document.full_text_links_for_cluster_display, online_links_arr)
+    has_hathi_link = has_hathi_link? document.full_text_links_for_cluster_display
     # online holdings are not necessarily represented in 'full_text_link_text_a'
     # derive the canonical `links_count` from `prt_count_isort`, possibly incremented by hathi holding
     # where legit holding has no link, below prevents Hathi holdings from masking the presence of "real" online holding
@@ -68,35 +68,17 @@ module BentoHelper
     end
   end
 
-  HATHI_PD_TEXT = 'HathiTrust Digital Library Connect to full text'
-  HATHI_ETAS_POSTFIX = ' from HathiTrust during COVID-19'
-  HATHI_LOGIN_PREFIX = 'https://babel.hathitrust.org/Shibboleth.sso/Login?entityID=https://idp.pennkey.upenn.edu/idp/shibboleth&target=https%3A%2F%2Fbabel.hathitrust.org%2Fcgi%2Fping%2Fpong%3Ftarget%3D'
-
-  def dedupe_hathi(online_links_arr, result_arr)
-    acc = { arr: result_arr }
-    online_links_arr.each_with_object(acc) do |v, acc|
+  def has_hathi_link?(online_links_arr)
+    online_links_arr.each do |v|
       e = JSON.parse(v).first
-      if e['linktext'] == HATHI_PD_TEXT
-        acc[:pd] = e
-      elsif e['postfix'] == HATHI_ETAS_POSTFIX
-        e['linkurl'] = HATHI_LOGIN_PREFIX + URI.encode_www_form_component(e['linkurl'])
-        acc[:etas] = e
-      else
-        acc[:arr] << e
-      end
+      return true if e['linktext'] == 'HathiTrust Digital Library Connect to full text'
     end
-    hathi = (acc[:etas] || acc[:pd])
-    if hathi.nil?
-      return false
-    else
-      result_arr << hathi
-      return true
-    end
+    false
   end
 
   # Return a link to full text
-  # @param [SolrDocument] document
-  # @return [ActiveSupport::SafeBuffer]
+  # @param [Hash, NilClass] link_info
+  # @return [String]
   def fulltext_link_for(link_info)
     link_to(link_info['linktext'], link_info['linkurl']) + link_info['postfix']
   end

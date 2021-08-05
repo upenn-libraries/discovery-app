@@ -51,86 +51,53 @@ module DocumentRenderHelper
     end
   end
 
-  @@HATHI_PD_TEXT = 'HathiTrust Digital Library Connect to full text'
-  @@HATHI_ETAS_POSTFIX = ' from HathiTrust during COVID-19'
-  @@HATHI_INFO = ' — only for <a data-toggle="tooltip" title="details regarding HathiTrust ETAS access authorization" href="https://guides.library.upenn.edu/hathitrust">students, active faculty, and permanent staff</a>'
-  @@HATHI_LOGIN_PREFIX = 'https://babel.hathitrust.org/Shibboleth.sso/Login?entityID=https://idp.pennkey.upenn.edu/idp/shibboleth&target=https%3A%2F%2Fbabel.hathitrust.org%2Fcgi%2Fping%2Fpong%3Ftarget%3D'
+  HATHI_PD_TEXT = 'HathiTrust Digital Library Connect to full text'
 
   def detect_nocirc(document)
     return nil unless (alma_mms_id = document[:alma_mms_id]).presence
     "<div id=\"items_nocirc-#{alma_mms_id}\" display=\"none\" val=\"#{document[:nocirc_a].first}\"></div>".html_safe
   end
 
+  # @param [Hash] options
   def render_online_resource_display_for_index_view(options)
     values = options[:value]
     alma_mms_id = options[:document][:alma_mms_id]
     hathi_pd = false
-    hathi_etas = nil
     ret = values.map do |value|
-      JSON.parse(value).map do |link_struct|
-        url = link_struct['linkurl']
-        text = link_struct['linktext']
-        postfix = link_struct['postfix']
-        if text == @@HATHI_PD_TEXT
-          hathi_pd = true
-        elsif postfix == @@HATHI_ETAS_POSTFIX
-          if hathi_etas.nil?
-            hathi_etas = [url]
-          elsif hathi_etas.include? url
-            next # dedupe identical urls; infrequent, but possible
-          else
-            hathi_etas << url
-          end
-          url = @@HATHI_LOGIN_PREFIX + URI.encode_www_form_component(url)
-          append = @@HATHI_INFO
-        end
-        %Q{<a href="#{url}">#{text}</a>#{postfix}#{append}}
+      JSON.parse(value).map do |link_info|
+        url = link_info['linkurl']
+        text = link_info['linktext']
+        postfix = link_info['postfix']
+        hathi_pd = true if text == HATHI_PD_TEXT
+        %Q{<a href="#{url}">#{text}</a>#{postfix}}
       end.compact.join('<br/>')
     end.join('<br/>')
     unless alma_mms_id.nil?
-      if hathi_pd
-        ret = ret.concat(hathi_tag_id('pd', alma_mms_id))
-      end
-      if hathi_etas
-        ret = ret.concat(hathi_tag_id('etas', alma_mms_id))
-      end
+      ret = ret.concat(hathi_tag_id('pd', alma_mms_id)) if hathi_pd
     end
     ret.html_safe
   end
 
+  # @param [Hash] options
   def render_online_display_for_show_view(options)
     values = options[:value]
     alma_mms_id = options[:document][:alma_mms_id]
     hathi_pd = false
-    hathi_etas = nil
     ret = values.map do |value|
-      JSON.parse(value).map do |link_struct|
-        url = link_struct['linkurl']
-        text = link_struct['linktext']
-        postfix = link_struct['postfix']
+      JSON.parse(value).map do |link_info|
+        url = link_info['linkurl']
+        text = link_info['linktext']
+        postfix = link_info['postfix']
+        # skip ETAS link if present
+        next if postfix =~ /COVID-19/
+
         orig_url = url
-        if text == @@HATHI_PD_TEXT
-          hathi_pd = true
-        elsif postfix == @@HATHI_ETAS_POSTFIX
-          if hathi_etas.nil?
-            hathi_etas = [url]
-          elsif hathi_etas.include? url
-            next # dedupe identical urls; infrequent, but possible
-          else
-            hathi_etas << url
-          end
-          url = @@HATHI_LOGIN_PREFIX + URI.encode_www_form_component(url)
-          append = @@HATHI_INFO
-        end
-        html = %Q{<div class="online-resource-link-group"><a href="#{url}">#{text}</a>#{postfix}#{append}}
+        hathi_pd = true if text == HATHI_PD_TEXT
+        html = %Q{<div class="online-resource-link-group"><a href="#{url}">#{text}</a>#{postfix}}
         html += '<br/>'.html_safe
-
-        if !text.start_with?('http')
-          html += + orig_url
-        end
-
-        if link_struct['volumes']
-          volumes_links = link_struct['volumes'].map do |link_struct2|
+        html += + orig_url unless text.start_with?('http')
+        if link_info['volumes']
+          volumes_links = link_info['volumes'].map do |link_struct2|
             url2 = link_struct2['linkurl']
             text2 = link_struct2['linktext']
             %Q{<a href="#{url2}">#{text2}</a>}
@@ -138,7 +105,6 @@ module DocumentRenderHelper
           first5 = volumes_links[0,5].join(', ')
           remainder = (volumes_links[5..-1] || []).join(', ')
           remainder_count = volumes_links.size - 5
-
           html += '<div class="volumes-available">Volumes available: '
           html += first5
           if remainder.present?
@@ -149,19 +115,12 @@ module DocumentRenderHelper
           end
           html += '</div>'
         end
-
         html += '</div>'
-
         html
       end.compact.join
     end.join
     unless alma_mms_id.nil?
-      if hathi_pd
-        ret = ret.concat(hathi_tag_id('pd', alma_mms_id))
-      end
-      if hathi_etas
-        ret = ret.concat(hathi_tag_id('etas', alma_mms_id))
-      end
+      ret = ret.concat(hathi_tag_id('pd', alma_mms_id)) if hathi_pd
     end
     ret.html_safe
   end
