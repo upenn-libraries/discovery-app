@@ -1,7 +1,7 @@
+# frozen_string_literal: true
 
 require 'uri'
 
-# frozen_string_literal: true
 class CatalogController < ApplicationController
   include ReplaceInvalidBytes
   include BlacklightAdvancedSearch::Controller
@@ -15,9 +15,9 @@ class CatalogController < ApplicationController
 
   ENABLE_SUBJECT_CORRELATION = ENV['ENABLE_SUBJECT_CORRELATION']&.downcase == 'true'
 
-  # explicitly define solr fields to be returned, since we have to explicitly include *_isort
-  # fields that aren't returned when using *
+  # explicitly define solr fields to be returned beyond the stored fields returned by *
   SOLR_FIELDLIST_PARAM = %w[
+    *
     id
     cluster_id
     alma_mms_id
