@@ -24,10 +24,6 @@ $(document).ready(function() {
     }
 
     function constructAeonLink(mmsid, holding) {
-        if (holding['location_code'] == 'vanpNocirc') {
-          return null;
-        }
-
         if(holding['link_to_aeon']) {
           return '<a href="/redir/aeon?bibid=' + mmsid + '&hldid=' + holding['holding_id'] + '" target="_blank">Request to view</a>';
         }
@@ -47,12 +43,12 @@ $(document).ready(function() {
                 // pre-COVID-19 always mapped to "See request options";
                 if (holding['link_to_aeon']) {
                     // Aeon materials show as "unavailable", but not in the sense of being unviewable.
-                    availability = holding['location_code'] == 'vanpNocirc' ? "Use online access — print restricted" : "See request options";
+                    availability = "See request options";
                 } else {
                     availability = "Unavailable";
                 }
             } else if (holding['availability'] == 'available') {
-                availability = holding['location_code'] == 'vanpNocirc' ? "Use online access — print restricted" : "Available";
+                availability = "Available";
             }
             // TODO: pass in format to shelfLocatorLink() somehow
             return [availability, holding['location'], holding['call_number'], $.shelfLocatorLink(mms_id, holding, "TODO"), constructAeonLink(mms_id, holding)]
