@@ -22,24 +22,26 @@ module TurboAlmaApi
       def initialize(mms_id, options = {})
         @mms_id = mms_id
         @alma_username = options.dig :username
-        # TODO: clean this up
-        if options.dig(:item_count) && options.dig(:item_count).to_i > 1
-          @total_count = options[:item_count].to_i
+        @item_count = options.dig(:item_count)&.to_i # item_count from params
+        if @item_count && @item_count > 1
+          @total_count = @item_count
           @items = bulk_retrieve_items
         else
           first_items_response = TurboAlmaApi::Client.api_get_request(
             items_url(username: options.dig(:username), limit: 1)
           )
           parsed_response = Oj.load first_items_response.body
-          @total_count = parsed_response['total_record_count']
-          @items = if @total_count > 1
+          @total_count = parsed_response['total_record_count'].to_i
+          @items = if @total_count == 1
+                     Array.wrap PennItem.new parsed_response['item'].first
+                   elsif @total_count > 1
                      bulk_retrieve_items
                    else
-                     Array.wrap PennItem.new parsed_response['item'].first
+                     []
                    end
         end
         # add items representing empty holdings if needed
-        if options[:empty_holding_count]&.positive?
+        if options[:empty_holding_count].to_i > 0
           holdings = TurboAlmaApi::Client.all_holdings_for @mms_id
           items_and_empty_holdings holdings
         else
