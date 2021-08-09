@@ -23,18 +23,6 @@ $(document).ready(function() {
         BlacklightAlma.call(this);
     }
 
-    function constructAeonLink(mmsid, holding) {
-        if (holding['location_code'] == 'vanpNocirc') {
-          return null;
-        }
-
-        if(holding['link_to_aeon']) {
-          return '<a href="/redir/aeon?bibid=' + mmsid + '&hldid=' + holding['holding_id'] + '" target="_blank">Request to view</a>';
-        }
-
-        return null;
-    }
-
     Franklin.prototype = Object.create(BlacklightAlma.prototype);
 
     Franklin.prototype.formatHolding = function (mms_id, holding) {
@@ -54,7 +42,7 @@ $(document).ready(function() {
                 availability = holding['location_code'] === 'vanpNocirc' ? "<span class='label label-availability label-default'>Use online access — print restricted</span>" : "<span class='label label-availability label-success'>Available</span>";
             }
             // TODO: pass in format to shelfLocatorLink() somehow
-            return [availability, holding['location'], holding['call_number'], $.shelfLocatorLink(mms_id, holding, "TODO"), constructAeonLink(mms_id, holding)]
+            return [availability, holding['location'], holding['call_number'], $.shelfLocatorLink(mms_id, holding, "TODO")]
                 .filter(function (item) {
                     return item != null && item.length > 0;
                 }).join(' ');
