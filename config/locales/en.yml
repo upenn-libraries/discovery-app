@@ -14,8 +14,8 @@ en:
       confirmation:
         subject: "Franklin Request confirmation"
     buttons:
-      print_request: "In Print"
-      electronic_request: "Electronic"
+      print_request: "Request In Print"
+      electronic_request: "Request Scan"
       submit: "Submit Request"
       close: "Close"
       ill_request: "ILL Request Form"
@@ -52,7 +52,7 @@ en:
       section_issue: "Issue of article/chapter"
       confirmation_number: "Confirmation Number"
       pickup_location: "Pickup Location"
-      selection: "Selection"
+      selection: "Search by Item"
     labels:
       proxy_request: "Proxy Request"
       add_comments: "Add Comments"
