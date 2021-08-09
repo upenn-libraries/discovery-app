@@ -1779,16 +1779,35 @@ h4, .facets .facets-heading, .h4 {
 /*start font icons
 samples: 
 <span class="icon icon-archive" aria-hidden="true"></span>
-
 <span class="icon icon-archiveb" aria-hidden="true"></span>
 */
 @font-face {
   font-family: 'icomoon';
-  src:  url('icomoon.eot?a7lhg6');
-  src:  url('icomoon.eot?a7lhg6#iefix') format('embedded-opentype'),
-    url('icomoon.ttf?a7lhg6') format('truetype'),
-    url('icomoon.woff?a7lhg6') format('woff'),
-    url('icomoon.svg?a7lhg6#icomoon') format('svg');
+  src:  font_path('icomoon.eot');
+  src:  font_path('icomoon.eot?#iefix') format('embedded-opentype'),
+        font_path('icomoon.ttf') format('truetype'),
+        font_path('icomoon.woff') format('woff'),
+        font_path('icomoon.svg?#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Source Sans Pro';
+  src:  font_path('SourceSansPro-Black.ttf') format('truetype'),
+        font_path('SourceSansPro-BlackItalic.ttf') format('truetype'),
+        font_path('SourceSansPro-Bold.ttf') format('truetype'),
+        font_path('SourceSansPro-BoldItalic.ttf') format('truetype'),
+        font_path('SourceSansPro-ExtraLight.ttf') format('truetype'),
+        font_path('SourceSansPro-ExtraLightItalic.ttf') format('truetype'),
+        font_path('SourceSansPro-Italic.ttf') format('truetype'),
+        font_path('SourceSansPro-Light.ttf') format('truetype'),
+        font_path('SourceSansPro-LightItalic.ttf') format('truetype'),
+        font_path('SSourceSansPro-Regular.ttf') format('truetype'),
+        font_path('SourceSansPro-BoldItalic.ttf') format('truetype'),
+        font_path('SourceSansPro-ExtraLight.ttf') format('truetype'),
+        font_path('SourceSansPro-SemiBold.ttf') format('truetype'),
+        font_path('SourceSansPro-SemiBoldItalic.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-display: block;
