@@ -44,10 +44,18 @@
 
 .label-availability {
   padding: .4em .8em;
+  font-size: 14px;
+  line-height: 2.4;
+  letter-spacing: 0.04rem;
+  margin-right: 3px;
 }
 
 .blacklight-availability {
   line-height: 175%;
+}
+
+dd.blacklight-status-location, dt.blacklight-status-location {
+  margin-top: 10px;
 }
 
 .search_q {
@@ -95,10 +103,6 @@ span.site-name a {
   color: $text-white;
   font-family: 'Gentium Book Basic', serif;
   text-shadow: 2px 2px 2px #000;
-}
-
-button.toggle {
-  margin-bottom: 20px;
 }
 
 button.toggle span.avail-label::after {
@@ -231,6 +235,14 @@ table[id^="holdingItems"] td {
   }
 }
 
+.search-widgets > a {
+  font-size: 16px;
+}
+
+.page_links {
+  font-size: 16px;
+}
+
 // add more padding to default btn class
 .btn {
   padding: 8px 18px;
@@ -243,6 +255,15 @@ table[id^="holdingItems"] td {
 .btn-primary:hover {
   background-color: $upenn-blue;
 }
+
+.btn-get-it {
+  font-size: 14px;
+}
+
+.item-request-section {
+  padding: 0 45px;
+}
+
 /*  END HEADER?  */
 /*  NEW HEADER CSS 165-416  */
 header {
@@ -480,6 +501,7 @@ body header #search-navbar div.container {
 #li-bookmarks {
   float: left;
   width: 16rem;
+  margin-top: 2px;
 
   @media (min-width: 768px) {
     padding: 1.6rem 0 0 3rem;
@@ -1117,7 +1139,7 @@ h1.franklin-title {
       /*button*/
       #search {
         border-color: #ccc;
-        height: 3.4rem;
+        height: 3.8rem;
         width: 4rem;
         background: #3d5b7b;
         background: -moz-linear-gradient(top,  #4a7eb3 0%, #3d5b7b 100%);
@@ -1129,11 +1151,11 @@ h1.franklin-title {
 
           background-image: asset-url('mag-w1pt5.svg');
           background-repeat: no-repeat;
-          height: 3.4rem;
+          height: 3.8rem;
           width: 4rem;
           background-size: 26px auto;
           background-repeat: no-repeat;
-          background-position: .6rem .3rem;
+          background-position: .6rem .45rem;
         }
       }
   }
@@ -1389,6 +1411,11 @@ body #search-navbar div.container {
 
 .bento-box dl {
   margin-bottom: 10px;
+}
+
+#document dl {
+  margin-top: 20px;
+  margin-left: 20px;
 }
 
 .view-all {
@@ -1777,7 +1804,7 @@ h4, .facets .facets-heading, .h4 {
 
 
 /*start font icons
-samples: 
+samples:
 <span class="icon icon-archive" aria-hidden="true"></span>
 
 <span class="icon icon-archiveb" aria-hidden="true"></span>
@@ -1793,7 +1820,7 @@ samples:
   font-style: normal;
   font-display: block;
 }
-[class^="icon-"], 
+[class^="icon-"],
 [class*=" icon-"] {
   /* use !important to prevent issues with browser extensions that change fonts */
   font-family: 'icomoon' !important;
