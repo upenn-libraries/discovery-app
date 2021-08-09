@@ -76,7 +76,7 @@ function initializeRequestingWidget($panelBody, context) {
             } else {
                 $widget.select2({
                     theme: 'bootstrap',
-                    placeholder: "Click here to select an item",
+                    placeholder: "Select an Item",
                     width: "100%",
                     data: responseData
                 }).on('select2:open', function(e) {
