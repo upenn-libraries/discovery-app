@@ -90,57 +90,8 @@ class SolrDocument
     @pennlibmarc ||= PennLib::Marc.new(@code_mappings)
   end
 
-  def format_icon
-    formats = fetch('format_a', [])
-    if !formats.empty?
-      first_format = formats.first
-      case first_format
-      when 'Book'
-        'icon-book'
-      when 'Government document'
-        'icon-gov-doc-bldg'
-      when 'Journal/Periodical'
-        'icon-journal'
-      when 'Microformat'
-        'icon-microform'
-      when 'Sound recording'
-        'icon-sound'
-      when 'Video'
-        'icon-video'
-      when 'Musical score'
-        'icon-music-score'
-      when 'Conference/Event'
-        'icon-conference'
-      when 'Manuscript'
-        'icon-ms'
-      when 'Thesis/Dissertation'
-        'icon-thesis'
-      when 'Newspaper'
-        'icon-newspaper'
-      when 'Datafile'
-        'icon-dataset'
-      when 'Map/Atlas'
-        'icon-map'
-      when 'Website/Database'
-        'icon-website'
-      when 'Image'
-        'icon-image'
-      when 'Archive'
-        'icon-archive'
-      when 'Other'
-        'icon-book'
-      when 'Database & Article Index'
-        'icon-database'
-      when '3D object'
-        'icon-object'
-      when 'Projected graphic'
-        'icon-projector'
-      else
-        'icon-book'
-      end
-    else
-      'icon-book'
-    end
+  def fetch_format
+    fetch('format_a', []).first
   end
 
   def cover_id_attrs

@@ -2,11 +2,6 @@
 @import 'base/globals.css.scss';
 @import 'base/colors.css.scss';
 @import 'base/mixins.css.scss';
-
-body {
-  font-size: 15px;
-}
-
 #skip-link {
   margin: 0;
   padding: 0;
@@ -444,7 +439,6 @@ body header #search-navbar div.container {
   .container {
     width: 100%;
     margin: 0 auto;
-    max-width: 140rem;
   }
   /*brand*/
   .navbar-header {
@@ -576,6 +570,10 @@ body header #search-navbar div.container {
 //.documents-list .document:nth-child(even) {
 //  background: #ececec;
 //}
+
+#documents .document .document-title-heading {
+  line-height: 1.42857143;
+}
 
 .direct-link-trigger {
   cursor: pointer;
@@ -1169,7 +1167,7 @@ h1.franklin-title {
           width: 4rem;
           background-size: 26px auto;
           background-repeat: no-repeat;
-          background-position: .6rem .3rem;
+          background-position: .6rem .45rem;
         }
       }
   }
@@ -1815,15 +1813,21 @@ h4, .facets .facets-heading, .h4 {
   bottom: 2rem;
   z-index: 99999;
 }
+
+
 /*start font icons
-sample: <span class="icon icon-archive" aria-hidden="true"></span>*/
+samples:
+<span class="icon icon-archive" aria-hidden="true"></span>
+
+<span class="icon icon-archiveb" aria-hidden="true"></span>
+*/
 @font-face {
   font-family: 'icomoon';
-  src:  url('icomoon.eot');
-  src:  url('icomoon.eot?#iefix') format('embedded-opentype'),
-        url('icomoon.ttf') format('truetype'),
-        url('icomoon.woff') format('woff'),
-        url('icomoon.svg?#icomoon') format('svg');
+  src:  font-url('icomoon.eot');
+  src:  font-url('icomoon.eot?#iefix') format('embedded-opentype'),
+        font-url('icomoon.ttf') format('truetype'),
+        font-url('icomoon.woff') format('woff'),
+        font-url('icomoon.svg#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -1833,15 +1837,20 @@ sample: <span class="icon icon-archive" aria-hidden="true"></span>*/
 [class*=" icon-"] {
   /* use !important to prevent issues with browser extensions that change fonts */
   font-family: 'icomoon' !important;
-  speak: none;
+  speak: never;
   font-style: normal;
   font-weight: normal;
   font-variant: normal;
   text-transform: none;
   line-height: 1;
-  margin-right: 6px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.format-facet .facet-label {
+  padding-left: 22px;
+  vertical-align: top;
+  padding-top: 1px;
 }
 
 /*from pul*/
@@ -1855,70 +1864,131 @@ sample: <span class="icon icon-archive" aria-hidden="true"></span>*/
     font-size: 1.275em;
     line-height: 1.4em;
 }
+.icon-archiveb:before {
+  content: "\ed00";
+}
+.icon-bookb:before {
+  content: "\ed01";
+}
+.icon-conferenceb:before {
+  content: "\ed02";
+}
+.icon-datasetb:before {
+  content: "\ed03";
+}
+.icon-databaseb:before {
+  content: "\ed04";
+}
+.icon-equipmentb:before {
+  content: "\ed05";
+}
+.icon-gov-doc-bldgb:before {
+  content: "\ed06";
+}
+.icon-imageb:before {
+  content: "\ed07";
+}
+.icon-journalb:before {
+  content: "\ed08";
+}
+.icon-map-linesb:before {
+  content: "\ed09";
+}
+.icon-microformb:before {
+  content: "\ed0a";
+}
+.icon-msb:before {
+  content: "\ed0b";
+}
+.icon-music-scoreb:before {
+  content: "\ed0c";
+}
+.icon-newspaperb:before {
+  content: "\ed0d";
+}
+.icon-objectb:before {
+  content: "\ed0e";
+}
+.icon-projectorb:before {
+  content: "\ed0f";
+}
+.icon-softwareb:before {
+  content: "\ed10";
+}
+.icon-soundb:before {
+  content: "\ed11";
+}
+.icon-thesisb:before {
+  content: "\ed12";
+}
+.icon-videob:before {
+  content: "\ed13";
+}
+.icon-websiteb:before {
+  content: "\ed14";
+}
 .icon-archive:before {
-  content: "\e900";
+  content: "\ed15";
 }
 .icon-book:before {
-  content: "\e901";
+  content: "\ed16";
 }
 .icon-conference:before {
-  content: "\e902";
+  content: "\ed17";
 }
 .icon-database:before {
-  content: "\e903";
+  content: "\ed18";
 }
 .icon-dataset:before {
-  content: "\e904";
+  content: "\ed19";
 }
 .icon-equipment:before {
-  content: "\e905";
+  content: "\ed1a";
 }
 .icon-gov-doc-bldg:before {
-  content: "\e906";
-}
-.icon-gov-doc-seal:before {
-  content: "\e907";
+  content: "\ed1b";
 }
 .icon-image:before {
-  content: "\e908";
+  content: "\ed1c";
 }
 .icon-journal:before {
-  content: "\e909";
+  content: "\ed1d";
 }
-.icon-map:before {
-  content: "\e90a";
+.icon-map-lines:before {
+  content: "\ed1e";
 }
 .icon-microform:before {
-  content: "\e90b";
+  content: "\ed1f";
 }
 .icon-ms:before {
-  content: "\e90c";
+  content: "\ed20";
 }
 .icon-music-score:before {
-  content: "\e90d";
+  content: "\ed21";
 }
 .icon-newspaper:before {
-  content: "\e90e";
+  content: "\ed22";
 }
 .icon-object:before {
-  content: "\e90f";
+  content: "\ed23";
 }
 .icon-projector:before {
-  content: "\e910";
+  content: "\ed24";
 }
 .icon-software:before {
-  content: "\e911";
+  content: "\ed25";
 }
 .icon-sound:before {
-  content: "\e912";
+  content: "\ed26";
 }
 .icon-thesis:before {
-  content: "\e913";
+  content: "\ed27";
 }
 .icon-video:before {
-  content: "\e914";
+  content: "\ed28";
 }
 .icon-website:before {
-  content: "\e915";
+  content: "\ed29";
 }
+
 /*end font icons*/
