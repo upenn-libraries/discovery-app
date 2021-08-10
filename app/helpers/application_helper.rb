@@ -225,4 +225,60 @@ module ApplicationHelper
   def resourcesharing_path
     '/forms/resourcesharing'
   end
+
+  def format_icon(format, size: 'small')
+    icon_class = if !format.empty?
+      case format
+      when 'Book'
+        'icon-book'
+      when 'Government document'
+        'icon-gov-doc-bldg'
+      when 'Journal/Periodical'
+        'icon-journal'
+      when 'Microformat'
+        'icon-microform'
+      when 'Sound recording'
+        'icon-sound'
+      when 'Video'
+        'icon-video'
+      when 'Musical score'
+        'icon-music-score'
+      when 'Conference/Event'
+        'icon-conference'
+      when 'Manuscript'
+        'icon-ms'
+      when 'Thesis/Dissertation'
+        'icon-thesis'
+      when 'Newspaper'
+        'icon-newspaper'
+      when 'Datafile'
+        'icon-dataset'
+      when 'Map/Atlas'
+        'icon-map'
+      when 'Website/Database'
+        'icon-website'
+      when 'Image'
+        'icon-image'
+      when 'Archive'
+        'icon-archive'
+      when 'Other'
+        'icon-book'
+      when 'Database & Article Index'
+        'icon-database'
+      when '3D object'
+        'icon-object'
+      when 'Projected graphic'
+        'icon-projector'
+      else
+        'icon-book'
+      end
+    else
+      'icon-book'
+    end
+    if size == 'large'
+      icon_class + 'b'
+    else
+      icon_class
+    end
+  end
 end
