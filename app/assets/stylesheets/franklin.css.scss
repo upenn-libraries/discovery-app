@@ -26,6 +26,10 @@
     }
   }
 }
+a {
+  color: #0778b3;
+  text-decoration: none;
+}
 
 
 @media (min-width: 992px) and (max-width: 1199px) {
@@ -1478,7 +1482,12 @@ body #search-navbar div.container {
 }
 
 /* end of hack */
-
+.panel-group .panel + .panel {
+    margin: 0 0 .8rem;
+    border-radius: .2rem;
+    border-color: #bbb;
+    @include box-shadow(none);
+}
 .panel-default > .panel-heading.expert-box {
   color: white;
   background-color: #337ab7;
