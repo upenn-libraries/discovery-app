@@ -39,7 +39,8 @@
   </div>
   <div class="col-xs-2">
     <%= render_index_doc_actions document %>
-    <div class="cover-image <%= document.format_icon %>" <%= document.cover_id_attrs %>></div>
+    <div class="cover-image <%= format_icon(document.fetch_format, size: 'large') %>" <%= document.cover_id_attrs %>>
+    </div>
   </div>
 </div>
 <% if document.alma_mms_id.present? && !atom_request? %>

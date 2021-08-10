@@ -25,6 +25,8 @@ class CatalogController < ApplicationController
     format_a
     full_text_link_text_a
     isbn_isxn
+    isbn_a
+    oclc_id
     language_a
     title
     title_880_a
@@ -399,7 +401,7 @@ class CatalogController < ApplicationController
         'HathiTrust' => { :label => 'HathiTrust', :fq => "{!join ex=orig_q from=cluster_id to=cluster_id v='{!term f=record_source_f v=HathiTrust}'}"},
         'Penn' => { :label => 'Penn', :fq => "{!term f=record_source_f v=Penn}"},
     }
-    config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false, :ex => 'orig_q', solr_params: MINCOUNT
+    config.add_facet_field 'format_f', label: 'Format', limit: 20, collapse: false, :ex => 'orig_q', solr_params: MINCOUNT, partial: "format_facet"
     config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z', collapse: false,
         :ex => 'orig_q', solr_params: MINCOUNT
     #config.add_facet_field 'subject_taxonomy', label: 'Subject Taxonomy', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy', :json_facet => SUBJECT_TAXONOM, :helper_method => :render_subcategories
