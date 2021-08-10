@@ -6,11 +6,10 @@
   <p class="list-group-item-text">
     <%= t('requests.delivery_messages.bbm_html') %>
   </p>
-  <%= f.form_group :bbm_confirm do %>
-    <%= f.check_box :bbm_confirm,
-                    id: 'bbm_validation_checkbox',
-                    label: t('requests.labels.registered_bbm'),
-                    disabled: true,
-                    required: true %>
-  <% end %>
+  <div class="checkbox disabled">
+    <label>
+      <input id="bbm_validation_checkbox" required="required" type="checkbox" value="1" name="bbm_confirm" disabled>
+      <%= t 'requests.labels.registered_bbm' %>
+    </label>
+  </div>
 </li>

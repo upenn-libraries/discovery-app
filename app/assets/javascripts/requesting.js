@@ -146,10 +146,13 @@ $(document).ready(function() {
     $body
         .on('click', '.delivery-option-radio', function(e) {
             var $radio = $(this);
+            var $checkbox = $('#bbm_validation_checkbox');
             if($radio.val() === 'mail') {
-                $('#bbm_validation_checkbox').prop('disabled', false).focus();
+                $checkbox.prop('disabled', false).focus();
+                $checkbox.closest('div.checkbox').removeClass('disabled');
             } else {
-                $('#bbm_validation_checkbox').prop('disabled', true);
+                $checkbox.prop('disabled', true);
+                $checkbox.closest('div.checkbox').addClass('disabled');
             }
         })
         .on('ajax:beforeSend', '#confirm-modal form', function() {
