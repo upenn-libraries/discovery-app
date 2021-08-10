@@ -254,7 +254,7 @@ module ApplicationHelper
       when 'Datafile'
         'icon-dataset'
       when 'Map/Atlas'
-        'icon-map'
+        'icon-map-lines'
       when 'Website/Database'
         'icon-website'
       when 'Image'

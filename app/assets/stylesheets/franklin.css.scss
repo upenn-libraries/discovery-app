@@ -1815,7 +1815,7 @@ samples:
   src:  font-url('icomoon.eot?#iefix') format('embedded-opentype'),
         font-url('icomoon.ttf') format('truetype'),
         font-url('icomoon.woff') format('woff'),
-        font-url('icomoon.svg?#icomoon') format('svg');
+        font-url('icomoon.svg#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -1834,6 +1834,13 @@ samples:
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+.format-facet .facet-label {
+  padding-left: 22px;
+  vertical-align: top;
+  padding-top: 1px;
+}
+
 /*from pul*/
 .facet-values .icon {
     width: 22px;
@@ -1845,131 +1852,131 @@ samples:
     font-size: 1.275em;
     line-height: 1.4em;
 }
-.icon-archive:before {
-  content: "\ec15";
-}
-.icon-book:before {
-  content: "\ec16";
-}
-.icon-conference:before {
-  content: "\ec17";
-}
-.icon-database:before {
-  content: "\ec18";
-}
-.icon-dataset:before {
-  content: "\ec19";
-}
-.icon-equipment:before {
-  content: "\ec1a";
-}
-.icon-gov-doc-bldg:before {
-  content: "\ec1b";
-}
-.icon-image:before {
-  content: "\ec1c";
-}
-.icon-journal:before {
-  content: "\ec1d";
-}
-.icon-map:before {
-  content: "\ec1e";
-}
-.icon-microform:before {
-  content: "\ec1f";
-}
-.icon-ms:before {
-  content: "\ec20";
-}
-.icon-music-score:before {
-  content: "\ec21";
-}
-.icon-newspaper:before {
-  content: "\ec22";
-}
-.icon-object:before {
-  content: "\ec23";
-}
-.icon-projector:before {
-  content: "\ec24";
-}
-.icon-software:before {
-  content: "\ec25";
-}
-.icon-sound:before {
-  content: "\ec26";
-}
-.icon-thesis:before {
-  content: "\ec27";
-}
-.icon-video:before {
-  content: "\ec28";
-}
-.icon-website:before {
-  content: "\ec29";
-}
-/*big icons*/
 .icon-archiveb:before {
-  content: "\ec00";
+  content: "\ed00";
 }
 .icon-bookb:before {
-  content: "\ec01";
+  content: "\ed01";
 }
 .icon-conferenceb:before {
-  content: "\ec02";
+  content: "\ed02";
 }
 .icon-datasetb:before {
-  content: "\ec03";
+  content: "\ed03";
 }
-.icon-dbb:before {
-  content: "\ec04";
+.icon-databaseb:before {
+  content: "\ed04";
 }
 .icon-equipmentb:before {
-  content: "\ec05";
+  content: "\ed05";
 }
-.icon-gov-docs-bldgb:before {
-  content: "\ec06";
+.icon-gov-doc-bldgb:before {
+  content: "\ed06";
 }
 .icon-imageb:before {
-  content: "\ec07";
+  content: "\ed07";
 }
 .icon-journalb:before {
-  content: "\ec08";
+  content: "\ed08";
 }
-.icon-mapb:before {
-  content: "\ec09";
+.icon-map-linesb:before {
+  content: "\ed09";
 }
-.icon-microfilmb:before {
-  content: "\ec0a";
+.icon-microformb:before {
+  content: "\ed0a";
 }
 .icon-msb:before {
-  content: "\ec0b";
+  content: "\ed0b";
 }
 .icon-music-scoreb:before {
-  content: "\ec0c";
+  content: "\ed0c";
 }
 .icon-newspaperb:before {
-  content: "\ec0d";
+  content: "\ed0d";
 }
 .icon-objectb:before {
-  content: "\ec0e";
+  content: "\ed0e";
 }
-.icon-projectedb:before {
-  content: "\ec0f";
+.icon-projectorb:before {
+  content: "\ed0f";
 }
 .icon-softwareb:before {
-  content: "\ec10";
+  content: "\ed10";
 }
 .icon-soundb:before {
-  content: "\ec11";
+  content: "\ed11";
 }
 .icon-thesisb:before {
-  content: "\ec12";
+  content: "\ed12";
 }
 .icon-videob:before {
-  content: "\ec13";
+  content: "\ed13";
 }
 .icon-websiteb:before {
-  content: "\ec14";
+  content: "\ed14";
 }
+.icon-archive:before {
+  content: "\ed15";
+}
+.icon-book:before {
+  content: "\ed16";
+}
+.icon-conference:before {
+  content: "\ed17";
+}
+.icon-database:before {
+  content: "\ed18";
+}
+.icon-dataset:before {
+  content: "\ed19";
+}
+.icon-equipment:before {
+  content: "\ed1a";
+}
+.icon-gov-doc-bldg:before {
+  content: "\ed1b";
+}
+.icon-image:before {
+  content: "\ed1c";
+}
+.icon-journal:before {
+  content: "\ed1d";
+}
+.icon-map-lines:before {
+  content: "\ed1e";
+}
+.icon-microform:before {
+  content: "\ed1f";
+}
+.icon-ms:before {
+  content: "\ed20";
+}
+.icon-music-score:before {
+  content: "\ed21";
+}
+.icon-newspaper:before {
+  content: "\ed22";
+}
+.icon-object:before {
+  content: "\ed23";
+}
+.icon-projector:before {
+  content: "\ed24";
+}
+.icon-software:before {
+  content: "\ed25";
+}
+.icon-sound:before {
+  content: "\ed26";
+}
+.icon-thesis:before {
+  content: "\ed27";
+}
+.icon-video:before {
+  content: "\ed28";
+}
+.icon-website:before {
+  content: "\ed29";
+}
+
 /*end font icons*/

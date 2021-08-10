@@ -91,7 +91,7 @@ class SolrDocument
   end
 
   def fetch_format
-    fetch('format_a', [])
+    fetch('format_a', []).first
   end
 
   def cover_id_attrs

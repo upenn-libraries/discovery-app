@@ -1,7 +1,9 @@
-<ul class="facet-values list-unstyled">
+<ul class="format-facet facet-values list-unstyled">
   <% paginator = facet_paginator(facet_field, display_facet) %>
   <% paginator.items.each do |item| -%>
-    <li class=<%= format_icon(item.value) %>>
+    <% next if item.value == item.value.to_i.to_s %>
+    <li>
+      <span class="icon <%= format_icon(item.value) %>"></span>
       <% if facet_in_params?( solr_field, item.value ) %>
           <%= render_selected_facet_value(solr_field, item) %>
         <% else %>
