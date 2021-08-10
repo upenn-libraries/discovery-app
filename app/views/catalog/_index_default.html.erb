@@ -1,7 +1,6 @@
 <% doc_presenter = index_presenter(document) %>
 <%= detect_nocirc(document) %>
 
-
 <div class="row">
   <div class="col-xs-10">
     <div class="documentHeader row">
@@ -45,7 +44,7 @@
 </div>
 <% if document.alma_mms_id.present? && !atom_request? %>
   <% if document.show_requesting_widget? %>
-    <%= render 'shared/item_request_widget', document: document, hide: true %>
+    <%= render 'requests/index_request_widget', document: document, hide: true %>
   <% else %>
     <%= render 'alma_availability', document: document, collapsed: true %>
   <% end %>

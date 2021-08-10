@@ -1,0 +1,30 @@
+<form class="request-form">
+  <div class="form-group">
+    <label for="request-item"><%= t('requests.fields.selection') %></label>
+    <select name="request-item" class="form-control request-item-select" data-mmsid="<%= document.alma_mms_id %>" data-item-count="<%= document.item_count %>" data-empty-holding-count="<%= document.empty_holding_count %>">
+      <option value=""></option>
+    </select>
+  </div>
+  <div class="form-group">
+    <div class="btn-toolbar" aria-label="Get It Options">
+      <button type="submit" class="print-request-button btn btn-default request-button" value="print" style="display: none;" disabled><%= t('requests.buttons.print_request') %></button>
+      <button type="submit" class="aeon-request-button btn btn-default request-button" value="aeon" style="display: none;" disabled><%= t('requests.buttons.request_to_view') %></button>
+      <button type="submit" class="electronic-request-button btn btn-default request-button" style="display: none;"
+              value="electronic" disabled>
+        <%= t('requests.buttons.electronic_request') %>
+      </button>
+      <% unless current_user %>
+        <div class="btn-group">
+          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Login to Activate Requesting Options <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a href="<%= accounts_login_url(next: request.original_url) %>">Current faculty, student, staff login</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="https://guides.library.upenn.edu/franklinaccount#s-lg-box-19646803">Subscribed alumni and courtesy user login</a></li>
+          </ul>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</form>

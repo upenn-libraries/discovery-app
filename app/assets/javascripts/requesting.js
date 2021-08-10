@@ -1,45 +1,39 @@
-function populateItemDebugWell($panelBody, selectedItem) {
-    $panelBody.find('.selected-item-debug').show().text('Debug Info: ' + JSON.stringify(selectedItem, null, 4));
-}
-
-function showAndEnableRequestButtons($panelBody, selectedItem) {
-    $panelBody.find('.print-request-button').prop('disabled', false).show();
+function showAndEnableRequestButtons($widgetArea, selectedItem) {
+    $widgetArea.find('.print-request-button').prop('disabled', false).show();
     if(selectedItem.scannable) {
-        $panelBody.find('.electronic-request-button').prop('disabled', false).show();
+        $widgetArea.find('.electronic-request-button').prop('disabled', false).show();
     }
-    $panelBody.find('.aeon-request-button').prop('disabled', true).hide();
+    $widgetArea.find('.aeon-request-button').prop('disabled', true).hide();
 }
 
-function showAndEnablePublicAeonButton($panelBody) {
-    $panelBody.find('.print-request-button').prop('disabled', true).hide();
-    $panelBody.find('.electronic-request-button').prop('disabled', true).hide();
-    $panelBody.find('.aeon-request-button').prop('disabled', false).show();
+function showAndEnablePublicAeonButton($widgetArea) {
+    $widgetArea.find('.print-request-button').prop('disabled', true).hide();
+    $widgetArea.find('.electronic-request-button').prop('disabled', true).hide();
+    $widgetArea.find('.aeon-request-button').prop('disabled', false).show();
 }
 
-function showDisabledRequestButtons($panelBody) {
-    $panelBody.find('.print-request-button').prop('disabled', true).show();
-    $panelBody.find('.electronic-request-button').prop('disabled', true).show();
-    $panelBody.find('.aeon-request-button').prop('disabled', false).hide();
+function showDisabledRequestButtons($widgetArea) {
+    $widgetArea.find('.print-request-button').prop('disabled', true).show();
+    $widgetArea.find('.electronic-request-button').prop('disabled', true).show();
+    $widgetArea.find('.aeon-request-button').prop('disabled', false).hide();
 }
 
-function displayButtons($panelBody, selectedItem, logged_in, context) {
+function displayButtons($widgetArea, selectedItem, logged_in, context) {
     if(!selectedItem.aeon_requestable) {
         if(logged_in) {
-            showAndEnableRequestButtons($panelBody, selectedItem);
+            showAndEnableRequestButtons($widgetArea, selectedItem);
         } else {
-            showDisabledRequestButtons($panelBody);
+            showDisabledRequestButtons($widgetArea);
         }
     } else {
-        showAndEnablePublicAeonButton($panelBody);
+        showAndEnablePublicAeonButton($widgetArea);
     }
-
-    // if (context === 'show') { populateItemDebugWell($panelBody, selectedItem) }
 }
 
-function initializeRequestingWidget($panelBody, context) {
+function initializeRequestingWidget($widgetArea, context) {
     $('.selected-item-debug').hide();
-    var $requestForm = $panelBody.find('.request-form')
-    var $widget = $panelBody.find('.request-item-select');
+    var $requestForm = $widgetArea.find('.request-form')
+    var $widget = $widgetArea.find('.request-item-select');
     var logged_in = $('#requesting-logged-in').data('value')
     if($widget.length > 0) {
         var mmsId = $widget.data('mmsid');
@@ -64,15 +58,15 @@ function initializeRequestingWidget($panelBody, context) {
             url: itemRequestUrl,
             dataType: 'json'
         }).done(function(data) {
-            $panelBody.removeClass('spinner');
+            $widgetArea.removeClass('spinner');
             $requestForm.show();
             responseData = data
             if(responseData.length === 1) {
-                // single iem case - avoid instantiating select2 widget
+                // single item case - avoid instantiating select2 widget
                 $widget.closest('.form-group').hide();
                 selectedItem = responseData[0];
                 $widget.data(selectedItem);
-                displayButtons($panelBody, selectedItem, logged_in, context);
+                displayButtons($widgetArea, selectedItem, logged_in, context);
             } else {
                 $widget.select2({
                     theme: 'bootstrap',
@@ -83,10 +77,11 @@ function initializeRequestingWidget($panelBody, context) {
                     $('.select2-search__field').attr('placeholder', "Start typing to filter the list");
                 }).on('select2:select', function(e) {
                     selectedItem = e.params.data;
-                    displayButtons($panelBody, selectedItem, logged_in, context);
+                    displayButtons($widgetArea, selectedItem, logged_in, context);
                 });
             }
-            $panelBody.addClass('loaded');
+            $widgetArea.addClass('loaded');
+            $widgetArea.find('button:first').focus();
         });
 
         if(context === 'show') {
@@ -109,25 +104,35 @@ $(document).ready(function() {
     var $body = $('body');
     var context;
     if(document.body.classList.contains("blacklight-catalog-show")) {
-        var $panelBody = $('.item-request-widget');
+        var $widgetArea = $('.item-request-widget');
         context = 'show';
-        initializeRequestingWidget($panelBody, context);
+        initializeRequestingWidget($widgetArea, context);
     } else if(document.body.classList.contains("blacklight-catalog-index")) {
         context = 'index';
         $body.on('click', '.btn-get-it', function(e){
             e.preventDefault();
-            var mms_id = $(this).data('mms-id');
+            var $button = $(this);
+            var mms_id = $button.data('mms-id');
             if(mms_id) {
                 var id = '#item-request-widget-for-' + mms_id;
                 var $widget = $(id);
+                var $caret = $button.find('span.getit-caret');
                 if($widget && !$widget.hasClass('loaded')) {
                     initializeRequestingWidget($widget, context);
                 }
                 var $otherWidgets = $('.item-request-widget:not(' + id + ')');
                 $otherWidgets.hide();
                 $widget.slideToggle(200);
-            }
+                if($caret.hasClass('glyphicon-chevron-down')) {
+                    $button.attr('aria-expanded', false);
+                    $caret.removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-right');
+                } else if($caret.hasClass('glyphicon-chevron-right')) {
+                    $button.attr('aria-expanded', true);
+                    $('.getit-caret').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-right');
+                    $caret.removeClass('glyphicon-chevron-right').addClass('glyphicon-chevron-down');
+                }
 
+            }
         });
     }
 

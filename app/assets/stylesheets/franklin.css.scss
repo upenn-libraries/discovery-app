@@ -263,11 +263,24 @@ table[id^="holdingItems"] td {
 
 .btn-get-it {
   font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  //background-color: $upenn-lighter-blue;
 }
 
-.item-request-section {
-  padding: 0 45px;
+.item-request-section-index {
+  padding: 0 55px;
+  margin-bottom: 10px;
+
+  .panel-body {
+    margin-bottom: -15px;
+  }
 }
+
+.item-request-section-show {
+  padding: 0 0;
+}
+
 /*  END HEADER?  */
 /*  NEW HEADER CSS 165-416  */
 header {
