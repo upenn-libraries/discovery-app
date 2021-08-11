@@ -74,7 +74,7 @@ function initializeRequestingWidget($widgetArea, context) {
                     width: "100%",
                     data: responseData
                 }).on('select2:open', function(e) {
-                    $('.select2-search__field').attr('placeholder', "Start typing to filter the list");
+                    $('.select2-search__field').attr('placeholder', "Type a year, issue or volume number to filter the list");
                 }).on('select2:select', function(e) {
                     selectedItem = e.params.data;
                     displayButtons($widgetArea, selectedItem, logged_in, context);
