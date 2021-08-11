@@ -53,6 +53,7 @@ en:
       confirmation_number: "Confirmation Number"
       pickup_location: "Pickup Location"
       selection: "Search by Item"
+      selected: "Selected Item"
     labels:
       proxy_request: "Proxy Request"
       add_comments: "Add Comments"
