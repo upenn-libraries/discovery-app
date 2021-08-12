@@ -191,59 +191,59 @@
   <display>LIBRA - Athenaeum of Philadelphia Circulating</display>
 </location>
 <location location_code="biom">
-  <specific_location>Biomedical Library</specific_location>
+  <specific_location>Biotech Commons</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Biomedical Library</library>
-  <display>Biomedical Library</display>
+  <library>Biotech Commons</library>
+  <display>Biotech Commons</display>
 </location>
 <location location_code="biomclin">
-  <specific_location>Biomedical Library - Clinical Reading Room</specific_location>
+  <specific_location>Biotech Commons - Clinical Reading Room</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Biomedical Library</library>
-  <display>Biomedical Library - Clinical Reading Room</display>
+  <library>Biotech Commons</library>
+  <display>Biotech Commons - Clinical Reading Room</display>
 </location>
 <location location_code="biomhist">
-  <specific_location>Biomedical Library - Historical Collection</specific_location>
+  <specific_location>Biotech Commons - Historical Collection</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Biomedical Library</library>
-  <display>Biomedical Library - Historical Collection</display>
+  <library>Biotech Commons</library>
+  <display>Biotech Commons - Historical Collection</display>
 </location>
 <location location_code="biomlibr">
-  <specific_location>Biomedical Library - Librarian's Office</specific_location>
+  <specific_location>Biotech Commons - Librarian's Office</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Biomedical Library</library>
-  <display>Biomedical Library - Librarian's Office</display>
+  <library>Biotech Commons</library>
+  <display>Biotech Commons - Librarian's Office</display>
 </location>
 <location location_code="biomonli">
-  <specific_location>Biomedical Library - Online Office</specific_location>
+  <specific_location>Biotech Commons - Online Office</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Biomedical Library</library>
-  <display>Biomedical Library - Online Office</display>
+  <library>Biotech Commons</library>
+  <display>Biotech Commons - Online Office</display>
 </location>
 <location location_code="biomperi">
-  <specific_location>Biomedical Library - Periodicals</specific_location>
+  <specific_location>Biotech Commons - Periodicals</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Biomedical Library</library>
-  <display>Biomedical Library - Periodicals</display>
+  <library>Biotech Commons</library>
+  <display>Biotech Commons - Periodicals</display>
 </location>
 <location location_code="biomrede">
-  <specific_location>Biomedical Library - Reference Desk</specific_location>
+  <specific_location>Biotech Commons - Reference Desk</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Biomedical Library</library>
-  <display>Biomedical Library - Reference Desk</display>
+  <library>Biotech Commons</library>
+  <display>Biotech Commons - Reference Desk</display>
 </location>
 <location location_code="biomrefe">
-  <specific_location>Biomedical Library - Reference</specific_location>
+  <specific_location>Biotech Commons - Reference</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Biomedical Library</library>
-  <display>Biomedical Library - Reference</display>
+  <library>Biotech Commons</library>
+  <display>Biotech Commons - Reference</display>
 </location>
 <location location_code="biomrese">
-  <specific_location>Biomedical Library - Reserve</specific_location>
+  <specific_location>Biotech Commons - Reserve</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Biomedical Library</library>
+  <library>Biotech Commons</library>
   <library>Reserve</library>
-  <display>Biomedical Library - Reserve</display>
+  <display>Biotech Commons - Reserve</display>
 </location>
 <location location_code="chem">
   <specific_location>Chemistry Library - Books</specific_location>
@@ -1006,7 +1006,7 @@
 </location>
 <location location_code="musicsem">
   <specific_location>Van Pelt - Marian Anderson Music Study Center</specific_location>
-  <library>Van Pelt-Dietrich Library Center</library> 
+  <library>Van Pelt-Dietrich Library Center</library>
   <display>Van Pelt - Marian Anderson Music Study Center (452)</display>
 </location>
 <location location_code="musictech">
@@ -1014,17 +1014,17 @@
 </location>
 <location location_code="musicup">
   <specific_location>Van Pelt - Ormandy Center</specific_location>
-  <library>Van Pelt-Dietrich Library Center</library> 
+  <library>Van Pelt-Dietrich Library Center</library>
   <display>Van Pelt - Ormandy University Performances</display>
 </location>
 <location location_code="musinwbk">
   <specific_location>Van Pelt - Music Library New Book Shelf</specific_location>
-  <library>Van Pelt-Dietrich Library Center</library> 
+  <library>Van Pelt-Dietrich Library Center</library>
   <display>Van Pelt - Music Library New Book Shelf</display>
 </location>
 <location location_code="musisemres">
   <specific_location>Van Pelt - Marian Anderson Study Center Reserve</specific_location>
-  <library>Van Pelt-Dietrich Library Center</library> 
+  <library>Van Pelt-Dietrich Library Center</library>
   <library>Reserve</library>
   <display>Van Pelt - Marian Anderson Study Center Reserve</display>
 </location>
@@ -1079,8 +1079,8 @@
 <location location_code="oobiom">
   <specific_location>On Order</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Biomedical Library</library>
-  <display>Ordered for Biomedical Library</display>
+  <library>Biotech Commons</library>
+  <display>Ordered for Biotech Commons</display>
 </location>
 <location location_code="oochem">
   <specific_location>On Order</specific_location>
