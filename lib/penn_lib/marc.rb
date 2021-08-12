@@ -688,7 +688,7 @@ module PennLib
     end
 
     def is_subject_search_field(field)
-      # 11/2018 kms: add 2nd Ind 7
+      # 11/2018 kms: add 2nd Ind 7 
       if ! (field.respond_to?(:indicator2) && %w{0 1 2 4 7}.member?(field.indicator2))
         false
       elsif subject_search_tags.member?(field.tag) || field.tag.start_with?('69')
@@ -728,7 +728,7 @@ module PennLib
     def subject_69X
       @subject_69X ||= %w{690 691 697}
     end
-
+    
     # 11/2018: add 69x as local subj, add 650 _7 as subj
     def get_subjects_from_600s_and_800(rec, indicator2)
       track_dups = Set.new
@@ -767,7 +767,7 @@ module PennLib
         # but NOT a penn community of interest 690 (which have $2 penncoi )
         acc += rec.fields
              .select { |f| subject_600s.member?(f.tag) && f.indicator2 == '4' ||
-                 ( subject_69X.member?(f.tag)  && !(has_subfield_value(f,'2',/penncoi/))  ) }
+                 ( subject_69X.member?(f.tag)  && !(has_subfield_value(f,'2',/penncoi/))  ) } 
              .map do |field|
           suba = field.select(&subfield_in(%w{a}))
                      .select { |sf| sf.value !~ /^%?(PRO|CHR)/ }
@@ -795,7 +795,7 @@ module PennLib
       acc
     end
 
-    # 11/2018: 650 _7 is also handled here
+    # 11/2018: 650 _7 is also handled here 
     def get_subject_display(rec)
       get_subjects_from_600s_and_800(rec, '0')
     end
@@ -856,16 +856,20 @@ module PennLib
       end
       locations = get_specific_location_values(rec)
 
-      if locations.any? { |loc| loc =~ /manuscripts/i }
+      if locations.any? { |loc| loc =~ /manuscripts/i } &&
+         locations.none? { |loc| loc =~ /scmss/i }
+        # Add 'manuscript' if locations include manuscript and not scmss
         acc << 'Manuscript'
       elsif locations.any? { |loc| loc =~ /archives/i } &&
-          locations.none? { |loc| loc =~ /cajs/i } &&
-          locations.none? { |loc| loc =~ /nursing/i }
+            locations.none? { |loc| loc =~ /cajs/i } &&
+            locations.none? { |loc| loc =~ /cjs/i } &&
+            locations.none? { |loc| loc =~ /nursing/i }
+        # Add 'archive' if locations include archives and not cajs, cjs or nursing
         acc << 'Archive'
       elsif locations.any? { |loc| loc =~ /micro/i } ||
-          f245h.any? { |val| val =~ /micro/i } ||
-          call_nums.any? { |val| val =~ /micro/i } ||
-          f337a.any? { |val| val =~ /microform/i }
+            f245h.any? { |val| val =~ /micro/i } ||
+            call_nums.any? { |val| val =~ /micro/i } ||
+            f337a.any? { |val| val =~ /microform/i }
         acc << 'Microformat'
       else
         # these next 4 can have this format plus ONE of the formats down farther below
@@ -2306,7 +2310,7 @@ module PennLib
       acc
     end
 
-    # 10/2018 kms: add 562 563 585. Add 561 if subf a starts with Athenaeum copy:
+    # 10/2018 kms: add 562 563 585. Add 561 if subf a starts with Athenaeum copy: 
     # non-Athenaeum 561 still displays as Penn Provenance
     def get_local_notes_display(rec)
       acc = []
@@ -2654,7 +2658,7 @@ module PennLib
       linkurl = linkurl.sub(' target=_blank', '')
       [linktext, linkurl]
     end
-
+    
     def words_to_remove_from_web_link
       @words_to_remove_from_web_link ||=
           %w(fund funds collection collections endowment
