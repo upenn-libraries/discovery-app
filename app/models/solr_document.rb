@@ -96,11 +96,11 @@ class SolrDocument
 
   def cover_id_attrs
     markup = ''
-    isbn = fetch('isbn_a', [])
+    isbns = fetch('isbn_a', [])
     oclc = fetch('oclc_id', '')
-    markup += "data-isbn=#{isbn.first} " if !isbn.empty?
-    markup += "data-oclc=#{oclc}" if !oclc.empty?
-    markup
+    markup += "data-isbn=#{isbns.first} " unless isbns.first.blank?
+    markup += "data-oclc=#{oclc}" unless oclc.blank?
+    { oclc_id: oclc, isbns: isbns, markup: markup, ol_cover_id: PennLib::CoverMappings.map(oclc, isbns) }
   end
 
 
