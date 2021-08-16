@@ -1,7 +1,7 @@
 <li class="list-group-item">
   <h3 class="list-group-item-heading">
     <label>
-      <input type="radio" name="delivery" value="pickup" id="pickup-radio" class="delivery-option-radio" checked /> <%= t('requests.labels.pickup') %></label>
+      <input type="radio" name="delivery" value="pickup" id="pickup-radio" class="delivery-option-radio" <%= user_is_facex? ? '' : 'checked' %>  /> <%= t('requests.labels.pickup') %></label>
   </h3>
   <p class="list-group-item-text">
     <%= t('requests.delivery_messages.pap_html') %>

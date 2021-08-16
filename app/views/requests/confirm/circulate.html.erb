@@ -17,9 +17,14 @@
                        disabled: true %>
 
       <ul class="list-group">
-        <%= render 'requests/confirm/delivery_options/pickup', f: f %>
-        <%#= render 'requests/confirm/delivery_options/campus', f: f %>
-        <%= render 'requests/confirm/delivery_options/mail', f: f %>
+        <% if user_is_facex? %>
+          <%= render('requests/confirm/delivery_options/office', f: f) if user_is_facex?  %>
+          <%= render 'requests/confirm/delivery_options/pickup', f: f %>
+          <%= render 'requests/confirm/delivery_options/mail', f: f %>
+        <% else %>
+          <%= render 'requests/confirm/delivery_options/pickup', f: f %>
+          <%= render 'requests/confirm/delivery_options/mail', f: f %>
+      <% end %>
       </ul>
       <div id="comments-area">
         <a class="input-toggleable" href="#"><%= t('requests.labels.add_comments') %></a>

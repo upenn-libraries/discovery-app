@@ -7,6 +7,7 @@ class RequestsController < ApplicationController
   def confirm
     partial = partial_for_request_type params
     set_ill_url if partial == 'ill'
+    set_facex_address if user_alma_group == 'Faculty Express'
     render "requests/confirm/#{partial}", layout: false
   end
 
@@ -33,6 +34,10 @@ class RequestsController < ApplicationController
     @item = TurboAlmaApi::Client.item_for mms_id: params[:mms_id].to_s,
                                           holding_id: params[:holding_id].to_s,
                                           item_pid: params[:item_pid].to_s
+  end
+
+  def set_facex_address
+    @facex_address = Illiad::ApiClient.new.facex_address_for user_id
   end
 
   # Set the ILL URL for use in the ILL confirmation partial
@@ -66,7 +71,7 @@ class RequestsController < ApplicationController
   # because current_user is useless
   # @return [Hash{Symbol->String}]
   def user_data
-    { id: user_id, email: user_email }
+    { id: user_id, email: user_email, group: user_alma_group }
   end
 
   # @return [String]
@@ -77,5 +82,10 @@ class RequestsController < ApplicationController
   # @return [String]
   def user_email
     session['email']
+  end
+
+  # @return [String]
+  def user_alma_group
+    session['user_group']
   end
 end

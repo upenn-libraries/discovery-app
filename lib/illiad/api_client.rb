@@ -105,6 +105,21 @@ module Illiad
       }
     end
 
+    # @param [String] username
+    # @return [String, NilClass]
+    def facex_address_for(username)
+      user_info = get_user username
+      return nil unless user_info
+
+      if user_info['Address'].downcase.include? 'books by mail'
+        parts = user_info['Address'].split('/')
+        part = parts.reject { |part| part.downcase.include? 'books by mail' }
+        part[0]
+      else
+        user_info['Address']
+      end
+    end
+
     private
 
     def respond_to(response, exception_class = RequestFailed)
