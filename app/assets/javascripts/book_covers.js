@@ -13,18 +13,23 @@ $(document).ready(function() {
       exclude_gb++;
     } else {
       try_gb++;
-      isbn = cover_div.attr('data-isbn');
-      if (isbn != null) {
-        key = "isbn:" + isbn;
-	// NOTE: multiple page_idx (divs) may be associated with the
-	// same ids, so we have to support multi-value mappings
-	(by_id[key] || (by_id[key] = [])).push({
-	  "page_idx": page_idx,
-	  "cover_div": cover_div
+      isbns = cover_div.attr('data-isbns');
+      if (isbns) {
+        // NOTE: multiple isbns may be associated with the same record.
+	// We check all of them and prioritize results at img display
+	// time.
+        isbns.split(',').forEach(function(isbn) {
+          key = "isbn:" + isbn;
+	  // NOTE: multiple page_idx (divs) may be associated with the
+	  // same ids, so we have to support multi-value mappings
+	  (by_id[key] || (by_id[key] = [])).push({
+	    "page_idx": page_idx,
+	    "cover_div": cover_div
+	  });
 	});
       }
       oclc_id = cover_div.attr('data-oclc');
-      if (oclc_id != null) {
+      if (oclc_id) {
         key = "oclc:" + oclc_id;
 	// see above wrt multi-value mappings
 	(by_id[key] || (by_id[key] = [])).push({
