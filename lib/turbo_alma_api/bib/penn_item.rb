@@ -4,7 +4,22 @@ module TurboAlmaApi
   module Bib
     # sprinkle additional and Penn-specific behavior on top of Alma::BibItem
     class PennItem < Alma::BibItem
-      ETAS_TEMPORARY_LOCATION = 'ETAS No Loans No Requests'
+      PICKUP_LOCATIONS = [
+        ['Van Pelt Library', 'VanPeltLib'],
+        ['Annenberg Library', 'AnnenLib'],
+        ['Athenaeum Library', 'AthLib'],
+        # ['Biotech Commons', 'BiomLib'],
+        ['Chemistry Library', 'ChemLib'],
+        ['Dental Medicine Library', 'DentalLib'],
+        ['Fisher Fine Arts Library', 'FisherFAL'],
+        ['Library at the Katz Center', 'KatzLib'],
+        ['Math/Physics/Astronomy Library', 'MPALib'],
+        ['Museum Library', 'MuseumLib'],
+        ['Ormandy Music and Media Center', 'MusicLib'],
+        ['Pennsylvania Hospital Library', 'PAHospLib'],
+        ['Veterinary Library - New Bolton Center', 'VetNBLib'],
+        ['Veterinary Library - Penn Campus', 'VetPennLib'],
+      ]
 
       # Rudimentary list of material types unsuitable for Scan & Deliver
       UNSCANNABLE_MATERIAL_TYPES = %w[
@@ -40,7 +55,6 @@ module TurboAlmaApi
       def checkoutable?
         in_place? &&
           !non_circulating? &&
-          !etas_restricted? &&
           !not_loanable? &&
           !aeon_requestable?
       end
@@ -70,25 +84,6 @@ module TurboAlmaApi
       # @return [TrueClass, FalseClass]
       def not_loanable?
         user_due_date_policy&.include? 'Not loanable'
-      end
-
-      # Is this Item restricted from circulation due to ETAS?
-      # @return [TrueClass, FalseClass]
-      def etas_restricted?
-        # is in ETAS temporary location?
-        temp_location_name == ETAS_TEMPORARY_LOCATION
-      end
-
-      # Label text for Item radio button
-      # TODO: defunct?
-      # @return [String]
-      def label_for_radio_button
-        label_info = [
-          location_name,
-          description,
-          user_policy_display(user_due_date_policy)
-        ]
-        label_info.reject(&:blank?).join(' - ')
       end
 
       # Label text for select2

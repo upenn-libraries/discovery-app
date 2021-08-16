@@ -13,7 +13,7 @@ class RequestsController < ApplicationController
 
   def submit
     request = AbstractRequest.new @item, user_data, params
-    # @response = request.submit
+    @response = request.submit
     # TODO: ugh, illiad test server is down. feign request success for now...
     @response = { status: :success,
                   confirmation_number: 'SAMPLE123456789',
