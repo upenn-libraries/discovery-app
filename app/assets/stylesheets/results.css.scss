@@ -19,7 +19,17 @@ li.blacklight-format_a {
 .cover-image {
   font-size: 70px;
   padding-top: 15px;
-  margin-left: 10px
+  margin-left: 10px;
+  position: relative;
+}
+
+.cover-image > img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding-top: 10px;
+  max-height: 120px;
+  max-width: 100%;
 }
 
 .label-warning {
