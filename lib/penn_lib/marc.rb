@@ -625,7 +625,7 @@ module PennLib
     def get_curated_format(rec)
       rec.fields('944').map do |field|
         sf = field.find { |sf| sf.code == 'a' }
-        sf.nil? ? nil : sf.value
+        sf.nil? || (sf.value == sf.value.to_i.to_s) ? nil : sf.value
       end.compact.uniq
     end
 
