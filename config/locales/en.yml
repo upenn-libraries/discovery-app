@@ -25,7 +25,7 @@ en:
       bbm_html: "Users must <a href='https://upenn.libwizard.com/f/books-by-mail' target='_blank'>register for Books by Mail</a> before submitting requests."
       office_no_address_html: "You do not have a preferred Faculty Express delivery address. Please set one up by contacting <a href='mailto:pld@pobox.upenn.edu'>Faculty Express</a>"
       office_html: "If this is not your preferred delivery address, please contact <a href='mailto:pld@pobox.upenn.edu'>Faculty Express</a>"
-      pap_html: "<a href='https://guides.library.upenn.edu/circulation/PickUpatPenn'>PickUp@Penn service</a>"
+      pap_html: "<a href='https://guides.library.upenn.edu/circulation/PickUpatPenn' target='_blank'>PickUp@Penn service</a>"
       digi_html: "We are unable to scan entire works. Please specify chapter or article title and author information for the portion of this work to be digitized and delivered to you."
     messages:
       aeon_explanation: "This item is available for viewing in the special collections reading room by submitting a viewing request in the Aeon Special Collections system. You will need to create an account and request an appointment time to view the item in the reading room."
@@ -38,6 +38,8 @@ en:
       comment_limit: "Maximum 256 characters"
       invalid_request: "Request is invalid. See errors below."
       invalid_deliver_to: "PennKey specified for delivery is not valid"
+    urls:
+      libguide: "https://guides.library.upenn.edu/circulation/CirculationWelcome"
     fields:
       deliver_to: "Deliver To"
       comment: "Comments"

@@ -2,6 +2,7 @@
   <div class="panel panel-default">
     <div class="panel-heading">
       <span class="glyphicon glyphicon-book"></span> <%= t('requests.widget.title') %>
+      <%= render 'requests/help_icon' %>
     </div>
     <div class="item-request-widget panel-body spinner" id="item-request-widget-for-<%= document.alma_mms_id %>">
       <%= render 'requests/widget_form', document: document %>
