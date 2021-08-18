@@ -38,3 +38,11 @@ span.constraints-label{
 .catalog_startOverLink {
   font-size: 14px;
 }
+
+.panel-heading.collapse-toggle .panel-title:after {
+  content: "\e113";
+}
+
+.panel-heading.collapse-toggle.collapsed .panel-title:after {
+    content: "\e114";
+}
