@@ -70,7 +70,7 @@ function initializeRequestingWidget($widgetArea, context) {
             } else {
                 $widget.select2({
                     theme: 'bootstrap',
-                    placeholder: "Select an Item",
+                    placeholder: "Click here to see all Items",
                     width: "100%",
                     data: responseData
                 }).on('select2:open', function(e) {
