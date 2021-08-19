@@ -81,7 +81,8 @@ function initializeRequestingWidget($widgetArea, context) {
                 });
             }
             $widgetArea.addClass('loaded');
-            $widgetArea.find('button:first').focus();
+            // srt focus to first button - triggers tooltip :/
+            // $widgetArea.find('button:first').focus();
         });
 
         if(context === 'show') {
@@ -102,6 +103,7 @@ function initializeRequestingWidget($widgetArea, context) {
 
 $(document).ready(function() {
     var $body = $('body');
+    $('[data-toggle="tooltip"]').tooltip(); // activate tooltips
     var context;
     if(document.body.classList.contains("blacklight-catalog-show")) {
         var $widgetArea = $('.item-request-widget');
@@ -172,6 +174,7 @@ $(document).ready(function() {
     $('#confirm-modal').on('show.bs.modal', function(e) {
         var selectedItem;
         var $modal = $(this);
+        $('[data-toggle="tooltip"]').tooltip('hide'); // hide tooltips
         $modal.empty();
         var triggeringButton = e.relatedTarget;
         var $widget = triggeringButton.closest('form').find('.request-item-select')

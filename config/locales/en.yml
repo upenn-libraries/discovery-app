@@ -38,6 +38,9 @@ en:
       comment_limit: "Maximum 256 characters"
       invalid_request: "Request is invalid. See errors below."
       invalid_deliver_to: "PennKey specified for delivery is not valid"
+    tooltips:
+      request_in_print: "Request a physical copy from Penn Libraries (Pickup@Penn, Books by Mail) or a partner library (BorrowDirect+, Interlibrary loan)"
+      request_electronic: "Request digital delivery of an article, chapter or section"
     urls:
       libguide: "https://guides.library.upenn.edu/circulation/CirculationWelcome"
     fields:
