@@ -46,3 +46,20 @@ span.constraints-label{
 .panel-heading.collapse-toggle.collapsed .panel-title:after {
     content: "\e114";
 }
+
+.tooltip-wrapper {
+  display: inline-block; /* display: block works as well */
+  float: left;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.tooltip-wrapper .btn[disabled] {
+  /* don't let button block mouse events from reaching wrapper */
+  pointer-events: none;
+}
+
+.tooltip-wrapper.disabled {
+  /* OPTIONAL pointer-events setting above blocks cursor setting, so set it here */
+  cursor: not-allowed;
+}
