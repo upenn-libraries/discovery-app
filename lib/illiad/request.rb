@@ -5,7 +5,7 @@ module Illiad
   class Request
     attr_accessor :username, :email
 
-    CAMPUS_DELIVERY = 'campus'
+    OFFICE_DELIVERY = 'office'
     MAIL_DELIVERY = 'bbm'
     ELECTRONIC_DELIVERY = 'electronic'
 
@@ -85,9 +85,8 @@ module Illiad
         # BBM attribute changes to trigger Illiad routing rules
         body[:LoanTitle] = body['LoanTitle'].prepend('BBM ')
         body[:ItemInfo1] = 'booksbymail'
-      elsif @data[:delivery] == CAMPUS_DELIVERY
-        # likewise for campus delivery
-        body[:ItemInfo1] = 'campus'
+      elsif @data[:delivery] == OFFICE_DELIVERY
+        # TODO: for now, don't do anything for Office Delivery
       end
       body
     end

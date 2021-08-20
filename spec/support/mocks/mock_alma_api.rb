@@ -33,6 +33,13 @@ module MockAlmaApi
     )
   end
 
+  def stub_request_post_failure_empty
+    stub_request(
+      :post,
+      'https://api-na.hosted.exlibrisgroup.com/almaws/v1/bibs/1234/holdings/2345/items/0000/requests?user_id=testuser&user_id_type=all_unique'
+    ).to_return(an_unsuccessful_response_with(''))
+  end
+
   def stub_request_post_failure
     stub(
       :post,
@@ -83,6 +90,13 @@ module MockAlmaApi
       status: 200,
       body: body,
       headers: { 'Content-Type' => 'application/json' }
+    }
+  end
+
+  def an_unsuccessful_response_with(body)
+    {
+      status: 500,
+      body: body
     }
   end
 end

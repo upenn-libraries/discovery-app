@@ -9,7 +9,7 @@
       <%= f.hidden_field :item_pid, id: 'requestItemPid' %>
       <%= f.hidden_field :holding_id, id: 'requestHoldingId' %>
       <%= f.hidden_field :mms_id, id: 'requestMmsId' %>
-      <%= f.hidden_field :delivery, value: 'scandeliver' %>
+      <%= f.hidden_field :delivery, value: Illiad::Request::ELECTRONIC_DELIVERY %>
 
       <div class="alert alert-danger" role="alert">
         <%= t('requests.delivery_messages.digi_html') %>

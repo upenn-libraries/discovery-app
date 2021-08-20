@@ -1,12 +1,17 @@
-<% table_style='style=display:none;' if collapsed %>
-<section class="item-request-section">
+<% if collapsed %>
+<section class="item-request-section-index">
+  <button class='btn btn-primary btn-get-it toggle' data-mmsid='<%= document.alma_mms_id %>' aria-expanded="false" aria-controls="table-wrapper-<%= document.alma_mms_id %>">
+    <span class="glyphicon glyphicon-th-list"></span> Options <span class="getit-caret glyphicon glyphicon-chevron-down"></span>
+  </button>
+<div class="panel panel-default" style="display:none;">
+<% else %>
+<section class="item-request-section-show">
 <div class="panel panel-default">
   <div class="panel-heading">
-    <button class='btn btn-link btn-sm btn-get-it toggle' role="button" data-mmsid='<%= document.alma_mms_id %>'>
-      <span class="glyphicon glyphicon-th-list"></span> Options
-    </button>
+    <span class="glyphicon glyphicon-th-list"></span> Options
   </div>
-  <div class="panel-body" <%= table_style %>>
+<% end %>
+  <div class="panel-body">
     <div id="table-wrapper-<%= document.alma_mms_id %>">
       <table id="requestOptions-<%= document.alma_mms_id %>" class="request-options-load" data-mmsid="<%= document.alma_mms_id %>" style="width:100%">
         <thead>

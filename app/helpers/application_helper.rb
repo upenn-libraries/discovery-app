@@ -226,6 +226,11 @@ module ApplicationHelper
     '/forms/resourcesharing'
   end
 
+  # @return [TrueClass, FalseClass]
+  def user_is_facex?
+    session[:user_group] == 'Faculty Express'
+  end
+
   def format_icon(format, size: 'small')
     icon_class = if !format.empty?
       case format
