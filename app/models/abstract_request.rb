@@ -20,7 +20,7 @@ class AbstractRequest
   # Handle submission of Request
   def submit
     response = perform_request
-    RequestMailer.confirmation_email(response, @request.email)
+    RequestMailer.confirmation_email(response, @request)
                  .deliver_now
     { status: :success,
       confirmation_number: response[:confirmation_number],

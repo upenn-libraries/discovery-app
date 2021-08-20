@@ -17,6 +17,7 @@ module Illiad
       @email = user[:email]
       @item = item
       @data = params
+      @delivery = params
     end
 
     # for POSTing to API
@@ -27,6 +28,11 @@ module Illiad
       else
         book_request_body @username, @item, @data
       end
+    end
+
+    # @return [String]
+    def delivery
+      @data.dig :delivery
     end
 
     private
