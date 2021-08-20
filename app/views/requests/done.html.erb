@@ -6,10 +6,8 @@
     </div>
     <div class="modal-body">
       <% if @response.dig(:status) == :success %>
-        <%# TODO: ensure proper success message is displayed for golive  %>
-        <div class="alert alert-warn" role="alert">
-          <%# t('requests.messages.request_complete') %>
-          <%= @response.dig :message %>
+        <div class="alert alert-success" role="alert">
+          <% t('requests.messages.request_complete') %>
         </div>
       <dl>
         <dt>
