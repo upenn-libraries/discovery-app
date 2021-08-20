@@ -64,6 +64,13 @@ class RequestsController < ApplicationController
     options.dig('ILLIAD') || ill_request_form_url_for(mms_id)
   end
 
+  # A backup in case we can't get the nice link from Alma
+  # @param [String] mms_id
+  # TODO: this will be confusing in non-production environments
+  def ill_request_form_url_for(mms_id)
+    "https://franklin.library.upenn.edu/redir/ill?bibid=#{mms_id}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com"
+  end
+
   # because current_user is useless
   # @return [Hash{Symbol->String}]
   def user_data
