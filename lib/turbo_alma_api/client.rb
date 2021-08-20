@@ -72,11 +72,15 @@ module TurboAlmaApi
                'pickup_location_library' => request.pickup_location,
                'comment' => request.comments }
       request_url = "#{BASE_URL}/v1/bibs/#{request.mms_id}/holdings/#{request.holding_id}/items/#{request.item_pid}/requests"
+
       response = Typhoeus.post request_url,
                                headers: DEFAULT_REQUEST_HEADERS,
                                params: query,
                                body: Oj.dump(body)
       parsed_response = Oj.load response.body
+
+      raise RequestFailed, "Unparseable response from Alma for Request URL: #{request_url}" unless parsed_response
+
       if parsed_response.key?('web_service_response') || parsed_response.key?('errorsExist')
         first_error_message = parsed_response['errorList']['error'].first['errorMessage']
         raise RequestFailed, first_error_message # TODO: better error message details

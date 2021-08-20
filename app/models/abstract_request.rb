@@ -19,11 +19,6 @@ class AbstractRequest
 
   # Handle submission of Request
   def submit
-    unless Rails.env.development?
-      return { status: :success,
-               message: 'Submission is disabled in this environment!' }
-    end
-
     response = perform_request
     RequestMailer.confirmation_email(response, @request.email)
                  .deliver_now
@@ -31,8 +26,8 @@ class AbstractRequest
       confirmation_number: response[:confirmation_number],
       title: response[:title] }
   rescue RequestFailed => e
-    # TODO: honeybadger push
-    { status: :failed, message: "Submission failed: #{e.message}" }
+    Honeybadger.notify e
+    { status: :failed, message: "Submission failed, please try again: #{e.message}" }
   end
 
   # Do the request using the proper API client

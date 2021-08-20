@@ -13,7 +13,7 @@ module Illiad
     # not also specified.
     CREATE_USER_REQUIRED_FIELDS = %w[Username NVTGC].freeze
 
-    base_uri ENV['ILLIAD_API_BASE_URI']
+    base_uri ENV.fetch('ILLIAD_API_BASE_URI')
 
     def initialize
       @default_options = { headers: headers }
@@ -74,17 +74,12 @@ module Illiad
 
       create_user illiad_data_for username
     rescue StandardError => e
-      raise RequestFailed, e.message
+      raise RequestFailed, "Problem building user from Illiad: #{e.message}"
     end
 
     # Sufficient mapped data to create an ILLiad user
     # @param [String] username
     def illiad_data_for(username)
-      # TODO: how to grab these attributes? for a logged-in user (via SSO)
-      #       some of these attributes will be in the session. others will require
-      #       calling back to the Alma User API....or....?
-      #       Just call the user API for now...
-      #       I could save all the required values from below to the session?
       alma_user = TurboAlmaApi::User.new username
       {
         'Username' => username,
@@ -95,11 +90,11 @@ module Illiad
         'Status' => alma_user.user_group,
         'Department' => alma_user.affiliation,
         'PlainTextPassword' => ENV['ILLIAD_USER_PASSWORD'],
-        'Address' => '', # TODO: get it from alma_user preferred address
+        'Address' => '', # TODO: get it from alma_user preferred address?
         # from here on, just setting things that we've normally set. many of these could be frivolous
         'DeliveryMethod' => 'Mail to Address',
         'Cleared' => 'Yes',
-        'Web' => true, # TODO: question this
+        'Web' => true, # TODO: question this?
         'ArticleBillingCategory' => 'Exempt',
         'LoanBillingCategory' => 'Exempt'
       }
