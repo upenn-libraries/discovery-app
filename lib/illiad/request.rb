@@ -6,7 +6,7 @@ module Illiad
     attr_accessor :username, :email
 
     OFFICE_DELIVERY = 'office'
-    MAIL_DELIVERY = 'bbm'
+    MAIL_DELIVERY = 'mail'
     ELECTRONIC_DELIVERY = 'electronic'
 
     # @param [Hash] user
@@ -83,7 +83,7 @@ module Illiad
     def append_routing_info(body)
       if @data[:delivery] == MAIL_DELIVERY
         # BBM attribute changes to trigger Illiad routing rules
-        body[:LoanTitle] = body['LoanTitle'].prepend('BBM ')
+        body[:LoanTitle] = body[:LoanTitle].prepend('BBM ')
         body[:ItemInfo1] = 'booksbymail'
       elsif @data[:delivery] == OFFICE_DELIVERY
         # TODO: for now, don't do anything for Office Delivery

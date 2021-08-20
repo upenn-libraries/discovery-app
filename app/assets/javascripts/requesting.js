@@ -149,7 +149,7 @@ $(document).ready(function() {
         .on('click', '.delivery-option-radio', function(e) {
             var $radio = $(this);
             var $checkbox = $('#bbm_validation_checkbox');
-            if($radio.val() === 'mail') {
+            if ($radio.val() === 'mail') {
                 $checkbox.prop('disabled', false).focus();
                 $checkbox.closest('div.checkbox').removeClass('disabled');
             } else {
