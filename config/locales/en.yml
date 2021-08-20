@@ -33,7 +33,7 @@ en:
       request_complete: "Your request has been successfully submitted!"
       request_failed: "Oh no! Your Request failed!"
       invalid_confirm_partial: "Could not determine a request type for confirmation"
-      unsupported_submission_logic: "No configured submission logic for a %{request.class.name}"
+      unsupported_submission_logic: "No configured submission logic for a %{request_class}"
       bib_item_validation: "Unable to get an Item from Alma based on the given identifiers."
       comment_limit: "Maximum 256 characters"
       invalid_request: "Request is invalid. See errors below."

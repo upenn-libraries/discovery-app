@@ -3,7 +3,7 @@
 # abstract Request, wrapping creation and submission of either a:
 # TurboAlmaApi::Request or a Illiad::Request
 class AbstractRequest
-  ILLIAD_DELIVERY_OPTIONS = %w[mail scandeliver campus].freeze
+  ILLIAD_DELIVERY_OPTIONS = %w[mail electronic campus].freeze
   ALMA_DELIVERY_OPTIONS = %w[pickup].freeze
 
   class RequestFailed < StandardError; end
