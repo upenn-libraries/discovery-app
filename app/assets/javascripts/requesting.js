@@ -103,7 +103,7 @@ function initializeRequestingWidget($widgetArea, context) {
 
 $(document).ready(function() {
     var $body = $('body');
-    $('[data-toggle="tooltip"]').tooltip(); // activate tooltips
+    $('.tooltip-wrapper').tooltip(); // activate tooltips
     var context;
     if(document.body.classList.contains("blacklight-catalog-show")) {
         var $widgetArea = $('.item-request-widget');
