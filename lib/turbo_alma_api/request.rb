@@ -26,7 +26,7 @@ module TurboAlmaApi
     end
 
     # @return [String]
-    def submitter_email
+    def email
       @user[:email]
     end
   end
