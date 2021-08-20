@@ -84,7 +84,7 @@ module Illiad
       if @data[:delivery] == MAIL_DELIVERY
         # BBM attribute changes to trigger Illiad routing rules
         body[:LoanTitle] = body[:LoanTitle].prepend('BBM ')
-        body[:ItemInfo1] = 'booksbymail'
+        body[:ItemInfo1] = 'Books by Mail'
       elsif @data[:delivery] == OFFICE_DELIVERY
         # TODO: for now, don't do anything for Office Delivery
       end

@@ -7,7 +7,7 @@
     <div class="modal-body">
       <% if @response.dig(:status) == :success %>
         <div class="alert alert-success" role="alert">
-          <% t('requests.messages.request_complete') %>
+          <%= t('requests.messages.request_complete') %>
         </div>
       <dl>
         <dt>
