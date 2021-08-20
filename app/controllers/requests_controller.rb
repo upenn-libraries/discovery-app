@@ -13,11 +13,7 @@ class RequestsController < ApplicationController
 
   def submit
     request = AbstractRequest.new @item, user_data, params
-    # @response = request.submit
-    # TODO: testing...feign request success for now...
-    @response = { status: :success,
-                  confirmation_number: 'SAMPLE123456789',
-                  message: 'Submission is currently disabled in this testing environment! Your request has not actually been submitted.' }
+    @response = request.submit
     render 'requests/done', layout: false
   end
 
