@@ -1,11 +1,13 @@
+require 'rocksdb'
 
 module PennLib
 
   module CoverMappings
 
     blah = lambda { |file, key_transform|
-      hash = {}
-      return hash unless File.file?(file)
+      db_file = "#{file}.db"
+      return RocksDB.open_readonly(db_file) if File.directory?(db_file)
+      hash = RocksDB.open(db_file)
       ct = 0
       Zlib::GzipReader.new(File.open(file), :external_encoding => 'UTF-8').each_line do |line|
         keys = line.split(' ')
@@ -15,10 +17,10 @@ module PennLib
 	end
         keys.each do |key|
           transformed_key = key_transform.call(key)
-          hash[transformed_key] = target unless transformed_key.nil?
+          hash[transformed_key.to_s] = target.to_s unless transformed_key.nil?
         end
       end
-      hash
+      RocksDB.open_readonly(db_file)
     }
 
     STRICT_INT_TRANSFORM = lambda { |id| Integer(id) rescue nil }
@@ -76,9 +78,9 @@ module PennLib
       isbns.find do |isbn|
         isbn = SANITIZE_ISBN.call(isbn)
         if isbn.length <= 10
-          ret = ISBN10_MAP[STRICT_ISBN_TRANSFORM.call(isbn)]
+          ret = ISBN10_MAP[STRICT_ISBN_TRANSFORM.call(isbn)&.to_s || '']
         elsif isbn.length <= 13
-          ret = ISBN13_MAP[STRICT_ISBN_TRANSFORM.call(isbn)]
+          ret = ISBN13_MAP[STRICT_ISBN_TRANSFORM.call(isbn)&.to_s || '']
         else
           nil
         end
@@ -87,15 +89,15 @@ module PennLib
     end
 
     def self.from_oclc_id(id)
-      OCLC_MAP[STRICT_INT_TRANSFORM.call(id)]
+      OCLC_MAP[STRICT_INT_TRANSFORM.call(id)&.to_s || '']
     end
 
     def self.from_isbn_10(id)
-      ISBN10_MAP[LENIENT_ISBN_TRANSFORM.call(id)]
+      ISBN10_MAP[LENIENT_ISBN_TRANSFORM.call(id)&.to_s || '']
     end
 
     def self.from_isbn_13(id)
-      ISBN13_MAP[LENIENT_ISBN_TRANSFORM.call(id)]
+      ISBN13_MAP[LENIENT_ISBN_TRANSFORM.call(id)&.to_s || '']
     end
 
   end
