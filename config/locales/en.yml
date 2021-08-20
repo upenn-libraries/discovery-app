@@ -29,7 +29,7 @@ en:
       digi_html: "We are unable to scan entire works. Please specify chapter or article title and author information for the portion of this work to be digitized and delivered to you."
     messages:
       aeon_explanation: "This item is available for viewing in the special collections reading room by submitting a viewing request in the Aeon Special Collections system. You will need to create an account and request an appointment time to view the item in the reading room."
-      unavailable_prompt: "This item is currently unavailable in print from the Penn Libraries. Use the button below to complete an Interlibrary Loan request."
+      unavailable_prompt: "This item is currently unavailable in print from the Penn Libraries. Use the button below to complete an Interlibrary Loan request. We will automatically fill this request via BorrowDirect if the item is available."
       request_complete: "Your request has been successfully submitted!"
       request_failed: "Oh no! Your Request failed!"
       invalid_confirm_partial: "Could not determine a request type for confirmation"
