@@ -43,7 +43,11 @@ class AbstractRequest
     elsif illiad_fulfillment?
       @request = Illiad::Request.new @user, @item, @params
       illiad_api.get_or_create_illiad_user @request.username
-      illiad_api.transaction @request.to_h
+      transaction_response = illiad_api.transaction @request.to_h
+      if @request.note.present? && transaction_response[:confirmation_number].present?
+        illiad_api.add_note transaction_response[:confirmation_number], @request.note, @request.username
+      end
+      transaction_response
     else
       raise ArgumentError,
             I18n.t('requests.messages.unsupported_submission_logic',

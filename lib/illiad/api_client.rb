@@ -12,6 +12,7 @@ module Illiad
     # create requests fail, though, with an empty 400 response if NVTGC is
     # not also specified.
     CREATE_USER_REQUIRED_FIELDS = %w[Username NVTGC].freeze
+    NOTE_TYPE = 'Staff'.freeze # TODO: get Atlas to allow creation of user notes via API
 
     base_uri ENV.fetch('ILLIAD_API_BASE_URI')
 
@@ -115,10 +116,30 @@ module Illiad
       end
     end
 
+    # @param [String] comment
+    # @param [String] transaction_number form Illiad response when creating transaction
+    def add_note(transaction_number, comment, user_id)
+      unless transaction_number
+        Honeybadger.notify 'add_note called with no transaction_number!'
+        return
+      end
+
+      # TODO: ugly
+      proper_transaction_number = transaction_number.sub /^ILLIAD/, ''
+      comment_with_user = comment + " - comment submitted by #{user_id}"
+      options = @default_options
+      options[:body] = {
+        'NoteType' => NOTE_TYPE,
+        'Note' => comment_with_user
+      }
+      note_url = "/transaction/#{proper_transaction_number}/notes"
+      respond_to self.class.post(note_url, options)
+    end
+    
     private
 
     def respond_to(response, exception_class = RequestFailed)
-      raise(exception_class, response.body) unless response.code == 200
+      raise(exception_class, response.body) unless response.success?
 
       Oj.load(response.body).transform_keys { |k| k.downcase.to_sym }
     end

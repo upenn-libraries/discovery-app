@@ -3,7 +3,7 @@
 module Illiad
   # Represent an Illiad request
   class Request
-    attr_accessor :username, :email
+    attr_accessor :username, :email, :note
 
     OFFICE_DELIVERY = 'office'
     MAIL_DELIVERY = 'mail'
@@ -18,6 +18,7 @@ module Illiad
       @item = item
       @data = params
       @delivery = params
+      @note = params[:comments]
     end
 
     # for POSTing to API
@@ -54,8 +55,6 @@ module Illiad
         LoanDate: item.bib('date_of_publication'),
         LoanEdition: item.bib('complete_edition'),
         ISSN: item.bib('issn') || item.bib('isbn'),
-        # ESPNumber: data['pmid'],
-        Notes: data[:comments],
         CitedIn: cited_in_value
       }
       append_routing_info body
@@ -72,10 +71,8 @@ module Illiad
         PhotoJournalYear: item.bib('date_of_publication'),
         PhotoJournalInclusivePages: data['pages'],
         ISSN: item.bib('issn') || item.bib('isbn'),
-        # ESPNumber: data['pmid'],
         PhotoArticleAuthor: data[:section_author],
         PhotoArticleTitle: data[:section_title],
-        Notes: data['comments'],
         CitedIn: cited_in_value
       }
     end
