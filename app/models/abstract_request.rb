@@ -3,7 +3,11 @@
 # abstract Request, wrapping creation and submission of either a:
 # TurboAlmaApi::Request or a Illiad::Request
 class AbstractRequest
-  ILLIAD_DELIVERY_OPTIONS = %w[mail electronic campus].freeze
+  ILLIAD_DELIVERY_OPTIONS = [
+    Illiad::Request::MAIL_DELIVERY,
+    Illiad::Request::ELECTRONIC_DELIVERY,
+    Illiad::Request::OFFICE_DELIVERY
+  ]
   ALMA_DELIVERY_OPTIONS = %w[pickup].freeze
 
   class RequestFailed < StandardError; end

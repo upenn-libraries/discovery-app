@@ -122,15 +122,12 @@ $(document).ready(function() {
                 if($widget && !$widget.hasClass('loaded')) {
                     initializeRequestingWidget($widget, context);
                 }
-                // var $otherWidgets = $('.item-request-widget:not(' + id + ')');
-                // $otherWidgets.hide();
                 $widget.slideToggle(200);
                 if($caret.hasClass('glyphicon-chevron-up')) {
                     $button.attr('aria-expanded', false);
                     $caret.removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
                 } else if($caret.hasClass('glyphicon-chevron-down')) {
                     $button.attr('aria-expanded', true);
-                    // $('.getit-caret').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
                     $caret.removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
                 }
 
