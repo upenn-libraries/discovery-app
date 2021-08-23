@@ -47,6 +47,7 @@ module Illiad
     def book_request_body(username, item, data)
       body = {
         Username: username,
+        RequestType: 'Loan',
         ProcessType: 'Borrowing',
         LoanAuthor: item.bib('author'),
         LoanTitle: item.bib('title'),
