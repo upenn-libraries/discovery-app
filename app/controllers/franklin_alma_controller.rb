@@ -379,7 +379,7 @@ class FranklinAlmaController < ApplicationController
       end
     end
 
-    render json: results
+    render json: options
   end
 
   def request_title?
