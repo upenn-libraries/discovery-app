@@ -196,8 +196,11 @@ $(document).ready(function() {
             } else {
                 if(selectedItem.aeon_requestable) {
                     urlPart = 'aeon';
-                } else if (selectedItem.on_reserve) {
-                    params.location = selectedItem.library;
+                } else if (selectedItem.restricted_circ) {
+                    params.location = selectedItem.location;
+                    params.library = selectedItem.library;
+                    params.reserves = selectedItem.on_reserves;
+                    params.reference = selectedItem.at_refrence;
                     urlPart = 'reserves';
                 } else {
                     urlPart = 'ill';

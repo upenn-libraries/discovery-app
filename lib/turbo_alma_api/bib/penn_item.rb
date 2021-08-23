@@ -57,7 +57,8 @@ module TurboAlmaApi
           !non_circulating? &&
           !not_loanable? &&
           !aeon_requestable? &&
-          !on_reserve?
+          !on_reserve? &&
+          !at_reference?
       end
 
       # Penn uses "Non-circ" in Alma
@@ -97,7 +98,7 @@ module TurboAlmaApi
                          physical_material_type['desc'],
                          public_note,
                          user_policy_display(user_due_date_policy),
-                         location_name
+                         library_name
                        ]
                      else # no item data case - holding as item...
                        [
@@ -168,6 +169,14 @@ module TurboAlmaApi
         holding_data.dig('temp_policy', 'value') == 'reserve'
       end
 
+      def at_reference?
+        item_data.dig('policy', 'value') == 'reference'
+      end
+
+      def restricted_circ?
+        on_reserve? || at_reference?
+      end
+
       # TODO: use to_h here?
       def for_select(_options = {})
         {
@@ -179,10 +188,13 @@ module TurboAlmaApi
           'holding_id' => holding_data['holding_id'],
           'circulate' => checkoutable?,
           'call_number' => call_number,
-          'library' => location_name,
+          'location' => location_name,
+          'library' => library_name,
           'due_date' => user_due_date_policy,
           'aeon_requestable' => aeon_requestable?,
           'on_reserve' => on_reserve?,
+          'at_reference' => at_reference?,
+          'restricted_circ' => restricted_circ?,
           'volume' => volume,
           'issue' => issue,
           'in_place' => in_place?,

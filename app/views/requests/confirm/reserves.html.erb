@@ -2,15 +2,16 @@
   <div class="modal-content">
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-      <div class="modal-title" id="exampleModalLabel">Item on Reserves</div>
+      <div class="modal-title" id="exampleModalLabel">Item has Limited Access</div>
     </div>
     <div class="modal-body">
       <p>
-         This item is being held at <%= params[:location] %>. It may be checked out for a limited period by visiting
-        the reserves desk.
+        This item is being held at <%= params[:library] %>. It may be checked out for a limited period by visiting
+        the library.
       </p>
       <p>
-        If you would like to receive a physical copy, you may try submitting an Iterlibrary Loan request using the button
+        If you would like to receive a physical copy, you may try submitting an Iterlibrary Loan request using the
+        button below.
       </p>
     </div>
     <div class="modal-footer">
