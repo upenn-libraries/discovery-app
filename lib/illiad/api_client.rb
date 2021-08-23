@@ -102,18 +102,12 @@ module Illiad
     end
 
     # @param [String] username
-    # @return [String, NilClass]
-    def facex_address_for(username)
+    # @return [Array, NilClass]
+    def address_info_for(username)
       user_info = get_user username
       return nil unless user_info
 
-      if user_info['Address'].downcase.include? 'books by mail'
-        parts = user_info['Address'].split('/')
-        part = parts.reject { |part| part.downcase.include? 'books by mail' }
-        part[0]
-      else
-        user_info['Address']
-      end
+      [user_info['Address'], user_info['Address2']]
     end
 
     # @param [String] comment
