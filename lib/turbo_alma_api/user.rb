@@ -18,14 +18,23 @@ module TurboAlmaApi
       @name = user_record.full_name
       @first_name = user_record.preferred_first_name
       @last_name = user_record.preferred_last_name
-      @email = user_record.preferred_email
+      @email = safe_preferred_email_from user_record
       @user_group = user_group_from user_record
       @affiliation = affiliation_from user_record
       @organization = organization_from user_record
       @active = active_from user_record
-    rescue StandardError => _e
+    rescue StandardError => e
       raise UserNotFound,
-            "Username '#{user_id}' cannot be found. Are you sure the Pennkey is valid?"
+            "Username '#{user_id}' cannot be created. Are you sure the Pennkey is valid? Exception: #{e.message}"
+    end
+
+    # Get preferred email, handling error if one is not present
+    # @param [Object] user_record
+    # @return [Alma::User, NilClass]
+    def safe_preferred_email_from(user_record)
+      user_record.preferred_email
+    rescue NoMethodError => _e
+      nil
     end
 
     # @return [Hash{Symbol->Unknown}]
@@ -37,10 +46,10 @@ module TurboAlmaApi
     private
 
     # @param [String] user_id
+    # @return [Alma::User]
     def get_user(user_id)
       Alma::User.find user_id, expand: nil
-    rescue Alma::ResponseError => e
-      # TODO: username probably does not exist in Alma
+    rescue Alma::User::ResponseError => e
       raise e
     rescue Net::OpenTimeout => e
       raise TurboAlmaApi::User::Timeout, "Problem with Alma API: #{e.message}"
