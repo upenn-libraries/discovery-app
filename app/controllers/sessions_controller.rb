@@ -14,14 +14,13 @@ class SessionsController < Devise::SessionsController
     return unless id
 
     alma_user = TurboAlmaApi::User.new id
-    if alma_user
-      session['first_name'] = alma_user.first_name
-      session['user_group'] = alma_user.user_group
-      session['email'] = alma_user.email
-    else
-      flash[:alert] = "The credentials you have entered to authenticate are not registered in our library system. Please contact the circulation desk at vpcircdk@pobox.upenn.edu for assistance." # temporarily removed "or 215-898-7566"
-      Rails.logger.error("ERROR: Got non-200 response from Alma User API, user account may not exist for id=#{id}. response=#{response}")
-    end
+    session['first_name'] = alma_user.first_name
+    session['user_group'] = alma_user.user_group
+    session['email'] = alma_user.email
+
+  rescue TurboAlmaApi::User::UserNotFound
+    flash[:alert] = "The credentials you have entered to authenticate are not registered in our library system. Please contact the circulation desk at vpcircdk@pobox.upenn.edu for assistance." # temporarily removed "or 215-898-7566"
+    Rails.logger.error("ERROR: Got non-200 response from Alma User API, user account may not exist for id=#{id}. response=#{response}")
   end
 
   def social_login_populate_session(jwt)
