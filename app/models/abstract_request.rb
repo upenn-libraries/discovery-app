@@ -12,7 +12,7 @@ class AbstractRequest
 
   class RequestFailed < StandardError; end
 
-  # @param [TurboAlmaApi::Bib::PennItem] item
+  # @param [TurboAlmaApi::Bib::PennItem, NilClass] item
   # @param [Hash] user_data
   # @param [ActionController::Parameters] params
   def initialize(item, user_data, params = {})

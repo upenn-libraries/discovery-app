@@ -208,6 +208,7 @@ $(document).ready(function() {
             $modal.find('#requestItemPid').val(selectedItem.id);
             $modal.find('#requestHoldingId').val(selectedItem.holding_id);
             $modal.find('#requestMmsId').val(mmsId);
+            $modal.find('#requestIsxn').val(selectedItem.isxn);
 
             // set Item details
             $modal.find('#title').val(selectedItem.title);

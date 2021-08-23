@@ -27,9 +27,13 @@ class RequestsController < ApplicationController
   private
 
   def set_item
-    @item = TurboAlmaApi::Client.item_for mms_id: params[:mms_id].to_s,
-                                          holding_id: params[:holding_id].to_s,
-                                          item_pid: params[:item_pid].to_s
+    @item = if params[:item_pid] == 'no-item'
+              nil
+            else
+              TurboAlmaApi::Client.item_for mms_id: params[:mms_id].to_s,
+                                            holding_id: params[:holding_id].to_s,
+                                            item_pid: params[:item_pid].to_s
+            end
   end
 
   def set_address_info
