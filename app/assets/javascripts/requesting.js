@@ -196,6 +196,9 @@ $(document).ready(function() {
             } else {
                 if(selectedItem.aeon_requestable) {
                     urlPart = 'aeon';
+                } else if (selectedItem.on_reserve) {
+                    params.location = selectedItem.library;
+                    urlPart = 'reserves';
                 } else {
                     urlPart = 'ill';
                 }

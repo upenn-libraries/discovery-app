@@ -56,7 +56,8 @@ module TurboAlmaApi
         in_place? &&
           !non_circulating? &&
           !not_loanable? &&
-          !aeon_requestable?
+          !aeon_requestable? &&
+          !on_reserve?
       end
 
       # Penn uses "Non-circ" in Alma
@@ -136,6 +137,8 @@ module TurboAlmaApi
       def user_policy_display(raw_policy)
         if raw_policy == 'Not loanable'
           'Restricted Access'
+        elsif on_reserve?
+          'On Reserve'
         elsif !checkoutable?
           'Currently Unavailable'
         else
@@ -161,6 +164,10 @@ module TurboAlmaApi
         location.in? aeon_site_codes
       end
 
+      def on_reserve?
+        holding_data.dig('temp_policy', 'value') == 'reserve'
+      end
+
       # TODO: use to_h here?
       def for_select(_options = {})
         {
@@ -175,6 +182,7 @@ module TurboAlmaApi
           'library' => location_name,
           'due_date' => user_due_date_policy,
           'aeon_requestable' => aeon_requestable?,
+          'on_reserve' => on_reserve?,
           'volume' => volume,
           'issue' => issue,
           'in_place' => in_place?,
