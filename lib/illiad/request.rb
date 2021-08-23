@@ -49,6 +49,7 @@ module Illiad
         Username: username,
         RequestType: 'Loan',
         ProcessType: 'Borrowing',
+        DocumentType: 'Book',
         LoanAuthor: item.bib('author'),
         LoanTitle: item.bib('title'),
         LoanPublisher: item.bib('publisher_const'),
@@ -65,6 +66,7 @@ module Illiad
       {
         Username: username,
         ProcessType: 'Borrowing',
+        DocumentType: 'Article',
         PhotoJournalTitle: item.bib('title'),
         PhotoJournalVolume: data[:section_volume],
         PhotoJournalIssue: data[:section_issue],
