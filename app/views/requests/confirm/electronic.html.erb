@@ -1,0 +1,54 @@
+<%= bootstrap_form_tag url: request_submit_path, method: :post, remote: true do |f| %>
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-title" id="confirmModalLabel"><%= t('requests.modal_titles.confirm.electronic') %></div>
+    </div>
+    <div class="modal-body">
+      <%= f.hidden_field :item_pid, id: 'requestItemPid' %>
+      <%= f.hidden_field :holding_id, id: 'requestHoldingId' %>
+      <%= f.hidden_field :mms_id, id: 'requestMmsId' %>
+      <%= f.hidden_field :delivery, value: Illiad::Request::ELECTRONIC_DELIVERY %>
+
+      <div class="alert alert-danger" role="alert">
+        <%= t('requests.delivery_messages.digi_html') %>
+      </div>
+
+      <%= f.text_field :title,
+                       label: t('requests.fields.title'),
+                       disabled: true %>
+
+      <%= f.text_field :selection,
+                       label: t('requests.fields.selected'),
+                       disabled: true %>
+      <%= f.text_field :section_title,
+                       label: t('requests.fields.section_title'),
+                       required: true %>
+      <%= f.text_field :section_author,
+                       label: t('requests.fields.section_author'),
+                       required: true %>
+      <%= f.text_field :section_pages,
+                       label: t('requests.fields.section_pages') %>
+      <%= f.text_field :section_volume,
+                       label: t('requests.fields.section_volume'),
+                       value: params[:volume] %>
+      <%= f.text_field :section_issue,
+                       label: t('requests.fields.section_issue'),
+                       value: params[:issue] %>
+
+      <div id="comments-area">
+        <a class="input-toggleable" href="#"><%= t('requests.labels.add_comments') %></a>
+        <div class="toggle-field" style="display: none;">
+          <%= f.text_area :comments, label: t('requests.fields.comment') %>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal"><%= t('requests.buttons.go_back') %></button>
+      <%= f.submit t('requests.buttons.submit'), class: 'btn btn-primary' %>
+    </div>
+  </div>
+</div>
+<% end %>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Franklin Request Confirmation</title>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+  <h1>Your Franklin request has been submitted</h1>
+  <p>
+    You have successfully submitted a request for: <%= @info[:title] %>
+  </p>
+  <p>
+    <% if @request.respond_to? :pickup_location_human %>
+      You have chosen to pickup this item at <%= @request.pickup_location_human %>
+    <% elsif @request.respond_to? :delivery %>
+      <% if @request.delivery == Illiad::Request::OFFICE_DELIVERY %>
+      You have chosen office delivery.
+      <% elsif @request.delivery == Illiad::Request::MAIL_DELIVERY %>
+      You have chosen Books by Mail delivery.
+      <% elsif @request.delivery == Illiad::Request::ELECTRONIC_DELIVERY %>
+      You will receive another email when your request is available online.
+      <% end %>
+    <% end %>
+  </p>
+  <p>
+    Your confirmation number is <strong><%= @info[:confirmation_number] %></strong>. Please reference it when inquiring about your request status or about any other issues.
+  </p>
+  <p>
+    For questions regarding your request, <a href="<%= t('requests.urls.libguide') %>">see our guides</a>.
+  </p>
+  </body>
+</html>

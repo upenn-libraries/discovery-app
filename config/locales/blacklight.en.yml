@@ -5,6 +5,7 @@ en:
     search:
       form:
         search:
+          label: "Search term"
           placeholder: "Find books, journals, videos, & more"
       librarian_view:
         title: "Staff View"

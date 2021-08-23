@@ -13,8 +13,8 @@ class SolrDocument
   use_extension( Blacklight::Solr::Document::Marc) do |document|
     document.key?( :marcrecord_text )
   end
-  
-  field_semantics.merge!(    
+
+  field_semantics.merge!(
                          :last_updated => "recently_added_isort",
                          :title => "title",
                          :author => "author_creator_a",
@@ -46,10 +46,10 @@ class SolrDocument
   )
 
   # self.unique_key = 'id'
-  
+
   # Email uses the semantic field mappings below to generate the body of an email.
   SolrDocument.use_extension( Blacklight::Document::Email )
-  
+
   # SMS uses the semantic field mappings below to generate the body of an SMS email.
   SolrDocument.use_extension( Blacklight::Document::Sms )
 
@@ -89,6 +89,20 @@ class SolrDocument
     @code_mappings ||= PennLib::CodeMappings.new(Rails.root.join('config').join('translation_maps'))
     @pennlibmarc ||= PennLib::Marc.new(@code_mappings)
   end
+
+  def fetch_format
+    fetch('format_a', []).first
+  end
+
+  def cover_id_attrs
+    markup = ''
+    isbn = fetch('isbn_a', [])
+    oclc = fetch('oclc_id', '')
+    markup += "data-isbn=#{isbn.first} " if !isbn.empty?
+    markup += "data-oclc=#{oclc}" if !oclc.empty?
+    markup
+  end
+
 
   def format_display
     @format_display ||= [ fetch('format_a') ] + pennlibmarc.get_format_display(to_marc)
@@ -183,5 +197,20 @@ class SolrDocument
   # @return [TrueClass, FalseClass]
   def print_holdings?
     self['hld_count_isort']&.positive?
+  end
+
+  # @return [String, nil]
+  def item_count
+    fetch('itm_count_isort', nil)
+  end
+
+  # @return [String, nil]
+  def empty_holding_count
+    fetch('empty_hld_count_isort', nil)
+  end
+
+  # @return [TrueClass, FalseClass]
+  def show_requesting_widget?
+    print_holdings? || self[:physical_holdings_json].present?
   end
 end

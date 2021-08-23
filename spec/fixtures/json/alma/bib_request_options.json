@@ -1,0 +1,97 @@
+{
+  "request_option": [
+    {
+      "type": {
+        "value": "PURCHASE",
+        "desc": "Purchase"
+      },
+      "request_url": "https://api-na.hosted.exlibrisgroup.com/almaws/v1/users/99999999/purchase-requests/"
+    },
+    {
+      "type": {
+        "value": "GES",
+        "desc": "General Electronic Services"
+      },
+      "request_url": "http://faq.library.upenn.edu/ask?rfe_dat=1756390&rfr_id=&rft.atitle=&rft.au=&rft.aufirst=&rft.auinit=&rft.aulast=&rft.date=&rft.doi=&rft.edition=&rft.eisbn=&rft.eissn=&rft.epage=&rft.genre=journal&rft.isbn=&rft.issn=00249262&rft.issue=&rft.jtitle=Maclean%27s.&rft.month=&rft.number=&rft.place=Toronto%2C+Canada+%3A&rft.pub=Maclean+Pub+Co&rft.publisher=Maclean+Pub+Co&rft.pubdate=1911&rft.pubyear=&rft.spage=&rft.stitle=Maclean%27s.&rft.btitle=&rft.title=Maclean%27s.&rft.volume=",
+      "general_electronic_service_details": {
+        "code": "ASKUS",
+        "name": "Send us a question",
+        "description": null,
+        "public_name": "Send Penn Libraries a question",
+        "avail_for_physical": false,
+        "avail_for_electronic": true
+      }
+    },
+    {
+      "type": {
+        "value": "GES",
+        "desc": "General Electronic Services"
+      },
+      "request_url": "https://franklin.library.upenn.edu/redir/enhanced?bibid=1234",
+      "general_electronic_service_details": {
+        "code": "ENHANCED",
+        "name": "Suggest Fix / Enhance Record",
+        "description": null,
+        "public_name": "Suggest Fix / Enhance Record",
+        "avail_for_physical": true,
+        "avail_for_electronic": true
+      }
+    },
+    {
+      "type": {
+        "value": "GES",
+        "desc": "General Electronic Services"
+      },
+      "request_url": "https://franklin.library.upenn.edu/redir/ill?requesttype=ScanDelivery&rfe_dat=1756390&rfr_id=&rft.atitle=&rft.au=&rft.aufirst=&rft.auinit=&rft.aulast=&rft.date=&rft.doi=&rft.edition=&rft.eisbn=&rft.eissn=&rft.epage=&rft.genre=journal&rft.isbn=&rft.issn=00249262&rft.issue=&rft.jtitle=Maclean%27s.&rft.month=&rft.number=&rft.place=Toronto%2C+Canada+%3A&rft.pub=Maclean+Pub+Co&rft.publisher=Maclean+Pub+Co&rft.pubdate=1911&rft.pubyear=&rft.spage=&rft.stitle=Maclean%27s.&rft.btitle=&rft.title=Maclean%27s.&rft.volume=&test=",
+      "general_electronic_service_details": {
+        "code": "SCANDEL",
+        "name": "Request Digital Delivery",
+        "description": null,
+        "public_name": "Request Digital Delivery",
+        "avail_for_physical": true,
+        "avail_for_electronic": true
+      }
+    },
+    {
+      "type": {
+        "value": "GES",
+        "desc": "General Electronic Services"
+      },
+      "request_url": "https://franklin.library.upenn.edu/redir/ares?ArticleTitle=&Author=&CODEN=&EISSN=&ISSN=00249262&Issue=&Volume=&date=&doi=&edition=&genre=journal&isbn=journal&pages=&publisher=Maclean+Pub+Co&pubplace=Toronto%2C+Canada+%3A&rft.jtitle=Maclean%27s.&sid=&title=Maclean%27s.&volume=",
+      "general_electronic_service_details": {
+        "code": "ARES",
+        "name": "Place on Course Reserve",
+        "description": null,
+        "public_name": "Place on Course Reserve",
+        "avail_for_physical": true,
+        "avail_for_electronic": true
+      }
+    },
+    {
+      "type": {
+        "value": "GES",
+        "desc": "General Electronic Services"
+      },
+      "request_url": "https://franklin.library.upenn.edu/forms/resourcesharing",
+      "general_electronic_service_details": {
+        "code": "RESOURCESHARING",
+        "name": "BorrowDirect+",
+        "description": null,
+        "public_name": "BorrowDirect+",
+        "avail_for_physical": true,
+        "avail_for_electronic": false
+      }
+    },
+    {
+      "type": {
+        "value": "RS_BROKER",
+        "desc": "Resource Sharing Broker"
+      },
+      "request_url": "https://franklin.library.upenn.edu/redir/ill?rft.mms_id=1234&rft.stitle=Maclean%27s.&rft.pub=Maclean+Pub+Co&rft.place=Toronto%2C+Canada+%3A&rft.jtitle=Maclean%27s.&rft.genre=journal&rft.object_type=JOURNAL&rft.publisher=Maclean+Pub+Co&rft.normalized_issn=0024-9262&rft.pubdate=1911&rft.oclcnum=1756390&rft.title=Maclean%27s.&rft.issn=0024-9262",
+      "rs_broker_details": {
+        "code": "ILLIAD",
+        "name": "Interlibrary Loan"
+      }
+    }
+  ]
+}

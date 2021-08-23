@@ -1,35 +1,27 @@
-<nav class="footer-bar">
+<footer class="footer" id="footer">
   <div class="container">
     <div class="row">
-      <div class="col-sm-9">
-        <div class="footer-bar-links-right">
-          <%= yield :footer_bar_nav_links %>
-        </div>
-      </div>
-    </div>
-  </div>
-</nav>
+      <div class="col-sm-3 one">
 
-<footer class="footer">
-  <div class="container">
-    <div class="row">
-      <div class="col-sm-3">
-
-        <h2>PENN LIBRARIES</h2>
+        <h2>Penn Libraries</h2>
 
         <ul class="footerlinks">
 
-          <li><a href="https://www.library.upenn.edu/about/locations">Choose a library</a></li>
+          <li id="chooselibrarylink"><!-- 2 -->
+            <a class="library-home-link" href="http://www.library.upenn.edu">Library Home</a>
+          </li>
+          <li><a href="https://www.library.upenn.edu/about/locations">Libraries &amp; Hours</a></li>
 
           <li><a href="<%= resourcesharing_path %>">BorrowDirect+/ILL</a></li>
+          <li><a href="//libcal.library.upenn.edu/appointments">Make an appointment</a></li>
 
         </ul>
 
       </div>
 
-      <div class="col-sm-3">
+      <div class="col-sm-3 two">
 
-        <h2>FRANKLIN HELP</h2>
+        <h2>Franklin Help</h2>
 
         <ul class="footerlinks">
 
@@ -40,43 +32,20 @@
           <li><a href="https://guides.library.upenn.edu/articlesplus">Using Franklin Articles+</a></li>
 
           <li><a href="https://guides.library.upenn.edu/usingeresources">Accessing E-Resources</a></li>
-
-          <!-- <li><a href="">Privacy</a></li> -->
-<%#
-          <li class="googlelabel">
-
-            <h3>Search help pages</h3>
-
-            <form action="//www.google.com/cse" id="cse-search-box" target="_blank">
-              <input type="hidden" name="cx" value="017655588810252898367:yledfkhdv64" />
-              <input type="hidden" name="ie" value="UTF-8" />
-              <input type="hidden" value="3" name="num" />
-              <input type="text" name="q"  class="gsinput defaultText" title="Search Help" />
-              <input  class="googlego" name="sa" value="go" type="submit"/>
-            </form>
-            <script type="text/javascript" src="//www.google.com/jsapi"></script>
-            <script type="text/javascript">google.load("elements", "1", {packages: "transliteration"});</script>
-            <script type="text/javascript" src="//www.google.com/coop/cse/t13n?form=cse-search-box&#38;t13n_langs=en"></script>
-            <script type="text/javascript" src="//www.google.com/coop/cse/brand?form=cse-search-box&#38;lang=en"></script>
-          </li>
-%>
         </ul>
 
       </div>
 
-      <div class="col-sm-3">
+      <div class="col-sm-3 three">
 
         <h2>CONTACT US</h2>
-
         <ul class="footerlinks">
-
-          <!-- <li><a href="tel:2158987555">215-898-7555</a></li> -->
-
           <li><a href="http://faq.library.upenn.edu/ask">Questions or comments</a></li>
-
-          <li id="footerchat">
-            <div id="libchat_424b3bc441c9bd760d26a2d0dd03c906"></div><script type="text/javascript" src="//v2.libanswers.com/load_chat.php?hash=424b3bc441c9bd760d26a2d0dd03c906"></script>
-          </li>
+          <% unless current_page?(root_path) %>
+            <li id="footerchat">
+              <div id="libchat_424b3bc441c9bd760d26a2d0dd03c906"></div><script type="text/javascript" src="//v2.libanswers.com/load_chat.php?hash=424b3bc441c9bd760d26a2d0dd03c906"></script>
+            </li>
+          <% end %>
 
         </ul>
 
@@ -85,7 +54,7 @@
     </div>
 
     <div class="row">
-      <div class="contact col-sm-12">&copy; <a href="https://www.upenn.edu/">University of Pennsylvania</a></div>
+      <div class="copyright col-sm-12">&copy; <a href="https://www.upenn.edu/">University of Pennsylvania</a></div>
     </div>
 
   </div>

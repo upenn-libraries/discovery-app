@@ -1,19 +1,40 @@
-div.section {
-    border: 1px solid black;
-    padding: 5px;
-    margin: 10px auto;
-    width: 67%;
-}
-  
-div.section-heading {
-    font-weight: bold;
-    border-bottom: 1px solid black;
-    padding-bottom: 4px;
-    margin-bottom: 4px;
+@import 'base/colors.css.scss';
+
+.alert-facex-address {
+  margin: 10px 0;
 }
 
-.control-label {
-    text-align: right;
-    margin-bottom: 0;
-    padding-top: 7px;
+// spinner stuff from:
+// https://codeburst.io/how-to-create-a-simple-css-loading-spinner-make-it-accessible-e5c83c2e464c
+@keyframes spinner {
+  0% {
+    transform: translate3d(-50%, -50%, 0) rotate(0deg);
+  }
+  100% {
+    transform: translate3d(-50%, -50%, 0) rotate(360deg);
+  }
+}
+
+.spinner {
+  height: 60px;
+  opacity: 1;
+  position: relative;
+  transition: opacity linear 0.1s;
+
+  &::before {
+    animation: 2s linear infinite spinner;
+    border: solid 3px #eee;
+    border-bottom-color: $upenn-blue;
+    border-radius: 50%;
+    content: "";
+    height: 40px;
+    left: 50%;
+    opacity: inherit;
+    position: absolute;
+    top: 50%;
+    transform: translate3d(-50%, -50%, 0);
+    transform-origin: center;
+    width: 40px;
+    will-change: transform;
+  }
 }
