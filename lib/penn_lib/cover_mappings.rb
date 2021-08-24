@@ -41,7 +41,7 @@ module PennLib
       str.unpack('Q')[0]
     end
 
-    blah = lambda { |file, key_transform|
+    build_db = lambda { |file, key_transform|
       db_file = "#{file}.db"
       return RocksDB.open_readonly(db_file) if File.directory?(db_file)
       hash = RocksDB.open(db_file)
@@ -95,13 +95,13 @@ module PennLib
     }
     private_constant :LENIENT_ISBN_TRANSFORM
 
-    OCLC_MAP = blah.call('oclc_numbers_cover_mappings.txt.gz', STRICT_INT_TRANSFORM).freeze
+    OCLC_MAP = build_db.call('oclc_numbers_cover_mappings.txt.gz', STRICT_INT_TRANSFORM).freeze
     private_constant :OCLC_MAP
 
-    ISBN10_MAP = blah.call('isbn_10_cover_mappings.txt.gz', STRICT_ISBN10_TRANSFORM).freeze
+    ISBN10_MAP = build_db.call('isbn_10_cover_mappings.txt.gz', STRICT_ISBN10_TRANSFORM).freeze
     private_constant :ISBN10_MAP
 
-    ISBN13_MAP = blah.call('isbn_13_cover_mappings.txt.gz', STRICT_ISBN13_TRANSFORM).freeze
+    ISBN13_MAP = build_db.call('isbn_13_cover_mappings.txt.gz', STRICT_ISBN13_TRANSFORM).freeze
     private_constant :ISBN13_MAP
 
     def self.map(oclc_id, isbn10, isbn13)
