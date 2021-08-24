@@ -98,10 +98,9 @@ class SolrDocument
     markup = ''
     isbns = fetch('isbn_a', [])
     oclc = fetch('oclc_id', '')
-    ol_cover_id = fetch('ol_cover_id', nil)
     markup += "data-isbns=#{isbns.join(',')} " unless isbns.blank?
     markup += "data-oclc=#{oclc}" unless oclc.blank?
-    { oclc_id: oclc, isbns: isbns, markup: markup, ol_cover_id: ol_cover_id }
+    { oclc_id: oclc, isbns: isbns, markup: markup, ol_cover_id: PennLib::CoverMappings.map(oclc, isbns) }
   end
 
 
