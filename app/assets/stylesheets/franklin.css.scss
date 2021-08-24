@@ -63,8 +63,16 @@ dd.blacklight-status-location, dt.blacklight-status-location {
 }
 
 .list-inline {
-  display: flex;
+  &.freq-databases {
+    @media (min-width: 530px) {
+    display: flex;
+    }
+  }
+  @media (min-width: 930px) {
+    display: flex;
+  }
 }
+
 
 .list-inline li {
   flex: 1;
@@ -262,14 +270,20 @@ table[id^="holdingItems"] td {
   margin-bottom: 5px;
 }
 
+.btn-default.dropdown-toggle {
+  white-space: normal;
+}
+
 .getit-caret.glyphicon-chevron-down, .getit-caret.glyphicon-chevron-up {
   top: 2px;
   left: 2px;
 }
 
 .item-request-section-index {
-  padding: 0 55px;
   margin-bottom: 10px;
+  @media (min-width: 992px) {
+    padding-left: 15px;
+  }
 
   .panel-body {
     margin-bottom: -15px;
@@ -315,6 +329,7 @@ header {
     padding: 0 0 0 0;
     width: 40rem;
     max-width: 100%;
+    margin-right: 0;
     @media (min-width: 700px) {
       float: right;
       padding-right: 2.4rem;
@@ -427,11 +442,7 @@ body header #search-navbar div.container {
 #header-navbar {
 
   background-color: #011f5b;
-  padding-top: 9.2rem;
-  @media (min-width: 450px) {
-    padding-top: 5.8rem;
-
-  }
+  padding-top: 5.8rem;
   @media (min-width: 670px) {
     padding: 2rem 0 2rem 1.9rem;
 
@@ -454,7 +465,7 @@ body header #search-navbar div.container {
     margin: 0 4% 0 5.5%;
     padding-right: 0;
     max-width: 100%;
-    @media (min-width: 450px) {
+    @media (min-width: 380px) {
       margin-bottom: 1rem;
     }
     @media (min-width: 670px) {
@@ -514,10 +525,15 @@ body header #search-navbar div.container {
     position: static!important;
 }
 
+#articles-search-navbar > .summon-form {
+  padding-bottom: 0;
+}
+
 #li-bookmarks {
   float: left;
   width: 16rem;
   margin-top: 2px;
+  padding-bottom: 1rem;
 
   @media (min-width: 768px) {
     padding: 1.6rem 0 0 3rem;
@@ -530,13 +546,18 @@ body header #search-navbar div.container {
 #catalog-search-navbar,
 #databases-search-navbar {
   #li-bookmarks {
-    @media (min-width: 768px) {
-      padding: 2.1rem 0 0 1.3rem;
-      width: 13rem;
+    float: right;
+    width: auto;
+    padding: 0.5rem 0.1rem 0 0;
+    @media (min-width: 555px) {
+      padding: 2.5rem 1.5rem 0 3rem;
     }
-    @media (min-width: 822px) {
+    @media (min-width: 768px) {
+      padding: 1.5rem 0 0 3rem;
+    }
+    @media (min-width: 855px) {
       padding: 2.1rem 0 0 3rem;
-      width: 14rem;
+      width: 15rem;
     }
   }
 }
@@ -570,10 +591,6 @@ body header #search-navbar div.container {
   margin-top: 0;
   border-bottom: 1px dashed #d2d2d2;
 }
-
-//.documents-list .document:nth-child(even) {
-//  background: #ececec;
-//}
 
 #documents .document .document-title-heading {
   line-height: 1.42857143;
@@ -883,7 +900,7 @@ h3.ongray {
 
 
 .navbar-default .navbar-form,
-.navbar-form.col-sm-3 {
+.navbar-form.tools-basic-bookmarks {
     border-color: transparent;
     border: none !important;
     -webkit-box-shadow: none;
@@ -939,16 +956,18 @@ h1.franklin-title {
 
   #catalog-search-navbar,
   #databases-search-navbar {
-    .navbar-form.col-sm-3 {
-      a.advanced_search {
-        @media (min-width: 555px) {
-          top: -.5rem;
-        }
-        @media (min-width: 700px) {
-          top: .5rem;
-        }
+    .navbar-form.tools-basic-bookmarks {
         @media (min-width: 768px) {
-          top: 1rem;
+          padding-left: 0;
+        }
+      a.advanced_search {
+        top: 0.75rem;
+        @media (min-width: 555px) {
+          left: 0;
+        }
+        @media (min-width: 855px) {
+          top: 1.5rem;
+          left: 2.5rem;
         }
       }
     }
@@ -956,20 +975,35 @@ h1.franklin-title {
 }
 
 
-
 .blacklight-advanced {
+  .page-header {
+    padding-left: 15px;
+    padding-right: 15px;
+    .advanced-search-start-over {
+      margin-top: -7px;
+    }
+  }
+
+  .sort-buttons {
+    margin-bottom: 10px;
+  }
+
+  hr {
+    margin-left: -15px;
+    margin-right: -15px;
+  }
+
   #search-navbar.navbar-default .tab-content  {
     #catalog-search-navbar,
     #databases-search-navbar {
 
       @media (min-width: 768px) {
-        width: 86rem;
         margin: 0 auto;
         height: 4rem;
       }
       form.search-query-form.navbar-form {
-        max-width: 90%;
-        width: 33rem;
+        max-width: 95%;
+        width: 40rem;
         @media (min-width: 670px) {
           width: 45rem;
         }
@@ -978,16 +1012,67 @@ h1.franklin-title {
         }
       }
 
-
-      .navbar-form.col-sm-3 {/*basic search*/
-        clear:both;
-        @media (min-width: 555px) {
-          clear:none;
+      .navbar-form.tools-advanced-bookmarks  {
+        float: left;
+        top: -.5rem;
+        width: 100%;
+        padding-top: 0;
+        margin-bottom: 1.4rem;
+        @media (min-width: 768px) {
+          padding-left: 0;
+          padding-right: 0.5rem;
         }
-        @media (min-width: 722px) {
-          float: left;
-
+        @media (min-width: 785px) {
+          margin-top: -.5rem;
+          width: auto;
         }
+        @media (min-width: 855px) {
+          top: 1.5rem;
+          margin-top: 0;
+        }
+        #li-bookmarks {
+          top: 0;
+          float: right;
+          width: auto;
+          padding-top: 0.7rem;
+          padding-right: 0;
+          margin-right: -1.5rem;
+          @media (min-width: 722px) {
+            padding-top: 0;
+            margin-right: -.5rem;
+            margin-top: -.2rem;
+          }
+          @media (min-width: 768px) {
+            padding-top: 1.3rem;
+            margin-right: 1rem;
+          }
+          @media (min-width: 785px) {
+            padding-top: 2.1rem;
+          }
+          @media (min-width: 855px) {
+            padding-top: 2.6rem;
+          }
+        }
+        a {
+          top: 1rem;
+          left: 0;
+          @media (min-width: 768px) {
+            margin-top: -0.5rem;
+            margin-bottom: 1.2rem;
+          }
+          @media (min-width: 785px) {
+            margin: 0;
+            left: 1rem;
+          }
+          @media (min-width: 855px) {
+            top: 1.5rem;
+          }
+        }
+      }
+
+
+      .navbar-form.tools-basic-bookmarks{/*basic search*/
+        float: left;
         a {
           top: 0;
           @media (min-width: 555px) {
@@ -1094,11 +1179,8 @@ h1.franklin-title {
       #catalog-search-navbar,
       #databases-search-navbar {
         max-width: 84rem;
-        height: 10rem;
-        @media (min-width: 555px) {
-          height: 6rem;
-        }
-        @media (min-width: 850px) {
+        height: 6.3rem;
+        @media (min-width: 855px) {
           height: 4.5rem;
         }
         form.search-query-form.navbar-form {
@@ -1109,10 +1191,7 @@ h1.franklin-title {
           z-index: 3000;
           width: 100%;
 
-          @media (min-width: 555px) {
-            width: 40rem;
-          }
-          @media (min-width: 700px) {
+          @media (min-width: 855px) {
             width: 66%;
             margin: 1rem 0 1rem;
           }
@@ -1146,7 +1225,7 @@ h1.franklin-title {
         margin-top: 0;
         @media (min-width: 768px) {
           margin: 1rem 0 1rem;
-          width: 66%;
+          width: 77%;
         }
         .input-group span.input-group-btn {
           width: 4rem;
@@ -1228,6 +1307,15 @@ body #search-navbar div.container {
               width: 100%;
               height: 4rem;
               font-weight: normal;
+              @media (min-width: 420px) {
+                padding-left: 3.5rem;
+              }
+              @media (min-width: 500px) {
+                padding-left: 2rem;
+              }
+              @media (min-width: 530px) {
+                padding-left: 1.2rem;
+              }
               @media (min-width: 800px) {
                 padding:.8rem 1.2rem 0 4.7rem;
               }
@@ -1701,12 +1789,6 @@ h3.expert-heading {
 }
 
 @media screen and (min-width: 320px) and (max-width: 568px) {
-
-
-  .row {
-    margin: 0px 5px 5px 5px;
-  }
-
 
   .bento-box {
     min-width: 300px;
