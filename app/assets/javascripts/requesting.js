@@ -30,6 +30,17 @@ function displayButtons($widgetArea, selectedItem, logged_in, context) {
     }
 }
 
+function calculateItemRequestUrl(mmsId, itemCount, emptyHoldingCount) {
+    var itemRequestUrl = '/alma/items/' + mmsId + '/all';
+    if(itemCount || emptyHoldingCount) {
+        var urlParams = new URLSearchParams({
+            item_count: itemCount,
+            empty_holding_count: emptyHoldingCount
+        });
+    }
+    return itemRequestUrl + '?' + urlParams.toString();
+}
+
 function initializeRequestingWidget($widgetArea, context) {
     $('.selected-item-debug').hide();
     var $requestForm = $widgetArea.find('.request-form')
@@ -42,18 +53,7 @@ function initializeRequestingWidget($widgetArea, context) {
         $requestForm.hide();
         var itemCount = $widget.data('itemCount');
         var emptyHoldingCount = $widget.data('emptyHoldingCount');
-        // TODO: move to function, e.g.:
-        // var itemRequestUrl = calculateItemRequestUrl(itemCount, emptyHoldingCount)
-        var itemRequestUrl = '/alma/items/' + mmsId + '/all';
-        if(itemCount || emptyHoldingCount) {
-            itemRequestUrl += '?'
-        }
-        if(itemCount) {
-            itemRequestUrl += $.param({ item_count: itemCount })
-        }
-        if(emptyHoldingCount) {
-            itemRequestUrl += $.param({ empty_holding_count: emptyHoldingCount })
-        }
+        var itemRequestUrl = calculateItemRequestUrl(mmsId, itemCount, emptyHoldingCount);
         $.ajax({
             url: itemRequestUrl,
             dataType: 'json'
@@ -103,7 +103,7 @@ function initializeRequestingWidget($widgetArea, context) {
 
 $(document).ready(function() {
     var $body = $('body');
-    $('[data-toggle="tooltip"]').tooltip(); // activate tooltips
+    $('.tooltip-wrapper').tooltip(); // activate tooltips
     var context;
     if(document.body.classList.contains("blacklight-catalog-show")) {
         var $widgetArea = $('.item-request-widget');
@@ -122,15 +122,12 @@ $(document).ready(function() {
                 if($widget && !$widget.hasClass('loaded')) {
                     initializeRequestingWidget($widget, context);
                 }
-                // var $otherWidgets = $('.item-request-widget:not(' + id + ')');
-                // $otherWidgets.hide();
                 $widget.slideToggle(200);
                 if($caret.hasClass('glyphicon-chevron-up')) {
                     $button.attr('aria-expanded', false);
                     $caret.removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
                 } else if($caret.hasClass('glyphicon-chevron-down')) {
                     $button.attr('aria-expanded', true);
-                    // $('.getit-caret').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
                     $caret.removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
                 }
 
@@ -149,7 +146,7 @@ $(document).ready(function() {
         .on('click', '.delivery-option-radio', function(e) {
             var $radio = $(this);
             var $checkbox = $('#bbm_validation_checkbox');
-            if($radio.val() === 'mail') {
+            if ($radio.val() === 'mail') {
                 $checkbox.prop('disabled', false).focus();
                 $checkbox.closest('div.checkbox').removeClass('disabled');
             } else {
@@ -211,6 +208,7 @@ $(document).ready(function() {
             $modal.find('#requestItemPid').val(selectedItem.id);
             $modal.find('#requestHoldingId').val(selectedItem.holding_id);
             $modal.find('#requestMmsId').val(mmsId);
+            $modal.find('#requestIsxn').val(selectedItem.isxn);
 
             // set Item details
             $modal.find('#title').val(selectedItem.title);

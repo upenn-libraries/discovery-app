@@ -279,16 +279,12 @@ jQuery.shelfLocatorLink = new function() {
                 case 'E':
                 case 'F':
                 case 'G':
-                    target = "A-G";
-                    break;
                 case 'H':
-                    target = "H";
-                    break;
                 case 'J':
                 case 'K':
                 case 'L':
                 case 'M':
-                    target = "J-M";
+                    target = "A-M";
                     break;
                 case 'P':
                 case 'Q':

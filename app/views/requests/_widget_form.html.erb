@@ -7,12 +7,16 @@
   </div>
   <div class="form-group">
     <div class="btn-toolbar" aria-label="Get It Options">
-      <button type="submit" class="print-request-button btn btn-default request-button" value="print" style="display: none;" data-toggle="tooltip" data-placement="bottom" title="<%= t('requests.tooltips.request_in_print') %>" disabled><%= t('requests.buttons.print_request') %></button>
+      <div class="tooltip-wrapper disabled" data-toggle="tooltip" data-placement="bottom" title="<%= t('requests.tooltips.request_in_print') %>">
+        <button type="submit" class="print-request-button btn btn-default request-button" value="print" style="display: none;" disabled><%= t('requests.buttons.print_request') %></button>
+      </div>
       <button type="submit" class="aeon-request-button btn btn-default request-button" value="aeon" style="display: none;" disabled><%= t('requests.buttons.request_to_view') %></button>
-      <button type="submit" class="electronic-request-button btn btn-default request-button" style="display: none;"
-              value="electronic" data-toggle="tooltip" data-placement="bottom" title="<%= t('requests.tooltips.request_electronic') %>" disabled>
-        <%= t('requests.buttons.electronic_request') %>
-      </button>
+      <div class="tooltip-wrapper disabled" data-toggle="tooltip" data-placement="bottom" title="<%= t('requests.tooltips.request_electronic') %>">
+        <button type="submit" class="electronic-request-button btn btn-default request-button" style="display: none;"
+                value="electronic" disabled>
+          <%= t('requests.buttons.electronic_request') %>
+        </button>
+      </div>
       <% unless current_user %>
         <div class="btn-group">
           <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

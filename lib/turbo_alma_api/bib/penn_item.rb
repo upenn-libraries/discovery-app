@@ -161,6 +161,10 @@ module TurboAlmaApi
         location.in? aeon_site_codes
       end
 
+      def isxn
+        bib('issn') || bib('isbn')
+      end
+
       # TODO: use to_h here?
       def for_select(_options = {})
         {
@@ -177,6 +181,7 @@ module TurboAlmaApi
           'aeon_requestable' => aeon_requestable?,
           'volume' => volume,
           'issue' => issue,
+          'isxn' => isxn,
           'in_place' => in_place?,
           'scannable' => scannable?
         }

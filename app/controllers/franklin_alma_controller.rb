@@ -379,12 +379,33 @@ class FranklinAlmaController < ApplicationController
       end
     end
 
-    # only allow permitted request options by name
-    options = options.compact.uniq.select do |option|
-      option[:option_code].in? PERMITTED_REQUEST_OPTION_CODES
-    end
-
     render json: options
+  end
+
+  def request_title?
+    api_instance = BlacklightAlma::BibsApi.instance
+    api = api_instance.ezwadl_api[0]
+    userid = session['id'].presence || 'GUEST'
+    options = { user_id: userid, format: 'json', consider_dlr: true }
+
+    response_data = api_instance.request(api.almaws_v1_bibs.mms_id_request_options, :get, params.merge(options))
+
+    (response_data['request_option'] || []).map do |option|
+      option['type']['value']
+    end.member?('HOLD')
+  end
+
+  def request_item?
+    api_instance = BlacklightAlma::BibsApi.instance
+    api = api_instance.ezwadl_api[0]
+    userid = session['id'].presence || 'GUEST'
+    options = { user_id: userid, format: 'json' }
+
+    response_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items_item_pid_request_options, :get, params.merge(options))
+
+    (response_data['request_option'] || []).map do |option|
+      option['type']['value']
+    end.member?('HOLD')
   end
 
   def load_request
@@ -404,48 +425,38 @@ class FranklinAlmaController < ApplicationController
 
     return if performed?
 
-    userid = session['id'].presence || 'GUEST'
-
-    # The block below pulls libraries dynamically but the list of valid pickup locations shouldn't
-    # change, so I've created a hard-coded list to use below to save an API call and reduce load time.
-    #
-    #exclude_libs = ['Architectural Archives', 'Area Studies Technical Services', 'EMPTY', 'Education Commons', 'LIBRA', 'ZUnavailable Library']
-    #url = "https://api-na.hosted.exlibrisgroup.com/almaws/v1/conf/libraries?apikey=#{ENV['ALMA_API_KEY']}"
-    #doc = Nokogiri::XML(open(url))
-    #libraries = {}.merge(doc.root.children.map { |lib|
-                           #{ lib.xpath('.//name').text => lib.xpath('.//code').text }
-                         #}
-                         #.reduce(&:merge)
-                         #.to_h
-                         #.reject { |k,v| exclude_libs.member?(k) }
-                        #)
-
     # Uncomment these as more libraries open up as delivery options
-    libraries = { #"Annenberg Library" => "AnnenLib",
-                  #"Athenaeum Library" => "AthLib",
-                  #"Biomedical Library" => "BiomLib",
-                  #"Chemistry Library" => "ChemLib",
-                  #"Dental Medicine Library" => "DentalLib",
-                  #"Fisher Fine Arts Library" => "FisherFAL",
-                  #"Library at the Katz Center" => "KatzLib",
-                  #"Math/Physics/Astronomy Library" => "MPALib",
-                  #"Museum Library" => "MuseumLib",
-                  #"Ormandy Music and Media Center" => "MusicLib",
-                  #"Pennsylvania Hospital Library" => "PAHospLib",
-                  'Van Pelt Library' => 'VanPeltLib'
-                  #"Veterinary Library - New Bolton Center" => "VetNBLib",
-                  #"Veterinary Library - Penn Campus" => "VetPennLib"
+    libraries = { 'Annenberg Library' => 'AnnenLib',
+                  'Athenaeum Library' => 'AthLib',
+                  # 'Biotech Commons' => 'BiomLib",
+                  # 'Chemistry Library' => 'ChemLib',
+                  'Dental Medicine Library' => 'DentalLib',
+                  'Fisher Fine Arts Library' => 'FisherFAL',
+                  'Library at the Katz Center' => 'KatzLib',
+                  # 'Math/Physics/Astronomy Library' => 'MPALib',
+                  'Museum Library' => 'MuseumLib',
+                  'Ormandy Music and Media Center' => 'MusicLib',
+                  'Pennsylvania Hospital Library' => 'PAHospLib',
+                  'Van Pelt Library' => 'VanPeltLib',
+                  'Veterinary Library - New Bolton Center' => 'VetNBLib',
+                  'Veterinary Library - Penn Campus' => 'VetPennLib',
                 }
 
     if params['item_pid'].present?
-      api_response = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items_item_pid, :get, params.merge({ format: 'json' }))
-      bib_data, holding_data, item_data = ['bib_data', 'holding_data', 'item_data'].map { |d| api_response[d] }
+      api_response = api_instance.request(
+        api.almaws_v1_bibs.mms_id_holdings_holding_id_items_item_pid, :get, params.merge({ format: 'json' })
+      )
+      bib_data, holding_data, item_data = %w[bib_data holding_data item_data].map { |d| api_response[d] }
     else
-      api_response = api_instance.request(api.almaws_v1_bibs, :get, params.merge({ format: 'json' }))
+      api_response = api_instance.request(
+        api.almaws_v1_bibs, :get, params.merge({ format: 'json' })
+      )
       bib_data, holding_data, item_data = api_response.dig('bib', 0), {}, {}
     end
 
-    render 'catalog/request', locals: { bib_data: bib_data, holding_data: holding_data, item_data: item_data, libraries: libraries } unless performed?
+    render 'catalog/request', locals: {
+      bib_data: bib_data, holding_data: holding_data, item_data: item_data, libraries: libraries
+    }
   end
 
   def create_request

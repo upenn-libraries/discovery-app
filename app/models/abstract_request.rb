@@ -3,12 +3,16 @@
 # abstract Request, wrapping creation and submission of either a:
 # TurboAlmaApi::Request or a Illiad::Request
 class AbstractRequest
-  ILLIAD_DELIVERY_OPTIONS = %w[mail electronic campus].freeze
+  ILLIAD_DELIVERY_OPTIONS = [
+    Illiad::Request::MAIL_DELIVERY,
+    Illiad::Request::ELECTRONIC_DELIVERY,
+    Illiad::Request::OFFICE_DELIVERY
+  ]
   ALMA_DELIVERY_OPTIONS = %w[pickup].freeze
 
   class RequestFailed < StandardError; end
 
-  # @param [TurboAlmaApi::Bib::PennItem] item
+  # @param [TurboAlmaApi::Bib::PennItem, NilClass] item
   # @param [Hash] user_data
   # @param [ActionController::Parameters] params
   def initialize(item, user_data, params = {})
@@ -20,7 +24,7 @@ class AbstractRequest
   # Handle submission of Request
   def submit
     response = perform_request
-    RequestMailer.confirmation_email(response, @request.email)
+    RequestMailer.confirmation_email(response, @request)
                  .deliver_now
     { status: :success,
       confirmation_number: response[:confirmation_number],
@@ -39,7 +43,11 @@ class AbstractRequest
     elsif illiad_fulfillment?
       @request = Illiad::Request.new @user, @item, @params
       illiad_api.get_or_create_illiad_user @request.username
-      illiad_api.transaction @request.to_h
+      transaction_response = illiad_api.transaction @request.to_h
+      if @request.note.present? && transaction_response[:confirmation_number].present?
+        illiad_api.add_note transaction_response[:confirmation_number], @request.note, @request.username
+      end
+      transaction_response
     else
       raise ArgumentError,
             I18n.t('requests.messages.unsupported_submission_logic',

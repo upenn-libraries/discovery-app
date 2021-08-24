@@ -3,9 +3,10 @@
 # Mail actions for Requests
 class RequestMailer < ApplicationMailer
   # @param [Hash] info
-  # @param [String] to recipient
-  def confirmation_email(info, to)
+  # @param [TurboAlmaApi::Request, Illiad::Request] request
+  def confirmation_email(info, request)
     @info = info
-    mail(to: to, subject: I18n.t('requests.email.confirmation.subject'))
+    @request = request
+    mail(to: request.email, subject: I18n.t('requests.email.confirmation.subject'))
   end
 end
