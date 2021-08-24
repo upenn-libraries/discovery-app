@@ -42,7 +42,8 @@ $(document).ready(function() {
                 availability = holding['location_code'] === 'vanpNocirc' ? "<span class='label label-availability label-default'>Use online access — print restricted</span>" : "<span class='label label-availability label-success'>Available</span>";
             }
             // TODO: pass in format to shelfLocatorLink() somehow
-            return [availability, holding['location'], holding['call_number'], $.shelfLocatorLink(mms_id, holding, "TODO")]
+            var holding_info = holding['holding_info'] ?  (" - "  + holding['holding_info']) : null;
+            return [availability, holding['location'], holding['call_number'], holding_info , $.shelfLocatorLink(mms_id, holding, "TODO")]
                 .filter(function (item) {
                     return item != null && item.length > 0;
                 }).join(' ');
