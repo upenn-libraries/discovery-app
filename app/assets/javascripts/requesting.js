@@ -30,6 +30,17 @@ function displayButtons($widgetArea, selectedItem, logged_in, context) {
     }
 }
 
+function calculateItemRequestUrl(mmsId, itemCount, emptyHoldingCount) {
+    var itemRequestUrl = '/alma/items/' + mmsId + '/all';
+    if(itemCount || emptyHoldingCount) {
+        var urlParams = new URLSearchParams({
+            item_count: itemCount,
+            empty_holding_count: emptyHoldingCount
+        });
+    }
+    return itemRequestUrl + '?' + urlParams.toString();
+}
+
 function initializeRequestingWidget($widgetArea, context) {
     $('.selected-item-debug').hide();
     var $requestForm = $widgetArea.find('.request-form')
@@ -42,18 +53,7 @@ function initializeRequestingWidget($widgetArea, context) {
         $requestForm.hide();
         var itemCount = $widget.data('itemCount');
         var emptyHoldingCount = $widget.data('emptyHoldingCount');
-        // TODO: move to function, e.g.:
-        // var itemRequestUrl = calculateItemRequestUrl(itemCount, emptyHoldingCount)
-        var itemRequestUrl = '/alma/items/' + mmsId + '/all';
-        if(itemCount || emptyHoldingCount) {
-            itemRequestUrl += '?'
-        }
-        if(itemCount) {
-            itemRequestUrl += $.param({ item_count: itemCount })
-        }
-        if(emptyHoldingCount) {
-            itemRequestUrl += $.param({ empty_holding_count: emptyHoldingCount })
-        }
+        var itemRequestUrl = calculateItemRequestUrl(mmsId, itemCount, emptyHoldingCount);
         $.ajax({
             url: itemRequestUrl,
             dataType: 'json'
