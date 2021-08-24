@@ -49,12 +49,13 @@ module PennLib
       Zlib::GzipReader.new(File.open(file), :external_encoding => 'UTF-8').each_line do |line|
         keys = line.split(' ')
         target = Integer(keys.shift) rescue next
+	target = encode(target) # convert to binary "string" key
 	if (ct = ct + 1) % 100000 == 0
 	  puts "#{file}: #{ct}"
 	end
         keys.each do |key|
           transformed_key = key_transform.call(key)
-          hash[encode(transformed_key)] = encode(target) unless transformed_key.nil?
+          hash[encode(transformed_key)] = target unless transformed_key.nil?
         end
       end
       hash.close
