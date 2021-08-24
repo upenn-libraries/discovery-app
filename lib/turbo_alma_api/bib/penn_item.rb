@@ -51,10 +51,11 @@ module TurboAlmaApi
 
       # Determine, based on various response attributes, if this Item is
       # able to be circulated.
+      # If a user cannot check out an item, the #not_loanable? call will be false and prevent requesting
       # @return [TrueClass, FalseClass]
       def checkoutable?
         in_place? &&
-          !non_circulating? &&
+          # !non_circulating? &&
           !not_loanable? &&
           !aeon_requestable?
       end
@@ -82,6 +83,7 @@ module TurboAlmaApi
       end
 
       # @return [TrueClass, FalseClass]
+      # This is tailored
       def not_loanable?
         user_due_date_policy&.include? 'Not loanable'
       end
