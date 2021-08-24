@@ -27,8 +27,8 @@ li.blacklight-format_a {
   position: absolute;
   top: 0;
   left: 0;
-  padding-top: 10px;
-  max-height: 120px;
+  padding-top: 15px;
+  max-height: 140px;
   max-width: 100%;
 }
 
@@ -47,4 +47,12 @@ span.constraints-label{
 
 .catalog_startOverLink {
   font-size: 14px;
+}
+
+.panel-heading.collapse-toggle .panel-title:after {
+  content: "\e113";
+}
+
+.panel-heading.collapse-toggle.collapsed .panel-title:after {
+    content: "\e114";
 }

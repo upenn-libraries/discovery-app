@@ -70,7 +70,7 @@ function initializeRequestingWidget($widgetArea, context) {
             } else {
                 $widget.select2({
                     theme: 'bootstrap',
-                    placeholder: "Select an Item",
+                    placeholder: "Click here to see all Items",
                     width: "100%",
                     data: responseData
                 }).on('select2:open', function(e) {
@@ -81,7 +81,8 @@ function initializeRequestingWidget($widgetArea, context) {
                 });
             }
             $widgetArea.addClass('loaded');
-            $widgetArea.find('button:first').focus();
+            // srt focus to first button - triggers tooltip :/
+            // $widgetArea.find('button:first').focus();
         });
 
         if(context === 'show') {
@@ -102,6 +103,7 @@ function initializeRequestingWidget($widgetArea, context) {
 
 $(document).ready(function() {
     var $body = $('body');
+    $('[data-toggle="tooltip"]').tooltip(); // activate tooltips
     var context;
     if(document.body.classList.contains("blacklight-catalog-show")) {
         var $widgetArea = $('.item-request-widget');
@@ -120,16 +122,16 @@ $(document).ready(function() {
                 if($widget && !$widget.hasClass('loaded')) {
                     initializeRequestingWidget($widget, context);
                 }
-                var $otherWidgets = $('.item-request-widget:not(' + id + ')');
-                $otherWidgets.hide();
+                // var $otherWidgets = $('.item-request-widget:not(' + id + ')');
+                // $otherWidgets.hide();
                 $widget.slideToggle(200);
-                if($caret.hasClass('glyphicon-chevron-down')) {
+                if($caret.hasClass('glyphicon-chevron-up')) {
                     $button.attr('aria-expanded', false);
-                    $caret.removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-right');
-                } else if($caret.hasClass('glyphicon-chevron-right')) {
+                    $caret.removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+                } else if($caret.hasClass('glyphicon-chevron-down')) {
                     $button.attr('aria-expanded', true);
-                    $('.getit-caret').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-right');
-                    $caret.removeClass('glyphicon-chevron-right').addClass('glyphicon-chevron-down');
+                    // $('.getit-caret').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+                    $caret.removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
                 }
 
             }
@@ -172,6 +174,7 @@ $(document).ready(function() {
     $('#confirm-modal').on('show.bs.modal', function(e) {
         var selectedItem;
         var $modal = $(this);
+        $('[data-toggle="tooltip"]').tooltip('hide'); // hide tooltips
         $modal.empty();
         var triggeringButton = e.relatedTarget;
         var $widget = triggeringButton.closest('form').find('.request-item-select')

@@ -13,12 +13,14 @@
       <%= f.hidden_field :mms_id, id: 'requestMmsId' %>
 
       <%= f.text_field :selection,
-                       label: t('requests.fields.selection'),
+                       label: t('requests.fields.selected'),
                        disabled: true %>
 
       <ul class="list-group">
+        <% if user_is_facex? %>
+          <%= render('requests/confirm/delivery_options/office', f: f) if user_is_facex?  %>
+        <% end %>
         <%= render 'requests/confirm/delivery_options/pickup', f: f %>
-        <%#= render 'requests/confirm/delivery_options/campus', f: f %>
         <%= render 'requests/confirm/delivery_options/mail', f: f %>
       </ul>
       <div id="comments-area">

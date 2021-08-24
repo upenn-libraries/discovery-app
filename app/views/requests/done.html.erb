@@ -6,8 +6,10 @@
     </div>
     <div class="modal-body">
       <% if @response.dig(:status) == :success %>
-        <div class="alert alert-success" role="alert">
-          <%= t('requests.messages.request_complete') %>
+        <%# TODO: ensure proper success message is displayed for golive  %>
+        <div class="alert alert-warn" role="alert">
+          <%# t('requests.messages.request_complete') %>
+          <%= @response.dig :message %>
         </div>
       <dl>
         <dt>
@@ -25,14 +27,6 @@
         <%= @response.dig(:message) %>
       </pre>
       <% end %>
-<!--      <div class="debug-info">-->
-<!--      <pre>-->
-        <%#= params %>
-<!--      </pre>-->
-<!--        <pre>-->
-        <%#= @response %>
-<!--      </pre>-->
-<!--      </div>-->
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-primary" data-dismiss="modal"><%= t('requests.buttons.close') %></button>

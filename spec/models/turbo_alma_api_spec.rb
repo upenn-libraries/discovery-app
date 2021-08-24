@@ -68,16 +68,31 @@ RSpec.describe TurboAlmaApi::Client, type: :model do
       end
     end
     context 'failure' do
-      before do
-        allow(request).to receive(:item_pid).and_return('9876')
+      context 'with parseable response body' do
+        before do
+          allow(request).to receive(:item_pid).and_return('9876')
+        end
+        before do
+          stub_request_post_failure
+        end
+        it 'raises an exception' do
+          expect do
+            described_class.submit_request request
+          end.to raise_error TurboAlmaApi::Client::RequestFailed
+        end
       end
-      before do
-        stub_request_post_failure
-      end
-      it 'returns a hash with an error message' do
-        expect do
-          described_class.submit_request request
-        end.to raise_error TurboAlmaApi::Client::RequestFailed
+      context 'with empty response body' do
+        before do
+          allow(request).to receive(:item_pid).and_return('0000')
+        end
+        before do
+          stub_request_post_failure_empty
+        end
+        it 'raises an exception' do
+          expect do
+            described_class.submit_request request
+          end.to raise_error TurboAlmaApi::Client::RequestFailed
+        end
       end
     end
   end

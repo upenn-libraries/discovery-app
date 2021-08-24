@@ -80,7 +80,6 @@ $(document).ready(function() {
       img_tag = "<img alt='' src='" + thumbs[min] + "'>"
       element_struct["cover_div"].append(img_tag);
     });
-    alert("exclude_gb=" + exclude_gb + "; try_gb=" + try_gb + "; found_gb=" + found_gb);
-    console.log("exclude_gb=" + exclude_gb + "; try_gb=" + try_gb + "; found_gb=" + found_gb);
+    // console.log("exclude_gb=" + exclude_gb + "; try_gb=" + try_gb + "; found_gb=" + found_gb);
   });
 });

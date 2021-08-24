@@ -42,7 +42,7 @@
     <% cover_id_attrs = document.cover_id_attrs %>
     <div class="cover-image <%= format_icon(document.fetch_format, size: 'large') %>" <%= cover_id_attrs[:markup] %>>
       <%= image_tag("https://covers.openlibrary.org/b/id/#{cover_id_attrs[:ol_cover_id]}-M.jpg",
-                    :alt => "A nice img", :class => "") unless cover_id_attrs[:ol_cover_id].nil? %>
+                    :alt => "", :class => "") unless cover_id_attrs[:ol_cover_id].nil? %>
     </div>
   </div>
 </div>

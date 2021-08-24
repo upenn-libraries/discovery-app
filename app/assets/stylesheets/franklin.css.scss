@@ -115,7 +115,6 @@ dd.btn-group.unauthenticated {
 }
 
 div[id^="table-wrapper"] {
-  border: 1px solid #77F;
   padding: 6px;
 }
 
@@ -248,8 +247,9 @@ table[id^="holdingItems"] td {
   padding: 8px 18px;
 }
 
-.btn-primary {
-  background-color: $upenn-lighter-blue;
+.btn-primary, .btn-primary:focus {
+  background-color: $geit-blue;
+  border-color: $geit-blue;
 }
 
 .btn-primary:hover {
@@ -260,7 +260,11 @@ table[id^="holdingItems"] td {
   font-size: 14px;
   font-weight: bold;
   margin-bottom: 5px;
-  //background-color: $upenn-lighter-blue;
+}
+
+.getit-caret.glyphicon-chevron-down, .getit-caret.glyphicon-chevron-up {
+  top: 2px;
+  left: 2px;
 }
 
 .item-request-section-index {

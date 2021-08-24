@@ -34,7 +34,7 @@ $(document).ready(function() {
                 // pre-COVID-19 always mapped to "See request options";
                 if (holding['link_to_aeon']) {
                     // Aeon materials show as "unavailable", but not in the sense of being unviewable.
-                    availability = holding['location_code'] === 'vanpNocirc' ? "<span class='label label-availability label-default'>Use online access — print restricted</span>" : "<span class='label label-availability label-default'>See request options</span>";
+                    availability = holding['location_code'] === 'vanpNocirc' ? "<span class='label label-availability label-default'>Use online access — print restricted</span>" : "<span class='label label-availability label-warning'>See request options</span>";
                 } else {
                     availability = "<span class='label label-availability label-danger'>Unavailable</span>";
                 }
@@ -251,11 +251,20 @@ $(document).ready(function() {
                     var $this = $(this);
                     $this.one("click", function(e) {
                         e.preventDefault();
-                        $this.closest('.panel').find('.panel-body').slideDown(200);
+                        var $caret = $this.find('span.getit-caret');
+                        $('#table-wrapper-' + mmsid).closest('.panel').slideToggle(200);
+                        $caret.removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
                         Franklin.prototype.initializeItemsDataTable(mmsid);
                         Franklin.prototype.loadRequestOptionsAjax(mmsid);
                         $(this).click(function() {
-                            $('#table-wrapper-' + mmsid).closest('.panel-body').slideToggle(200);
+                            $('#table-wrapper-' + mmsid).closest('.panel').slideToggle(200);
+                            if($caret.hasClass('glyphicon-chevron-up')) {
+                                $this.attr('aria-expanded', false);
+                                $caret.removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+                            } else if($caret.hasClass('glyphicon-chevron-down')) {
+                                $this.attr('aria-expanded', true);
+                                $caret.removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+                            }
                         });
                     });
                 });

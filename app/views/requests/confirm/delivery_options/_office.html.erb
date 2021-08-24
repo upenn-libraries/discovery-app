@@ -1,0 +1,18 @@
+<li class="list-group-item">
+  <h3 class="list-group-item-heading">
+    <label>
+      <input type="radio" name="delivery" value="<%= Illiad::Request::OFFICE_DELIVERY %>" id="office-radio" class="office-option-radio" checked /> <%= t('requests.labels.office_delivery') %></label>
+  </h3>
+  <p class="list-group-item-text">
+    <% if @facex_address %>
+      <%= t('requests.delivery_messages.office_html') %>
+      <div class="alert alert-info alert-facex-address">
+        <%= @facex_address %>
+      </div>
+    <% else %>
+    <div class="alert alert-warning alert-facex-address">
+      <%= t('requests.delivery_messages.office_no_address_html') %>
+    </div>
+    <% end %>
+  </p>
+</li>
