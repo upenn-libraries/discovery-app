@@ -32,13 +32,16 @@ function displayButtons($widgetArea, selectedItem, logged_in, context) {
 
 function calculateItemRequestUrl(mmsId, itemCount, emptyHoldingCount) {
     var itemRequestUrl = '/alma/items/' + mmsId + '/all';
+
     if(itemCount || emptyHoldingCount) {
         var urlParams = new URLSearchParams({
             item_count: itemCount,
             empty_holding_count: emptyHoldingCount
         });
+        return itemRequestUrl + '?' + urlParams.toString();
+    } else {
+        return itemRequestUrl
     }
-    return itemRequestUrl + '?' + urlParams.toString();
 }
 
 function initializeRequestingWidget($widgetArea, context) {
