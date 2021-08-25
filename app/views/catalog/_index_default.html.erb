@@ -1,15 +1,15 @@
 <% doc_presenter = index_presenter(document) %>
 <%= detect_nocirc(document) %>
 
-<div class="row">
-  <div class="col-xs-10">
-    <div class="documentHeader row">
+<div class="search-results-row row">
+  <div class="col-xs-10 col-sm-9 col-md-10">
+    <div class="documentHeader">
       <%# main title container for doc partial view
           How many bootstrap columns need to be reserved
           for bookmarks control depends on size.
       -%>
 
-      <h3 class="index_title document-title-heading col-md-12">
+      <h3 class="index_title document-title-heading">
         <% if counter = document_counter_with_offset(document_counter) %>
           <span class="document-counter">
             <%= t('blacklight.search.documents.counter', counter: counter) %>
@@ -37,7 +37,7 @@
       <% end %>
     </ul>
   </div>
-  <div class="col-xs-2">
+  <div class="col-xs-2 col-sm-3 col-md-2">
     <%= render_index_doc_actions document %>
     <div class="cover-image <%= format_icon(document.fetch_format, size: 'large') %>" <%= document.cover_id_attrs %>>
     </div>
