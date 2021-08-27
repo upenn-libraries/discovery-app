@@ -88,19 +88,19 @@ module TurboAlmaApi
         user_due_date_policy&.include? 'Not loanable'
       end
 
-      # is the holding flagged for suppression form publishing?
+      # is the holding flagged for suppression from publishing?
       # @return [TrueClass, FalseClass]
       def suppressed?
         holding_data.dig('holding_suppress_from_publishing') == 'true'
       end
 
-      # Is the Item in the mythical "Unavailable" Library? Apparently, a graveyard for withdrawn Items
+      # Is this Item in the mythical "Unavailable" Library? Apparently, a graveyard for withdrawn Items
       # @return [TrueClass, FalseClass]
       def in_unavailable_library?
         library_name == 'ZUnavailable'
       end
 
-      # Whether or not an Item should hidden from display in a Patron context
+      # Whether or not this Item should hidden from display in a Patron context
       # @return [TrueClass, FalseClass]
       def hide_from_patrons?
         suppressed? ||
