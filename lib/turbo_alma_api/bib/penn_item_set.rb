@@ -87,7 +87,7 @@ module TurboAlmaApi
           request
         end
         hydra.run # runs all requests in parallel
-        requests.map do |request|
+        returned_items = requests.map do |request|
           return nil unless request.response.success?
 
           parsed_response = Oj.load request.response.body
@@ -95,6 +95,7 @@ module TurboAlmaApi
             TurboAlmaApi::Bib::PennItem.new item_data
           end
         end.compact.flatten
+        returned_items.reject &:hide_from_patrons?
       end
 
       # @param [Fixnum] request_number
