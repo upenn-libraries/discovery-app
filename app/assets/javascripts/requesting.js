@@ -64,24 +64,28 @@ function initializeRequestingWidget($widgetArea, context) {
             $widgetArea.removeClass('spinner');
             $requestForm.show();
             responseData = data
-            if(responseData.length === 1) {
-                // single item case - avoid instantiating select2 widget
-                $widget.closest('.form-group').hide();
-                selectedItem = responseData[0];
-                $widget.data(selectedItem);
-                displayButtons($widgetArea, selectedItem, logged_in, context);
+            if(!responseData) {
+                $widgetArea.html('<div class="alert alert-danger requesting-widget-error-alert">Failed to load any items for this record - refresh the page and try again.</div>');
             } else {
-                $widget.select2({
-                    theme: 'bootstrap',
-                    placeholder: "Click here to see all Items",
-                    width: "100%",
-                    data: responseData
-                }).on('select2:open', function(e) {
-                    $('.select2-search__field').attr('placeholder', "Type a year, issue or volume number to filter the list");
-                }).on('select2:select', function(e) {
-                    selectedItem = e.params.data;
+                if (responseData.length === 1) {
+                    // single item case - avoid instantiating select2 widget
+                    $widget.closest('.form-group').hide();
+                    selectedItem = responseData[0];
+                    $widget.data(selectedItem);
                     displayButtons($widgetArea, selectedItem, logged_in, context);
-                });
+                } else {
+                    $widget.select2({
+                        theme: 'bootstrap',
+                        placeholder: "Click here to see all Items",
+                        width: "100%",
+                        data: responseData
+                    }).on('select2:open', function (e) {
+                        $('.select2-search__field').attr('placeholder', "Type a year, issue or volume number to filter the list");
+                    }).on('select2:select', function (e) {
+                        selectedItem = e.params.data;
+                        displayButtons($widgetArea, selectedItem, logged_in, context);
+                    });
+                }
             }
             $widgetArea.addClass('loaded');
             // srt focus to first button - triggers tooltip :/

@@ -68,7 +68,7 @@ module TurboAlmaApi
       end
 
       def to_json(_options = {})
-        Oj.dump @items.map(&:for_select)
+        Oj.dump @items&.map(&:for_select)
       end
 
       private
