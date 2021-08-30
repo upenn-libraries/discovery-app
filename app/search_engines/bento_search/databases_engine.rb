@@ -36,7 +36,7 @@ class BentoSearch::DatabasesEngine
       per_page: 5,
       facet: false,
       search_field: 'keyword',
-      f: { 'format_f': ['Database & Article Index'] }
+      f: { 'format_f': [PennLib::SubjectConfig::DATABASES_FACET_VALUE] }
     )
     bl_results.first.docs
   end
