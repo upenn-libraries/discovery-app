@@ -17,7 +17,7 @@ module TurboAlmaApi
     # @return [TurboAlmaApi::Bib::ItemSet]
     # @param [String] mms_id
     # @param [Hash] options
-    # @option [String] username
+    # @option [String] user_id
     # @option [Integer] item_count
     # @option [Integer] empty_holding_count
     def self.all_items_for(mms_id, options = {})

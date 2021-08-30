@@ -3,7 +3,7 @@
 module Illiad
   # Represent an Illiad request
   class Request
-    attr_accessor :username, :email, :note
+    attr_accessor :user_id, :email, :note
 
     OFFICE_DELIVERY = 'office'
     MAIL_DELIVERY = 'mail'
@@ -13,7 +13,7 @@ module Illiad
     # @param [TurboAlmaApi::Bib::PennItem] item
     # @param [Hash] params
     def initialize(user, item, params)
-      @username = user[:id]
+      @user_id = user[:id]
       @email = user[:email]
       @item = item
       @data = params
@@ -25,9 +25,9 @@ module Illiad
     # @return [Hash]
     def to_h
       if scan_deliver?
-        scandelivery_request_body @username, @item, @data
+        scandelivery_request_body @user_id, @item, @data
       else
-        book_request_body @username, @item, @data
+        book_request_body @user_id, @item, @data
       end
     end
 
@@ -44,9 +44,9 @@ module Illiad
       @data.dig('delivery') == ELECTRONIC_DELIVERY
     end
 
-    def book_request_body(username, item, data)
+    def book_request_body(user_id, item, data)
       body = {
-        Username: username,
+        Username: user_id,
         RequestType: 'Loan',
         ProcessType: 'Borrowing',
         DocumentType: 'Book',
@@ -62,9 +62,9 @@ module Illiad
       append_routing_info body
     end
 
-    def scandelivery_request_body(username, item, data)
+    def scandelivery_request_body(user_id, item, data)
       {
-        Username: username,
+        Username: user_id,
         ProcessType: 'Borrowing',
         DocumentType: 'Article',
         PhotoJournalTitle: item&.bib('title'),

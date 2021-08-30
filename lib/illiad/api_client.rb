@@ -48,16 +48,16 @@ module Illiad
     end
 
     # Get user info from Illiad
-    # @param [String] username
+    # @param [String] user_id
     # @return [Hash, nil] parsed response
-    def get_user(username)
-      user_response = self.class.get("/users/#{username}", @default_options)
+    def get_user(user_id)
+      user_response = self.class.get("/users/#{user_id}", @default_options)
       return Oj.load(user_response.body) if user_response.code == 200
 
       nil
     end
 
-    # Create an Illiad user with a username, at least
+    # Create an Illiad user with a user ID, at least
     # @param [Hash] user_info
     # @return [Hash, nil]
     def create_user(user_info)
@@ -68,22 +68,22 @@ module Illiad
       respond_to self.class.post('/users', options)
     end
 
-    # @param [String] username
-    def get_or_create_illiad_user(username)
-      user = get_user username
+    # @param [String] user_id
+    def get_or_create_illiad_user(user_id)
+      user = get_user user_id
       return user if user.present?
 
-      create_user illiad_data_for username
+      create_user illiad_data_for user_id
     rescue StandardError => e
       raise RequestFailed, "Problem building user from Illiad: #{e.message}"
     end
 
     # Sufficient mapped data to create an ILLiad user
-    # @param [String] username
-    def illiad_data_for(username)
-      alma_user = TurboAlmaApi::User.new username
+    # @param [String] user_id
+    def illiad_data_for(user_id)
+      alma_user = TurboAlmaApi::User.new user_id
       {
-        'Username' => username,
+        'Username' => user_id,
         'LastName' => alma_user.last_name,
         'FirstName' => alma_user.first_name,
         'EMailAddress' => alma_user.email,
@@ -101,10 +101,10 @@ module Illiad
       }
     end
 
-    # @param [String] username
+    # @param [String] user_id
     # @return [Array, NilClass]
-    def address_info_for(username)
-      user_info = get_user username
+    def address_info_for(user_id)
+      user_info = get_user user_id
       return nil unless user_info
 
       [user_info['Address'], user_info['Address2']]
@@ -112,6 +112,7 @@ module Illiad
 
     # @param [String] comment
     # @param [String] transaction_number form Illiad response when creating transaction
+    # @param [String] user_id
     def add_note(transaction_number, comment, user_id)
       unless transaction_number
         Honeybadger.notify 'add_note called with no transaction_number!'
