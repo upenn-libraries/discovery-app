@@ -49,49 +49,83 @@ RSpec.describe TurboAlmaApi::Client, type: :model do
 
   context '.submit_request' do
     let(:request) { instance_double TurboAlmaApi::Request }
-    before do
-      stub_request_post_success
-      allow(request).to receive(:mms_id).and_return('1234')
-      allow(request).to receive(:user_id).and_return('testuser')
-      allow(request).to receive(:holding_id).and_return('2345')
-      allow(request).to receive(:item_pid).and_return('3456')
-      allow(request).to receive(:pickup_location).and_return('VanPeltLib')
-      allow(request).to receive(:comments).and_return('')
-    end
-    context 'success' do
+    context 'item request' do
       before do
+        stub_item_request_post_success
+        allow(request).to receive(:mms_id).and_return('1234')
+        allow(request).to receive(:user_id).and_return('testuser')
+        allow(request).to receive(:holding_id).and_return('2345')
         allow(request).to receive(:item_pid).and_return('3456')
+        allow(request).to receive(:pickup_location).and_return('VanPeltLib')
+        allow(request).to receive(:comments).and_return('')
       end
-      it 'returns a hash with the confirmation number' do
-        response = described_class.submit_request request
-        expect(response[:confirmation_number]).to eq 'ALMA26107399010003681'
+      context 'success' do
+        before do
+          allow(request).to receive(:item_pid).and_return('3456')
+        end
+        it 'returns a hash with the confirmation number' do
+          response = described_class.submit_request request
+          expect(response[:confirmation_number]).to eq 'ALMA26107399010003681'
+        end
+      end
+      context 'failure' do
+        context 'with parseable response body' do
+          before do
+            allow(request).to receive(:item_pid).and_return('9876')
+          end
+          before do
+            stub_item_request_post_failure
+          end
+          it 'raises an exception' do
+            expect do
+              described_class.submit_request request
+            end.to raise_error TurboAlmaApi::Client::RequestFailed
+          end
+        end
+        context 'with empty response body' do
+          before do
+            allow(request).to receive(:item_pid).and_return('0000')
+          end
+          before do
+            stub_item_request_post_failure_empty
+          end
+          it 'raises an exception' do
+            expect do
+              described_class.submit_request request
+            end.to raise_error TurboAlmaApi::Client::RequestFailed
+          end
+        end
       end
     end
-    context 'failure' do
-      context 'with parseable response body' do
-        before do
-          allow(request).to receive(:item_pid).and_return('9876')
-        end
-        before do
-          stub_request_post_failure
-        end
-        it 'raises an exception' do
-          expect do
-            described_class.submit_request request
-          end.to raise_error TurboAlmaApi::Client::RequestFailed
+    context 'title request (mms id only)' do
+      before do
+        stub_title_request_post_success
+        allow(request).to receive(:mms_id).and_return('1234')
+        allow(request).to receive(:user_id).and_return('testuser')
+        allow(request).to receive(:holding_id).and_return(nil)
+        allow(request).to receive(:item_pid).and_return(nil)
+        allow(request).to receive(:pickup_location).and_return('VanPeltLib')
+        allow(request).to receive(:comments).and_return('')
+      end
+      context 'success' do
+        it 'returns a hash with the confirmation number' do
+          response = described_class.submit_request request
+          expect(response[:confirmation_number]).to eq 'ALMA26107399010003681'
         end
       end
-      context 'with empty response body' do
-        before do
-          allow(request).to receive(:item_pid).and_return('0000')
-        end
-        before do
-          stub_request_post_failure_empty
-        end
-        it 'raises an exception' do
-          expect do
-            described_class.submit_request request
-          end.to raise_error TurboAlmaApi::Client::RequestFailed
+      context 'failure' do
+        context 'with parseable response body' do
+          before do
+            allow(request).to receive(:item_pid).and_return('9876')
+          end
+          before do
+            stub_title_request_post_failure
+          end
+          it 'raises an exception' do
+            expect do
+              described_class.submit_request request
+            end.to raise_error TurboAlmaApi::Client::RequestFailed
+          end
         end
       end
     end
