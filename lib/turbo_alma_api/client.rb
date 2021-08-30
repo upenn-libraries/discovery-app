@@ -57,21 +57,11 @@ module TurboAlmaApi
       submit_request request
     end
 
-    # @param [TurboAlmaApi::Request] request
-    # @return [String (frozen)]
-    def self.item_or_title_request_url_for(request)
-      if request.holding_id && request.item_pid
-        "#{BASE_URL}/v1/bibs/#{request.mms_id}/holdings/#{request.holding_id}/items/#{request.item_pid}/requests"
-      else
-        "#{BASE_URL}/v1/bibs/#{request.mms_id}/requests"
-      end
-    end
-
     # Submits a HOLD request to Alma
     # -Request- object must respond to:
     #  * pickup location
     #  * comments
-    #  * mms_id, holding_id, item_pid
+    #  * mms_id
     # @param [Request] request
     def self.submit_request(request)
       query = { user_id: request.user_id, user_id_type: 'all_unique' }
@@ -134,6 +124,17 @@ module TurboAlmaApi
     def self.api_get_request(url, headers = {})
       headers.merge! DEFAULT_REQUEST_HEADERS
       Typhoeus.get url, headers: headers
+    end
+
+    # Return a URL for POSTING a HOLD request to Alma
+    # @param [TurboAlmaApi::Request] request
+    # @return [String (frozen)]
+    def self.item_or_title_request_url_for(request)
+      if request.holding_id && request.item_pid
+        "#{BASE_URL}/v1/bibs/#{request.mms_id}/holdings/#{request.holding_id}/items/#{request.item_pid}/requests"
+      else
+        "#{BASE_URL}/v1/bibs/#{request.mms_id}/requests"
+      end
     end
   end
 end
