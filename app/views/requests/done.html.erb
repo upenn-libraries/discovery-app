@@ -19,11 +19,8 @@
       </dl>
       <% else %>
         <div class="alert alert-danger" role="alert">
-          <%= t('requests.messages.request_failed') %>
+          <%= @response.dig(:message) %>
         </div>
-      <pre>
-        <%= @response.dig(:message) %>
-      </pre>
       <% end %>
     </div>
     <div class="modal-footer">

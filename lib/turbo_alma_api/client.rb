@@ -66,6 +66,7 @@ module TurboAlmaApi
     #  * comments
     #  * mms_id, holding_id, item_pid
     # @param [Request] request
+    # @return [Hash] response data
     def self.submit_request(request)
       query = { user_id: request.user_id, user_id_type: 'all_unique' }
       body = { 'request_type' => 'HOLD', 'pickup_location_type' => 'LIBRARY',
@@ -81,25 +82,24 @@ module TurboAlmaApi
 
       raise RequestFailed, "Unparseable response from Alma for Request URL: #{request_url}" unless parsed_response
 
-      if parsed_response.key?('web_service_response') || parsed_response.key?('errorsExist')
-        first_error_message = parsed_response['errorList']['error'].first['errorMessage']
-        raise RequestFailed, first_error_message # TODO: better error message details
-        # boo, get error code
-        # 401890 User with identifier X of type Y was not found.
-        # 401129 No items can fulfill the submitted request.
-        # 401136 Failed to save the request: Patron has active request for selected item.
-        # 60308 Delivery to personal address is not supported.
-        # 60309 User does not have address for personal delivery.
-        # 60310 Delivery is not supported for this type of personal address.
-        # 401684 Search for request physical item failed.
-        # 60328 Item for request was not found.
-        # 60331 Failed to create request.
-        # 401652 General Error - An error has occurred while processing the request.
-      else
-        # TODO: get confirmation code/request id
+      if parsed_response.key? 'request_id'
         { title: parsed_response['title'],
-          confirmation_number: parsed_response['request_id'].prepend('ALMA')
-        }
+          confirmation_number: parsed_response['request_id'].prepend('ALMA') }
+      elsif parsed_response.key?('errorsExist')
+        first_error_code = parsed_response.dig('errorList', 'error')&.first['errorCode']
+        case first_error_code
+        when '401129'
+          { status: :failed,
+            message: I18n.t('requests.messages.alma_response.no_item_for_request') }
+        when '401136'
+          { status: :failed,
+            message: I18n.t('requests.messages.alma_response.request_already_exists') }
+        else
+          first_error_message = parsed_response.dig('errorList', 'error')&.first['errorMessage']
+          raise RequestFailed, first_error_message
+        end
+      else
+        raise RequestFailed, I18n.t('requests.messages.alma_response.other')
       end
     end
 
