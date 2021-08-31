@@ -24,11 +24,12 @@ class AbstractRequest
   # Handle submission of Request
   def submit
     response = perform_request
-    if request.email # only send an email if we have an address
-      RequestMailer.confirmation_email(response, @request)
-                   .deliver_now
+    return response if response[:status] == :failed
+
+    if @request.email
+      send_confirmation_email response
     else
-      Honeybadger.notify "User with no email address submitting a request: #{request&.user_id}"
+      Honeybadger.notify "User with no email address submitting a request: #{@request&.user_id}"
     end
     { status: :success,
       confirmation_number: response[:confirmation_number],
@@ -53,15 +54,20 @@ class AbstractRequest
       end
       transaction_response
     else
-      raise ArgumentError,
-            I18n.t('requests.messages.unsupported_submission_logic',
-                   request_class: @request.class.name)
+      Honeybadger.notify "Problem handling request submission! Params: #{@params}"
+      raise ArgumentError, I18n.t('requests.messages.alma_response.other')
     end
   rescue StandardError => e
     raise RequestFailed, e.message
   end
 
   private
+
+  # @param [Hash] response
+  def send_confirmation_email(response)
+    RequestMailer.confirmation_email(response, @request)
+                 .deliver_now
+  end
 
   # @return [TrueClass, FalseClass]
   def alma_fulfillment?

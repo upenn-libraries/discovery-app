@@ -64,6 +64,22 @@ module MockAlmaApi
     )
   end
 
+  def stub_request_post_failure_no_item
+    stub(
+      :post,
+      'https://api-na.hosted.exlibrisgroup.com/almaws/v1/bibs/1234/holdings/2345/items/1129/requests?user_id=testuser&user_id_type=all_unique',
+      'alma/request_post_failure_no_item.json'
+    )
+  end
+
+  def stub_request_post_failure_already_exists
+    stub(
+      :post,
+      'https://api-na.hosted.exlibrisgroup.com/almaws/v1/bibs/1234/holdings/2345/items/1136/requests?user_id=testuser&user_id_type=all_unique',
+      'alma/request_post_failure_already_exists.json'
+    )
+  end
+
   def stub_turbo_item_get_canary
     stub(
       :get,
