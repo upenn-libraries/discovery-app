@@ -83,7 +83,7 @@ module TurboAlmaApi
       end
 
       # @return [TrueClass, FalseClass]
-      # This is tailored to the username, if provided
+      # This is tailored to the user_id, if provided
       def not_loanable?
         user_due_date_policy&.include? 'Not loanable'
       end

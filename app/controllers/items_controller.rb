@@ -12,7 +12,7 @@ class ItemsController < ApplicationController
 
   def all
     options = {
-      username: session['id'],
+      user_id: session['id'],
       item_count: params[:item_count],
       empty_holding_count: params[:empty_holding_count]
     }

@@ -17,7 +17,7 @@ module TurboAlmaApi
     # @return [TurboAlmaApi::Bib::ItemSet]
     # @param [String] mms_id
     # @param [Hash] options
-    # @option [String] username
+    # @option [String] user_id
     # @option [Integer] item_count
     # @option [Integer] empty_holding_count
     def self.all_items_for(mms_id, options = {})
@@ -64,7 +64,7 @@ module TurboAlmaApi
     # -Request- object must respond to:
     #  * pickup location
     #  * comments
-    #  * mms_id, holding_id, item_pid
+    #  * mms_id
     # @param [Request] request
     # @return [Hash] response data
     def self.submit_request(request)
@@ -72,8 +72,7 @@ module TurboAlmaApi
       body = { 'request_type' => 'HOLD', 'pickup_location_type' => 'LIBRARY',
                'pickup_location_library' => request.pickup_location,
                'comment' => request.comments }
-      request_url = "#{BASE_URL}/v1/bibs/#{request.mms_id}/holdings/#{request.holding_id}/items/#{request.item_pid}/requests"
-
+      request_url = item_or_title_request_url_for request
       response = Typhoeus.post request_url,
                                headers: DEFAULT_REQUEST_HEADERS,
                                params: query,
@@ -131,6 +130,17 @@ module TurboAlmaApi
     def self.api_get_request(url, headers = {})
       headers.merge! DEFAULT_REQUEST_HEADERS
       Typhoeus.get url, headers: headers
+    end
+
+    # Return a URL for POSTING a HOLD request to Alma
+    # @param [TurboAlmaApi::Request] request
+    # @return [String (frozen)]
+    def self.item_or_title_request_url_for(request)
+      if request.holding_id && request.item_pid
+        "#{BASE_URL}/v1/bibs/#{request.mms_id}/holdings/#{request.holding_id}/items/#{request.item_pid}/requests"
+      else
+        "#{BASE_URL}/v1/bibs/#{request.mms_id}/requests"
+      end
     end
   end
 end
