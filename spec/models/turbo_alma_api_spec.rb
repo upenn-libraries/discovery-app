@@ -95,6 +95,28 @@ RSpec.describe TurboAlmaApi::Client, type: :model do
             end.to raise_error TurboAlmaApi::Client::RequestFailed
           end
         end
+        context 'with Alma error response code handling' do
+          context 'for code 401129 (no Item can fulfill request)' do
+            before do
+              stub_request_post_failure_no_item
+              allow(request).to receive(:item_pid).and_return('1129')
+            end
+            it 'returns a hash with helpful error information' do
+              response = described_class.submit_request request
+              expect(response[:message]).to eq I18n.t('requests.messages.alma_response.no_item_for_request')
+            end
+          end
+          context 'for code 401136 (request already exists)' do
+            before do
+              stub_request_post_failure_already_exists
+              allow(request).to receive(:item_pid).and_return('1136')
+            end
+            it 'returns a hash with helpful error information' do
+              response = described_class.submit_request request
+              expect(response[:message]).to eq I18n.t('requests.messages.alma_response.request_already_exists')
+            end
+          end
+        end
       end
     end
     context 'title request (mms id only)' do
@@ -126,28 +148,6 @@ RSpec.describe TurboAlmaApi::Client, type: :model do
               described_class.submit_request request
             end.to raise_error TurboAlmaApi::Client::RequestFailed
           end
-        end
-      end
-    end
-    context 'with Alma error response code handling' do
-      context 'for code 401129 (no Item can fulfill request)' do
-        before do
-          stub_request_post_failure_no_item
-          allow(request).to receive(:item_pid).and_return('1129')
-        end
-        it 'returns a hash with helpful error information' do
-          response = described_class.submit_request request
-          expect(response[:message]).to eq I18n.t('requests.messages.alma_response.no_item_for_request')
-        end
-      end
-      context 'for code 401136 (request already exists)' do
-        before do
-          stub_request_post_failure_already_exists
-          allow(request).to receive(:item_pid).and_return('1136')
-        end
-        it 'returns a hash with helpful error information' do
-          response = described_class.submit_request request
-          expect(response[:message]).to eq I18n.t('requests.messages.alma_response.request_already_exists')
         end
       end
     end
