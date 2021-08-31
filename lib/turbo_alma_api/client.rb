@@ -49,9 +49,6 @@ module TurboAlmaApi
       TurboAlmaApi::Bib::PennItem.new parsed_response
     end
 
-    # see: https://developers.exlibrisgroup.com/alma/apis/docs/bibs/UE9TVCAvYWxtYXdzL3YxL2JpYnMve21tc19pZH0vcmVxdWVzdHM=/
-    def self.submit_title_request(request); end
-
     # @param [PennItem] item
     # @param [Hash] user
     # @param [Hash] params
@@ -64,15 +61,14 @@ module TurboAlmaApi
     # -Request- object must respond to:
     #  * pickup location
     #  * comments
-    #  * mms_id, holding_id, item_pid
+    #  * mms_id
     # @param [Request] request
     def self.submit_request(request)
       query = { user_id: request.user_id, user_id_type: 'all_unique' }
       body = { 'request_type' => 'HOLD', 'pickup_location_type' => 'LIBRARY',
                'pickup_location_library' => request.pickup_location,
                'comment' => request.comments }
-      request_url = "#{BASE_URL}/v1/bibs/#{request.mms_id}/holdings/#{request.holding_id}/items/#{request.item_pid}/requests"
-
+      request_url = item_or_title_request_url_for request
       response = Typhoeus.post request_url,
                                headers: DEFAULT_REQUEST_HEADERS,
                                params: query,
@@ -88,9 +84,6 @@ module TurboAlmaApi
         # 401890 User with identifier X of type Y was not found.
         # 401129 No items can fulfill the submitted request.
         # 401136 Failed to save the request: Patron has active request for selected item.
-        # 60308 Delivery to personal address is not supported.
-        # 60309 User does not have address for personal delivery.
-        # 60310 Delivery is not supported for this type of personal address.
         # 401684 Search for request physical item failed.
         # 60328 Item for request was not found.
         # 60331 Failed to create request.
@@ -131,6 +124,17 @@ module TurboAlmaApi
     def self.api_get_request(url, headers = {})
       headers.merge! DEFAULT_REQUEST_HEADERS
       Typhoeus.get url, headers: headers
+    end
+
+    # Return a URL for POSTING a HOLD request to Alma
+    # @param [TurboAlmaApi::Request] request
+    # @return [String (frozen)]
+    def self.item_or_title_request_url_for(request)
+      if request.holding_id && request.item_pid
+        "#{BASE_URL}/v1/bibs/#{request.mms_id}/holdings/#{request.holding_id}/items/#{request.item_pid}/requests"
+      else
+        "#{BASE_URL}/v1/bibs/#{request.mms_id}/requests"
+      end
     end
   end
 end
