@@ -10,25 +10,25 @@ module TurboAlmaApi
       # better overall performance?
       ITEMS_PER_REQUEST = 100
 
-      attr_accessor :mms_id, :alma_username, :total_count
+      attr_accessor :mms_id, :alma_user_id, :total_count
 
       def_delegators :@items, :each, :length, :[], :first, :sort_by
 
       # @param [String] mms_id
       # @param [Hash] options
-      # @option [String] username
+      # @option [String] user_id
       # @option [Integer] item_count
       # @option [Integer] empty_holding_count
       def initialize(mms_id, options = {})
         @mms_id = mms_id
-        @alma_username = options.dig :username
+        @alma_user_id = options.dig :user_id
         @item_count = options.dig(:item_count)&.to_i # item_count from params
         if @item_count && @item_count > 1
           @total_count = @item_count
           @items = bulk_retrieve_items
         else
           first_items_response = TurboAlmaApi::Client.api_get_request(
-            items_url(username: options.dig(:username), limit: 1)
+            items_url(user_id: options.dig(:user_id), limit: 1)
           )
           parsed_response = Oj.load first_items_response.body
           @total_count = parsed_response['total_record_count'].to_i
@@ -80,7 +80,7 @@ module TurboAlmaApi
         requests = (1..requests_needed).map do |request_number|
           request_url = items_url limit: ITEMS_PER_REQUEST,
                                   offset: offset_for(request_number),
-                                  username: @alma_username
+                                  user_id: @alma_user_id
           request = Typhoeus::Request.new request_url,
                                           headers: TurboAlmaApi::Client::DEFAULT_REQUEST_HEADERS
           hydra.queue request
@@ -110,7 +110,7 @@ module TurboAlmaApi
       # @return [String (frozen)]
       def items_url(options = {})
         minimal_url = "#{TurboAlmaApi::Client::BASE_URL}/v1/bibs/#{@mms_id}/holdings/ALL/items?expand=due_date,due_date_policy&order_by=description&direction=asc"
-        minimal_url += "&user_id=#{options[:username]}" if options[:username].present?
+        minimal_url += "&user_id=#{options[:user_id]}" if options[:user_id].present?
         minimal_url += "&offset=#{options[:offset]}" if options[:offset].present?
         minimal_url += "&limit=#{options[:limit]}" if options[:limit].present?
         minimal_url
