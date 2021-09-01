@@ -3,7 +3,9 @@ en:
     widget:
       title: "Get It"
     modal_titles:
-      submitted: "Request Submitted"
+      submitted:
+        success: "Request Submitted"
+        failure: "Problem Submitting Request"
       confirm:
         ill: "Request from Another Library"
         electronic: "Scanning Request"
