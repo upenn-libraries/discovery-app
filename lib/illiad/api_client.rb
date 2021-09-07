@@ -62,7 +62,7 @@ module Illiad
     # @return [Hash, nil]
     def create_user(user_info)
       options = @default_options
-      raise InvalidRequest unless required_user_fields? user_info
+      raise InvalidRequest unless has_required_user_fields? user_info
 
       options[:body] = user_info
       respond_to self.class.post('/users', options)
@@ -82,8 +82,7 @@ module Illiad
     # @param [String] user_id
     def illiad_data_for(user_id)
       alma_user = TurboAlmaApi::User.new user_id
-      {
-        'Username' => user_id,
+      { 'Username' => user_id,
         'LastName' => alma_user.last_name,
         'FirstName' => alma_user.first_name,
         'EMailAddress' => alma_user.email,
@@ -91,14 +90,12 @@ module Illiad
         'Status' => alma_user.user_group,
         'Department' => alma_user.affiliation,
         'PlainTextPassword' => ENV['ILLIAD_USER_PASSWORD'],
-        'Address' => '', # TODO: get it from alma_user preferred address?
-        # from here on, just setting things that we've normally set. many of these could be frivolous
+        'Address' => '',
         'DeliveryMethod' => 'Mail to Address',
         'Cleared' => 'Yes',
-        'Web' => true, # TODO: question this?
+        'Web' => true,
         'ArticleBillingCategory' => 'Exempt',
-        'LoanBillingCategory' => 'Exempt'
-      }
+        'LoanBillingCategory' => 'Exempt' }
     end
 
     # @param [String] user_id
@@ -142,8 +139,13 @@ module Illiad
     # Checks if user_info includes minimum required Illiad API fields
     # @param [Hash] user_info
     # @return [TrueClass, FalseClass]
-    def required_user_fields?(user_info = {})
-      (CREATE_USER_REQUIRED_FIELDS - user_info.keys).empty?
+    def has_required_user_fields?(user_info = {})
+      return false if (CREATE_USER_REQUIRED_FIELDS - user_info.keys).any?
+
+      CREATE_USER_REQUIRED_FIELDS.each do |req_key|
+        return false if user_info.dig(req_key)&.blank?
+      end
+      true
     end
 
     def headers

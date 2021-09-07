@@ -66,7 +66,7 @@ module MockIlliadApi
   def stub_illiad_user_post_failure
     stub_request(:post, "#{ENV['ILLIAD_API_BASE_URI']}/users")
       .with(
-        body: '{ "Username":"value" }',
+        body: '{ "Username":"test" }',
         headers: default_headers
       ).to_return(
         status: 400,
@@ -79,6 +79,6 @@ module MockIlliadApi
 
   def default_headers
     { 'Accept' => 'application/json; version=1',
-      'Apikey' => ENV['ILLIAD_API_KEY'] }
+      'Apikey' => ENV.fetch('ILLIAD_API_KEY') }
   end
 end
