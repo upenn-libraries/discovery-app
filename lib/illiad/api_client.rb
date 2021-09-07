@@ -86,6 +86,7 @@ module Illiad
         'LastName' => alma_user.last_name,
         'FirstName' => alma_user.first_name,
         'EMailAddress' => alma_user.email,
+        'SSN' => alma_user.id,
         'NVTGC' => 'VPL',
         'Status' => alma_user.user_group,
         'Department' => alma_user.affiliation,
