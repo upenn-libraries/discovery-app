@@ -169,7 +169,7 @@ class CatalogController < ApplicationController
     # :index_range can be an array or range of prefixes that will be used to create the navigation (note: It is case sensitive when searching values)
 
     database_selected = lambda { |a, b, c|
-      a.params.dig(:f, :format_f)&.include?('Database & Article Index')
+      a.params.dig(:f, :format_f)&.include?(PennLib::SubjectConfig::DATABASES_FACET_VALUE)
     }
 
     # Some filters (e.g., subject_f) are capable of driving meaningful correlations;
@@ -183,7 +183,7 @@ class CatalogController < ApplicationController
     CORRELATION_IGNORELIST = {
       :access_f => nil,
       :record_source_f => nil,
-      :format_f => ['Database & Article Index']
+      :format_f => [PennLib::SubjectConfig::DATABASES_FACET_VALUE]
     }.freeze
 
     actionable_filters = lambda { |a, b, c|
@@ -223,7 +223,7 @@ class CatalogController < ApplicationController
     }
 
     config.induce_sort = lambda { |blacklight_params|
-      return 'title_nssort asc' if blacklight_params.dig(:f, :format_f)&.include?('Database & Article Index')
+      return 'title_nssort asc' if blacklight_params.dig(:f, :format_f)&.include?(PennLib::SubjectConfig::DATABASES_FACET_VALUE)
     }
 
     config.facet_types = {
@@ -900,6 +900,10 @@ class CatalogController < ApplicationController
   def bento
     params[:per_page] = 5
     index
+  end
+
+  def databases
+    redirect_to search_catalog_path('f[format_f][]': PennLib::SubjectConfig::DATABASES_FACET_VALUE)
   end
 
   # Landing has to live under this controller, otherwise the paths for

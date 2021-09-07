@@ -9,7 +9,6 @@
     <% elsif search_fields.length == 1 %>
       <%= hidden_field_tag :search_field, search_fields.first.last %>
     <% end %>
-    <%= hidden_field_tag "f[format_f][]","Database & Article Index" %>
     <label for="q3" class="sr-only"><%= t('blacklight.search.form.search.label') %></label>
     <%= text_field_tag :q, params[:q], { placeholder: (current_page?(controller: 'advanced') ? 'Configure advanced search below' : t('franklin.databases_search.placeholder')), class: "search_q q form-control", id: "q3", data: { autocomplete_enabled: autocomplete_enabled?, autocomplete_path: blacklight.suggest_index_path } }.merge(current_page?(controller: 'advanced') ? {disabled: 'disabled'} : {})  %>
     <span class="input-group-btn">
@@ -22,11 +21,12 @@
 <% if current_page?(controller: 'advanced') %>
   <div class="navbar-form tools-advanced-bookmarks">
     <%= link_to 'Basic Search', search_catalog_path + '#catalog', class: 'btn btn-default'%>
+  </div>
 <% else %>
   <div class="navbar-form tools-basic-bookmarks">
     <%= link_to 'Advanced', blacklight_advanced_search_engine.advanced_search_path(search_state.to_h), class: 'advanced_search btn btn-default'%>
+  </div>
 <% end %>
-  <%= render_nav_actions do |config, action|%>
-          <div id="li-bookmarks"><%= action %></div>
-   <% end %>
-</div>
+<%= render_nav_actions do |config, action|%>
+  <div id="li-bookmarks"><%= action %></div>
+<% end %>

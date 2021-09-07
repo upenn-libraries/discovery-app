@@ -80,6 +80,8 @@ module PennLib
 
   module SubjectConfig
 
+    DATABASES_FACET_VALUE = 'Database & Article Index'
+
     module Prefixes
       NAME = 'n'
       TITLE = 't'
@@ -633,7 +635,7 @@ module PennLib
     def get_db_types(rec)
       return [] unless is_curated_database(rec)
       rec.fields('944').map do |field|
-        if field.any? { |sf| sf.code == 'a' && sf.value == 'Database & Article Index' }
+        if field.any? { |sf| sf.code == 'a' && sf.value == PennLib::SubjectConfig::DATABASES_FACET_VALUE }
           sf = field.find { |sf| sf.code == 'b' }
           sf.nil? ? nil : sf.value
         end
