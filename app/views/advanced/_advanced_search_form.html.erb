@@ -18,12 +18,15 @@
     <div class="input-criteria">
 
       <div class="query-criteria">
-        <h3 class="query-criteria-heading">
-          <%= t('blacklight_advanced_search.form.query_criteria_heading_html', :select_menu =>  select_menu_for_field_operator ) %>
-        </h3>
+        <h2 class="query-criteria-heading"><label>
+          <%= t('blacklight_advanced_search.form.query_criteria_heading_html', :select_menu =>  select_menu_for_field_operator ) %></label>
+        </h2>
 
         <div id="advanced_search">
-          <%= render 'advanced/advanced_search_fields' %>
+          <fieldset>
+              <legend class="visually-hidden">Search fields</legend>
+              <%= render 'advanced/advanced_search_fields' %>
+          </fieldset>
         </div>
       </div>
 
