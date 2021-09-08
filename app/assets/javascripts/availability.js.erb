@@ -57,7 +57,7 @@ $(document).ready(function() {
 
                 if (url !== null) {
                     var text = holding['collection'] || "Electronic resource";
-                    url = '<span class="label label-availability label-primary">Online access</span> <a href="' + url + '">' + text + '</a>';
+                    url = '<a href="' + url + '"> <span class="label label-availability label-primary">Online access</span>' + text + '</a>';
                 } else {
                     url = "<span class='label label-availability label-default'>No URL available</span> Electronic Resource";
                 }
