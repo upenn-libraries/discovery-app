@@ -301,6 +301,15 @@ table[id^="holdingItems"] td {
 
 .item-request-section-show {
   padding: 0 0;
+  display: inline-block;
+  width: 100%;
+}
+
+.cover-image.cover-show {
+  font-size: 80px;
+  padding-top: 20px;
+  margin-left: 30px;
+  position: relative;
 }
 
 /*  END HEADER?  */
