@@ -6,6 +6,16 @@ var validRequestTypes = ["CentralCAT","MAINT-EC","CHI CAT","CatMet","HEB CAT",
                          "MAINT-otf","MAINT-tr"];
 $.fn.dataTable.ext.errMode = 'none';
 
+function page_context() {
+    if(document.body.classList.contains("blacklight-catalog-show")) {
+        return 'show';
+    } else if(document.body.classList.contains("blacklight-catalog-index")) {
+        return 'index';
+    } else {
+        return null;
+    }
+}
+
 // Hackily parses relevant context out of the DOM for the specified mmsid
 function get_request_context(mmsid) {
   var d = document.getElementById('items_nocirc-'+mmsid);
@@ -14,6 +24,34 @@ function get_request_context(mmsid) {
     pickupable: null,
     items_nocirc: items_nocirc
   };
+}
+
+function holdingAvailabilityRow(mms_id, availability, holding, page_context) {
+    // TODO: pass in format to shelfLocatorLink() somehow
+    var row1 = `
+        <div class="row">
+            <div class="col-md-2 holding-availability-col">
+                ${availability}
+            </div>
+            <div class="col-md-7">
+                ${holding['location'] || ''} ${holding['call_number'] || ''}
+            </div>
+            <div class="col-md-3">
+                ${$.shelfLocatorLink(mms_id, holding, "TODO") || ''}
+            </div>
+        </div>
+    `;
+
+    if(page_context === 'show' && holding['holding_info']) {
+        var row2 = `
+            <div class="row holding-info-row">
+                <div class="col-md-5 col-md-offset-2">
+                    ${holding['holding_info']}
+                </div>
+            </div>
+        `;
+    }
+    return `<div class="holding-availability-area holding-availability-area-${page_context}">${row1}${row2 || ''}</div>`;
 }
 
 $(document).ready(function() {
@@ -41,12 +79,7 @@ $(document).ready(function() {
             } else if (holding['availability'] === 'available') {
                 availability = holding['location_code'] === 'vanpNocirc' ? "<span class='label label-availability label-default'>Use online access — print restricted</span>" : "<span class='label label-availability label-success'>Available</span>";
             }
-            // TODO: pass in format to shelfLocatorLink() somehow
-            var holding_info = holding['holding_info'] ?  (" - " + holding['holding_info']) : null;
-            return [availability, holding['location'], holding['call_number'], holding_info , $.shelfLocatorLink(mms_id, holding, "TODO")]
-                .filter(function (item) {
-                    return item != null && item.length > 0;
-                }).join(' ');
+            return holdingAvailabilityRow(mms_id, availability, holding, page_context());
         } else if(holding['inventory_type'] === 'electronic') {
 
             if (holding['activation_status'] === 'Available') {
