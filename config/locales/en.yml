@@ -47,7 +47,7 @@ en:
     urls:
       libguide: "https://guides.library.upenn.edu/circulation/CirculationWelcome"
     fields:
-      deliver_to: "Deliver To"
+      email: 'Email'
       comment: "Comments"
       title: "Title"
       author: "Author"
@@ -70,5 +70,3 @@ en:
       office_delivery: "Office Delivery"
       pickup: "Pickup at Penn"
       registered_bbm: "I am a registered Books by Mail user"
-    help:
-      deliver_to: "PennKey of recipient for electronic materials."

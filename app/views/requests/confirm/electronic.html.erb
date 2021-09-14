@@ -16,10 +16,16 @@
         <%= t('requests.delivery_messages.digi_html') %>
       </div>
 
+      <% unless session[:email].present? %>
+        <%= f.email_field :email,
+                          label: t('requests.fields.email'),
+                          required: true
+        %>
+      <% end %>
+
       <%= f.text_field :title,
                        label: t('requests.fields.title'),
                        disabled: true %>
-
       <%= f.text_field :selection,
                        label: t('requests.fields.selected'),
                        disabled: true %>
