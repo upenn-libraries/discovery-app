@@ -12,7 +12,7 @@ class AbstractRequest
 
   class RequestFailed < StandardError; end
 
-  # @param [TurboAlmaApi::Bib::PennItem] item
+  # @param [TurboAlmaApi::Bib::PennItem, NilClass] item
   # @param [Hash] user_data
   # @param [ActionController::Parameters] params
   def initialize(item, user_data, params = {})
@@ -24,8 +24,13 @@ class AbstractRequest
   # Handle submission of Request
   def submit
     response = perform_request
-    RequestMailer.confirmation_email(response, @request)
-                 .deliver_now
+    return response if response[:status] == :failed
+
+    if @request.email
+      send_confirmation_email response
+    else
+      Honeybadger.notify "User with no email address submitting a request: #{@request&.user_id}"
+    end
     { status: :success,
       confirmation_number: response[:confirmation_number],
       title: response[:title] }
@@ -42,22 +47,27 @@ class AbstractRequest
       TurboAlmaApi::Client.submit_request @request
     elsif illiad_fulfillment?
       @request = Illiad::Request.new @user, @item, @params
-      illiad_api.get_or_create_illiad_user @request.username
+      illiad_api.get_or_create_illiad_user @request.user_id
       transaction_response = illiad_api.transaction @request.to_h
       if @request.note.present? && transaction_response[:confirmation_number].present?
-        illiad_api.add_note transaction_response[:confirmation_number], @request.note, @request.username
+        illiad_api.add_note transaction_response[:confirmation_number], @request.note, @request.user_id
       end
       transaction_response
     else
-      raise ArgumentError,
-            I18n.t('requests.messages.unsupported_submission_logic',
-                   request_class: @request.class.name)
+      Honeybadger.notify "Problem handling request submission! Params: #{@params}"
+      raise ArgumentError, I18n.t('requests.messages.alma_response.other')
     end
   rescue StandardError => e
     raise RequestFailed, e.message
   end
 
   private
+
+  # @param [Hash] response
+  def send_confirmation_email(response)
+    RequestMailer.confirmation_email(response, @request)
+                 .deliver_now
+  end
 
   # @return [TrueClass, FalseClass]
   def alma_fulfillment?

@@ -51,10 +51,11 @@ module TurboAlmaApi
 
       # Determine, based on various response attributes, if this Item is
       # able to be circulated.
+      # If a user cannot check out an item, the #not_loanable? call will be false and prevent requesting
       # @return [TrueClass, FalseClass]
       def checkoutable?
         in_place? &&
-          !non_circulating? &&
+          # !non_circulating? &&
           !not_loanable? &&
           !aeon_requestable? &&
           !on_reserve? &&
@@ -84,8 +85,28 @@ module TurboAlmaApi
       end
 
       # @return [TrueClass, FalseClass]
+      # This is tailored to the user_id, if provided
       def not_loanable?
         user_due_date_policy&.include? 'Not loanable'
+      end
+
+      # is the holding flagged for suppression from publishing?
+      # @return [TrueClass, FalseClass]
+      def suppressed?
+        holding_data.dig('holding_suppress_from_publishing') == 'true'
+      end
+
+      # Is this Item in the mythical "Unavailable" Library? Apparently, a graveyard for withdrawn Items
+      # @return [TrueClass, FalseClass]
+      def in_unavailable_library?
+        library_name == 'ZUnavailable'
+      end
+
+      # Whether or not this Item should hidden from display in a Patron context
+      # @return [TrueClass, FalseClass]
+      def hide_from_patrons?
+        suppressed? ||
+          in_unavailable_library?
       end
 
       # Label text for select2
@@ -177,6 +198,10 @@ module TurboAlmaApi
         on_reserve? || at_reference?
       end
 
+      def isxn
+        bib('issn') || bib('isbn')
+      end
+
       # TODO: use to_h here?
       def for_select(_options = {})
         {
@@ -197,6 +222,7 @@ module TurboAlmaApi
           'restricted_circ' => restricted_circ?,
           'volume' => volume,
           'issue' => issue,
+          'isxn' => isxn,
           'in_place' => in_place?,
           'scannable' => scannable?
         }

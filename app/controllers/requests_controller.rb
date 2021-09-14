@@ -27,9 +27,13 @@ class RequestsController < ApplicationController
   private
 
   def set_item
-    @item = TurboAlmaApi::Client.item_for mms_id: params[:mms_id].to_s,
-                                          holding_id: params[:holding_id].to_s,
-                                          item_pid: params[:item_pid].to_s
+    @item = if params[:item_pid] == 'no-item'
+              nil
+            else
+              TurboAlmaApi::Client.item_for mms_id: params[:mms_id].to_s,
+                                            holding_id: params[:holding_id].to_s,
+                                            item_pid: params[:item_pid].to_s
+            end
   end
 
   def set_address_info
@@ -83,9 +87,10 @@ class RequestsController < ApplicationController
     session['id']
   end
 
+  # Email might come from the session, or from a form submission
   # @return [String]
   def user_email
-    session['email']
+    session['email'] || params['email'].to_s
   end
 
   # @return [String]

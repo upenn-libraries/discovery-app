@@ -6,6 +6,16 @@ var validRequestTypes = ["CentralCAT","MAINT-EC","CHI CAT","CatMet","HEB CAT",
                          "MAINT-otf","MAINT-tr"];
 $.fn.dataTable.ext.errMode = 'none';
 
+function page_context() {
+    if(document.body.classList.contains("blacklight-catalog-show")) {
+        return 'show';
+    } else if(document.body.classList.contains("blacklight-catalog-index")) {
+        return 'index';
+    } else {
+        return null;
+    }
+}
+
 // Hackily parses relevant context out of the DOM for the specified mmsid
 function get_request_context(mmsid) {
   var d = document.getElementById('items_nocirc-'+mmsid);
@@ -14,6 +24,10 @@ function get_request_context(mmsid) {
     pickupable: null,
     items_nocirc: items_nocirc
   };
+}
+
+function should_show_holding_info() {
+    return document.body.classList.contains("blacklight-catalog-show");
 }
 
 $(document).ready(function() {
@@ -41,13 +55,16 @@ $(document).ready(function() {
             } else if (holding['availability'] === 'available') {
                 availability = holding['location_code'] === 'vanpNocirc' ? "<span class='label label-availability label-default'>Use online access — print restricted</span>" : "<span class='label label-availability label-success'>Available</span>";
             }
-            // TODO: pass in format to shelfLocatorLink() somehow
-            return [availability, holding['location'], holding['call_number'], $.shelfLocatorLink(mms_id, holding, "TODO")]
+            var holding_info = '';
+            if (holding['holding_info'] && should_show_holding_info()) {
+                holding_info = " - " + holding['holding_info'];
+            }
+            return [availability, holding['location'], holding['call_number'], holding_info , $.shelfLocatorLink(mms_id, holding, "TODO")]
                 .filter(function (item) {
                     return item != null && item.length > 0;
                 }).join(' ');
-        } else if(holding['inventory_type'] === 'electronic') {
-
+        }
+        else if(holding['inventory_type'] === 'electronic') {
             if (holding['activation_status'] === 'Available') {
                 var url = null;
                 if (holding['portfolio_pid']) {
@@ -57,7 +74,7 @@ $(document).ready(function() {
 
                 if (url !== null) {
                     var text = holding['collection'] || "Electronic resource";
-                    url = '<span class="label label-availability label-primary">Online access</span> <a href="' + url + '">' + text + '</a>';
+                    url = '<a href="' + url + '"> <span class="label label-availability label-primary">Online access</span>' + text + '</a>';
                 } else {
                     url = "<span class='label label-availability label-default'>No URL available</span> Electronic Resource";
                 }
@@ -102,6 +119,7 @@ $(document).ready(function() {
                 { "visible": false, "targets": [0,6,7] },
                 { "orderable": false, "targets": 5 }
             ],
+            "autoWidth": false,
             "order": [],
             "language": {
               "search": "Filter records:",
@@ -142,6 +160,9 @@ $(document).ready(function() {
                 else {
                   $('#requestOptions-' + mmsid + '_paginate').hide();
                 }
+
+                // resize table columns
+                table.columns.adjust();
             },
             "initComplete": function(settings, json) {
                 var table = $('#requestOptions-' + mmsid).DataTable();
@@ -209,6 +230,36 @@ $(document).ready(function() {
             }
         });
     };
+
+    Franklin.prototype.loadPortfolioDetailsInDataTable = function() {
+        $('.load-portfolio-details').each(function(idx, element) {
+            var mmsid = $(element).data("mmsid");
+            var portfoliopid = $(element).data("portfoliopid");
+            var collectionid = $(element).data("collectionid");
+            var coverage = $(element).data("coverage");
+            var publicnote = $(element).data("publicnote");
+
+            // "standalone" portfolios have no collection_id, and so we should skip this lookup
+            if(!collectionid) {
+                $(element).removeClass('load-portfolio-details').html('');
+                return;
+            }
+
+            var url = "/alma/portfolio_details?mms_id="+mmsid+"&portfolio_pid="+portfoliopid+"&collection_id="+collectionid+"&coverage="+coverage+"&public_note="+publicnote
+            $.ajax({
+                url: url,
+                success: function(data, textStatus, jqXHR) {
+                    $(element).removeClass('load-portfolio-details');
+                    $(element).html('');
+                    $(element).append(coverage);
+                    var notes = [data['public_note'], data['authentication_note']]
+                        .filter(function(obj) { return obj }) // compact
+                        .join('<br>')
+                    $('#notes-' + portfoliopid).append(notes)
+                }
+            });
+        });
+    }
 
     Franklin.prototype.loadRequestOptionListAjax = function(mmsid) {
         $.ajax({
@@ -310,6 +361,9 @@ $(document).ready(function() {
                         }
                     }
                 }
+
+                // Initiate AJAX calls for portfolio details - new rows might be displayed!
+                Franklin.prototype.loadPortfolioDetailsInDataTable();
 
                 if(tableLen <= 10) {
                   $('#holdingItems-' + mmsid + '_length').hide();

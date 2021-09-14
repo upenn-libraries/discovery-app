@@ -33,18 +33,21 @@ en:
       request_complete: "Your request has been successfully submitted!"
       request_failed: "Oh no! Your Request failed!"
       invalid_confirm_partial: "Could not determine a request type for confirmation"
-      unsupported_submission_logic: "No configured submission logic for a %{request_class}"
       bib_item_validation: "Unable to get an Item from Alma based on the given identifiers."
       comment_limit: "Maximum 256 characters"
       invalid_request: "Request is invalid. See errors below."
       invalid_deliver_to: "PennKey specified for delivery is not valid"
+      alma_response:
+        no_item_for_request: "Sorry, no item can fulfill this request for pickup. You may need to visit the reserves or reference desk at the holding library in order to check out this book on-site and for a limited time."
+        request_already_exists: "You already have a request for this item. You can see your pending requests by visiting the \"My Library Account\" link at the top of the page."
+        other: 'Sorry, we could not create your request at this time.'
     tooltips:
       request_in_print: "Request a physical copy from Penn Libraries (Pickup@Penn, Books by Mail) or a partner library (BorrowDirect+, Interlibrary loan)"
       request_electronic: "Request digital delivery of an article, chapter or section"
     urls:
       libguide: "https://guides.library.upenn.edu/circulation/CirculationWelcome"
     fields:
-      deliver_to: "Deliver To"
+      email: 'Email'
       comment: "Comments"
       title: "Title"
       author: "Author"
@@ -67,5 +70,3 @@ en:
       office_delivery: "Office Delivery"
       pickup: "Pickup at Penn"
       registered_bbm: "I am a registered Books by Mail user"
-    help:
-      deliver_to: "PennKey of recipient for electronic materials."

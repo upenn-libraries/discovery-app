@@ -16,8 +16,8 @@ module TurboAlmaApi
       user_record = get_user user_id
       @id = user_record.id
       @name = user_record.full_name
-      @first_name = user_record.preferred_first_name
-      @last_name = user_record.preferred_last_name
+      @first_name = user_record.preferred_first_name.titleize
+      @last_name = user_record.preferred_last_name.titleize
       @email = safe_preferred_email_from user_record
       @user_group = user_group_from user_record
       @affiliation = affiliation_from user_record

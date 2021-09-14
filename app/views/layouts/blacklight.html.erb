@@ -27,24 +27,7 @@
         j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-P9SGBHT');</script>
-
     <!-- End Google Tag Manager -->
-
-    <!-- Matomo -->
-    <script type="text/javascript">
-      var _paq = window._paq || [];
-      /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-      _paq.push(['trackPageView']);
-      _paq.push(['enableLinkTracking']);
-      (function() {
-        var u="//matomo.library.upenn.edu/";
-        _paq.push(['setTrackerUrl', u+'matomo.php']);
-        _paq.push(['setSiteId', '2']);
-        var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-        g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
-      })();
-    </script>
-    <!-- End Matomo Code -->
 
     <%= javascript_include_tag "application" %>
     <script type="text/javascript" src="https://libapps.s3.amazonaws.com/sites/231/include/franklinalert.js"></script>
@@ -54,11 +37,8 @@
   <body class="<%= render_body_class %>">
 
   <!-- Google Tag Manager (noscript). Paste immediately after the opening body tag -->
-  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P9SGBHT"
-  height="0" width="0" style="display:none;visibility:hidden"></iframe>
-  <!-- Matomo Image Tracker-->
-  <img src="http://matomo.library.upenn.edu/matomo.php?idsite=2&amp;rec=1" style="border:0" alt="" />
-  <!-- End Matomo -->
+  <noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P9SGBHT" height="0" width="0" style="display:none;visibility:hidden"></iframe>
   </noscript>
   <!-- End Google Tag Manager (noscript) -->
 

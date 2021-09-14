@@ -23,7 +23,7 @@ module ApplicationHelper
   def databases_results_path(query)
     search_catalog_path params: {
       q: query, utf8: '✓', search_field: 'keyword',
-      'f[format_f][]': 'Database & Article Index'
+      'f[format_f][]': PennLib::Marc::DATABASES_FACET_VALUE
     }
   end
 
@@ -46,7 +46,7 @@ module ApplicationHelper
     on_bento_page = (controller_name == 'catalog') && ['landing', 'bento'].member?(action_name)
 
     # databases search, falls through to catalog but different tab should be highlighted
-    on_databases_page = params.dig('f', 'format_f')&.include?('Database & Article Index')
+    on_databases_page = params.dig('f', 'format_f')&.include?(PennLib::Marc::DATABASES_FACET_VALUE)
 
     if tab_id == 'bento' && on_bento_page
       'active'
@@ -268,7 +268,7 @@ module ApplicationHelper
         'icon-archive'
       when 'Other'
         'icon-book'
-      when 'Database & Article Index'
+      when PennLib::Marc::DATABASES_FACET_VALUE
         'icon-database'
       when '3D object'
         'icon-object'

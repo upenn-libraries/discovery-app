@@ -30,6 +30,20 @@ function displayButtons($widgetArea, selectedItem, logged_in, context) {
     }
 }
 
+function calculateItemRequestUrl(mmsId, itemCount, emptyHoldingCount) {
+    var itemRequestUrl = '/alma/items/' + mmsId + '/all';
+
+    if(itemCount || emptyHoldingCount) {
+        var urlParams = new URLSearchParams({
+            item_count: itemCount,
+            empty_holding_count: emptyHoldingCount
+        });
+        return itemRequestUrl + '?' + urlParams.toString();
+    } else {
+        return itemRequestUrl
+    }
+}
+
 function initializeRequestingWidget($widgetArea, context) {
     $('.selected-item-debug').hide();
     var $requestForm = $widgetArea.find('.request-form')
@@ -42,18 +56,7 @@ function initializeRequestingWidget($widgetArea, context) {
         $requestForm.hide();
         var itemCount = $widget.data('itemCount');
         var emptyHoldingCount = $widget.data('emptyHoldingCount');
-        // TODO: move to function, e.g.:
-        // var itemRequestUrl = calculateItemRequestUrl(itemCount, emptyHoldingCount)
-        var itemRequestUrl = '/alma/items/' + mmsId + '/all';
-        if(itemCount || emptyHoldingCount) {
-            itemRequestUrl += '?'
-        }
-        if(itemCount) {
-            itemRequestUrl += $.param({ item_count: itemCount })
-        }
-        if(emptyHoldingCount) {
-            itemRequestUrl += $.param({ empty_holding_count: emptyHoldingCount })
-        }
+        var itemRequestUrl = calculateItemRequestUrl(mmsId, itemCount, emptyHoldingCount);
         $.ajax({
             url: itemRequestUrl,
             dataType: 'json'
@@ -61,24 +64,28 @@ function initializeRequestingWidget($widgetArea, context) {
             $widgetArea.removeClass('spinner');
             $requestForm.show();
             responseData = data
-            if(responseData.length === 1) {
-                // single item case - avoid instantiating select2 widget
-                $widget.closest('.form-group').hide();
-                selectedItem = responseData[0];
-                $widget.data(selectedItem);
-                displayButtons($widgetArea, selectedItem, logged_in, context);
+            if(!responseData) {
+                $widgetArea.html('<div class="alert alert-danger requesting-widget-error-alert">Failed to load any items for this record - refresh the page and try again.</div>');
             } else {
-                $widget.select2({
-                    theme: 'bootstrap',
-                    placeholder: "Click here to see all Items",
-                    width: "100%",
-                    data: responseData
-                }).on('select2:open', function(e) {
-                    $('.select2-search__field').attr('placeholder', "Type a year, issue or volume number to filter the list");
-                }).on('select2:select', function(e) {
-                    selectedItem = e.params.data;
+                if (responseData.length === 1) {
+                    // single item case - avoid instantiating select2 widget
+                    $widget.closest('.form-group').hide();
+                    selectedItem = responseData[0];
+                    $widget.data(selectedItem);
                     displayButtons($widgetArea, selectedItem, logged_in, context);
-                });
+                } else {
+                    $widget.select2({
+                        theme: 'bootstrap',
+                        placeholder: "Click here to see all Items",
+                        width: "100%",
+                        data: responseData
+                    }).on('select2:open', function (e) {
+                        $('.select2-search__field').attr('placeholder', "Type a year, issue or volume number to filter the list");
+                    }).on('select2:select', function (e) {
+                        selectedItem = e.params.data;
+                        displayButtons($widgetArea, selectedItem, logged_in, context);
+                    });
+                }
             }
             $widgetArea.addClass('loaded');
             // srt focus to first button - triggers tooltip :/
@@ -214,6 +221,7 @@ $(document).ready(function() {
             $modal.find('#requestItemPid').val(selectedItem.id);
             $modal.find('#requestHoldingId').val(selectedItem.holding_id);
             $modal.find('#requestMmsId').val(mmsId);
+            $modal.find('#requestIsxn').val(selectedItem.isxn);
 
             // set Item details
             $modal.find('#title').val(selectedItem.title);
