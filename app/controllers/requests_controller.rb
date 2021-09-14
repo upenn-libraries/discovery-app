@@ -86,9 +86,10 @@ class RequestsController < ApplicationController
     session['id']
   end
 
+  # Email might come from the session, or from a form submission
   # @return [String]
   def user_email
-    session['email']
+    session['email'] || params['email'].to_s
   end
 
   # @return [String]
