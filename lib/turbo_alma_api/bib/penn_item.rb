@@ -21,6 +21,10 @@ module TurboAlmaApi
         ['Veterinary Library - Penn Campus', 'VetPennLib'],
       ]
 
+      RESERVES_LOCATIONS = %w[
+        finecore
+      ]
+
       # Rudimentary list of material types unsuitable for Scan & Deliver
       UNSCANNABLE_MATERIAL_TYPES = %w[
         RECORD DVD CDROM BLURAY BLURAYDVD LP FLOPPY_DISK DAT GLOBE
@@ -157,7 +161,7 @@ module TurboAlmaApi
 
       # @param [String] raw_policy
       def user_policy_display(raw_policy)
-        if raw_policy == 'Not loanable'
+        if (raw_policy == 'Not loanable') && !on_reserve?
           'Restricted Access'
         elsif on_reserve?
           'On Reserve'
@@ -187,7 +191,8 @@ module TurboAlmaApi
       end
 
       def on_reserve?
-        holding_data.dig('temp_policy', 'value') == 'reserve'
+        (holding_data.dig('temp_policy', 'value') == 'reserve') ||
+          location.in?(RESERVES_LOCATIONS)
       end
 
       def at_reference?
