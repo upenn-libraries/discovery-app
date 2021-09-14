@@ -26,32 +26,8 @@ function get_request_context(mmsid) {
   };
 }
 
-function holdingAvailabilityRow(mms_id, availability, holding, page_context) {
-    // TODO: pass in format to shelfLocatorLink() somehow
-    var row1 = `
-        <div class="row">
-            <div class="col-md-2 holding-availability-col">
-                ${availability}
-            </div>
-            <div class="col-md-7">
-                ${holding['location'] || ''} ${holding['call_number'] || ''}
-            </div>
-            <div class="col-md-3">
-                ${$.shelfLocatorLink(mms_id, holding, "TODO") || ''}
-            </div>
-        </div>
-    `;
-
-    if(page_context === 'show' && holding['holding_info']) {
-        var row2 = `
-            <div class="row holding-info-row">
-                <div class="col-md-5 col-md-offset-2">
-                    ${holding['holding_info']}
-                </div>
-            </div>
-        `;
-    }
-    return `<div class="holding-availability-area holding-availability-area-${page_context}">${row1}${row2 || ''}</div>`;
+function should_show_holding_info() {
+    return document.body.classList.contains("blacklight-catalog-show");
 }
 
 $(document).ready(function() {
@@ -79,9 +55,16 @@ $(document).ready(function() {
             } else if (holding['availability'] === 'available') {
                 availability = holding['location_code'] === 'vanpNocirc' ? "<span class='label label-availability label-default'>Use online access — print restricted</span>" : "<span class='label label-availability label-success'>Available</span>";
             }
-            return holdingAvailabilityRow(mms_id, availability, holding, page_context());
-        } else if(holding['inventory_type'] === 'electronic') {
-
+            var holding_info = '';
+            if (holding['holding_info'] && should_show_holding_info()) {
+                holding_info = " - " + holding['holding_info'];
+            }
+            return [availability, holding['location'], holding['call_number'], holding_info , $.shelfLocatorLink(mms_id, holding, "TODO")]
+                .filter(function (item) {
+                    return item != null && item.length > 0;
+                }).join(' ');
+        }
+        else if(holding['inventory_type'] === 'electronic') {
             if (holding['activation_status'] === 'Available') {
                 var url = null;
                 if (holding['portfolio_pid']) {
