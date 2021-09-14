@@ -6,6 +6,16 @@ var validRequestTypes = ["CentralCAT","MAINT-EC","CHI CAT","CatMet","HEB CAT",
                          "MAINT-otf","MAINT-tr"];
 $.fn.dataTable.ext.errMode = 'none';
 
+function page_context() {
+    if(document.body.classList.contains("blacklight-catalog-show")) {
+        return 'show';
+    } else if(document.body.classList.contains("blacklight-catalog-index")) {
+        return 'index';
+    } else {
+        return null;
+    }
+}
+
 // Hackily parses relevant context out of the DOM for the specified mmsid
 function get_request_context(mmsid) {
   var d = document.getElementById('items_nocirc-'+mmsid);
@@ -14,6 +24,10 @@ function get_request_context(mmsid) {
     pickupable: null,
     items_nocirc: items_nocirc
   };
+}
+
+function should_show_holding_info() {
+    return document.body.classList.contains("blacklight-catalog-show");
 }
 
 $(document).ready(function() {
@@ -41,13 +55,16 @@ $(document).ready(function() {
             } else if (holding['availability'] === 'available') {
                 availability = holding['location_code'] === 'vanpNocirc' ? "<span class='label label-availability label-default'>Use online access — print restricted</span>" : "<span class='label label-availability label-success'>Available</span>";
             }
-            // TODO: pass in format to shelfLocatorLink() somehow
-            return [availability, holding['location'], holding['call_number'], $.shelfLocatorLink(mms_id, holding, "TODO")]
+            var holding_info = '';
+            if (holding['holding_info'] && should_show_holding_info()) {
+                holding_info = " - " + holding['holding_info'];
+            }
+            return [availability, holding['location'], holding['call_number'], holding_info , $.shelfLocatorLink(mms_id, holding, "TODO")]
                 .filter(function (item) {
                     return item != null && item.length > 0;
                 }).join(' ');
-        } else if(holding['inventory_type'] === 'electronic') {
-
+        }
+        else if(holding['inventory_type'] === 'electronic') {
             if (holding['activation_status'] === 'Available') {
                 var url = null;
                 if (holding['portfolio_pid']) {
