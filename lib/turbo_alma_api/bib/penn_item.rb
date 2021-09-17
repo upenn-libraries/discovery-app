@@ -8,7 +8,7 @@ module TurboAlmaApi
         ['Van Pelt Library', 'VanPeltLib'],
         ['Annenberg Library', 'AnnenLib'],
         ['Athenaeum Library', 'AthLib'],
-        # ['Biotech Commons', 'BiomLib'],
+        ['Biotech Commons', 'BiomLib'],
         ['Chemistry Library', 'ChemLib'],
         ['Dental Medicine Library', 'DentalLib'],
         ['Fisher Fine Arts Library', 'FisherFAL'],
