@@ -108,9 +108,10 @@ module PennLib
             holding = subfields.reduce(Hash.new) do |acc, subfield|
               fieldname = subfield_codes_to_fieldnames[subfield['code']]
               fieldvalue = subfield['__content__']
-              # a value can sometimes be nil, and in some cases, this would overwrite a previously existing value that
-              # has already been set
-              if fieldname && fieldvalue
+              if acc[fieldname].present?
+                # value already set - concat! but only if not falsey
+                acc[fieldname] = acc[fieldname] + fieldvalue if fieldvalue
+              else
                 acc[fieldname] = fieldvalue
               end
               acc
