@@ -6,11 +6,13 @@ module TurboAlmaApi
     class PennItem < Alma::BibItem
       PICKUP_LOCATIONS = [
         ['Van Pelt Library', 'VanPeltLib'],
+        ['Van Pelt Locker Pickup', 'VPLOCKER'],
         ['Annenberg Library', 'AnnenLib'],
         ['Athenaeum Library', 'AthLib'],
         ['Biotech Commons', 'BiomLib'],
         ['Chemistry Library', 'ChemLib'],
         ['Dental Medicine Library', 'DentalLib'],
+        ['Dental Medicine Locker Pickup', 'DENTLOCKER'],
         ['Fisher Fine Arts Library', 'FisherFAL'],
         ['Library at the Katz Center', 'KatzLib'],
         ['Math/Physics/Astronomy Library', 'MPALib'],
