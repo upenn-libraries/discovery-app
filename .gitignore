@@ -26,6 +26,8 @@ local_dev_env
 .env
 .idea
 
+pod_data/
+
 public/assets
 
 .byebug_history

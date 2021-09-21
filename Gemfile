@@ -26,6 +26,7 @@ gem 'mysql2', '~> 0.4.10'
 gem 'nokogiri', '~> 1.10.0'
 gem 'oj'
 gem 'rails', '~> 4.2.0'
+gem 'resync-client', git: 'https://github.com/mksndz/resync-client', branch: 'support_arbitrary_http_headers'
 gem 'rsolr', '1.1.2'
 gem 'sass-rails', '5.0.6'
 gem 'sdoc', '0.4.2', group: :doc
