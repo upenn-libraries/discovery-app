@@ -8,10 +8,10 @@ class SolrDocument
   include ExpandedDocs
 
   # The following shows how to setup this blacklight document to display marc documents
-  extension_parameters[:marc_source_field] = :marcrecord_text
+  extension_parameters[:marc_source_field] = :marcrecord_xml
   extension_parameters[:marc_format_type] = :marcxml
-  use_extension( Blacklight::Solr::Document::Marc) do |document|
-    document.key?( :marcrecord_text )
+  use_extension(Blacklight::Solr::Document::Marc) do |document|
+    document.key?(:marcrecord_xml)
   end
 
   field_semantics.merge!(
@@ -46,10 +46,10 @@ class SolrDocument
   )
 
   # self.unique_key = 'id'
-
+  
   # Email uses the semantic field mappings below to generate the body of an email.
   SolrDocument.use_extension( Blacklight::Document::Email )
-
+  
   # SMS uses the semantic field mappings below to generate the body of an SMS email.
   SolrDocument.use_extension( Blacklight::Document::Sms )
 
@@ -102,7 +102,6 @@ class SolrDocument
     markup += "data-oclc=#{oclc}" if !oclc.empty?
     markup
   end
-
 
   def format_display
     @format_display ||= [ fetch('format_a') ] + pennlibmarc.get_format_display(to_marc)
@@ -160,7 +159,7 @@ class SolrDocument
   # returns the full text link field values for all the documents in the cluster
   def full_text_links_for_cluster_display
     structs = cluster_docs.map do |expanded_doc|
-      field_value = expanded_doc.fetch('full_text_link_text_a', [])
+      field_value = expanded_doc.fetch('full_text_link_a', [])
       if field_value.present?
         {
           id: expanded_doc.id,

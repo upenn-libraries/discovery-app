@@ -25,6 +25,14 @@ module DocumentRenderHelper
     render_values_with_breaks(options[:value] + options[:document].fetch('author_880_a', []))
   end
 
+  def record_source_map(options)
+    inst = options[:value].first
+    BaseIndexer::RecordSource.constants(false).each do |const|
+      inst_int = BaseIndexer::RecordSource.const_get(const)
+      return const.to_s.humanize if inst_int == inst
+    end
+  end
+
   def render_electronic_holdings(options)
     buf = ''
     electronic_holdings = options[:value]
@@ -60,11 +68,12 @@ module DocumentRenderHelper
 
   def detect_nocirc(document)
     return nil unless (alma_mms_id = document[:alma_mms_id]).presence
-    "<div id=\"items_nocirc-#{alma_mms_id}\" display=\"none\" val=\"#{document[:nocirc_a].first}\"></div>".html_safe
+    "<div id=\"items_nocirc-#{alma_mms_id}\" display=\"none\" val=\"#{document[:nocirc_stored_a].first}\"></div>".html_safe
   end
 
   def render_online_resource_display_for_index_view(options)
     values = options[:value]
+    suppress_remote_links = 'Include Partner Libraries' != params.dig('f', 'cluster', 0)
     alma_mms_id = options[:document][:alma_mms_id]
     hathi_pd = false
     hathi_etas = nil
@@ -87,8 +96,9 @@ module DocumentRenderHelper
           append = @@HATHI_INFO
         end
         %Q{<a href="#{url}"> <span class="label label-availability label-primary">Online access</span>#{text}</a>#{postfix}#{append}}
+        (suppress_remote_links && text =~ /View record in .*\'s catalog/) ? nil : %Q{<a href="#{url}">#{text}</a>#{postfix}#{append}}
       end.compact.join('<br/>')
-    end.join('<br/>')
+    end.reject { |item| item.blank? }.join('<br/>')
     unless alma_mms_id.nil?
       if hathi_pd
         ret = ret.concat(hathi_tag_id('pd', alma_mms_id))
@@ -97,7 +107,7 @@ module DocumentRenderHelper
         ret = ret.concat(hathi_tag_id('etas', alma_mms_id))
       end
     end
-    ret.html_safe
+    ret.blank? ? 'Has partner library holdings' : ret.html_safe
   end
 
   def render_online_display_for_show_view(options)
