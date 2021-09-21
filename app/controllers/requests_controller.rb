@@ -52,7 +52,7 @@ class RequestsController < ApplicationController
     case params[:type].to_sym
     when :circulate
       params[:available] ? 'circulate' : 'ill'
-    when :reserves then 'reserves'
+    when :noncirc then 'noncirc'
     when :ill then 'ill'
     when :electronic then 'electronic'
     when :aeon then 'aeon'

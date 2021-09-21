@@ -5,13 +5,12 @@
       <div class="modal-title" id="exampleModalLabel">Item has Limited Access</div>
     </div>
     <div class="modal-body">
+      <div class="alert alert-danger">
+        <%= t noncirc_type, scope: 'requests.messages.noncirc', library: params[:library] %>
+      </div>
       <p>
-        This item is being held at <%= params[:library] %>. It may be checked out for a limited period by visiting
-        the library.
-      </p>
-      <p>
-        If you would like to receive a physical copy, you may try submitting an Interlibrary Loan request using the
-        button below.
+        If you would like to receive a physical copy, you may try submitting an Interlibrary Loan (ILL) request using
+        the button below.
       </p>
     </div>
     <div class="modal-footer">

@@ -22,11 +22,7 @@ module TurboAlmaApi
         ['Veterinary Library - New Bolton Center', 'VetNBLib'],
         ['Veterinary Library - Penn Campus', 'VetPennLib'],
       ]
-
-      RESERVES_LOCATIONS = %w[
-        finecore
-      ]
-
+      IN_HOUSE_POLICY_CODE = 'InHouseView'
       # Rudimentary list of material types unsuitable for Scan & Deliver
       UNSCANNABLE_MATERIAL_TYPES = %w[
         RECORD DVD CDROM BLURAY BLURAYDVD LP FLOPPY_DISK DAT GLOBE
@@ -61,14 +57,15 @@ module TurboAlmaApi
       # @return [TrueClass, FalseClass]
       def checkoutable?
         in_place? &&
-          # !non_circulating? &&
           !not_loanable? &&
           !aeon_requestable? &&
           !on_reserve? &&
-          !at_reference?
+          !at_reference? &&
+          !in_house_use_only?
       end
 
       # Penn uses "Non-circ" in Alma
+      # @return [TrueClass, FalseClass]
       def non_circulating?
         circulation_policy.include?('Non-circ')
       end
@@ -91,7 +88,12 @@ module TurboAlmaApi
       end
 
       # @return [TrueClass, FalseClass]
+      def in_house_use_only?
+        item_data.dig('policy', 'value') == IN_HOUSE_POLICY_CODE
+      end
+
       # This is tailored to the user_id, if provided
+      # @return [TrueClass, FalseClass]
       def not_loanable?
         user_due_date_policy&.include? 'Not loanable'
       end
@@ -163,10 +165,14 @@ module TurboAlmaApi
 
       # @param [String] raw_policy
       def user_policy_display(raw_policy)
-        if (raw_policy == 'Not loanable') && !on_reserve?
+        if (raw_policy == 'Not loanable') && !restricted_circ?
           'Restricted Access'
         elsif on_reserve?
           'On Reserve'
+        elsif at_reference?
+          'At Reference Desk'
+        elsif in_house_use_only?
+          'On Site Use Only'
         elsif !checkoutable?
           'Currently Unavailable'
         else
@@ -181,7 +187,7 @@ module TurboAlmaApi
         end
       end
 
-      # TODO: is this right? AlmaAvailability parses availability XML and gets a location_code
+      # @return [TrueClass, FalseClass]
       def aeon_requestable?
         aeon_site_codes = PennLib::BlacklightAlma::CodeMappingsSingleton.instance.code_mappings.aeon_site_codes
         location = if item_data.dig('location', 'value')
@@ -192,17 +198,19 @@ module TurboAlmaApi
         location.in? aeon_site_codes
       end
 
+      # @return [TrueClass, FalseClass]
       def on_reserve?
-        (holding_data.dig('temp_policy', 'value') == 'reserve') ||
-          location.in?(RESERVES_LOCATIONS)
+        holding_data.dig('temp_policy', 'value') == 'reserve'
       end
 
+      # @return [TrueClass, FalseClass]
       def at_reference?
         item_data.dig('policy', 'value') == 'reference'
       end
 
+      # @return [TrueClass, FalseClass]
       def restricted_circ?
-        on_reserve? || at_reference?
+        on_reserve? || at_reference? || in_house_use_only?
       end
 
       def isxn
@@ -226,6 +234,7 @@ module TurboAlmaApi
           'aeon_requestable' => aeon_requestable?,
           'on_reserve' => on_reserve?,
           'at_reference' => at_reference?,
+          'in_house_only' => in_house_use_only?,
           'restricted_circ' => restricted_circ?,
           'volume' => volume,
           'issue' => issue,

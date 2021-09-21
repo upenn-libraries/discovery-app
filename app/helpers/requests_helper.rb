@@ -13,4 +13,15 @@ module RequestsHelper
       t('requests.modal_titles.confirm.circulate')
     end
   end
+
+  # @return [Symbol]
+  def noncirc_type
+    if params[:on_reserves]
+      :reserves
+    elsif params[:at_reference]
+      :reference
+    elsif params[:in_house]
+      :inhouse
+    end
+  end
 end
