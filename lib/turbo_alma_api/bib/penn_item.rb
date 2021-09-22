@@ -199,11 +199,13 @@ module TurboAlmaApi
       end
 
       # @return [TrueClass, FalseClass]
+      # TODO: also check item policy?
       def on_reserve?
         holding_data.dig('temp_policy', 'value') == 'reserve'
       end
 
       # @return [TrueClass, FalseClass]
+      # TODO: also consider temp_policy?
       def at_reference?
         item_data.dig('policy', 'value') == 'reference'
       end
