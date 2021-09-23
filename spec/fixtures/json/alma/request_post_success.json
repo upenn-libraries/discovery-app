@@ -1,0 +1,36 @@
+{
+  "user_primary_id": "12345678",
+  "request_id": "26107399010003681",
+  "request_type": "HOLD",
+  "request_sub_type": {
+    "value": "PATRON_PHYSICAL",
+    "desc": "Patron physical item request"
+  },
+  "mms_id": "1234",
+  "title": "Mathematics as a science of patterns / by Michael D. Resnik.",
+  "author": "Resnik, Michael D.",
+  "description": null,
+  "pickup_location": "Van Pelt Library",
+  "pickup_location_type": "LIBRARY",
+  "pickup_location_library": "VanPeltLib",
+  "managed_by_library": "Van Pelt Library",
+  "managed_by_circulation_desk": "Van Pelt Stacks Circulation",
+  "managed_by_library_code": "VanPeltLib",
+  "managed_by_circulation_desk_code": "VPSTACKS",
+  "material_type": {
+    "value": null,
+    "desc": null
+  },
+  "volume": "",
+  "issue": "",
+  "part": "",
+  "date_of_publication": "",
+  "comment": null,
+  "request_status": "IN_PROCESS",
+  "request_date": "2021-01-08Z",
+  "request_time": "2021-01-08T21:10:33.662Z",
+  "task_name": "Pickup From Shelf",
+  "expiry_date": "2021-01-16Z",
+  "item_id": "3456",
+  "barcode": "31198022078369"
+}

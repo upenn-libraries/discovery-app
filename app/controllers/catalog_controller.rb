@@ -1,7 +1,7 @@
+# frozen_string_literal: true
 
 require 'uri'
 
-# frozen_string_literal: true
 class CatalogController < ApplicationController
   include ReplaceInvalidBytes
   include BlacklightAdvancedSearch::Controller
@@ -14,6 +14,41 @@ class CatalogController < ApplicationController
   include EmailActionProtection
 
   ENABLE_SUBJECT_CORRELATION = ENV['ENABLE_SUBJECT_CORRELATION']&.downcase == 'true'
+
+  # explicitly define solr fields to be returned beyond the stored fields returned by *
+  SOLR_FIELDLIST_PARAM = %w[
+    *
+    id
+    cluster_id
+    alma_mms_id
+    score
+    format_a
+    full_text_link_text_a
+    isbn_isxn
+    isbn_a
+    oclc_id
+    language_a
+    title
+    title_880_a
+    author_creator_a
+    author_880_a
+    standardized_title_a
+    edition
+    conference_a
+    series
+    publication_a
+    contained_within_a
+    physical_holdings_json
+    electronic_holdings_json
+    bound_with_ids_a
+    marcrecord_text
+    recently_added_isort
+    hld_count_isort
+    prt_count_isort
+    empty_hld_count_isort
+    itm_count_isort
+    nocirc_a
+  ].join(',')
 
   # expire session if needed
   before_action :expire_session
@@ -60,34 +95,7 @@ class CatalogController < ApplicationController
         #combo: '{!query v=$q}',
         # this list is annoying to maintain, but this avoids hard-coding a field list
         # in the search request handler in solrconfig.xml
-        fl: %w{
-        id
-        cluster_id
-        alma_mms_id
-        score
-        format_a
-        full_text_link_text_a
-        isbn_isxn
-        language_a
-        title
-        title_880_a
-        author_creator_a
-        author_880_a
-        standardized_title_a
-        edition
-        conference_a
-        series
-        publication_a
-        contained_within_a
-        physical_holdings_json
-        electronic_holdings_json
-        bound_with_ids_a
-        marcrecord_text
-        recently_added_isort
-        hld_count_isort
-        prt_count_isort
-        nocirc_a
-      }.join(','),
+        fl: SOLR_FIELDLIST_PARAM,
         'facet.threads': 2,
         'facet.mincount': 0,
         #      fq: '{!tag=cluster}{!collapse field=cluster_id nullPolicy=expand size=5000000 min=record_source_id}',
@@ -118,9 +126,10 @@ class CatalogController < ApplicationController
     ## Default parameters to send on single-document requests to Solr. These settings are the Blackligt defaults (see SearchHelper#solr_doc_params) or
     ## parameters included in the Blacklight-jetty document requestHandler.
     config.default_document_solr_params = {
-        expand: 'true',
-        'expand.field': 'cluster_id',
-        'expand.q': '*:*',
+      expand: 'true',
+      'expand.field': 'cluster_id',
+      'expand.q': '*:*',
+      'fl': SOLR_FIELDLIST_PARAM
     }
 
     # solr field configuration for search results/index views
@@ -160,7 +169,7 @@ class CatalogController < ApplicationController
     # :index_range can be an array or range of prefixes that will be used to create the navigation (note: It is case sensitive when searching values)
 
     database_selected = lambda { |a, b, c|
-      a.params.dig(:f, :format_f)&.include?('Database & Article Index')
+      a.params.dig(:f, :format_f)&.include?(PennLib::Marc::DATABASES_FACET_VALUE)
     }
 
     # Some filters (e.g., subject_f) are capable of driving meaningful correlations;
@@ -174,7 +183,7 @@ class CatalogController < ApplicationController
     CORRELATION_IGNORELIST = {
       :access_f => nil,
       :record_source_f => nil,
-      :format_f => ['Database & Article Index']
+      :format_f => [PennLib::Marc::DATABASES_FACET_VALUE]
     }.freeze
 
     actionable_filters = lambda { |a, b, c|
@@ -214,7 +223,7 @@ class CatalogController < ApplicationController
     }
 
     config.induce_sort = lambda { |blacklight_params|
-      return 'title_nssort asc' if blacklight_params.dig(:f, :format_f)&.include?('Database & Article Index')
+      return 'title_nssort asc' if blacklight_params.dig(:f, :format_f)&.include?(PennLib::Marc::DATABASES_FACET_VALUE)
     }
 
     config.facet_types = {
@@ -392,7 +401,7 @@ class CatalogController < ApplicationController
         'HathiTrust' => { :label => 'HathiTrust', :fq => "{!join ex=orig_q from=cluster_id to=cluster_id v='{!term f=record_source_f v=HathiTrust}'}"},
         'Penn' => { :label => 'Penn', :fq => "{!term f=record_source_f v=Penn}"},
     }
-    config.add_facet_field 'format_f', label: 'Format', limit: 5, collapse: false, :ex => 'orig_q', solr_params: MINCOUNT
+    config.add_facet_field 'format_f', label: 'Format', limit: 20, collapse: false, :ex => 'orig_q', solr_params: MINCOUNT, partial: "format_facet"
     config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z', collapse: false,
         :ex => 'orig_q', solr_params: MINCOUNT
     #config.add_facet_field 'subject_taxonomy', label: 'Subject Taxonomy', collapse: false, :partial => 'blacklight/hierarchy/facet_hierarchy', :json_facet => SUBJECT_TAXONOM, :helper_method => :render_subcategories
@@ -431,7 +440,7 @@ class CatalogController < ApplicationController
                            :if => search_field_accept::(['subject_xfacet2'])
     config.add_facet_field 'title_xfacet', label: 'Title', limit: 20, show: false, solr_params: MINCOUNT,
                            xfacet: true, xfacet_view_type: 'rbrowse', :if => search_field_accept::(['title_xfacet']),
-                           xfacet_rbrowse_fields: %w(title author_creator_a standardized_title_a edition conference_a series contained_within_a publication_a format_a full_text_links_for_cluster_display availability)
+                           xfacet_rbrowse_fields: %w[title author_creator_a standardized_title_a edition conference_a series contained_within_a publication_a format_a full_text_links_for_cluster_display availability]
     #config.add_facet_field 'author_creator_xfacet', label: 'Author', limit: 20, show: false,
     #                       xfacet: true, xfacet_view_type: 'xbrowse', facet_for_filtering: 'author_creator_f'
     config.add_facet_field 'author_creator_xfacet2', label: 'Author', limit: 20, show: false, solr_params: MINCOUNT,
@@ -439,7 +448,7 @@ class CatalogController < ApplicationController
                            :if => search_field_accept::(['author_creator_xfacet2'])
     config.add_facet_field 'call_number_xfacet', label: 'Call number', limit: 20, show: false, solr_params: MINCOUNT,
                            xfacet: true, xfacet_view_type: 'rbrowse', :if => search_field_accept::(['call_number_xfacet']),
-                           xfacet_rbrowse_fields: %w(title author_creator_a standardized_title_a edition conference_a series contained_within_a publication_a format_a full_text_links_for_cluster_display availability)
+                           xfacet_rbrowse_fields: %w[title author_creator_a standardized_title_a edition conference_a series contained_within_a publication_a format_a full_text_links_for_cluster_display availability]
 
     # Have BL send all facet field names to Solr, which has been the default
     # previously. Simply remove these lines if you'd rather use Solr request
@@ -479,9 +488,9 @@ class CatalogController < ApplicationController
 
     # solr fields to be displayed in the index (search results) view
     #   The ordering of the field names is the order of the display
-    add_fields.call(config, 'index', [
-        { name: 'author_creator_a', label: 'Author/Creator', helper_method: 'render_author_with_880' },
-        { name: 'standardized_title_a', label: 'Standardized Title' },
+    add_fields.call(
+      config, 'index', [
+        { name: 'author_creator_a', label: 'Author/Creator' },
         { name: 'edition', label: 'Edition' },
         { name: 'conference_a', label: 'Conference name' },
         { name: 'series', label: 'Series' },
@@ -490,11 +499,12 @@ class CatalogController < ApplicationController
         { dynamic_name: 'distribution_display', label: 'Distribution' },
         { dynamic_name: 'manufacture_display', label: 'Manufacture' },
         { name: 'contained_within_a', label: 'Contained in' },
-        { name: 'format_a', label: 'Format/Description' },
+        { name: 'format_a', label: 'Format/Description', separator: ', '},
         # in this view, 'Online resource' is full_text_link; note that
         # 'Online resource' is deliberately different here from what's on show view
         { dynamic_name: 'full_text_links_for_cluster_display', label: 'Online resource', helper_method: 'render_online_resource_display_for_index_view' },
-    ])
+      ]
+    )
 
     # Most show field values are generated dynamically from MARC stored in Solr.
     # This is because there's sometimes complex logic for extracting granular bits
@@ -510,19 +520,30 @@ class CatalogController < ApplicationController
     #       helper_method is used to render values for presentation.
     #   if: if dynamic, defaults to 'is_field_present' lambda if not specified,
     #       so that only fields containing non-blank values are displayed.
+    #   top_field: boolean, defaults to false - tell BL to render this metadata
+    #       element "above the fold" - above the availability info area
 
-    add_fields.call(config, 'show', [
-        { dynamic_name: 'author_display', label: 'Author/Creator', helper_method: 'render_linked_values' },
-        { dynamic_name: 'standardized_title_display', label: 'Standardized Title', helper_method: 'render_linked_values' },
+    add_fields.call(
+      config, 'show', [
+        { dynamic_name: 'author_display', label: 'Author/Creator',
+          helper_method: 'render_linked_values', top_field: true },
+        { dynamic_name: 'publication_display', label: 'Publication', top_field: true },
+        { dynamic_name: 'format_display', label: 'Format/Description', top_field: true },
+        { dynamic_name: 'edition_display', label: 'Edition', top_field: true },
+        { dynamic_name: 'conference_display', label: 'Conference Name',
+          helper_method: 'render_linked_values', top_field: true },
+        { dynamic_name: 'series_display', label: 'Series',
+          helper_method: 'render_linked_values', top_field: true },
+        { dynamic_name: 'production_display', label: 'Production', top_field: true },
+        { dynamic_name: 'distribution_display', label: 'Distribution', top_field: true },
+        { dynamic_name: 'manufacture_display', label: 'Manufacture', top_field: true },
+        { dynamic_name: 'contained_in_display', label: 'Contained In', top_field: true },
+        # 'Online' corresponds to the right-side box labeled 'Online' in DLA Franklin
+        { dynamic_name: 'full_text_links_for_cluster_display', label: 'Online',
+          helper_method: 'render_online_display_for_show_view', top_field: true },
+        { dynamic_name: 'standardized_title_display', label: 'Standardized Title',
+          helper_method: 'render_linked_values' },
         { dynamic_name: 'other_title_display', label: 'Other Title' },
-        { dynamic_name: 'edition_display', label: 'Edition' },
-        { dynamic_name: 'publication_display', label: 'Publication' },
-        { dynamic_name: 'production_display', label: 'Production' },
-        { dynamic_name: 'distribution_display', label: 'Distribution' },
-        { dynamic_name: 'manufacture_display', label: 'Manufacture' },
-        { dynamic_name: 'conference_display', label: 'Conference Name', helper_method: 'render_linked_values' },
-        { dynamic_name: 'series_display', label: 'Series', helper_method: 'render_linked_values' },
-        { dynamic_name: 'format_display', label: 'Format/Description' },
         { dynamic_name: 'cartographic_display', label: 'Cartographic Data' },
         { dynamic_name: 'fingerprint_display', label: 'Fingerprint' },
         { dynamic_name: 'arrangement_display', label: 'Arrangement' },
@@ -562,7 +583,6 @@ class CatalogController < ApplicationController
         { dynamic_name: 'related_work_display', label: 'Related Work' },
         { dynamic_name: 'contains_display', label: 'Contains' },
         { dynamic_name: 'other_edition_display', label: 'Other Edition', helper_method: 'render_linked_values' },
-        { dynamic_name: 'contained_in_display', label: 'Contained In' },
         { dynamic_name: 'constituent_unit_display', label: 'Constituent Unit' },
         { dynamic_name: 'has_supplement_display', label: 'Has Supplement' },
         { dynamic_name: 'other_format_display', label: 'Other format' },
@@ -573,10 +593,9 @@ class CatalogController < ApplicationController
         { dynamic_name: 'web_link_display', label: 'Web link', helper_method: 'render_web_link_display' },
         { dynamic_name: 'access_restriction_display', label: 'Access Restriction' },
         { dynamic_name: 'bound_with_display', label: 'Bound with' },
-        # 'Online' corresponds to the right-side box labeled 'Online' in DLA Franklin
-        { dynamic_name: 'full_text_links_for_cluster_display', label: 'Online', helper_method: 'render_online_display_for_show_view' },
     #{ name: 'electronic_holdings_json', label: 'Online resource', helper_method: 'render_electronic_holdings' },
-    ])
+      ]
+    )
 
     # "fielded" search configuration. Used by pulldown among other places.
     # For supported keys in hash, see rdoc for Blacklight::SearchFields
@@ -883,6 +902,10 @@ class CatalogController < ApplicationController
     index
   end
 
+  def databases
+    redirect_to search_catalog_path('f[format_f][]': PennLib::Marc::DATABASES_FACET_VALUE)
+  end
+
   # Landing has to live under this controller, otherwise the paths for
   # certain BL view partials used on landing page won't resolve correctly.
   def landing
@@ -997,6 +1020,10 @@ class CatalogController < ApplicationController
   def render_saved_searches?
     # don't ever show saved searches link to the user
     false
+  end
+
+  def show_requesting_widget?(_config, options = {})
+    options[:document].show_requesting_widget?
   end
 
 end

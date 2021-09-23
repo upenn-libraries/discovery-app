@@ -1,78 +1,10 @@
-require 'json'
+# frozen_string_literal: true
 
-#class FranklinAlmaController < BlacklightAlma::AlmaController
+# handle Alma-related actions
 class FranklinAlmaController < ApplicationController
+  include AlmaOptionOrdering
 
-  include BlacklightAlma::Availability
-
-  #TODO: Move result ordering logic to concern?
-  @@toplist = {'collection' => {}, 'interface' => {}}
-  @@toplist['collection']['Publisher website'] = 8
-  @@toplist['interface']['Highwire Press'] = 7
-  @@toplist['interface']['HighWire'] = 6
-  @@toplist['interface']['Elsevier ScienceDirect'] = 5
-  @@toplist['interface']['Elsevier ClinicalKey'] = 4
-  @@toplist['collection']['Vogue Magazine Archive'] = 3
-  @@toplist['interface']['Nature'] = 2
-  @@toplist['collection']['Academic OneFile'] = 1
-
-  @@bottomlist = {'collection' => {}, 'interface' => {}}
-  @@bottomlist['interface']['JSTOR'] = 1
-  @@bottomlist['interface']['EBSCO Host'] = 2
-  @@bottomlist['interface']['EBSCOhost'] = 3
-  @@bottomlist['collection']['LexisNexis Academic'] = 4
-  @@bottomlist['collection']['Factiva'] = 5
-  @@bottomlist['collection']['Gale Cengage GreenR'] = 6
-  @@bottomlist['collection']['Nature Free'] = 7
-  @@bottomlist['collection']['DOAJ Directory of Open Access Journals'] = 8
-  @@bottomlist['collection']['Highwire Press Free'] = 9
-  @@bottomlist['collection']['Biography In Context'] = 10
-
-  @@topoptionslist = {}
-  @@topoptionslist['Request'] = 1
-
-  @@bottomoptionslist = {}
-  @@bottomoptionslist['Suggest Fix / Enhance Record'] = 1
-  @@bottomoptionslist['Place on Course Reserve'] = 2
-
-  def cmpOnlineServices(service_a, service_b)
-    collection_a = service_a['collection'] || ''
-    interface_a = service_a['interface_name'] || ''
-    collection_b = service_b['collection'] || ''
-    interface_b = service_b['interface_name'] || ''
-
-    score_a = -[@@toplist['collection'][collection_a] || 0, @@toplist['interface'][interface_a] || 0].max
-    score_a = [@@bottomlist['collection'][collection_a] || 0, @@bottomlist['interface'][interface_a] || 0].max if score_a == 0
-
-    score_b = -[@@toplist['collection'][collection_b] || 0, @@toplist['interface'][interface_b] || 0].max
-    score_b = [@@bottomlist['collection'][collection_b] || 0, @@bottomlist['interface'][interface_b] || 0].max if score_b == 0
-
-    return (score_a == score_b ? collection_a <=> collection_b : score_a <=> score_b)
-  end
-
-  def cmpHoldingLocations(holding_a, holding_b)
-    lib_a = holding_a['library_code'] || ''
-    lib_b = holding_b['library_code'] || ''
-
-    score_a = lib_a == 'Libra' ? 1 : 0
-    score_b = lib_b == 'Libra' ? 1 : 0
-
-    return (score_a == score_b ? lib_a <=> lib_b : score_a <=> score_b)
-  end
-
-  def cmpRequestOptions(option_a, option_b)
-    score_a = -(@@topoptionslist[option_a[:option_name]] || 0)
-    score_a = (@@bottomoptionslist[option_a[:option_name]] || 0) if score_a == 0
-
-    score_b = -(@@topoptionslist[option_b[:option_name]] || 0)
-    score_b = (@@bottomoptionslist[option_b[:option_name]] || 0) if score_b == 0
-
-    return score_a <=> score_b
-  end
-
-  def alma_api_class
-    PennLib::BlacklightAlma::AvailabilityApi
-  end
+  PERMITTED_REQUEST_OPTION_CODES = %w[ILLIAD ARES ENHANCED].freeze
 
   def holding_details
     api_instance = BlacklightAlma::BibsApi.instance
@@ -81,26 +13,19 @@ class FranklinAlmaController < ApplicationController
     response_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id, :get, params)
 
     xml = Nokogiri(response_data.body)
-    holding_details = xml.xpath('//datafield[@tag="866"]/subfield[@code="a"]').map { |field|
-                        field.text
-                      }
+    holding_details = xml.xpath('//datafield[@tag="866"]/subfield[@code="a"]').map(&:text)
 
-    note_details = xml.xpath('//datafield[@tag="852"]/subfield[@code="z"]').map { |field|
-                     field.text
-                   }
+    note_details = xml.xpath('//datafield[@tag="852"]/subfield[@code="z"]').map(&:text)
     note_details.unshift('Public Notes:') unless note_details.empty?
 
-    supplemental_details = xml.xpath('//datafield[@tag="867"]/subfield[@code="a"]').map { |field|
-                             field.text
-                           }
+    supplemental_details = xml.xpath('//datafield[@tag="867"]/subfield[@code="a"]').map(&:text)
     supplemental_details.unshift('Supplemental:') unless supplemental_details.empty?
 
-    index_details = xml.xpath('//datafield[@tag="868"]/subfield[@code="a"]').map { |field|
-                      field.text
-                    }
+    index_details = xml.xpath('//datafield[@tag="868"]/subfield[@code="a"]').map(&:text)
     index_details.unshift('Indexes:') unless index_details.empty?
 
-    render :json => { "holding_details": holding_details.join("<br/>").html_safe, "notes": (note_details + supplemental_details + index_details).join("<br/>").html_safe }
+    render json: { "holding_details": holding_details.join('<br/>').html_safe,
+                   "notes": (note_details + supplemental_details + index_details).join('<br/>').html_safe }
 
   end
 
@@ -159,16 +84,6 @@ class FranklinAlmaController < ApplicationController
                    public_note: public_note, authentication_note: authentication_note }
   end
 
-  def has_holding_info?(api_mms_data, mmsid)
-    # check if any holdings have more than one item
-    api_mms_data['availability'][mmsid]['holdings'].map(&:keys).reduce([], &:+).member?('holding_info') ||
-      api_mms_data['availability'][mmsid]['holdings'].any? { |hld| hld['total_items'].to_i > 1 || hld['availability'] == 'check_holdings' }
-  end
-
-  def has_portfolio_info?(api_mms_data, mmsid)
-    api_mms_data['availability'][mmsid]['holdings'].map(&:keys).reduce([], &:+).member?('portfolio_pid')
-  end
-
   def single_availability
     availability_status = { 'available' => 'Available',
                             'check_holdings' => 'Requestable' }
@@ -185,11 +100,11 @@ class FranklinAlmaController < ApplicationController
     inventory_type = ''
 
     # check if any holdings have more than one item
-    has_holding_info = has_holding_info?(bib_data, mmsid)
+    has_holding_info = holding_info?(bib_data, mmsid)
     # check if portfolio information is present
-    has_portfolio_info = has_portfolio_info?(bib_data, mmsid)
+    has_portfolio_info = portfolio_info?(bib_data, mmsid)
 
-    metadata = check_requestable(has_holding_info)
+    metadata = check_requestable
 
     # Load holding information for monographs. Monographs do not have
     # a 'holding_info' value.
@@ -229,10 +144,10 @@ class FranklinAlmaController < ApplicationController
           )
           link_url = collection_response['url_override'].presence || collection_response['url']
           link_text = collection_response['public_name_override'].presence || collection_response['public_name']
-          link = "<a target='_blank' href='#{link_url}'>#{link_text}</a>"
+          link = "<a class='btn btn-default btn-request-option' target='_blank' href='#{link_url}'>#{link_text}</a>"
           public_note_content = collection_response['public_note'].present? ? ['Public Notes: ', collection_response['public_note']] : []
           authentication_note_content = collection_response['authentication_note'].present? ? ['Authentication Notes: ', collection_response['authentication_note']] : []
-          notes = ('<span>' + (public_note_content + authentication_note_content).join("<br/>") + '</span>').html_safe
+          notes = ('<span>' + (public_note_content + authentication_note_content).join('<br/>') + '</span>').html_safe
           [
             i,
             link,
@@ -285,14 +200,14 @@ class FranklinAlmaController < ApplicationController
       policy = 'Please log in for loan and request information' if userid == 'GUEST'
       table_data = bib_data['availability'][mmsid]['holdings']
                      .select { |h| h['inventory_type'] == 'physical' }
-                     .sort { |a, b| cmpHoldingLocations(a, b) }
+                     .sort { |a, b| compare_holdings(a, b) }
                      .each_with_index
                      .map do |h, i|
                        [
                          i,
                          h['location'],
                          h['availability'],
-                         (has_holding_info ? "" : "<span class='load-holding-details' data-mmsid='#{mmsid}' data-holdingid='#{h['holding_id']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/>") + "</span><span id='notes-#{h['holding_id']}'></span>",
+                         (has_holding_info ? '' : "<span class='load-holding-details' data-mmsid='#{mmsid}' data-holdingid='#{h['holding_id']}'><img src='#{ActionController::Base.helpers.asset_path('ajax-loader.gif')}'/>") + "</span><span id='notes-#{h['holding_id']}'></span>",
                          policy || h['due_date_policy'],
                          h['links'],
                          h['holding_id'],
@@ -303,12 +218,12 @@ class FranklinAlmaController < ApplicationController
       if table_data.empty?
         table_data = bib_data['availability'][mmsid]['holdings']
                      .select { |h| h['inventory_type'] == 'electronic' }
-                     .sort { |a, b| cmpOnlineServices(a, b) }
+                     .sort { |a, b| compare_services(a, b) }
                      .reject { |p| p['activation_status'] == 'Not Available' }
                      .each_with_index
                      .map do |p, i|
                        link_text = p['collection'] || 'Online'
-                       link = "<a target='_blank' href='https://upenn.alma.exlibrisgroup.com/view/uresolver/01UPENN_INST/openurl?Force_direct=true&test_access=true&portfolio_pid=#{p['portfolio_pid']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com&u.ignore_date_coverage=true'>#{link_text}</a>"
+                       link = "<a target='_blank' href='https://upenn.alma.exlibrisgroup.com/view/uresolver/01UPENN_INST/openurl?Force_direct=true&portfolio_pid=#{p['portfolio_pid']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com&u.ignore_date_coverage=true' class='btn btn-default'>#{link_text}</a>"
                        [
                          i,
                          link,
@@ -322,32 +237,6 @@ class FranklinAlmaController < ApplicationController
     metadata[mmsid][:inventory_type] = inventory_type
     metadata[mmsid][:pickupable] = pickupable
     render json: { "metadata": metadata, "data": table_data }
-  end
-
-  def check_requestable(has_holding_info = false)
-    api_instance = BlacklightAlma::BibsApi.instance
-    api = api_instance.ezwadl_api[0]
-    request_data = api_instance.request(api.almaws_v1_bibs.mms_id_requests, :get, params)
-    result = {}
-    requestable = false
-
-    if request_data.dig('total_record_count') != '0'
-      [request_data.dig('user_requests', 'user_request')].flatten.reject(&:nil?).each do |req|
-        item_pid = req.dig('item_id').presence
-        request_type = req.dig('request_sub_type', '__content__').presence
-        result[item_pid] ||= []
-        result[item_pid] << request_type
-      end
-    end
-
-    userid = session['id'].presence
-    usergroup = session['user_group'].presence
-    mmsid = params[:mms_id]
-
-    result[mmsid] = {:facultyexpress => usergroup == 'Faculty Express', :group => usergroup}
-
-    return result
-
   end
 
   def holding_items
@@ -371,8 +260,8 @@ class FranklinAlmaController < ApplicationController
     # table_data here is used to compose the columns in the availability DataTable
     table_data = response_data['item'].map do |item|
       data = item['item_data']
-      unless policies.has_key?(data['policy']['value']) ||
-             data['base_status']['desc'] != "Item in place" || userid.nil?
+      unless policies.key?(data['policy']['value']) ||
+             data['base_status']['desc'] != 'Item in place' || userid.nil?
         policies[data['policy']['value']] = nil
         pids_to_check << [data['pid'], data['policy']['value']]
       end
@@ -398,7 +287,7 @@ class FranklinAlmaController < ApplicationController
       )
       table_data += response_data['item'].map do |item|
         data = item['item_data']
-        unless policies.has_key?(data['policy']['value']) || data['base_status']['desc'] != "Item in place" || userid.nil?
+        unless policies.key?(data['policy']['value']) || data['base_status']['desc'] != 'Item in place' || userid.nil?
           policies[data['policy']['value']] = nil
           pids_to_check << [data['pid'], data['policy']['value']]
         end
@@ -442,146 +331,88 @@ class FranklinAlmaController < ApplicationController
     render json: { "data": table_data }
   end
 
-  def suppress_bbm(ctx)
-    # temporary NOTE: only 80% confident (initially) that we want to filter on `pickupable` here
-    # this should be set in/returned from `single_availablity` method, and will be `true` if any
-    # holding has a raw `holding['availability']` property of `available`
-    return true unless ctx['pickupable'] != false
-    return true if ctx['items_nocirc'] == 'all'
-    false
-  end
-
+  # @note this is no longer used for print holdings, only in the datatable
+  # widget for e-holdings. for print holdings, see RequestsController
+  # @note this code is strongly coupled with Alma's General Electronic
+  # Services (Fulfillment) configuration. modification to that configuration
+  # can break or otherwise cause bugs in this code.
   def request_options
     userid = session['id'].presence || nil
-    usergroup = session['user_group'].presence
-    ctx = JSON.parse(params['request_context'])
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
-    options = { user_id: userid, consider_dlr: true }
-    response_data = api_instance.request(api.almaws_v1_bibs.mms_id_request_options, :get, params.merge(options))
-    has_pickup_option = false
-    results = response_data['request_option'].map do |option|
-      request_url = option['request_url']
-      details = option['general_electronic_service_details'] || option['rs_broker_details'] || {}
-      if request_url.nil?
-        nil
-      else
-        case option['type']['value']
-        when 'HOLD'
-          has_pickup_option = true
-          {
-            option_name: 'PickUp@Penn',
-            # option_url: option['request_url'],
-            option_url: "/alma/request?mms_id=#{params['mms_id']}",
-            avail_for_physical: true,
-            avail_for_electronic: true,
-            highlightable: true
-          }
-        when 'GES'
-          option_url = option['request_url']
-          option_url += if option_url.index('?')
-                          '&'
-                        else
-                          '?'
-                        end
-          {
-            option_name: details['public_name'],
-            # Remove appended mmsid when SF case #00584311 is resolved
-            option_url: option_url + "bibid=#{params['mms_id']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com",
-            avail_for_physical: details['avail_for_physical'],
-            avail_for_electronic: details['avail_for_electronic'],
-            highlightable: ['SCANDEL'].member?(details['code'])
-          }
-        when 'RS_BROKER'
-          option_url = option['request_url']
-          option_url += if option_url.index('?')
-                          '&'
-                        else
-                          '?'
-                        end
-          # explicitly set requesttype to book if we are working with a monograph
-          # this will ensure the ILL "Book" request form is loaded
-          option_url += 'requesttype=book&' if ctx['monograph']
-          {
-            option_name: details['name'],
-            # Remove appended mmsid when SF case #00584311 is resolved
-            option_url: option_url + "bibid=#{params['mms_id']}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com",
-            avail_for_physical: true,
-            avail_for_electronic: true,
-            highlightable: true
-          }
-        else
-          nil
-        end
-      end
-    end
 
-    # .uniq required due to request options API bug returning duplicate options
-    results = results.compact.uniq.sort { |a, b| cmpRequestOptions(a, b) }
+    # consider_dlr here tells the API to look at Alma's configured Discovery display logic rules
+    # defined in the Alma configuration. it will limit returned options.
+    response_data = api_instance.request(
+      api.almaws_v1_bibs.mms_id_request_options, :get,
+      params.merge({ user_id: userid, consider_dlr: true })
+    )
 
-    # TODO: Remove when GES is updated in Alma & request option API is fixed (again)
-    results.reject! do |option|
-      ['Send Penn Libraries a question', 'Books By Mail'].member?(option[:option_name]) ||
-        (option[:option_name] == 'FacultyEXPRESS' && usergroup != 'Faculty Express')
-    end
+    options = response_data['request_option'].map do |option|
+      details = option['general_electronic_service_details'] ||
+                option['rs_broker_details'] || {}
+      return nil unless option.dig 'request_url'
 
-    # TODO: Remove when GES is updated in Alma
-    results.each do |option|
-      if option[:option_name] == 'Suggest Fix / Enhance Record'
-        option[:option_name] = 'Report Cataloging Error'
-      end
-    end
-
-    if ['Associate', 'Athenaeum Staff', 'Faculty', 'Faculty Express',
-        'Faculty Spouse', 'Grad Student', 'Library Staff', 'Medical Center Staff',
-        'Retired Library Staff', 'Staff', 'Undergraduate Student']
-       .member?(session['user_group']) && (has_pickup_option || !suppress_bbm(ctx))
-      # NOTE: has_pickup_option==true overrides any suppression of bbm by possibly-out-of-date (indexed) info in ctx
-      results.append(
+      case option.dig 'type', 'value'
+      when 'GES' # Cataloging error, ScanDeliver, etc.
         {
-          option_name: 'Books By Mail',
-          option_url: "https://franklin.library.upenn.edu/redir/booksbymail?bibid=#{params['mms_id']}",
+          option_code: details['code'],
+          option_name: details['public_name'],
+          option_url: add_bib_rfr_id_params_to(option['request_url'],
+                                               params['mms_id']),
+          avail_for_physical: details['avail_for_physical'],
+          avail_for_electronic: details['avail_for_electronic'],
+          highlightable: details['code'] == 'SCANDEL'
+        }
+      when 'RS_BROKER' # ILL
+        {
+          option_code: details['code'],
+          option_name: details['name'],
+          option_url: add_bib_rfr_id_params_to(option['request_url'],
+                                               params['mms_id']),
           avail_for_physical: true,
-          avail_for_electronic: false,
+          avail_for_electronic: true,
           highlightable: true
         }
-      )
+      else
+        nil
+      end
     end
 
-    render json: results
+    render json: options
   end
 
   def request_title?
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
     userid = session['id'].presence || 'GUEST'
-    options = {:user_id => userid, :format => 'json', :consider_dlr => true}
+    options = { user_id: userid, format: 'json', consider_dlr: true }
 
     response_data = api_instance.request(api.almaws_v1_bibs.mms_id_request_options, :get, params.merge(options))
 
-    return (response_data['request_option'] || []).map { |option|
+    (response_data['request_option'] || []).map do |option|
       option['type']['value']
-    }.member?('HOLD')
+    end.member?('HOLD')
   end
 
   def request_item?
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
     userid = session['id'].presence || 'GUEST'
-    options = {:user_id => userid, :format => 'json'}
+    options = { user_id: userid, format: 'json' }
 
     response_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items_item_pid_request_options, :get, params.merge(options))
 
-    return (response_data['request_option'] || []).map { |option|
+    (response_data['request_option'] || []).map do |option|
       option['type']['value']
-    }.member?('HOLD')
+    end.member?('HOLD')
   end
 
   def load_request
     api_instance = BlacklightAlma::BibsApi.instance
     api = api_instance.ezwadl_api[0]
 
-    if !params['mms_id'].present?
+    unless params['mms_id'].present?
       render 'catalog/bad_request'
       return
     end
@@ -594,48 +425,38 @@ class FranklinAlmaController < ApplicationController
 
     return if performed?
 
-    userid = session['id'].presence || 'GUEST'
-
-    # The block below pulls libraries dynamically but the list of valid pickup locations shouldn't
-    # change, so I've created a hard-coded list to use below to save an API call and reduce load time.
-    #
-    #exclude_libs = ['Architectural Archives', 'Area Studies Technical Services', 'EMPTY', 'Education Commons', 'LIBRA', 'ZUnavailable Library']
-    #url = "https://api-na.hosted.exlibrisgroup.com/almaws/v1/conf/libraries?apikey=#{ENV['ALMA_API_KEY']}"
-    #doc = Nokogiri::XML(open(url))
-    #libraries = {}.merge(doc.root.children.map { |lib|
-                           #{ lib.xpath('.//name').text => lib.xpath('.//code').text }
-                         #}
-                         #.reduce(&:merge)
-                         #.to_h
-                         #.reject { |k,v| exclude_libs.member?(k) }
-                        #)
-
     # Uncomment these as more libraries open up as delivery options
-    libraries = { #"Annenberg Library" => "AnnenLib",
-                  #"Athenaeum Library" => "AthLib",
-                  #"Biomedical Library" => "BiomLib",
-                  #"Chemistry Library" => "ChemLib",
-                  #"Dental Medicine Library" => "DentalLib",
-                  #"Fisher Fine Arts Library" => "FisherFAL",
-                  #"Library at the Katz Center" => "KatzLib",
-                  #"Math/Physics/Astronomy Library" => "MPALib",
-                  #"Museum Library" => "MuseumLib",
-                  #"Ormandy Music and Media Center" => "MusicLib",
-                  #"Pennsylvania Hospital Library" => "PAHospLib",
-                  "Van Pelt Library" => "VanPeltLib"
-                  #"Veterinary Library - New Bolton Center" => "VetNBLib",
-                  #"Veterinary Library - Penn Campus" => "VetPennLib"
+    libraries = { 'Annenberg Library' => 'AnnenLib',
+                  'Athenaeum Library' => 'AthLib',
+                  # 'Biotech Commons' => 'BiomLib",
+                  # 'Chemistry Library' => 'ChemLib',
+                  'Dental Medicine Library' => 'DentalLib',
+                  'Fisher Fine Arts Library' => 'FisherFAL',
+                  'Library at the Katz Center' => 'KatzLib',
+                  # 'Math/Physics/Astronomy Library' => 'MPALib',
+                  'Museum Library' => 'MuseumLib',
+                  'Ormandy Music and Media Center' => 'MusicLib',
+                  'Pennsylvania Hospital Library' => 'PAHospLib',
+                  'Van Pelt Library' => 'VanPeltLib',
+                  'Veterinary Library - New Bolton Center' => 'VetNBLib',
+                  'Veterinary Library - Penn Campus' => 'VetPennLib',
                 }
 
     if params['item_pid'].present?
-      api_response = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items_item_pid, :get, params.merge({:format => 'json'}))
-      bib_data, holding_data, item_data = ['bib_data', 'holding_data', 'item_data'].map { |d| api_response[d] }
+      api_response = api_instance.request(
+        api.almaws_v1_bibs.mms_id_holdings_holding_id_items_item_pid, :get, params.merge({ format: 'json' })
+      )
+      bib_data, holding_data, item_data = %w[bib_data holding_data item_data].map { |d| api_response[d] }
     else
-      api_response = api_instance.request(api.almaws_v1_bibs, :get, params.merge({:format => 'json'}))
+      api_response = api_instance.request(
+        api.almaws_v1_bibs, :get, params.merge({ format: 'json' })
+      )
       bib_data, holding_data, item_data = api_response.dig('bib', 0), {}, {}
     end
 
-    render 'catalog/request', locals: {:bib_data => bib_data, :holding_data => holding_data, :item_data => item_data, :libraries => libraries} unless performed?
+    render 'catalog/request', locals: {
+      bib_data: bib_data, holding_data: holding_data, item_data: item_data, libraries: libraries
+    }
   end
 
   def create_request
@@ -673,12 +494,12 @@ class FranklinAlmaController < ApplicationController
 
     url += "?user_id=#{userid}&user_id_type=all_unique&apikey=#{ENV['ALMA_API_KEY']}"
     headers = { 'Content-Type' => 'application/json' }
-    body = { :request_type => "HOLD",
-             :pickup_location_type => "LIBRARY",
-             :pickup_location_library => params['pickup_location'],
-             :comment => params['comments'] }.to_json
+    body = { request_type: 'HOLD',
+             pickup_location_type: 'LIBRARY',
+             pickup_location_library: params['pickup_location'],
+             comment: params['comments'] }.to_json
 
-    api_response = HTTParty.post(url, :headers => headers, :body => body)
+    api_response = HTTParty.post(url, headers: headers, body: body)
 
     render 'catalog/request_created' unless performed?
 
@@ -698,13 +519,13 @@ class FranklinAlmaController < ApplicationController
         ) == 'electronic'
           response_data['availability'].keys.each do |mmsid|
             response_data['availability'][mmsid]['holdings'].sort! do |a, b|
-              cmpOnlineServices(a, b)
+              compare_services(a, b)
             end
           end
         else
           response_data['availability'].keys.each do |mmsid|
             response_data['availability'][mmsid]['holdings'].sort! do |a, b|
-              cmpHoldingLocations(a, b)
+              compare_holdings(a, b)
             end
           end
         end
@@ -721,9 +542,107 @@ class FranklinAlmaController < ApplicationController
     end
   end
 
+  private
+
+  # @return [Class<PennLib::BlacklightAlma::AvailabilityApi>]
+  def alma_api_class
+    PennLib::BlacklightAlma::AvailabilityApi
+  end
+
   # API key param for appending to Alma API request URLs
   # @return [String]
   def api_key_param
     "apikey=#{ENV['ALMA_API_KEY']}"
+  end
+
+  # @param [Object] api_mms_data
+  # @param [Object] mmsid
+  # @return [TrueClass, FalseClass]
+  def holding_info?(api_mms_data, mmsid)
+    # check if any holdings have more than one item
+    api_mms_data['availability'][mmsid]['holdings'].map(&:keys).reduce([], &:+).member?('holding_info') ||
+      api_mms_data['availability'][mmsid]['holdings'].any? { |hld| hld['total_items'].to_i > 1 || hld['availability'] == 'check_holdings' }
+  end
+
+  # @param [Object] api_mms_data
+  # @param [Object] mmsid
+  # @return [TrueClass, FalseClass]
+  def portfolio_info?(api_mms_data, mmsid)
+    api_mms_data['availability'][mmsid]['holdings'].map(&:keys).reduce([], &:+).member?('portfolio_pid')
+  end
+
+  # @return [Hash]
+  def check_requestable
+    api_instance = BlacklightAlma::BibsApi.instance
+    api = api_instance.ezwadl_api[0]
+    request_data = api_instance.request(api.almaws_v1_bibs.mms_id_requests, :get, params)
+    result = {}
+
+    if request_data.dig('total_record_count') != '0'
+      [request_data.dig('user_requests', 'user_request')].flatten.reject(&:nil?).each do |req|
+        item_pid = req.dig('item_id').presence
+        request_type = req.dig('request_sub_type', '__content__').presence
+        result[item_pid] ||= []
+        result[item_pid] << request_type
+      end
+    end
+
+    usergroup = session['user_group'].presence
+    mmsid = params[:mms_id]
+
+    result[mmsid] = { facultyexpress: usergroup == 'Faculty Express',
+                      group: usergroup }
+
+    result
+  end
+
+  # temporary NOTE: only 80% confident (initially) that we want to filter on `pickupable` here
+  # this should be set in/returned from `single_availablity` method, and will be `true` if any
+  # holding has a raw `holding['availability']` property of `available`
+  # @param [Hash] ctx
+  # @return [FalseClass, TrueClass]
+  def suppress_bbm(ctx)
+    return true unless ctx['pickupable'] != false
+
+    return true if ctx['items_nocirc'] == 'all'
+
+    false
+  end
+
+  # @return [TrueClass, FalseClass]
+  def request_title?
+    api_instance = BlacklightAlma::BibsApi.instance
+    api = api_instance.ezwadl_api[0]
+    userid = session['id'].presence || 'GUEST'
+    options = { user_id: userid, format: 'json', consider_dlr: true }
+
+    response_data = api_instance.request(api.almaws_v1_bibs.mms_id_request_options, :get, params.merge(options))
+
+    (response_data['request_option'] || []).map { |option|
+      option['type']['value']
+    }.member?('HOLD')
+  end
+
+  # @return [TrueClass, FalseClass]
+  def request_item?
+    api_instance = BlacklightAlma::BibsApi.instance
+    api = api_instance.ezwadl_api[0]
+    userid = session['id'].presence || 'GUEST'
+    options = { user_id: userid, format: 'json' }
+
+    response_data = api_instance.request(api.almaws_v1_bibs.mms_id_holdings_holding_id_items_item_pid_request_options, :get, params.merge(options))
+
+    (response_data['request_option'] || []).map { |option|
+      option['type']['value']
+    }.member?('HOLD')
+  end
+
+  # @note this could be added in the Alma configuration
+  # @param [String] original_url
+  # @param [ActionController::Parameter] mms_id
+  # @return [String]
+  def add_bib_rfr_id_params_to(original_url, mms_id)
+    original_url += original_url.index('?') ? '&' : '?'
+    original_url + "bibid=#{mms_id}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com"
   end
 end

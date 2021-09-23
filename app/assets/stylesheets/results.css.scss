@@ -1,0 +1,120 @@
+@import 'base/colors.css.scss';
+
+#document, .document-metadata > li {
+  list-style-type: none;
+  font-size: 16px;
+}
+
+#documents .document .row {
+  margin-left: -15px;
+  @media (min-width: 992px) {
+    margin-left: 0;
+  }
+}
+
+.search-results-row .col-xs-2 {
+  margin-left: -15px;
+  @media (min-width: 768px) {
+    padding-left: 25px;
+    margin-left: 0;
+  }
+  @media (min-width: 992px) {
+    padding-left: 0;
+  }
+}
+
+.search-results-row .col-xs-10 {
+  @media (max-width: 550px) {
+    width: calc(100% - 92px);
+  }
+  @media (min-width: 768px) {
+    padding-right: 5px;
+  }
+  @media (min-width: 992px) {
+    padding-right: 15px;
+  }
+}
+
+#sortAndPerPage, #documents {
+  @media (max-width: 550px) {
+    margin: 0 -10px;
+  }
+}
+
+.document-metadata {
+  padding-left: 0;
+}
+
+.index-document-functions {
+  padding-top: 5px;
+  margin-left: -5px;
+}
+
+label.toggle_bookmark {
+  min-width: 0;
+}
+
+label.toggle_bookmark.checked {
+  margin-left: -7px;
+  max-width: none;
+  width: 11.2rem;
+}
+
+li.blacklight-format_a {
+  font-family: serif;
+  text-transform: uppercase;
+  font-size: 15px;
+}
+
+#documents .document .document-title-heading {
+  line-height: 1.42857143;
+  font-size: 18px;
+}
+
+.cover-image {
+  font-size: 70px;
+  padding-top: 15px;
+  margin-left: 10px
+}
+
+.label-warning {
+  color: black;
+}
+
+.results-availability {
+  margin-top: 10px;
+}
+
+span.constraints-label{
+  font-size: 16px;
+  margin-right: 5px;
+}
+
+.catalog_startOverLink {
+  font-size: 14px;
+}
+
+.panel-heading.collapse-toggle .panel-title:after {
+  content: "\e113";
+}
+
+.panel-heading.collapse-toggle.collapsed .panel-title:after {
+    content: "\e114";
+}
+
+.tooltip-wrapper {
+  display: inline-block; /* display: block works as well */
+  float: left;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.tooltip-wrapper .btn[disabled] {
+  /* don't let button block mouse events from reaching wrapper */
+  pointer-events: none;
+}
+
+.tooltip-wrapper.disabled {
+  /* OPTIONAL pointer-events setting above blocks cursor setting, so set it here */
+  cursor: not-allowed;
+}

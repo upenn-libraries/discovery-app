@@ -1,30 +1,32 @@
-  <%= form_tag search_catalog_path, method: :get, class: 'search-query-form clearfix navbar-form', role: 'search' do %>
+  <%= form_tag search_catalog_path, method: :get, class: 'search-query-form clearfix navbar-form', id: 'a-search', 'aria-label': 'search databases', role: 'search' do %>
   <%= render_hash_as_hidden_fields(search_state.params_for_search.except(:q, :search_field, :qt, :page, :utf8)) %>
   <div class="input-group">
     <% if search_fields.length > 1 %>
       <span class="input-group-addon for-search-field">
-        <label for="search_field" class="sr-only"><%= t('blacklight.search.form.search_field.label') %></label>
-        <%= select_tag(:search_field, options_for_select(search_fields, h(params[:search_field])), title: t('blacklight.search.form.search_field.title'), id: "search_field", class: "search_field") %>
+        <label for="search_field_databases" class="sr-only"><%= t('blacklight.search.form.search_field.label') %></label>
+        <%= select_tag(:search_field, options_for_select(search_fields, h(params[:search_field])), title: t('blacklight.search.form.search_field.title'), id: "search_field_databases", class: "search_field") %>
       </span>
     <% elsif search_fields.length == 1 %>
       <%= hidden_field_tag :search_field, search_fields.first.last %>
     <% end %>
-    <%= hidden_field_tag "f[format_f][]","Database & Article Index" %>
-    <label for="q" class="sr-only"><%= t('blacklight.search.form.search.label') %></label>
-    <%= text_field_tag :q, params[:q], placeholder: t('franklin.databases_search.placeholder'), class: "search_q q form-control", id: "q", data: { autocomplete_enabled: autocomplete_enabled?, autocomplete_path: blacklight.suggest_index_path }  %>
+    <label for="q3" class="sr-only"><%= t('blacklight.search.form.search.label') %></label>
+    <%= text_field_tag :q, params[:q], { placeholder: (current_page?(controller: 'advanced') ? 'Configure advanced search below' : t('franklin.databases_search.placeholder')), class: "search_q q form-control", id: "q3", data: { autocomplete_enabled: autocomplete_enabled?, autocomplete_path: blacklight.suggest_index_path } }.merge(current_page?(controller: 'advanced') ? {disabled: 'disabled'} : {})  %>
     <span class="input-group-btn">
-      <button type="submit" class="btn btn-primary search-btn" id="search">
-        <span class="submit-search-text"><%= t('blacklight.search.form.submit') %></span>
-        <span class="glyphicon glyphicon-search"></span>
+      <button type="submit" class="btn btn-primary search-btn" id="search" <%= current_page?(controller: 'advanced') ? 'disabled="disabled"' : ''%>>
+        <div title="search" class="mag-bg"><span class="visually-hidden"><%= t('blacklight.search.form.submit') %></span></div>
       </button>
     </span>
   </div>
 <% end %>
-
-<div class="navbar-form col-sm-3">
-  <% if current_page?(controller: 'advanced') %>
+<% if current_page?(controller: 'advanced') %>
+  <div class="navbar-form tools-advanced-bookmarks">
     <%= link_to 'Basic Search', search_catalog_path + '#catalog', class: 'btn btn-default'%>
-  <% else %>
-    <%= link_to 'Advanced Search', blacklight_advanced_search_engine.advanced_search_path(search_state.to_h), class: 'advanced_search btn btn-default'%>
-  <% end %>
-</div>
+  </div>
+<% else %>
+  <div class="navbar-form tools-basic-bookmarks">
+    <%= link_to 'Advanced', blacklight_advanced_search_engine.advanced_search_path(search_state.to_h), class: 'advanced_search btn btn-default'%>
+  </div>
+<% end %>
+<%= render_nav_actions do |config, action|%>
+  <div id="li-bookmarks"><%= action %></div>
+<% end %>

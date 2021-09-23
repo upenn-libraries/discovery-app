@@ -88,7 +88,7 @@ jQuery.shelfLocatorLink = new function() {
     function shouldDisplayLink(location, target, status, format) {
         var inVP = location.indexOf("Van Pelt") >= 0;
         var inLL = location.indexOf("Lippincott") >= 0;
-        var inFA = location.indexOf("Fine Arts") >= 0;
+        var inFA = (location.indexOf("Fine Arts") >= 0) && (location.indexOf("LIBRA") < 0);
 
         if (!inVP && !inLL && !inFA) {
             return false;

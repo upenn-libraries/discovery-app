@@ -1,19 +1,17 @@
 include:
   - project: "devops/gitlab/ci-templates/docker"
-    ref: "master"
+    ref: "speed-up-builds"
     file: ".build_docker_image.yml"
   - project: "devops/gitlab/ci-templates/docker"
     ref: "master"
-    file: ".push_docker_image.yml"
-  - project: "devops/gitlab/ci-templates/docker"
-    ref: "master"
-    file: ".remove_docker_image.yml"
+    file:
+      - ".push_docker_image.yml"
+      - ".remove_docker_image.yml"
   - project: "devops/gitlab/ci-templates/sast"
     ref: "master"
-    file: ".shiftleft_container_scanning.yml"
-  - project: "devops/gitlab/ci-templates/sast"
-    ref: "master"
-    file: ".trivy_container_scanning.yml"
+    file:
+      - ".shiftleft_container_scanning.yml"
+      - ".trivy_container_scanning.yml"
   - template: "Workflows/MergeRequest-Pipelines.gitlab-ci.yml"
 
 stages:

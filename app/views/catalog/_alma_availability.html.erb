@@ -1,35 +1,34 @@
-<% table_style='style=display:none;' if collapsed %>
 <% if collapsed %>
-  <button class='toggle btn btn-request-options' data-mmsid='<%= document.alma_mms_id %>'><span class="avail-label">Options</span></button>
+<section class="item-request-section-index">
+  <button class='btn btn-primary btn-get-it toggle' data-mmsid='<%= document.alma_mms_id %>' aria-expanded="false" aria-controls="table-wrapper-<%= document.alma_mms_id %>">
+    <span class="glyphicon glyphicon-th-list"></span> Options <span class="getit-caret glyphicon glyphicon-chevron-down"></span>
+  </button>
+<div class="panel panel-default" style="display:none;">
+<% else %>
+<section class="item-request-section-show">
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <span class="glyphicon glyphicon-th-list"></span> Options
+  </div>
 <% end %>
-<div id="table-wrapper-<%= document.alma_mms_id %>" <%= table_style %> >
-  <table id="requestOptions-<%= document.alma_mms_id %>" class="request-options-load" data-mmsid="<%= document.alma_mms_id %>" style="width:100%">
-    <thead>
-      <tr>
-        <th></th>
-        <th>Location</th>
-        <th id="requestOptionsAvailability-<%= document.alma_mms_id %>"></th>
-        <th>Notes</th>
-        <th>Your Loan Policy</th>
-        <th></th>
-        <th></th>
-        <th></th>
-      </tr>
-    </thead>
-  </table>
-  <table id="holdingItems-<%= document.alma_mms_id %>" class="holding-items-load" style="width:100%">
-    <thead>
-      <tr>
-        <th></th>
-        <th>Description</th>
-        <th>Status</th>
-        <th>Barcode</th>
-        <th>Your Loan Policy</th>
-        <th></th>
-        <th></th>
-      </tr>
-      </tr>
-    </thead>
-  </table>
-  <%= render partial: 'alma_request_options', locals: { document: document } %>
+  <div class="panel-body">
+    <div id="table-wrapper-<%= document.alma_mms_id %>">
+      <table id="requestOptions-<%= document.alma_mms_id %>" class="request-options-load" data-mmsid="<%= document.alma_mms_id %>" style="width:100%">
+        <thead>
+        <tr>
+          <th></th>
+          <th>Location</th>
+          <th id="requestOptionsAvailability-<%= document.alma_mms_id %>"></th>
+          <th>Notes</th>
+          <th>Your Loan Policy</th>
+          <th></th>
+          <th></th>
+          <th></th>
+        </tr>
+        </thead>
+      </table>
+      <%= render 'alma_request_options', document: document %>
+    </div>
+  </div>
 </div>
+</section>

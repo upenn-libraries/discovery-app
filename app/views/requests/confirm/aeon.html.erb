@@ -1,0 +1,15 @@
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-title" id="aeonModalLabel"><%= t('requests.modal_titles.confirm.aeon') %></div>
+    </div>
+    <div class="modal-body">
+      <p><%= t('requests.messages.aeon_explanation') %></p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal"><%= t('requests.buttons.go_back') %></button>
+      <%= link_to t('requests.buttons.request_to_view'), aeon_request_form_url_for(params[:mms_id], params[:holding_id]), class: 'btn btn-primary' %>
+    </div>
+  </div>
+</div>

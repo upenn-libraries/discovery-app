@@ -23,7 +23,7 @@ module ApplicationHelper
   def databases_results_path(query)
     search_catalog_path params: {
       q: query, utf8: '✓', search_field: 'keyword',
-      'f[format_f][]': 'Database & Article Index'
+      'f[format_f][]': PennLib::Marc::DATABASES_FACET_VALUE
     }
   end
 
@@ -46,7 +46,7 @@ module ApplicationHelper
     on_bento_page = (controller_name == 'catalog') && ['landing', 'bento'].member?(action_name)
 
     # databases search, falls through to catalog but different tab should be highlighted
-    on_databases_page = params.dig('f', 'format_f')&.include?('Database & Article Index')
+    on_databases_page = params.dig('f', 'format_f')&.include?(PennLib::Marc::DATABASES_FACET_VALUE)
 
     if tab_id == 'bento' && on_bento_page
       'active'
@@ -94,14 +94,9 @@ module ApplicationHelper
     content_tag('a', tab_label, attrs)
   end
 
-  # return true if availability info HTML should be rendered (and loaded dynamically in-page)
-  def show_availability?(document)
-    # TODO: env var check should be removed eventually
-    (ENV['SUPPRESS_AVAILABILITY'] != 'true') && document.has_any_holdings?
-  end
-
-  def show_availability_on_index_view?
-    params[:format] != 'atom'
+  # @return [TrueClass, FalseClass]
+  def atom_request?
+    params[:format] == 'atom'
   end
 
   def display_alma_fulfillment_iframe?(document)
@@ -229,5 +224,66 @@ module ApplicationHelper
 
   def resourcesharing_path
     '/forms/resourcesharing'
+  end
+
+  # @return [TrueClass, FalseClass]
+  def user_is_facex?
+    session[:user_group] == 'Faculty Express'
+  end
+
+  def format_icon(format, size: 'small')
+    icon_class = if !format.empty?
+      case format
+      when 'Book'
+        'icon-book'
+      when 'Government document'
+        'icon-gov-doc-bldg'
+      when 'Journal/Periodical'
+        'icon-journal'
+      when 'Microformat'
+        'icon-microform'
+      when 'Sound recording'
+        'icon-sound'
+      when 'Video'
+        'icon-video'
+      when 'Musical score'
+        'icon-music-score'
+      when 'Conference/Event'
+        'icon-conference'
+      when 'Manuscript'
+        'icon-ms'
+      when 'Thesis/Dissertation'
+        'icon-thesis'
+      when 'Newspaper'
+        'icon-newspaper'
+      when 'Datafile'
+        'icon-dataset'
+      when 'Map/Atlas'
+        'icon-map-lines'
+      when 'Website/Database'
+        'icon-website'
+      when 'Image'
+        'icon-image'
+      when 'Archive'
+        'icon-archive'
+      when 'Other'
+        'icon-book'
+      when PennLib::Marc::DATABASES_FACET_VALUE
+        'icon-database'
+      when '3D object'
+        'icon-object'
+      when 'Projected graphic'
+        'icon-projector'
+      else
+        'icon-book'
+      end
+    else
+      'icon-book'
+    end
+    if size == 'large'
+      icon_class + 'b'
+    else
+      icon_class
+    end
   end
 end

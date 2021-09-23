@@ -3,11 +3,14 @@
   <dl class="dl-horizontal dl-invert">
     <%= render_rbrowse_display_fields(facet, doc_presenter) %>
 
-    <%# render partial: 'catalog/alma_availability_button', locals: { document: doc_presenter.document } %>
     <% if doc_presenter.document.alma_mms_id.present? %>
-      <%= render partial: 'alma_availability', locals: { document: doc_presenter.document, collapsed: true } %>
+      <% if doc_presenter.document.alma_mms_id.present? && !atom_request? %>
+        <% if doc_presenter.document.show_requesting_widget? %>
+          <%= render 'requests/index_request_widget', document: doc_presenter.document, hide: true %>
+        <% else %>
+          <%= render 'alma_availability', document: doc_presenter.document, collapsed: true %>
+        <% end %>
+      <% end %>
     <% end %>
   </dl>
-
-  <%= render partial: 'catalog/alma_availability_iframe_ajax_container', locals: { document: doc_presenter.document } %>
 </div>

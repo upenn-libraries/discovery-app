@@ -16,4 +16,7 @@
  *= require request
  *= require franklin
  *= require blacklight_advanced_search
+ *= require select2
+ *= require select2-bootstrap
+ *= require rails_bootstrap_forms
 */

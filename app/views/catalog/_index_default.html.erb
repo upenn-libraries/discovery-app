@@ -1,25 +1,52 @@
 <% doc_presenter = index_presenter(document) %>
 <%= detect_nocirc(document) %>
-<%# default partial to display solr document fields in catalog index view -%>
-<dl class="document-metadata dl-horizontal dl-invert">
 
-  <% index_fields(document).each do |field_name, field| -%>
-      <% if should_render_index_field? document, field %>
-          <dt class="blacklight-<%= field_name.parameterize %>"><%= render_index_field_label document, field: field_name %></dt>
-          <dd class="blacklight-<%= field_name.parameterize %>"><%= doc_presenter.field_value field_name %></dd>
+<div class="search-results-row row">
+  <div class="col-xs-10 col-sm-9 col-md-10">
+    <div class="documentHeader">
+      <%# main title container for doc partial view
+          How many bootstrap columns need to be reserved
+          for bookmarks control depends on size.
+      -%>
+
+      <h3 class="index_title document-title-heading">
+        <% if counter = document_counter_with_offset(document_counter) %>
+          <span class="document-counter">
+            <%= t('blacklight.search.documents.counter', counter: counter) %>
+          </span>
+        <% end %>
+        <%= link_to_document document, document_show_link_field(document), counter: counter %>
+      </h3>
+    </div>
+    <ul class="document-metadata dl-horizontal dl-invert">
+      <% index_fields(document).each do |field_name, field| -%>
+          <% if should_render_index_field?(document, field) && field_name != 'full_text_links_for_cluster_display' %>
+              <li class="blacklight-<%= field_name.parameterize %>"><%= doc_presenter.field_value field_name %></li>
+          <% end -%>
+      <% end %>
+    </ul>
+    <ul class="document-metadata dl-horizontal dl-invert results-availability">
+      <% online_field_name = 'full_text_links_for_cluster_display' %>
+      <% if doc_presenter.field_value online_field_name %>
+          <li class="blacklight-<%= online_field_name.parameterize %>"><%= doc_presenter.field_value online_field_name %></li>
       <% end -%>
-  <% end -%>
-
-  <% if show_availability_on_index_view? && document.alma_mms_id.present? %>
-    <%= render partial: 'status_location_field', locals: { document: document } %>
-
-    <%# render partial: 'alma_availability_button', locals: { document: document } %>
-    <%= render partial: 'alma_availability', locals: { document: document, collapsed: true } %>
-    <%# render partial: 'request_button', locals: { document: document } %>
+      <% if document.alma_mms_id.present? && !atom_request? && document.has_any_holdings? %>
+        <li class="blacklight-availability">
+          <%= render 'status_location_field', document: document %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+  <div class="col-xs-2 col-sm-3 col-md-2">
+    <%= render_index_doc_actions document %>
+    <div class="cover-image <%= format_icon(document.fetch_format, size: 'large') %>" <%= document.cover_id_attrs %>>
+    </div>
+  </div>
+</div>
+<% if document.alma_mms_id.present? && !atom_request? %>
+  <% if document.show_requesting_widget? %>
+    <%= render 'requests/index_request_widget', document: document, hide: true %>
+  <% else %>
+    <%= render 'alma_availability', document: document, collapsed: true %>
   <% end %>
-
-</dl>
-
-<% if show_availability_on_index_view? %>
-<%= render partial: 'alma_availability_iframe_ajax_container', locals: { document: document } %>
 <% end %>

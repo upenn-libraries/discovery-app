@@ -108,7 +108,10 @@ module PennLib
             holding = subfields.reduce(Hash.new) do |acc, subfield|
               fieldname = subfield_codes_to_fieldnames[subfield['code']]
               fieldvalue = subfield['__content__']
-              if fieldname
+              if acc[fieldname].present?
+                # value already set - concat! but only if not falsey
+                acc[fieldname] = acc[fieldname] + fieldvalue if fieldvalue
+              else
                 acc[fieldname] = fieldvalue
               end
               acc

@@ -105,6 +105,7 @@ module PennLib
       'aat' => Prefixes::OTHER,
       'cct' => Prefixes::OTHER,
       'fast' => Prefixes::FAST,
+      'homoit' => Prefixes::OTHER,
       'jlabsh' => Prefixes::OTHER,
       'lcsh' => Prefixes::SUBJECT,
       'lcstt' => Prefixes::OTHER,
@@ -380,6 +381,8 @@ module PennLib
 
     include BlacklightSolrplugins::Indexer
 
+    DATABASES_FACET_VALUE = 'Database & Article Index'
+
     attr_accessor :code_mappings
 
     # @param [PennLib::CodeMappings]
@@ -606,7 +609,7 @@ module PennLib
       # 10/2018 kms: add 2nd Ind 7
       subject_codes.member?(field.tag) && (%w(0 2 4).member?(field.indicator2) ||
             (field.indicator2 == '7' && field.any? do |sf|
-              sf.code == '2' && %w(aat cct fast jlabsh lcsh lcstt lctgm local/osu mesh ndlsh nlksh).member?(sf.value)
+              sf.code == '2' && %w(aat cct fast homoit jlabsh lcsh lcstt lctgm local/osu mesh ndlsh nlksh).member?(sf.value)
             end))
     end
 
@@ -625,14 +628,14 @@ module PennLib
     def get_curated_format(rec)
       rec.fields('944').map do |field|
         sf = field.find { |sf| sf.code == 'a' }
-        sf.nil? ? nil : sf.value
+        sf.nil? || (sf.value == sf.value.to_i.to_s) ? nil : sf.value
       end.compact.uniq
     end
 
     def get_db_types(rec)
       return [] unless is_curated_database(rec)
       rec.fields('944').map do |field|
-        if field.any? { |sf| sf.code == 'a' && sf.value == 'Database & Article Index' }
+        if field.any? { |sf| sf.code == 'a' && sf.value == PennLib::Marc::DATABASES_FACET_VALUE }
           sf = field.find { |sf| sf.code == 'b' }
           sf.nil? ? nil : sf.value
         end
@@ -740,7 +743,7 @@ module PennLib
              .select { |f| subject_600s.member?(f.tag) ||
                       (f.tag == '880' && has_subfield6_value(f, /^(#{subject_600s.join('|')})/)) }
              .select { |f| f.indicator2 == indicator2 || (f.indicator2 == '7' && indicator2 == '0' && f.any? do |sf|
-                sf.code == '2' && %w(aat cct fast jlabsh lcsh lcstt lctgm local/osu mesh ndlsh nlksh).member?(sf.value)
+                sf.code == '2' && %w(aat cct fast homoit jlabsh lcsh lcstt lctgm local/osu mesh ndlsh nlksh).member?(sf.value)
               end)}
              .map do |field|
           #added 2017/04/10: filter out 0 (authority record numbers) added by Alma
@@ -856,20 +859,16 @@ module PennLib
       end
       locations = get_specific_location_values(rec)
 
-      if locations.any? { |loc| loc =~ /manuscripts/i } &&
-         locations.none? { |loc| loc =~ /scmss/i }
-        # Add 'manuscript' if locations include manuscript and not scmss
+      if locations.any? { |loc| loc =~ /manuscripts/i }
         acc << 'Manuscript'
       elsif locations.any? { |loc| loc =~ /archives/i } &&
-            locations.none? { |loc| loc =~ /cajs/i } &&
-            locations.none? { |loc| loc =~ /cjs/i } &&
-            locations.none? { |loc| loc =~ /nursing/i }
-        # Add 'archive' if locations include archives and not cajs, cjs or nursing
+          locations.none? { |loc| loc =~ /cajs/i } &&
+          locations.none? { |loc| loc =~ /nursing/i }
         acc << 'Archive'
       elsif locations.any? { |loc| loc =~ /micro/i } ||
-            f245h.any? { |val| val =~ /micro/i } ||
-            call_nums.any? { |val| val =~ /micro/i } ||
-            f337a.any? { |val| val =~ /microform/i }
+          f245h.any? { |val| val =~ /micro/i } ||
+          call_nums.any? { |val| val =~ /micro/i } ||
+          f337a.any? { |val| val =~ /microform/i }
         acc << 'Microformat'
       else
         # these next 4 can have this format plus ONE of the formats down farther below
