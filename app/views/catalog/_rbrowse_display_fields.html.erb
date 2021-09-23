@@ -1,8 +1,6 @@
 <div class="availability-document-container">
-
   <dl class="dl-horizontal dl-invert">
     <%= render_rbrowse_display_fields(facet, doc_presenter) %>
-
     <% if doc_presenter.document.alma_mms_id.present? %>
       <% if doc_presenter.document.alma_mms_id.present? && !atom_request? %>
         <% if doc_presenter.document.show_requesting_widget? %>
