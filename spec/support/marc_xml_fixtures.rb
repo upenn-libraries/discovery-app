@@ -10,8 +10,9 @@ module MarcXmlFixtures
     File.join marcxml_dir, filename
   end
 
-  # Return the contents of a MARC XML fixture as a String
-  def marcxml_string(filename)
-    File.read marcxml_file(filename)
+  # @param [String] filename
+  # @return [MARC::Record, nil]
+  def marcxml_record(filename)
+    MARC::XMLReader.new(marcxml_file(filename)).first
   end
 end

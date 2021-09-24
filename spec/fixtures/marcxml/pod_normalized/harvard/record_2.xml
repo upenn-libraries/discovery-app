@@ -1,0 +1,129 @@
+<records>
+  <record>
+    <leader>01439nam  2200409Ii 4500</leader>
+    <controlfield tag='005'>20181224023625.782</controlfield>
+    <controlfield tag='008'>181224s2017    gw       b    101 0 eng d</controlfield>
+    <controlfield tag='001'>99153716584603941</controlfield>
+    <datafield ind1=' ' ind2=' ' tag='020'>
+      <subfield code='a'>9783034322553</subfield>
+      <subfield code='q'>(print)</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='020'>
+      <subfield code='a'>3034322550</subfield>
+      <subfield code='q'>(print)</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='020'>
+      <subfield code='z'>9781787073296</subfield>
+      <subfield code='q'>(ePDF)</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='020'>
+      <subfield code='z'>1787073297</subfield>
+      <subfield code='q'>(ePDF)</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='020'>
+      <subfield code='z'>9781787073302</subfield>
+      <subfield code='q'>(mobi)</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='020'>
+      <subfield code='z'>1787073300</subfield>
+      <subfield code='q'>(mobi)</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='020'>
+      <subfield code='z'>9781787073319</subfield>
+      <subfield code='q'>(ePub)</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='020'>
+      <subfield code='z'>1787073319</subfield>
+      <subfield code='q'>(ePub)</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='035'>
+      <subfield code='a'>(OCoLC)1193223404</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='040'>
+      <subfield code='a'>NyNyMAR</subfield>
+      <subfield code='b'>eng</subfield>
+      <subfield code='e'>rda</subfield>
+      <subfield code='c'>NyNyMAR</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2='4' tag='050'>
+      <subfield code='a'>PS3503.E744</subfield>
+      <subfield code='b'>Z596 2017</subfield>
+    </datafield>
+    <datafield ind1='0' ind2='0' tag='245'>
+      <subfield code='a'>John Berryman :</subfield>
+      <subfield code='b'>centenary essays /</subfield>
+      <subfield code='c'>Philip Coleman and Peter Campion (eds).</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2='1' tag='264'>
+      <subfield code='a'>Bern ;</subfield>
+      <subfield code='a'>New York :</subfield>
+      <subfield code='b'>Peter Lang,</subfield>
+      <subfield code='c'>[2017]</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2='4' tag='264'>
+      <subfield code='c'>©2017</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='300'>
+      <subfield code='a'>xv, 312 pages ;</subfield>
+      <subfield code='c'>23 cm.</subfield>
+    </datafield>
+    <datafield ind1='1' ind2=' ' tag='490'>
+      <subfield code='a'>Modern poetry,</subfield>
+      <subfield code='x'>1661-2744 ;</subfield>
+      <subfield code='v'>volume 11</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='504'>
+      <subfield code='a'>Includes bibliographical references and index.</subfield>
+    </datafield>
+    <datafield ind1='1' ind2='0' tag='600'>
+      <subfield code='a'>Berryman, John,</subfield>
+      <subfield code='d'>1914-1972</subfield>
+      <subfield code='x'>Criticism and interpretation.</subfield>
+    </datafield>
+    <datafield ind1='1' ind2=' ' tag='700'>
+      <subfield code='a'>Coleman, Philip,</subfield>
+      <subfield code='e'>editor.</subfield>
+    </datafield>
+    <datafield ind1='1' ind2=' ' tag='700'>
+      <subfield code='a'>Campion, Peter,</subfield>
+      <subfield code='d'>1976-</subfield>
+      <subfield code='e'>editor.</subfield>
+    </datafield>
+    <datafield ind1='1' ind2=' ' tag='700'>
+      <subfield code='a'>Meehan, Paula,</subfield>
+      <subfield code='e'>writer of foreword.</subfield>
+    </datafield>
+    <datafield ind1='1' ind2=' ' tag='700'>
+      <subfield code='a'>Cole, Henri</subfield>
+      <subfield code='e'>writer of afterword.</subfield>
+    </datafield>
+    <datafield ind1='0' ind2=' ' tag='776'>
+      <subfield code='z'>9781787073296 (online)</subfield>
+    </datafield>
+    <datafield ind1='0' ind2=' ' tag='776'>
+      <subfield code='w'>(GyWOH)har170200073</subfield>
+    </datafield>
+    <datafield ind1='0' ind2=' ' tag='776'>
+      <subfield code='z'>9781787073319 (online)</subfield>
+    </datafield>
+    <datafield ind1='0' ind2=' ' tag='776'>
+      <subfield code='w'>(GyWOH)har175012843</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2='0' tag='830'>
+      <subfield code='a'>Modern poetry ;</subfield>
+      <subfield code='v'>v. 11.</subfield>
+      <subfield code='x'>1661-2744</subfield>
+    </datafield>
+    <datafield ind1='0' ind2=' ' tag='852'>
+      <subfield code='b'>WID</subfield>
+      <subfield code='c'>HD</subfield>
+      <subfield code='h'>PS3503.E744</subfield>
+      <subfield code='i'>Z596 2017</subfield>
+      <subfield code='8'>222279313820003941</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='900'>
+      <subfield code='5'>POD</subfield>
+      <subfield code='b'>MH</subfield>
+    </datafield>
+  </record>
+</records>

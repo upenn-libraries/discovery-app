@@ -1,0 +1,51 @@
+<records>
+  <record>
+    <leader>00517cam a2200181Ki 4500</leader>
+    <controlfield tag='005'>20190405124905.0</controlfield>
+    <controlfield tag='008'>181102s2017    dk            000 f dan d</controlfield>
+    <controlfield tag='001'>99153715722703941</controlfield>
+    <datafield ind1=' ' ind2=' ' tag='020'>
+      <subfield code='a'>9788793046726</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='020'>
+      <subfield code='a'>8793046723</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='035'>
+      <subfield code='a'>(OCoLC)1060607973</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='040'>
+      <subfield code='a'>HLS</subfield>
+      <subfield code='b'>eng</subfield>
+      <subfield code='e'>rda</subfield>
+      <subfield code='c'>HLS</subfield>
+      <subfield code='d'>HLS</subfield>
+    </datafield>
+    <datafield ind1='1' ind2=' ' tag='100'>
+      <subfield code='a'>Bagger, Thomas,</subfield>
+      <subfield code='d'>1981-</subfield>
+    </datafield>
+    <datafield ind1='0' ind2='4' tag='245'>
+      <subfield code='a'>Den Permanente :</subfield>
+      <subfield code='b'>krimi /</subfield>
+      <subfield code='c'>Thomas Bagger.</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2='1' tag='264'>
+      <subfield code='a'>[Aarhus] :</subfield>
+      <subfield code='b'>EC Edition,</subfield>
+      <subfield code='c'>[2018]</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='300'>
+      <subfield code='a'>358 pages ;</subfield>
+      <subfield code='c'>22 cm</subfield>
+    </datafield>
+    <datafield ind1='0' ind2=' ' tag='852'>
+      <subfield code='b'>WID</subfield>
+      <subfield code='c'>HD</subfield>
+      <subfield code='8'>222279327850003941</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='900'>
+      <subfield code='5'>POD</subfield>
+      <subfield code='b'>MH</subfield>
+    </datafield>
+  </record>
+</records>
