@@ -1,0 +1,114 @@
+<records>
+  <record xmlns="http://www.loc.gov/MARC21/slim">
+    <leader>01946nam a2200361 i 4500</leader>
+    <controlfield tag="005">20210407184256.0</controlfield>
+    <controlfield tag="006">m     o  d        </controlfield>
+    <controlfield tag="007">cr  n         </controlfield>
+    <controlfield tag="008">011214s1864    stk    jo     000 0beng d</controlfield>
+    <controlfield tag="001">9977953996503681</controlfield>
+    <datafield tag="035" ind1=" " ind2=" ">
+      <subfield code="a">(MiFhGG)CHLCHNCCO3012752</subfield>
+    </datafield>
+    <datafield tag="035" ind1=" " ind2=" ">
+      <subfield code="a">(OCoLC)CHLCH905321055</subfield>
+    </datafield>
+    <datafield tag="040" ind1=" " ind2=" ">
+      <subfield code="a">MIGCL</subfield>
+      <subfield code="b">eng</subfield>
+      <subfield code="c">UtOrBLW</subfield>
+      <subfield code="e">rda</subfield>
+    </datafield>
+    <datafield tag="100" ind1="1" ind2=" ">
+      <subfield code="a">Farnie, H. B.</subfield>
+      <subfield code="q">(Henry Brougham),</subfield>
+      <subfield code="d">1836-1889</subfield>
+      <subfield code="e">author.</subfield>
+    </datafield>
+    <datafield tag="245" ind1="1" ind2="0">
+      <subfield code="a">Pet Marjorie :</subfield>
+      <subfield code="b">a story of child-life fifty years ago.</subfield>
+    </datafield>
+    <datafield tag="264" ind1=" " ind2="1">
+      <subfield code="a">Edinburgh :</subfield>
+      <subfield code="b">William P. Nimmo ;</subfield>
+      <subfield code="a">London :</subfield>
+      <subfield code="b">Simpkin, Marshall, and Company,</subfield>
+      <subfield code="c">1864.</subfield>
+    </datafield>
+    <datafield tag="300" ind1=" " ind2=" ">
+      <subfield code="a">1 online resource (x, 50, 3 pages).</subfield>
+    </datafield>
+    <datafield tag="336" ind1=" " ind2=" ">
+      <subfield code="a">text</subfield>
+      <subfield code="b">txt</subfield>
+      <subfield code="2">rdacontent</subfield>
+    </datafield>
+    <datafield tag="337" ind1=" " ind2=" ">
+      <subfield code="a">computer</subfield>
+      <subfield code="b">c</subfield>
+      <subfield code="2">rdamedia</subfield>
+    </datafield>
+    <datafield tag="338" ind1=" " ind2=" ">
+      <subfield code="a">online resource</subfield>
+      <subfield code="b">cr</subfield>
+      <subfield code="2">rdacarrier</subfield>
+    </datafield>
+    <datafield tag="490" ind1="1" ind2=" ">
+      <subfield code="a">Nineteenth Century Collections Online: Children's Literature and Childhood</subfield>
+    </datafield>
+    <datafield tag="500" ind1=" " ind2=" ">
+      <subfield code="a">Author's name from NUC pre-1956 and BM cited below.</subfield>
+    </datafield>
+    <datafield tag="500" ind1=" " ind2=" ">
+      <subfield code="a">"Third thousand."</subfield>
+    </datafield>
+    <datafield tag="500" ind1=" " ind2=" ">
+      <subfield code="a">Publisher's advertisements follow text and page [4] of wrapper.</subfield>
+    </datafield>
+    <datafield tag="500" ind1=" " ind2=" ">
+      <subfield code="a">Reproduction of the original from the Baldwin Library of Historical Children's Literature, George A. Smathers Libraries, University of Florida.</subfield>
+    </datafield>
+    <datafield tag="506" ind1=" " ind2=" ">
+      <subfield code="a">Restricted for use by site license. </subfield>
+    </datafield>
+    <datafield tag="520" ind1=" " ind2=" ">
+      <subfield code="a">This book started as an article in the "Fife Herald" and was republished as a book in 1858. The preface to the second edition acknowledges that any further success of this book is due to the article/review written by the distinguished author of "Rab and his Friends" (John Brown) in "North British Review."</subfield>
+    </datafield>
+    <datafield tag="600" ind1="1" ind2="0">
+      <subfield code="a">Fleming, Marjorie,</subfield>
+      <subfield code="d">1803-1811</subfield>
+      <subfield code="v">Juvenile literature.</subfield>
+    </datafield>
+    <datafield tag="650" ind1=" " ind2="0">
+      <subfield code="a">Gifted children</subfield>
+      <subfield code="v">Juvenile literature.</subfield>
+    </datafield>
+    <datafield tag="650" ind1=" " ind2="0">
+      <subfield code="a">Children</subfield>
+      <subfield code="x">Conduct of life</subfield>
+      <subfield code="v">Juvenile literature.</subfield>
+    </datafield>
+    <datafield tag="650" ind1=" " ind2="0">
+      <subfield code="a">Conduct of life</subfield>
+      <subfield code="v">Early works to 1800</subfield>
+      <subfield code="v">Juvenile literature.</subfield>
+    </datafield>
+    <datafield tag="650" ind1=" " ind2="0">
+      <subfield code="a">Children</subfield>
+      <subfield code="x">Death</subfield>
+      <subfield code="v">Juvenile literature.</subfield>
+    </datafield>
+    <datafield tag="830" ind1=" " ind2="0">
+      <subfield code="a">Nineteenth Century Collections Online: Children's Literature and Childhood.</subfield>
+    </datafield>
+    <datafield tag="prt" ind1=" " ind2=" ">
+      <subfield code="a">53667880230003681</subfield>
+      <subfield code="b">https://na03.alma.exlibrisgroup.com/view/uresolver/01UPENN_INST/openurl?u.ignore_date_coverage=true&amp;rft.mms_id=9977953996503681</subfield>
+      <subfield code="e">Gale</subfield>
+      <subfield code="f">Gale, Nineteenth Century Collections Online</subfield>
+      <subfield code="c">Nineteenth Century Collections Online: Children's Literature and Childhood</subfield>
+      <subfield code="h">6114016760000041</subfield>
+      <subfield code="8">53667880230003681</subfield>
+    </datafield>
+  </record>
+</records>
