@@ -21,6 +21,10 @@ module Illiad
       @note = params[:comments]
     end
 
+    def type
+      :illiad
+    end
+
     # for POSTing to API
     # @return [Hash]
     def to_h
