@@ -2,9 +2,9 @@ You have successfully submitted a request for: <%= @info[:title] %>
 
 <% if @request.type == :alma %>
   <% if @request.delivery? %>
-Your item will be delivered via <%= @request.pickup_location_human %>
+Your item will be delivered using College House delivery.
   <% else %>
-You have chosen to pickup this item at <%= @request.pickup_location_human %>
+You have chosen to pickup this item at <%= @request.pickup_location_human %>.
   <% end %>
 <% elsif @request.type == :illiad %>
   <% if @request.delivery == Illiad::Request::OFFICE_DELIVERY %>
