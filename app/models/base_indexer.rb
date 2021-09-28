@@ -12,5 +12,6 @@ class BaseIndexer < Blacklight::Marc::Indexer
     STANFORD = 9
     PRINCETON = 10
     CHICAGO = 11
+    DARTMOUTH = 12
   end
 end
