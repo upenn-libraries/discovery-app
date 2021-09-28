@@ -3,9 +3,6 @@
     <label>
       <input type="radio" name="delivery" value="pickup" id="pickup-radio" class="delivery-option-radio" <%= user_is_facex? ? '' : 'checked' %>  /> <%= t('requests.labels.pickup') %></label>
   </h3>
-  <p class="list-group-item-text">
-    <%# TODO: what text, if any, for P@P in the after-times?  %>
-    <%#= t('requests.delivery_messages.pap_html') %>
-  </p>
-  <%= f.select :pickup_location, TurboAlmaApi::Bib::PennItem::PICKUP_LOCATIONS, { label: t('requests.fields.pickup_location') }, { disabled: false } %>
+  <p class="list-group-item-text"></p>
+  <%= f.select :pickup_location, TurboAlmaApi::Request::PICKUP_LOCATIONS, { label: t('requests.fields.pickup_location') }, { disabled: false } %>
 </li>
