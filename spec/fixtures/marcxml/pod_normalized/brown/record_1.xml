@@ -1,0 +1,176 @@
+<records>
+  <record>
+    <leader>02190cam a2200469 i 4500</leader>
+    <controlfield tag='001'>ocn910009530ebsco</controlfield>
+    <controlfield tag='005'>20171125123311.7</controlfield>
+    <controlfield tag='006'>m     o  d        </controlfield>
+    <controlfield tag='007'>cr |||||||||||</controlfield>
+    <controlfield tag='008'>150521s2015    mdu     ob    001 0 eng  </controlfield>
+    <datafield ind1=' ' ind2=' ' tag='010'>
+      <subfield code='a'>2015019884</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='020'>
+      <subfield code='a'>9781612518640</subfield>
+      <subfield code='q'>(electronic bk.)</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='020'>
+      <subfield code='a'>1612518648</subfield>
+      <subfield code='q'>(electronic bk.)</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='020'>
+      <subfield code='z'>9781612518527</subfield>
+      <subfield code='q'>alkaline paper</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='035'>
+      <subfield code='a'>(OCoLC)910009530</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='037'>
+      <subfield code='a'>9CCA2873-B21C-43A7-BCD7-97E5DB37796F</subfield>
+      <subfield code='b'>OverDrive, Inc.</subfield>
+      <subfield code='n'>http://www.overdrive.com</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='040'>
+      <subfield code='a'>DLC</subfield>
+      <subfield code='b'>eng</subfield>
+      <subfield code='e'>rda</subfield>
+      <subfield code='c'>DLC</subfield>
+      <subfield code='d'>YDX</subfield>
+      <subfield code='d'>IDEBK</subfield>
+      <subfield code='d'>EBLCP</subfield>
+      <subfield code='d'>YDXCP</subfield>
+      <subfield code='d'>OCLCO</subfield>
+      <subfield code='d'>OCLCF</subfield>
+      <subfield code='d'>OCLCO</subfield>
+      <subfield code='d'>OCLCQ</subfield>
+      <subfield code='d'>OCL</subfield>
+      <subfield code='d'>RECBK</subfield>
+      <subfield code='d'>TEFOD</subfield>
+      <subfield code='d'>OCLCO</subfield>
+      <subfield code='d'>N$T</subfield>
+      <subfield code='d'>COCUF</subfield>
+      <subfield code='d'>LOA</subfield>
+      <subfield code='d'>ZCU</subfield>
+      <subfield code='d'>K6U</subfield>
+      <subfield code='d'>COO</subfield>
+      <subfield code='d'>OCLCQ</subfield>
+      <subfield code='d'>MERUC</subfield>
+      <subfield code='d'>IGB</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='042'>
+      <subfield code='a'>pcc</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='043'>
+      <subfield code='a'>n-us---</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='049'>
+      <subfield code='a'>RBNN</subfield>
+    </datafield>
+    <datafield ind1='1' ind2=' ' tag='100'>
+      <subfield code='a'>Haynes, Peter D.,</subfield>
+      <subfield code='e'>author.</subfield>
+    </datafield>
+    <datafield ind1='1' ind2='0' tag='245'>
+      <subfield code='a'>Toward a new maritime strategy :</subfield>
+      <subfield code='b'>American naval thinking in the post-Cold War era /</subfield>
+      <subfield code='c'>Peter D. Haynes.</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2='1' tag='264'>
+      <subfield code='a'>Annapolis, MD :</subfield>
+      <subfield code='b'>Naval Institute Press,</subfield>
+      <subfield code='c'>[2015]</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='300'>
+      <subfield code='a'>1 online resource.</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='336'>
+      <subfield code='a'>text</subfield>
+      <subfield code='b'>txt</subfield>
+      <subfield code='2'>rdacontent.</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='337'>
+      <subfield code='a'>computer</subfield>
+      <subfield code='b'>n</subfield>
+      <subfield code='2'>rdamedia.</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='338'>
+      <subfield code='a'>online resource</subfield>
+      <subfield code='b'>nc</subfield>
+      <subfield code='2'>rdacarrier.</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='504'>
+      <subfield code='a'>Includes bibliographical references and index.</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='588'>
+      <subfield code='a'>Description based on online resource; title from digital title page (viewed on July 27, 2015)</subfield>
+    </datafield>
+    <datafield ind1='1' ind2='0' tag='610'>
+      <subfield code='a'>United States.</subfield>
+      <subfield code='b'>Navy</subfield>
+      <subfield code='x'>History.</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2='0' tag='650'>
+      <subfield code='a'>Naval strategy</subfield>
+      <subfield code='x'>History</subfield>
+      <subfield code='y'>20th century.</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2='0' tag='650'>
+      <subfield code='a'>Naval strategy</subfield>
+      <subfield code='x'>History</subfield>
+      <subfield code='y'>21st century.</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2='0' tag='650'>
+      <subfield code='a'>Sea-power</subfield>
+      <subfield code='z'>United States</subfield>
+      <subfield code='x'>History.</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2='0' tag='650'>
+      <subfield code='a'>Military doctrine</subfield>
+      <subfield code='z'>United States</subfield>
+      <subfield code='x'>History.</subfield>
+    </datafield>
+    <datafield ind1='0' ind2='8' tag='776'>
+      <subfield code='i'>Print version:</subfield>
+      <subfield code='a'>Haynes, Peter D.</subfield>
+      <subfield code='t'>Toward a new maritime strategy</subfield>
+      <subfield code='d'>Annapolis, Maryland : Naval Institute Press, 2015</subfield>
+      <subfield code='z'>9781612518527</subfield>
+      <subfield code='w'>(DLC)  2015017477.</subfield>
+    </datafield><datafield ind1='4' ind2='0' tag='856'>
+    <subfield code='u'>https://login.revproxy.brown.edu/login?url=http://search.ebscohost.com/login.aspx?direct=true&amp;scope=site&amp;db=e000xna&amp;AN=1032057</subfield>
+    <subfield code='z'>Full text available from EBSCO eBook Academic Subscription Collection</subfield>
+  </datafield>
+    <datafield ind1=' ' ind2=' ' tag='907'>
+      <subfield code='a'>.b80820001</subfield>
+      <subfield code='b'>09-23-20</subfield>
+      <subfield code='c'>12-01-17</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='998'>
+      <subfield code='a'>es001</subfield>
+      <subfield code='b'>12-01-17</subfield>
+      <subfield code='c'>m</subfield>
+      <subfield code='d'>a  </subfield>
+      <subfield code='e'>n</subfield>
+      <subfield code='f'>eng</subfield>
+      <subfield code='g'>mdu</subfield>
+      <subfield code='h'>0</subfield>
+      <subfield code='i'>1</subfield>
+    </datafield>
+    <datafield ind1='0' ind2=' ' tag='990'>
+      <subfield code='a'>V165</subfield>
+      <subfield code='b'>.H39 2015</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='910'>
+      <subfield code='a'>EBSCO Academic</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='910'>
+      <subfield code='b'>Added to collection netlibrary.academicna</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='995'>
+      <subfield code='a'>171201,ab,BATCH</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='900'>
+      <subfield code='5'>POD</subfield>
+      <subfield code='b'>RPB</subfield>
+    </datafield>
+  </record>
+</records>
