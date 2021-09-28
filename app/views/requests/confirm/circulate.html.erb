@@ -18,9 +18,12 @@
 
       <ul class="list-group">
         <% if user_is_facex? %>
-          <%= render('requests/confirm/delivery_options/office', f: f) if user_is_facex?  %>
+          <%= render('requests/confirm/delivery_options/office', f: f) %>
         <% end %>
         <%= render 'requests/confirm/delivery_options/pickup', f: f %>
+        <% if user_is_college_house_eligible? %>
+          <%= render 'requests/confirm/delivery_options/college_house', f: f %>
+        <% end %>
         <%= render 'requests/confirm/delivery_options/mail', f: f %>
       </ul>
       <div id="comments-area">
