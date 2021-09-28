@@ -5,12 +5,13 @@ require 'rails_helper'
 RSpec.describe StanfordIndexer, type: :model do
   include MarcXmlFixtures
 
-  let(:indexer) { described_class.new }
-  let(:record_1) do
+  let(:index_data) { described_class.new.map_record marcxml_record_from marc_file }
 
-  end
+  context 'record 1' do
+    let(:marc_file) { 'pod_normalized/stanford/record_1.xml' }
 
-  it 'works' do
-    expect(indexer.map_record(record_1)).to be_a Hash
+    it 'has the expected record_source_id of 1' do
+      expect(index_data['record_source_id']).to eq [1]
+    end
   end
 end

@@ -63,7 +63,7 @@ class FranklinIndexer < BaseIndexer
       #processors << 'uid-distrib'
     end
 
-    solr_update_url = [ ENV['SOLR_URL'].chomp('/'), 'update', 'json' ].join('/') + "?processor=#{processors.join(',')}"
+    solr_update_url = [ ENV.fetch('SOLR_URL').chomp('/'), 'update', 'json' ].join('/') + "?processor=#{processors.join(',')}"
 
     settings do
       # type may be 'binary', 'xml', or 'json'

@@ -12,7 +12,7 @@ module MarcXmlFixtures
 
   # @param [String] filename
   # @return [MARC::Record, nil]
-  def marcxml_record(filename)
+  def marcxml_record_from(filename)
     MARC::XMLReader.new(marcxml_file(filename)).first
   end
 end
