@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # methods and constants for ordering alma request options, holdings, collections
+# these methods are intended to be used along with sort or sort! calls
 module AlmaOptionOrdering
   extend ActiveSupport::Concern
 
@@ -37,11 +38,7 @@ module AlmaOptionOrdering
       'Highwire Press Free' => 9,
       'Biography In Context' => 10
     },
-    'interface' => {
-      # 'JSTOR' => 1,
-      # 'EBSCO Host' => 2,
-      # 'EBSCOhost' => 3
-    }
+    'interface' => {}
   }.freeze
 
   # @param [Hash] service_a
