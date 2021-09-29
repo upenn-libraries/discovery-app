@@ -1,0 +1,79 @@
+<records>
+    <record>
+      <leader>00930nam  2200289 a 4500</leader>
+      <controlfield tag='001'>927</controlfield>
+      <controlfield tag='005'>20140212135800.0</controlfield>
+      <controlfield tag='008'>820415s1982    nyua     b    101 0 eng  </controlfield>
+      <datafield ind1=' ' ind2=' ' tag='010'>
+        <subfield code='a'>   82007549 </subfield>
+      </datafield>
+      <datafield ind1=' ' ind2=' ' tag='020'>
+        <subfield code='a'>0306409267</subfield>
+      </datafield>
+      <datafield ind1=' ' ind2=' ' tag='035'>
+        <subfield code='a'>927</subfield>
+      </datafield>
+      <datafield ind1=' ' ind2=' ' tag='035'>
+        <subfield code='a'>H</subfield>
+      </datafield>
+      <datafield ind1=' ' ind2=' ' tag='035'>
+        <subfield code='a'>08411097</subfield>
+        <subfield code='c'>820920</subfield>
+      </datafield>
+      <datafield ind1=' ' ind2=' ' tag='040'>
+        <subfield code='a'>DLC</subfield>
+        <subfield code='c'>DLC</subfield>
+        <subfield code='d'>JHW</subfield>
+      </datafield>
+      <datafield ind1=' ' ind2=' ' tag='049'>
+        <subfield code='a'>JHWW</subfield>
+        <subfield code='n'>O</subfield>
+      </datafield>
+      <datafield ind1=' ' ind2=' ' tag='096'>
+        <subfield code='a'>WB 427 D565 1982</subfield>
+      </datafield>
+      <datafield ind1='0' ind2='0' tag='245'>
+        <subfield code='a'>Dietary fiber in health and disease /</subfield>
+        <subfield code='c'>edited by George V. Vahouny and David Kritchevsky.</subfield>
+      </datafield>
+      <datafield ind1=' ' ind2=' ' tag='260'>
+        <subfield code='a'>New York :</subfield>
+        <subfield code='b'>Plenum Press,</subfield>
+        <subfield code='c'>c1982.</subfield>
+      </datafield>
+      <datafield ind1=' ' ind2=' ' tag='300'>
+        <subfield code='a'>xiv, 330 p. :</subfield>
+        <subfield code='b'>ill. ;</subfield>
+        <subfield code='c'>24 cm.</subfield>
+      </datafield>
+      <datafield ind1='1' ind2=' ' tag='490'>
+        <subfield code='a'>GWUMC Department of Biochemistry annual spring symposia</subfield>
+      </datafield>
+      <datafield ind1=' ' ind2=' ' tag='504'>
+        <subfield code='a'>Includes bibliographies and index.</subfield>
+      </datafield>
+      <datafield ind1=' ' ind2='2' tag='650'>
+        <subfield code='a'>Dietary Fiber</subfield>
+        <subfield code='v'>Congresses.</subfield>
+      </datafield>
+      <datafield ind1='1' ind2=' ' tag='700'>
+        <subfield code='a'>Vahouny, George V.,</subfield>
+        <subfield code='d'>1932-</subfield>
+      </datafield>
+      <datafield ind1='1' ind2=' ' tag='700'>
+        <subfield code='a'>Kritchevsky, David,</subfield>
+        <subfield code='d'>1920-2006.</subfield>
+      </datafield>
+      <datafield ind1=' ' ind2='0' tag='830'>
+        <subfield code='a'>GWUMC Department of Biochemistry annual spring symposia.</subfield>
+      </datafield>
+      <datafield ind1=' ' ind2=' ' tag='910'>
+        <subfield code='a'>927</subfield>
+        <subfield code='b'>Horizon bib#</subfield>
+      </datafield>
+      <datafield ind1=' ' ind2=' ' tag='900'>
+        <subfield code='5'>POD</subfield>
+        <subfield code='b'>MdBJ</subfield>
+      </datafield>
+    </record>
+  <records>

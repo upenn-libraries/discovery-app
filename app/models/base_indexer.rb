@@ -13,5 +13,6 @@ class BaseIndexer < Blacklight::Marc::Indexer
     PRINCETON = 10
     CHICAGO = 11
     DARTMOUTH = 12
+    JHU = 13
   end
 end
