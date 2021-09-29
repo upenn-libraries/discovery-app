@@ -886,6 +886,7 @@ class CatalogController < ApplicationController
     add_show_tools_partial(:print, partial: 'print')
 
     config.show.document_actions.delete(:sms)
+    config.show.partials = [:show]
     config.show.document_actions.email.if = :user_signed_in?
     config.show.document_actions.login_for_email.unless = :user_signed_in?
 

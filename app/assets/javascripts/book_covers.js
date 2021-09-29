@@ -5,7 +5,7 @@ $(document).ready(function() {
   found_gb = 0;
 
   by_id = {};
-  $('#documents > .document').each(function(idx) {
+  $('#documents > .document, #document').each(function(idx) {
     doc = $(this)
     page_idx = doc.attr('data-document-counter');
     cover_div = doc.find('div.cover-image');
@@ -78,6 +78,9 @@ $(document).ready(function() {
 	}
       });
       img_tag = "<img alt='' src='" + thumbs[min] + "'>"
+      element_struct["cover_div"].removeClass (function (index, className) {
+        return (className.match (/(^|\s)icon-\S+/g) || []).join(' ');
+      });
       element_struct["cover_div"].append(img_tag);
     });
     // console.log("exclude_gb=" + exclude_gb + "; try_gb=" + try_gb + "; found_gb=" + found_gb);
