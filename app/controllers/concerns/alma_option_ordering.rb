@@ -6,15 +6,24 @@ module AlmaOptionOrdering
 
   TOP_SERVICES = {
     'collection' => {
-      'Academic OneFile' => 1,
-      'Vogue Magazine Archive' => 3,
-      'Publisher website' => 8
+      'Publisher website' => 100,
+      'The New Republic Archive' => 99,
+      'Publishers Weekly Archive (1872- current)' => 98,
+      'American Association for the Advancement of Science' => 97,
+      'Vogue Magazine Archive' => 96,
+      'ProQuest Historical Newspapers: The New York Times' => 95,
+      'ProQuest Historical Newspapers: Pittsburgh Post-Gazette' => 94,
+      'ProQuest Historical Newspapers: The Washington Post' => 93,
+      'Wiley Online Library - Current Journals' => 88,
+      'Academic OneFile' => 87,
+      'Academic Search Premier' => 86
     },
     'interface' => {
-      'Elsevier ClinicalKey' => 4,
-      'Elsevier ScienceDirect' => 5,
-      'HighWire' => 6,
-      'Highwire Press' => 7
+      'Highwire Press' => 92,
+      'Elsevier ScienceDirect' => 91,
+      'Nature' => 90,
+      'Elsevier ClinicalKey' => 89,
+      # 'HighWire' => 6,
     }
   }.freeze
 
@@ -29,9 +38,9 @@ module AlmaOptionOrdering
       'Biography In Context' => 10
     },
     'interface' => {
-      'JSTOR' => 1,
-      'EBSCO Host' => 2,
-      'EBSCOhost' => 3
+      # 'JSTOR' => 1,
+      # 'EBSCO Host' => 2,
+      # 'EBSCOhost' => 3
     }
   }.freeze
 
