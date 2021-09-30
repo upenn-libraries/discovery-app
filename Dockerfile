@@ -12,6 +12,13 @@ FROM pennlib/passenger-ruby23:0.9.23-ruby-build
 
 RUN rm -f /etc/localtime && ln -s /usr/share/zoneinfo/US/Eastern /etc/localtime
 
+# Replace Let's Encrypt's expired DST Root CA X3 cert, which expired on 2021.09.30, with the newer ISRG Root X1 cert
+# https://letsencrypt.org/docs/certificate-compatibility/
+RUN rm /usr/share/ca-certificates/mozilla/DST_Root_CA_X3.crt && \
+    mkdir /usr/local/share/ca-certificates/letsencrypt.com && \
+    curl -k https://letsencrypt.org/certs/isrgrootx1.pem > /usr/local/share/ca-certificates/letsencrypt.com/isrgrootx1.crt && \
+    update-ca-certificates --fresh
+
 RUN apt-get update && apt-get install -y --no-install-recommends npm libxml2-utils unzip openjdk-8-jre
 
 # docker caches this step, but it does download the file each time.
