@@ -15,34 +15,40 @@ module AlmaOptionOrdering
       'ProQuest Historical Newspapers: The New York Times' => 95,
       'ProQuest Historical Newspapers: Pittsburgh Post-Gazette' => 94,
       'ProQuest Historical Newspapers: The Washington Post' => 93,
-      'Wiley Online Library - Current Journals' => 88,
-      'Academic OneFile' => 87,
-      'Academic Search Premier' => 86
+      'Wiley Online Library - Current Journals' => 92,
+      'Academic OneFile' => 91,
+      'Academic Search Premier' => 90
     },
     interface: {
-      'Highwire Press' => 92,
-      'Elsevier ScienceDirect' => 91,
-      'Nature' => 90,
-      'Elsevier ClinicalKey' => 89,
+      'Highwire Press' => 89,
+      'Elsevier ScienceDirect' => 88,
+      'Nature' => 87,
+      'Elsevier ClinicalKey' => 86,
     }
   }.freeze
 
   BOTTOM_SERVICES = {
     collection: {
-      'LexisNexis Academic' => 4,
-      'Factiva' => 5,
-      'Gale Cengage GreenR' => 6,
-      'Nature Free' => 7,
-      'DOAJ Directory of Open Access Journals' => 8,
-      'Highwire Press Free' => 9,
-      'Biography In Context' => 10
+      'LexisNexis Academic' => -1,
+      'Factiva' => -2,
+      'Gale Cengage GreenR' => -3,
+      'Nature Free' => -4,
+      'DOAJ Directory of Open Access Journals' => -5,
+      'Highwire Press Free' => -6,
+      'Biography In Context' => -7
     },
     interface: {}
   }.freeze
 
 
-  # a comparison between service_a and service_b that returns an integer less than 0 when service_b follows service_a,
-  # 0 when service_a and service_b are equivalent, or an integer greater than 0 when service_a follows service_b
+  # used with Array#sort
+  # services that are not included in top or bottom lists will both get 0 scores, and so be sorted alphabetically
+  # services in the top list will get positive numeric scores
+  # services in the bottom list will get negative numeric scores
+  # returns a positive value if service_b should be ranked above service_a
+  # returns a negative value if service_b should be ranked below service_a
+  # if scores are identical...alphabetically sorted
+  # top_service scores will be preferred
   # @param [Hash] service_a
   # @param [Hash] service_b
   # @return [Fixnum]
@@ -52,20 +58,24 @@ module AlmaOptionOrdering
     collection_b = service_b['collection'] || ''
     interface_b = service_b['interface_name'] || ''
 
-    score_a = -[TOP_SERVICES[:collection][collection_a] || 0, TOP_SERVICES[:interface][interface_a] || 0].max
-    if score_a == 0
-      score_a = [BOTTOM_SERVICES[:collection][collection_a] || 0, BOTTOM_SERVICES[:interface][interface_a] || 0].max
-    end
+    score_a = [
+      TOP_SERVICES[:collection][collection_a],
+      TOP_SERVICES[:interface][interface_a],
+      BOTTOM_SERVICES[:collection][collection_a],
+      BOTTOM_SERVICES[:interface][interface_a]
+    ].compact.max || 0
 
-    score_b = -[TOP_SERVICES[:collection][collection_b] || 0, TOP_SERVICES[:interface][interface_b] || 0].max
-    if score_b == 0
-      score_b = [BOTTOM_SERVICES[:collection][collection_b] || 0, BOTTOM_SERVICES[:interface][interface_b] || 0].max
-    end
+    score_b = [
+      TOP_SERVICES[:collection][collection_b],
+      TOP_SERVICES[:interface][interface_b],
+      BOTTOM_SERVICES[:collection][collection_b],
+      BOTTOM_SERVICES[:interface][interface_b]
+    ].compact.max || 0
 
     if score_a == score_b
       collection_a <=> collection_b # compare alphabetically if scores are the same
     else
-      score_a <=> score_b # compare by score otherwise
+      score_b <=> score_a # compare by score otherwise
     end
   end
 

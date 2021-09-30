@@ -4,29 +4,29 @@ RSpec.describe AlmaOptionOrdering do
   let(:ordering) { Class.new { extend AlmaOptionOrdering  } }
 
   describe '#compare_services' do
-    it 'return negative when comparing "Publisher website" and "Vogue Magazine Archive"' do
+    it 'return positive when comparing "Publisher website" and "Vogue Magazine Archive"' do
       expect(ordering.compare_services(
         { 'collection' => 'Vogue Magazine Archive' },
         { 'collection' => 'Publisher website' }
-      )).to be_negative
-    end
-
-    it 'return positive when comparing "Publisher website" and "Vogue Magazine Archive"' do
-      expect(ordering.compare_services(
-        { 'collection' => 'Publisher website' },
-        { 'collection' => 'Vogue Magazine Archive' }
       )).to be_positive
     end
 
-    it 'return negative when comparing "Vogue Magazine Archive" (a collection) and "Nature" (an interface)' do
+    it 'return negative when comparing "Publisher website" and "Vogue Magazine Archive"' do
       expect(ordering.compare_services(
         { 'collection' => 'Publisher website' },
-        { 'interface' => 'Nature' }
+        { 'collection' => 'Vogue Magazine Archive' }
       )).to be_negative
+    end
+
+    it 'return positive when comparing "Publisher website" (a collection) and "Nature" (an interface)' do
+      expect(ordering.compare_services(
+        { 'interface' => 'Nature' },
+        { 'collection' => 'Publisher website' }
+      )).to be_positive
     end
   end
 
-  describe '#compate_holdings' do
+  describe '#compare_holdings' do
     it 'returns negative when comparing "Van Pelt Library" and "Libra"' do
       expect(ordering.compare_holdings(
         { 'library_code' => 'Van Pelt Library' },
@@ -48,7 +48,9 @@ RSpec.describe AlmaOptionOrdering do
         { 'collection' => 'Vogue Magazine Archive' },
         { 'collection' => 'Publisher website' }
       ]
-      sorted = holdings.sort { |a, b| ordering.compare_services(a, b) }
+      sorted = holdings.sort do |a, b|
+        ordering.compare_services(a, b)
+      end
       expect(sorted).to eq(
         [{ 'collection' => 'Publisher website' },
          { 'collection' => 'Vogue Magazine Archive' }]
@@ -57,9 +59,10 @@ RSpec.describe AlmaOptionOrdering do
 
     it 'sorts collections and interfaces as expected' do
       holdings = [
-        { 'interface' => 'Nature' },
+        { 'interface_name' => 'Nature' },
         { 'collection' => 'Publisher website' },
         { 'collection' => 'Mike\'s Memoir Archive' },
+        { 'interface_name' => 'Carla\'s database' },
         { 'collection' => 'Factiva' },
         { 'collection' => 'Academic OneFile' }
       ]
@@ -67,8 +70,9 @@ RSpec.describe AlmaOptionOrdering do
       expect(sorted).to eq(
         [{ 'collection' => 'Publisher website' },
          { 'collection' => 'Academic OneFile' },
+         { 'interface_name' => 'Nature' },
+         { 'interface_name' => 'Carla\'s database' },
          { 'collection' => 'Mike\'s Memoir Archive' },
-         { 'interface' => 'Nature' },
          { 'collection' => 'Factiva' }]
       )
     end
