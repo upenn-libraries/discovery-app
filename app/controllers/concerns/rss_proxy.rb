@@ -61,7 +61,7 @@ module RssProxy
 
     if response.header['location']
       newurl = URI.parse(response.header['location'])
-      if(newurl.relative?)
+      if newurl.relative?
         newurl = url + response.header['location']
       end
       make_request(newurl.to_s, limit + 1)
@@ -77,6 +77,7 @@ module RssProxy
         feed_response = make_request(url)
       rescue
         Rails.logger.warn("rss_proxy: error fetching URL: #{url}")
+        Honeybadger.notify "Problem retrieving RSS content: #{feed_response.try :body}"
       end
       if feed_response
         struct = {
