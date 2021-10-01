@@ -87,16 +87,10 @@ module PennLib
       # Will retry up to 2 times and return nil if there are issues parsing JSON
       # @return [Hash, NilClass]
       def retrieve_specialist_json
-        connection = Faraday.new do |conn|
-          conn.request :retry, max: 2, interval: 0.1, backoff_factor: 2
-          conn.adapter :net_http
-        end
-        response_body = connection.get(DRUPAL_SPECIALISTS_URL).body
-        JSON.parse(response_body)
-      # handle attempt to parse nil or empty response, as well as connection
-      # errors
-      rescue TypeError, JSON::JSONError, Faraday::ClientError => _e
-        nil
+        response_body = Typhoeus.get(DRUPAL_SPECIALISTS_URL).body
+        Oj.load response_body
+      rescue StandardError => e
+        Honeybadger.notify "Problem retrieving specialists JSON from Drupal: #{e.message}"
       end
     end
 QUERIES = {

@@ -48,26 +48,18 @@ module RssProxy
     if limit > 5
       return nil
     end
-    uri = URI.parse(url)
-    req = Net::HTTP::Get.new(uri)
+    # uri = URI.parse(url)
+    # req = Net::HTTP::Get.new(uri)
+    #
+    # http = Net::HTTP.new(uri.host, uri.port)
+    # # relatively short timeout to prevent taking up rails processes
+    # http.read_timeout = 5
+    # if uri.instance_of? URI::HTTPS
+    #   http.use_ssl = true
+    # end
+    # response = http.request(req)
 
-    http = Net::HTTP.new(uri.host, uri.port)
-    # relatively short timeout to prevent taking up rails processes
-    http.read_timeout = 5
-    if uri.instance_of? URI::HTTPS
-      http.use_ssl = true
-    end
-    response = http.request(req)
-
-    if response.header['location']
-      newurl = URI.parse(response.header['location'])
-      if newurl.relative?
-        newurl = url + response.header['location']
-      end
-      make_request(newurl.to_s, limit + 1)
-    else
-      response
-    end
+    Typhoeus.get url
   end
 
   def rss_proxy(url, lifetime = 900)
@@ -82,7 +74,7 @@ module RssProxy
       if feed_response
         struct = {
           content: feed_response.body,
-          content_type: feed_response['Content-Type'],
+          content_type: feed_response.headers['Content-Type'],
           timestamp: Time.now.to_i,
         }
         RSSCache.instance.store(url, struct)
