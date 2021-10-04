@@ -69,8 +69,8 @@ RSpec.describe AlmaOptionOrdering do
       sorted = holdings.sort { |a, b| ordering.compare_services(a, b) }
       expect(sorted).to eq(
         [{ 'collection' => 'Publisher website' },
-         { 'collection' => 'Academic OneFile' },
          { 'interface_name' => 'Nature' },
+         { 'collection' => 'Academic OneFile' },
          { 'interface_name' => 'Carla\'s database' },
          { 'collection' => 'Mike\'s Memoir Archive' },
          { 'collection' => 'Factiva' }]
