@@ -13,8 +13,11 @@ en:
         request_error: "Franklin is having trouble executing your search. Please try again."
         invalid_solr_id: "The requested record was not found."
     tools:
-      librarian_view: "Staff View"
+      librarian_view: "Staff view"
       login_for_email: "Login to Email"
+      refworks: "To RefWorks"
+      endnote: "To EndNote"
+      ris: "In RIS format"
   franklin:
     landing_page_title: "Franklin - University of Pennsylvania"
     pap_info_link: "https://guides.library.upenn.edu/circulation/PickUpatPenn"

@@ -26,20 +26,21 @@ module PennLib
       #
       # @param [NestedOpenStructWithHashAccess] document_actions
       # @param [Array] action_list array of symbols
-      def reorder_document_actions(document_actions, *action_list)
-        orig = document_actions.dup
+      def filter_document_actions(document_actions, *action_list)
+        #filtered_actions = NestedOpenStructWithHashAccess.new(ToolConfig)
+        filtered_actions = document_actions.dup
 
-        orig.keys.each { |key| document_actions.delete_field(key) }
+        document_actions.keys.each { |key| filtered_actions.delete_field(key) }
 
-        unknown_actions = action_list.select { |action_name| !orig.keys.include?(action_name) }
+        unknown_actions = action_list.select { |action_name| !document_actions.keys.include?(action_name) }
         if unknown_actions.any?
-          raise "Unknown actions passed to #reorder_document_actions: #{unknown_actions}, the following actions exist: #{orig.keys}"
+          raise "Unknown actions passed to #reorder_document_actions: #{unknown_actions}, the following actions exist: #{document_actions.keys}"
         end
 
-        all_keys = action_list + (orig.keys - action_list)
-        all_keys.each do |action_name|
-          document_actions[action_name] = orig[action_name]
+        action_list.each do |action_name|
+          filtered_actions[action_name] = document_actions[action_name]
         end
+        filtered_actions
       end
 
     end

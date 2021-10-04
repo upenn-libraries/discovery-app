@@ -1,61 +1,71 @@
+<div class="row">
+  <div class="btn-toolbar pull-right" role="toolbar">
+    <button type="button" class="btn btn-default bookmark-button">
+      <%= render_filtered_partials blacklight_config.show.bookmark, {document: @document} do |config, inner| %>
+        <%= inner %>
+      <% end %>
+    </button>
+    <div class="btn-group" role="group">
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Share
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu">
+        <%= render_filtered_partials blacklight_config.show.share_actions, {document: @document} do |config, inner| %>
+          <li class="<%= config.key %>">
+            <%= inner %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+    <div class="btn-group" role="group">
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Export
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu export-formats">
+        <%= render_filtered_partials blacklight_config.show.export_formats, {document: @document} do |config, inner| %>
+          <li class="<%= config.key %>">
+            <%= inner %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</div>
 
-<div class="btn-toolbar pull-right" role="toolbar" aria-label="">
-<!--      <button type="button" class="btn btn-default"><%#= render 'bookmark_control', document: @document %></button>-->
-  <button type="button" class="btn btn-default">Bookmark</button>
-  <div class="btn-group" role="group">
-    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      Share
-      <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu">
-      <li><a href="#">Print</a></li>
-      <li><a href="#">Mail</a></li>
-      <li><a href="#">Cite</a></li>
-    </ul>
-  </div>
-  <div class="btn-group" role="group">
-    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      Export
-      <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu">
-      <li><a href="#">To RefWorks</a></li>
-      <li><a href="#">To EndNote</a></li>
-      <li><a href="#">In RIS Format</a></li>
-    </ul>
-  </div>
-  <button type="button" class="btn btn-default">Staff View</button>
-</div>
-</div>
 
 <div class="row">
-  <div class="col-sm-10">
-    <%= render_document_heading(document, :tag => :h1) %>
-    <% doc_presenter = show_presenter(document) %>
-    <%= detect_nocirc(document) %>
+    <div class="record-title-row">
+      <%= render_document_heading(document, :tag => :h1) %>
+    </div>
+      <% doc_presenter = show_presenter(document) %>
+      <%= detect_nocirc(document) %>
+    <div class="book-cover-col">
+      <% cover_id_attrs = document.cover_id_attrs %>
+      <div class="cover-image" <%= cover_id_attrs[:markup] %>>
+        <%= image_tag("https://covers.openlibrary.org/b/id/#{cover_id_attrs[:ol_cover_id]}-M.jpg",
+                      :alt => "", :class => "") unless cover_id_attrs[:ol_cover_id].nil? %>
+      </div>
+    </div>
     <%# default partial to display solr document fields in catalog show view -%>
-    <dl class="dl-horizontal dl-invert">
-      <% document_show_fields(document).each do |field_name, field| -%>
-        <% next unless field[:top_field] %>
+    <div class="record-main-details">
+      <dl class="dl-horizontal dl-invert">
+        <% document_show_fields(document).each do |field_name, field| -%>
+          <% next unless field[:top_field] %>
 
-        <% if should_render_show_field? document, field %>
-            <dt class="blacklight-<%= field_name.parameterize %>"><%= render_document_show_field_label document, field: field_name %></dt>
-            <dd class="blacklight-<%= field_name.parameterize %>"><%= doc_presenter.field_value field_name %></dd>
+          <% if should_render_show_field? document, field %>
+              <dt class="blacklight-<%= field_name.parameterize %>"><%= render_document_show_field_label document, field: field_name %></dt>
+              <dd class="blacklight-<%= field_name.parameterize %>"><%= doc_presenter.field_value field_name %></dd>
+          <% end -%>
         <% end -%>
-      <% end -%>
-      <% if document.has_any_holdings? %>
-            <dt class="blacklight-status-location">Status/Location:</dt>
-            <dd class="blacklight-status-location">
-              <%= render partial: 'status_location_field', locals: { document: document } %>
-            </dd>
-      <% end %>
-    </dl>
-  </div>
-  <div class="col-sm-2">
-    <% cover_id_attrs = document.cover_id_attrs %>
-    <div class="cover-image <%= format_icon(document.fetch_format, size: 'large') %>" <%= cover_id_attrs[:markup] %>>
-      <%= image_tag("https://covers.openlibrary.org/b/id/#{cover_id_attrs[:ol_cover_id]}-M.jpg",
-                    :alt => "", :class => "") unless cover_id_attrs[:ol_cover_id].nil? %>
+        <% if document.has_any_holdings? %>
+              <dt class="blacklight-status-location">Status/Location:</dt>
+              <dd class="blacklight-status-location">
+                <%= render partial: 'status_location_field', locals: { document: document } %>
+              </dd>
+        <% end %>
+      </dl>
     </div>
   </div>
 </div>
@@ -84,6 +94,12 @@
         <dd class="blacklight-<%= field_name.parameterize %>"><%= doc_presenter.field_value field_name %></dd>
       <% end -%>
     <% end -%>
+    <dt class="blacklight-other-views">Other views:</dt>
+    <dd class="blacklight-other-views">
+      <%= render_filtered_partials blacklight_config.show.staff_view, {document: @document} do |config, inner| %>
+        <%= inner %>
+      <% end %>
+    </dd>
   </dl>
 </div>
 

@@ -81,6 +81,7 @@ $(document).ready(function() {
       element_struct["cover_div"].removeClass (function (index, className) {
         return (className.match (/(^|\s)icon-\S+/g) || []).join(' ');
       });
+      $(".record-title-row").addClass("record-title-row-cover");
       element_struct["cover_div"].append(img_tag);
     });
     // console.log("exclude_gb=" + exclude_gb + "; try_gb=" + try_gb + "; found_gb=" + found_gb);

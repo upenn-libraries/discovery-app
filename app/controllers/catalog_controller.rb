@@ -890,9 +890,19 @@ class CatalogController < ApplicationController
     config.show.document_actions.email.if = :user_signed_in?
     config.show.document_actions.login_for_email.unless = :user_signed_in?
 
-    PennLib::Util.reorder_document_actions(
+
+    config.show.share_actions = PennLib::Util.filter_document_actions(
         config.show.document_actions,
-        :bookmark, :email, :login_for_email, :citation, :print, :refworks, :endnote, :ris, :librarian_view)
+        :print, :email, :login_for_email, :citation)
+    config.show.export_formats = PennLib::Util.filter_document_actions(
+        config.show.document_actions,
+        :refworks, :endnote, :ris)
+    config.show.bookmark = PennLib::Util.filter_document_actions(
+        config.show.document_actions,
+        :bookmark)
+    config.show.staff_view = PennLib::Util.filter_document_actions(
+        config.show.document_actions,
+        :librarian_view)
 
     config.navbar.partials.delete(:search_history)
   end

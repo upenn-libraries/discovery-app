@@ -1489,6 +1489,29 @@ body #search-navbar div.container {
   }
 }
 
+.bookmark-button .bookmark_toggle .toggle_bookmark {
+  min-height: 0;
+  padding-top: 0;
+  input {
+    opacity: 0;
+    margin: 0;
+  }
+  label {
+    padding-left: 0;
+  }
+}
+
+#content.show-document {
+  max-width: 1200px;
+  margin: auto;
+}
+
+.dropdown-menu {
+  min-width: 0;
+  &.export-formats {
+    left: -33px;
+  }
+}
 
 
 /***********
@@ -1536,8 +1559,11 @@ body #search-navbar div.container {
 }
 
 #document dl {
+  margin-left: 1px;
   margin-top: 20px;
-  margin-left: 20px;
+  @media (min-width: 768px) {
+    margin-left: 20px;
+  }
 }
 
 .view-all {

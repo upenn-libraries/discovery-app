@@ -78,10 +78,41 @@ li.blacklight-format_a {
   position: relative;
 }
 
+.show-document .cover-image {
+  padding-top: 0;
+  img {
+    float: right;
+    padding-top: 7px;
+    @media (min-width: 610px) {
+      padding-top: 20px;
+    }
+    @media (min-width: 700px) {
+        max-width: 90px;
+        max-height: 200px;
+        margin-bottom: 50px
+    }
+  }
+}
+
+.book-cover-col {
+  margin-left: 6px;
+  padding-right: 0;
+}
+
 .cover-image > img {
-  float: right;
-  padding-top: 15px;
+  margin-left: 2px;
+  margin-top: 2px;
+  max-width: 70px;
+  vertical-align: baseline;
   max-height: 140px;
+}
+
+.record-title-row-cover {
+  width: 100%;
+  @media (min-width: 610px) {
+    width: calc(100% - 100px);
+    float: left;
+  }
 }
 
 .label-warning {
