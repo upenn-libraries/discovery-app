@@ -5,6 +5,7 @@
 module AlmaOptionOrdering
   extend ActiveSupport::Concern
 
+  # higher scores sort higher
   TOP_SERVICES = {
     collection: {
       'Publisher website' => 100,
@@ -15,18 +16,19 @@ module AlmaOptionOrdering
       'ProQuest Historical Newspapers: The New York Times' => 95,
       'ProQuest Historical Newspapers: Pittsburgh Post-Gazette' => 94,
       'ProQuest Historical Newspapers: The Washington Post' => 93,
-      'Wiley Online Library - Current Journals' => 92,
-      'Academic OneFile' => 91,
-      'Academic Search Premier' => 90
+      'Wiley Online Library - Current Journals' => 88,
+      'Academic OneFile' => 87,
+      'Academic Search Premier' => 86
     },
     interface: {
-      'Highwire Press' => 89,
-      'Elsevier ScienceDirect' => 88,
-      'Nature' => 87,
-      'Elsevier ClinicalKey' => 86,
+      'Highwire Press' => 92,
+      'Elsevier ScienceDirect' => 91,
+      'Nature' => 90,
+      'Elsevier ClinicalKey' => 89,
     }
   }.freeze
 
+  # again, 'higher' scores sort higher
   BOTTOM_SERVICES = {
     collection: {
       'LexisNexis Academic' => -1,
