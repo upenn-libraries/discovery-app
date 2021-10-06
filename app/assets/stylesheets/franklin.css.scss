@@ -738,35 +738,19 @@ div.pagination {
       width: 2.6rem;
       height: 2.4rem;
       left: 0;
-      top: 1.5rem;
-      &.one-digit, &.two-digit {
-        width: 2.6rem;
-        height: 2.4rem;
-        padding: .2rem .2rem 0 .2rem;
-      }
+      top: 1.1rem;
       &.three-digit {
         width: 3rem;
-        height: 2.8rem;
-        padding: .4rem .2rem 0 .2rem;
         left: -.5rem;
-        top: 1.3rem;
       }
       &.four-digit {
-        padding: .9rem .2rem 0 .2rem;
         width: 3.6rem;
-        height: 3.6rem;
         left: -1rem;
-        top: 1rem;
       }
       &.five-digit {
         width: 4.4rem;
         left: -1.9rem;
       }
-      &.six-digit {
-        width: 5rem;
-        left: -2.5rem;
-      }
-      
     }
     a {
       margin-left: 3.5rem;
