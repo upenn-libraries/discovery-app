@@ -1,0 +1,188 @@
+<records>
+  <record>
+    <leader>01613cam a22004094a 4500</leader>
+    <controlfield tag='001'>9948355863506421</controlfield>
+    <controlfield tag='005'>20200922142121.0</controlfield>
+    <controlfield tag='008'>060721s2006    enk      b    001 0 eng  </controlfield>
+    <datafield ind1=' ' ind2=' ' tag='010'>
+      <subfield code='a'>  2005030926</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='035'>
+      <subfield code='a'>(OCoLC)ocm62161246</subfield>
+      <subfield code='0'>(uri) http://www.worldcat.org/oclc/62161246</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='035'>
+      <subfield code='a'>4835586</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='035'>
+      <subfield code='a'>(NjP)4835586-princetondb</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='040'>
+      <subfield code='a'>DLC</subfield>
+      <subfield code='c'>DLC</subfield>
+      <subfield code='d'>BAKER</subfield>
+      <subfield code='d'>BWKUK</subfield>
+      <subfield code='d'>UKM</subfield>
+      <subfield code='d'>OCLCQ</subfield>
+      <subfield code='d'>NLGGC</subfield>
+      <subfield code='d'>COO</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='015'>
+      <subfield code='a'>GBA612168</subfield>
+      <subfield code='2'>bnb</subfield>
+    </datafield>
+    <datafield ind1='7' ind2=' ' tag='016'>
+      <subfield code='a'>013375181</subfield>
+      <subfield code='2'>Uk</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='020'>
+      <subfield code='a'>0415364655 (pbk.)</subfield>
+      <subfield code='0'>(uri) http://www.isbnsearch.org/isbn/0415364655</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='020'>
+      <subfield code='a'>0415364647 (hbk.)</subfield>
+      <subfield code='0'>(uri) http://www.isbnsearch.org/isbn/0415364647</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='020'>
+      <subfield code='a'>020301569X (ebk.)</subfield>
+      <subfield code='0'>(uri) http://www.isbnsearch.org/isbn/020301569X</subfield>
+    </datafield>
+    <datafield ind1='3' ind2=' ' tag='024'>
+      <subfield code='a'>9780415364645</subfield>
+      <subfield code='c'>(hbk.)</subfield>
+    </datafield>
+    <datafield ind1='3' ind2=' ' tag='024'>
+      <subfield code='a'>9780415364652</subfield>
+      <subfield code='c'>(pbk.)</subfield>
+    </datafield>
+    <datafield ind1='3' ind2=' ' tag='024'>
+      <subfield code='a'>9780203015698</subfield>
+      <subfield code='c'>(ebk.)</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='042'>
+      <subfield code='a'>pcc</subfield>
+    </datafield>
+    <datafield ind1='0' ind2='0' tag='050'>
+      <subfield code='a'>P306.97.S63</subfield>
+      <subfield code='b'>C76 2006</subfield>
+    </datafield>
+    <datafield ind1='0' ind2='0' tag='082'>
+      <subfield code='a'>418/.02</subfield>
+      <subfield code='2'>22</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='084'>
+      <subfield code='a'>17.45</subfield>
+      <subfield code='2'>bcl</subfield>
+    </datafield>
+    <datafield ind1='1' ind2=' ' tag='100'>
+      <subfield code='a'>Cronin, Michael,</subfield>
+      <subfield code='d'>1960-</subfield>
+      <subfield code='0'>http://id.loc.gov/authorities/names/n93120433</subfield>
+    </datafield>
+    <datafield ind1='1' ind2='0' tag='245'>
+      <subfield code='a'>Translation and identity /</subfield>
+      <subfield code='c'>Michael Cronin.</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='260'>
+      <subfield code='a'>London ;</subfield>
+      <subfield code='a'>New York :</subfield>
+      <subfield code='b'>Routledge,</subfield>
+      <subfield code='c'>2006.</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='300'>
+      <subfield code='a'>x, 166 p. ;</subfield>
+      <subfield code='c'>24 cm.</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='504'>
+      <subfield code='a'>Includes bibliographical references (p. [144]-157) and index.</subfield>
+    </datafield>
+    <datafield ind1='0' ind2=' ' tag='505'>
+      <subfield code='a'>Translation and the new cosmopolitanism -- Translation and immigration -- Interpreting identity -- The future of diversity.</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2='0' tag='650'>
+      <subfield code='a'>Translating and interpreting</subfield>
+      <subfield code='x'>Social aspects.</subfield>
+      <subfield code='0'>http://id.loc.gov/authorities/subjects/sh2010116902</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2='0' tag='650'>
+      <subfield code='a'>Cultural pluralism.</subfield>
+      <subfield code='0'>http://id.loc.gov/authorities/subjects/sh85103571</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2='0' tag='650'>
+      <subfield code='a'>Identity (Psychology)</subfield>
+      <subfield code='0'>http://id.loc.gov/authorities/subjects/sh85064151</subfield>
+    </datafield>
+    <datafield ind1='4' ind2='1' tag='856'>
+      <subfield code='3'>Table of contents</subfield>
+      <subfield code='u'>http://www.loc.gov/catdir/toc/ecip062/2005030926.html</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='999'>
+      <subfield code='a'>4835586</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='904'>
+      <subfield code='a'>sla</subfield>
+      <subfield code='b'>o</subfield>
+      <subfield code='h'>m</subfield>
+      <subfield code='c'>b</subfield>
+      <subfield code='e'>20060906</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='902'>
+      <subfield code='a'>rb</subfield>
+      <subfield code='b'>l</subfield>
+      <subfield code='6'>a</subfield>
+      <subfield code='7'>m</subfield>
+      <subfield code='d'>v</subfield>
+      <subfield code='f'>1</subfield>
+      <subfield code='e'>20061009</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='950'>
+      <subfield code='b'>2020-12-02 16:08:39 US/Eastern</subfield>
+      <subfield code='a'>false</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='951'>
+      <subfield code='v'>2020-12-08 05:13:29 US/Eastern</subfield>
+      <subfield code='u'>System</subfield>
+      <subfield code='t'>2020-12-08 05:13:24 US/Eastern</subfield>
+      <subfield code='x'>https://na07.alma.exlibrisgroup.com/view/uresolver/01PRI_INST/openurl?u.ignore_date_coverage=true&amp;portfolio_pid=53287520410006421&amp;Force_direct=true</subfield>
+      <subfield code='s'>P2E_JOB</subfield>
+      <subfield code='0'>53287520410006421</subfield>
+      <subfield code='w'>2020-12-08 10:13:24</subfield>
+      <subfield code='f'>false</subfield>
+      <subfield code='b'>static</subfield>
+      <subfield code='q'>651447-princetondb</subfield>
+      <subfield code='1'>52287520420006421</subfield>
+      <subfield code='c'>d?u.ignore_date_coverage=true&amp;rft.mms_id=9948355863506421</subfield>
+      <subfield code='a'>Available</subfield>
+      <subfield code='e'>BOOK</subfield>
+      <subfield code='8'>53287520410006421</subfield>
+    </datafield>
+    <datafield ind1='0' ind2=' ' tag='852'>
+      <subfield code='b'>firestone</subfield>
+      <subfield code='c'>stacks</subfield>
+      <subfield code='h'>P306.97.S63</subfield>
+      <subfield code='i'>C76 2006</subfield>
+      <subfield code='8'>22197742440006421</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='952'>
+      <subfield code='a'>2020-12-02 21:08:39</subfield>
+      <subfield code='8'>22197742440006421</subfield>
+      <subfield code='b'>Firestone Library</subfield>
+      <subfield code='c'>Firestone Library</subfield>
+      <subfield code='e'>false</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='876'>
+      <subfield code='0'>22197742440006421</subfield>
+      <subfield code='a'>23197742430006421</subfield>
+      <subfield code='j'>1</subfield>
+      <subfield code='i'>0</subfield>
+      <subfield code='d'>2020-12-02 21:08:39</subfield>
+      <subfield code='h'>P306.97.S63 C76 2006</subfield>
+      <subfield code='p'>32101061130967</subfield>
+      <subfield code='t'>1</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='900'>
+      <subfield code='5'>POD</subfield>
+      <subfield code='b'>NjP</subfield>
+    </datafield>
+  </record>
+</records>
