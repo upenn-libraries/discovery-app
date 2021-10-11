@@ -1,0 +1,131 @@
+<records>
+  <record>
+    <leader>04859ntm  2200361Ki 4500</leader>
+    <controlfield tag='001'>990035019220106761</controlfield>
+    <controlfield tag='005'>20210714190649.0</controlfield>
+    <controlfield tag='008'>210616s2021    xx a     bm   000 0 eng d</controlfield>
+    <datafield ind1=' ' ind2=' ' tag='035'>
+      <subfield code='a'>(MCM)003501922MIT01</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='035'>
+      <subfield code='a'>(OCoLC)1256663507</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='040'>
+      <subfield code='a'>MYG</subfield>
+      <subfield code='b'>eng</subfield>
+      <subfield code='e'>rda</subfield>
+      <subfield code='c'>MYG</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='049'>
+      <subfield code='a'>MYGG</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='099'>
+      <subfield code='a'>Thesis Nuc.Eng 2021 Ph.D.</subfield>
+    </datafield>
+    <datafield ind1='1' ind2=' ' tag='100'>
+      <subfield code='a'>Dolan, Kieran Patrick.</subfield>
+    </datafield>
+    <datafield ind1='1' ind2='0' tag='245'>
+      <subfield code='a'>Tritium retention in nuclear graphite, system-level transport, and management strategies for the fluoride-salt-cooled high-temperature reactor /</subfield>
+      <subfield code='c'>by Kieran Patrick Dolan.</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2='4' tag='264'>
+      <subfield code='c'>©2021.</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='300'>
+      <subfield code='a'>340 pages :</subfield>
+      <subfield code='b'>illustrations (chiefly color) ;</subfield>
+      <subfield code='c'>29 cm</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='336'>
+      <subfield code='a'>text</subfield>
+      <subfield code='b'>txt</subfield>
+      <subfield code='2'>rdacontent</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='337'>
+      <subfield code='a'>unmediated</subfield>
+      <subfield code='b'>n</subfield>
+      <subfield code='2'>rdamedia</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='338'>
+      <subfield code='a'>volume</subfield>
+      <subfield code='b'>nc</subfield>
+      <subfield code='2'>rdacarrier</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='502'>
+      <subfield code='b'>Ph. D.</subfield>
+      <subfield code='c'>Massachusetts Institute of Technology, Department of Nuclear Science and Engineering</subfield>
+      <subfield code='g'>February</subfield>
+      <subfield code='d'>2021</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='504'>
+      <subfield code='a'>Includes bibliographical references (pages 319-333).</subfield>
+    </datafield>
+    <datafield ind1='3' ind2=' ' tag='520'>
+      <subfield code='a'>Advanced reactor concepts which use a lithium- or beryllium-bearing primary salt coolant will require technical solutions to mitigate the environmental release of tritium. One such design is the Fluoride-Salt-Cooled High-Temperature Reactor (FHR), which combines a molten Flibe (2LiF-BeF₂) salt coolant and tri-structural isotropic coated-particle fuel to produce power or process heat. Compared to current water-cooled reactors, managing tritium release from a FHR is further complicated by the mobility of tritium at high temperatures and limited knowledge of interactions between tritium and nuclear graphite in the molten fluoride salt environment. The total activity, chemical forms, and retention mechanisms for tritium in nuclear graphite were studied through thermal desorption analysis of sample materials from three in-core Flibe salt irradiations (denoted FS-1, FS-2, and FS-3) at the MIT Reactor (MITR). Tritium desorption rates as a function of temperature were observed in distinct peak structures which are indicative of distinct trapping sites in graphite. The tritium content measurements led to estimations of overall retention in nuclear graphite of 19.6±1.9% from FS-1, 34±10% from FS-2, and 27.1±1.9% from FS-3 relative to the total calculated tritium generation in each experiment. Thermal desorption measurements of the MITR samples were consistent with previously proposed mechanisms for retention of gaseous hydrogen in graphite based on the chemical form of desorbed tritium, the activation energy of the desorption process, and the effect of excess H₂ on the desorption rate as a function of temperature. Therefore, a methodology based on gaseous retention mechanisms was proposed and developed to model the uptake of tritium into graphite from Flibe in a FHR. A tritium retention model based on a bulk-diffusivity in graphite was developed as well as a model based on differential transport in graphite pores and grains. Using a system-level tritium transport model, the overall retention on graphite pebbles in a FHR was calculated to be 20.3% and 26.3% of the equilibrium generation rate for the bulk-diffusivity and pore and grain methods, respectively. In each case, modeling the transport and trapping of tritium inside graphite significantly reduced the retention rates compared to a retention process solely limited by mass transport in Flibe. According to the results of a sensitivity analysis, the level of tritium retention in core graphite has the largest uncertainty in the FHR tritium distribution because of relatively high standard deviations in literature measurements of tritium solubility and diffusivity in graphite. Tritium management technology options were then examined in the system-level transport model based on permeation barrier coatings and tritium extraction systems. Permeation barrier coatings of a specified performance level applied to Flibe-facing surfaces were found to be more effective than exterior-surface coatings, while extraction systems with design constraints were able to significantly reduce overall tritium releases. A combination of the interior-surface barriers and extraction systems applied to various regions of the plant was shown to reduce tritium release into the FHR reactor building to levels below that of current light water reactors.</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='500'>
+      <subfield code='a'>Cataloged from the official PDF version of thesis.</subfield>
+    </datafield>
+    <datafield ind1='2' ind2=' ' tag='710'>
+      <subfield code='a'>Massachusetts Institute of Technology.</subfield>
+      <subfield code='b'>Department of Nuclear Science and Engineering.</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='910'>
+      <subfield code='a'>mjy210616</subfield>
+      <subfield code='b'>new</subfield>
+      <subfield code='c'>~</subfield>
+      <subfield code='e'>mitp</subfield>
+      <subfield code='j'>t</subfield>
+      <subfield code='k'>m</subfield>
+      <subfield code='l'>blank</subfield>
+      <subfield code='m'>K</subfield>
+      <subfield code='o'>rda</subfield>
+      <subfield code='p'>MYG</subfield>
+      <subfield code='q'>vt</subfield>
+      <subfield code='r'>x</subfield>
+      <subfield code='s'>1</subfield>
+      <subfield code='w'>~</subfield>
+      <subfield code='x'>0</subfield>
+      <subfield code='y'>~</subfield>
+      <subfield code='i'>mjy</subfield>
+      <subfield code='d'>210616</subfield>
+      <subfield code='n'>n</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2='0' tag='949'>
+      <subfield code='4'>IP</subfield>
+      <subfield code='a'>vt</subfield>
+      <subfield code='b'>ARC</subfield>
+      <subfield code='c'>NOLN3</subfield>
+      <subfield code='k'>THESIS</subfield>
+      <subfield code='o'>8</subfield>
+      <subfield code='x'>02</subfield>
+      <subfield code='h'>Thesis Nuc.Eng 2021 Ph.D.</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='961'>
+      <subfield code='a'> 2021 </subfield>
+      <subfield code='a'> xx  </subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='969'>
+      <subfield code='a'>1256663507</subfield>
+    </datafield>
+    <datafield ind1='0' ind2='0' tag='992'>
+      <subfield code='a'>Supervised by Lin-wen Hu.</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='994'>
+      <subfield code='a'>C0</subfield>
+      <subfield code='b'>MYG</subfield>
+    </datafield>
+    <datafield ind1='8' ind2=' ' tag='852'>
+      <subfield code='b'>ARC</subfield>
+      <subfield code='c'>NOLN3</subfield>
+      <subfield code='k'>THESIS</subfield>
+      <subfield code='h'>Thesis Nuc.Eng 2021 Ph.D.</subfield>
+      <subfield code='8'>22471533940006761</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='900'>
+      <subfield code='5'>POD</subfield>
+      <subfield code='b'>MCM</subfield>
+    </datafield>
+  </record>
+</records>
