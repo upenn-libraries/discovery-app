@@ -113,6 +113,10 @@ module PennLib
         Dir.glob %W[#{@newest_stream}*.xml.gz #{@newest_stream}marcxml]
       end
 
+      def to_s
+        @name
+      end
+
       private
 
       def indexer_class

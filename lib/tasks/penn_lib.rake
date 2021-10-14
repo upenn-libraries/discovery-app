@@ -36,7 +36,7 @@ namespace :pennlib do
       end
     end
 
-    desc 'Index MARC files from organizations POD folder using Traject'
+    desc 'Index all MARC files from organizations POD folder using Traject'
     task index_from_pod: :environment do |_t, args|
       organizations = args.to_a.first.split(' ')
       dryrun = organizations.delete 'dry-run'
@@ -58,8 +58,71 @@ namespace :pennlib do
             gz.close
           end
           puts "Finished indexing #{organization} at #{DateTime.now}"
+
           # TODO: commit to Solr index
         end
+      end
+    end
+
+    desc 'Index subset of MARC records from organization POD folder using Traject'
+    task index_subset_from_pod: :environment do |_t, args|
+      organizations = args.to_a.first.split(' ')
+      dryrun = organizations.delete 'dry-run'
+      organizations.each do |org_name|
+        organization = PennLib::Pod::Organization.new org_name
+        indexer = organization.indexer.new
+        next unless organization.should_index?
+
+        # building an array like this in memory is painful, but how better to limit our subset when using
+        # a MarcReader ?
+        org_record_hashes = []
+
+        records_to_index = 1_000
+        organization.newest_stream_gzfiles.each do |file|
+          puts "File to index: #{file}"
+          File.open(file) do |f|
+            gz = Zlib::GzipReader.new(f)
+            reader = Traject::MarcReader.new gz, SolrMarc.indexer.settings
+            reader.each do |rec|
+              org_record_hashes << indexer.map_record(rec)
+              puts "#{organization} record #{org_records.length}"
+              break if org_record_hashes.length >= records_to_index
+            end
+            gz.close
+          end
+        end
+
+        unless org_record_hashes.any?
+          puts "No records found for #{organization}"
+          next
+        end
+
+        # sample records - disabled since reading all the marc into an Array is insane
+        # puts "Files contains #{org_records.length} records. Sampling #{records_to_index} records."
+        # selected_org_records = org_records.sample records_to_index
+
+        if dryrun
+          puts "Skipping indexing for #{organization} due to dryrun param"
+          next
+        end
+
+        # Sample and index records for organization
+        # Can't use process_with - unavailable in pinned traject version
+        # writer = Traject::SolrJsonWriter
+        # indexer.process_with org_records, writer,
+        #                      on_skipped: lambda { |context|
+        #                        puts "Skipped: #{context.record_inspect}"
+        #                      },
+        #                      rescue_with: lambda { |context, exception|
+        #                        puts "Error #{exception} in #{context.record_inspect}"
+        #                      }
+
+        # How to do indexing???
+        writer = Traject::SolrJsonWriter
+
+        # TODO: index
+
+        puts "Finished indexing #{organization} at #{DateTime.now}"
       end
     end
 
