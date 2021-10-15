@@ -8,10 +8,10 @@ class SolrDocument
   include ExpandedDocs
 
   # The following shows how to setup this blacklight document to display marc documents
-  extension_parameters[:marc_source_field] = :marcrecord_xml
+  extension_parameters[:marc_source_field] = :marcrecord_text
   extension_parameters[:marc_format_type] = :marcxml
   use_extension(Blacklight::Solr::Document::Marc) do |document|
-    document.key?(:marcrecord_xml)
+    document.key?(:marcrecord_text)
   end
 
   field_semantics.merge!(
