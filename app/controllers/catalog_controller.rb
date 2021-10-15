@@ -48,6 +48,7 @@ class CatalogController < ApplicationController
     empty_hld_count_isort
     itm_count_isort
     nocirc_a
+    record_source_f
   ].join(',')
 
   # expire session if needed
@@ -102,7 +103,7 @@ class CatalogController < ApplicationController
         # this approach needs expand.field=cluster_id
         #cluster: %q~NOT ({!join from=cluster_id to=cluster_id v='record_source_f:"Penn"'} AND record_source_f:"HathiTrust") NOT record_source_id:3~,
         # cluster: '{!bool filter=*:* must_not=\'{!bool filter=\\\'{!join from=cluster_id to=cluster_id v=record_source_id:1}\\\' filter=record_source_id:2}\'}',
-        cluster: '{!tieredDomainDedupe f=record_source_f joinField=cluster_id v=Penn,Brown,Chicago,Columbia,Cornell,Duke,Harvard,Princeton,Stanford,HathiTrust}',
+        cluster: '{!tieredDomainDedupe f=record_source_f joinField=cluster_id v=Penn,Brown,Chicago,Columbia,Cornell,Dartmouth,Duke,Harvard,MIT,Princeton,Stanford,HathiTrust}',
         back: '{!query v=$correlation_domain}',
         # NOTE: correlation_domain is separately defined from correlation_domain_refine so that the latter may be applied
         # and selectively excluded (via excludeTags) for reporting counts over the full cluster domain, while calculating
@@ -395,13 +396,16 @@ class CatalogController < ApplicationController
         'Online' => { :label => 'Online', :fq => "{!join ex=orig_q from=cluster_id to=cluster_id v='{!term f=access_f v=Online}'}"},
         'At the library' => { :label => 'At the library', :fq => "{!join ex=orig_q from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"},
     }
-    config.add_facet_field 'record_source_f', label: 'Record Source', collapse: false, solr_params: MINCOUNT, query: {
-        # NOTE: joins here are similarly relevant to the `access_f` case (see above), but with the exception that records from the
-        # "top-priority" source are all guaranteed to have the same value for this field, so can be optimized to a simple term query
-        # (because there can be nothing to meaningfully "cross-pollinate")
-        'HathiTrust' => { :label => 'HathiTrust', :fq => "{!join ex=orig_q from=cluster_id to=cluster_id v='{!term f=record_source_f v=HathiTrust}'}"},
-        'Penn' => { :label => 'Penn', :fq => "{!term f=record_source_f v=Penn}"},
-    }
+
+    config.add_facet_field 'record_source_f', label: 'Record Source', collapse: false
+    # config.add_facet_field 'record_source_f', label: 'Record Source', collapse: false, solr_params: MINCOUNT, query: {
+    #     # NOTE: joins here are similarly relevant to the `access_f` case (see above), but with the exception that records from the
+    #     # "top-priority" source are all guaranteed to have the same value for this field, so can be optimized to a simple term query
+    #     # (because there can be nothing to meaningfully "cross-pollinate")
+    #     'HathiTrust' => { :label => 'HathiTrust', :fq => "{!join ex=orig_q from=cluster_id to=cluster_id v='{!term f=record_source_f v=HathiTrust}'}"},
+    #     'Penn' => { :label => 'Penn', :fq => "{!term f=record_source_f v=Penn}"},
+    # }
+
     config.add_facet_field 'format_f', label: 'Format', limit: 20, collapse: false, :ex => 'orig_q', solr_params: MINCOUNT, partial: "format_facet"
     config.add_facet_field 'author_creator_f', label: 'Author/Creator', limit: 5, index_range: 'A'..'Z', collapse: false,
         :ex => 'orig_q', solr_params: MINCOUNT
@@ -501,8 +505,8 @@ class CatalogController < ApplicationController
         { dynamic_name: 'manufacture_display', label: 'Manufacture' },
         { name: 'contained_within_a', label: 'Contained in' },
         { name: 'format_a', label: 'Format/Description' },
-        { name: 'record_source_id', label: 'Source', helper_method: :record_source_map },
-        { name: 'oclc_id', label: 'OCLC' },
+        { name: 'record_source_f', label: 'Source', },
+        # { name: 'oclc_id', label: 'OCLC' },
         # in this view, 'Online resource' is full_text_link; note that
         # 'Online resource' is deliberately different here from what's on show view
         # { dynamic_name: 'full_text_links_for_cluster_display', label: 'Online resource', helper_method: 'render_online_resource_display_for_index_view' },

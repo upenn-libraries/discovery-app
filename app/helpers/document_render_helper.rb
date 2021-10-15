@@ -25,14 +25,6 @@ module DocumentRenderHelper
     render_values_with_breaks(options[:value] + options[:document].fetch('author_880_a', []))
   end
 
-  def record_source_map(options)
-    inst = options[:value].first
-    BaseIndexer::RecordSource.constants(false).each do |const|
-      inst_int = BaseIndexer::RecordSource.const_get(const)
-      return const.to_s.humanize if inst_int == inst
-    end
-  end
-
   def render_electronic_holdings(options)
     buf = ''
     electronic_holdings = options[:value]
