@@ -705,7 +705,7 @@ body header #search-navbar div.container {
   font-weight: normal;
 }
 
-ul.footerlinks {
+ul.footerlinks, ul.other-view-links {
   list-style-image: none;
   list-style-type: none;
   margin-bottom: 0;
@@ -713,6 +713,9 @@ ul.footerlinks {
   margin-right: 0;
   margin-top: 0;
   padding-left: 0;
+  li {
+    display: inline;
+  }
 }
 
 .footerlinks li {

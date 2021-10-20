@@ -94,11 +94,15 @@
         <dd class="blacklight-<%= field_name.parameterize %>"><%= doc_presenter.field_value field_name %></dd>
       <% end -%>
     <% end -%>
-    <dt class="blacklight-other-views">Other views:</dt>
+    <dt class="blacklight-other-views">Other:</dt>
     <dd class="blacklight-other-views">
-      <%= render_filtered_partials blacklight_config.show.staff_view, {document: @document} do |config, inner| %>
-        <%= inner %>
-      <% end %>
+      <ul class="other-view-links">
+        <li>
+        <%= render_filtered_partials blacklight_config.show.staff_view, {document: @document} do |config, inner| %>
+          <%= inner %>
+        <% end %>
+        </li>
+      </ul>
     </dd>
   </dl>
 </div>
