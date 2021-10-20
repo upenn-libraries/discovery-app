@@ -713,9 +713,10 @@ ul.footerlinks, ul.other-view-links {
   margin-right: 0;
   margin-top: 0;
   padding-left: 0;
-  li {
-    display: inline;
-  }
+}
+
+ul.other-view-links li {
+  display: inline;
 }
 
 .footerlinks li {
