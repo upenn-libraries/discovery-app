@@ -83,13 +83,16 @@ li.blacklight-format_a {
   img {
     float: right;
     padding-top: 7px;
+    margin-left: 10px;
     @media (min-width: 610px) {
+      max-width: 100px;
       padding-top: 20px;
+      max-height: 180px;
     }
     @media (min-width: 700px) {
-        max-width: 90px;
-        max-height: 200px;
-        margin-bottom: 50px
+      max-width: 115px;
+      max-height: 200px;
+      margin-bottom: 50px
     }
   }
 }
@@ -111,7 +114,11 @@ li.blacklight-format_a {
 .record-title-row-cover {
   width: 100%;
   @media (min-width: 610px) {
-    width: calc(100% - 100px);
+    width: calc(100% - 115px);
+    float: left;
+  }
+  @media (min-width: 700px) {
+    width: calc(100% - 130px);
     float: left;
   }
 }
