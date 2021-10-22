@@ -110,8 +110,8 @@ module Illiad
 
     # @param [String] comment
     # @param [String] transaction_number form Illiad response when creating transaction
-    # @param [String] user_id
-    def add_note(transaction_number, comment, user_id)
+    # @param [String, NilClass] user_id
+    def add_note(transaction_number, comment, user_id = nil)
       unless transaction_number
         Honeybadger.notify 'add_note called with no transaction_number!'
         return
@@ -119,11 +119,11 @@ module Illiad
 
       # TODO: ugly
       proper_transaction_number = transaction_number.sub /^ILLIAD/, ''
-      comment_with_user = comment + " - comment submitted by #{user_id}"
+      comment += " - comment submitted by #{user_id}" if user_id
       options = @default_options
       options[:body] = {
         'NoteType' => NOTE_TYPE,
-        'Note' => comment_with_user
+        'Note' => comment
       }
       note_url = "/transaction/#{proper_transaction_number}/notes"
       respond_to self.class.post(note_url, options)
