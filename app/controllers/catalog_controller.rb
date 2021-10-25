@@ -343,8 +343,8 @@ class CatalogController < ApplicationController
                            :if => database_selected,
                            :facet_type => :database, solr_params: MINCOUNT
     # NOTE: set facet_type=nil below, to bypass normal facet display
-    config.add_facet_field 'subject_specialists', label: 'Subject Area Correlation', collapse: true, :facet_type => nil,
-        :json_facet => PennLib::SubjectSpecialists::QUERIES, :if => actionable_filters
+    config.add_facet_field 'subject_specialists', label: 'Subject Area Correlation', collapse: true, facet_type: nil,
+        json_facet: PennLib::SubjectSpecialistsQueries::SOLR_QUERIES, if: actionable_filters
 
     config.add_facet_field 'subject_correlation',
                            label: 'Subject Correlation',

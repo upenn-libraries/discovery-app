@@ -21,6 +21,10 @@ module Illiad
       @note = params[:comments]
     end
 
+    def type
+      :illiad
+    end
+
     # for POSTing to API
     # @return [Hash]
     def to_h
@@ -92,7 +96,9 @@ module Illiad
         body[:LoanTitle] = body[:LoanTitle].prepend('BBM ')
         body[:ItemInfo1] = 'Books by Mail'
       elsif @data[:delivery] == OFFICE_DELIVERY
-        # TODO: for now, don't do anything for Office Delivery
+        # Also set ItemInfo1 to BBM for Office delivery
+        # It doesn't make sense, but this is what Lapis desires
+        body[:ItemInfo1] = 'Books by Mail'
       end
       body
     end

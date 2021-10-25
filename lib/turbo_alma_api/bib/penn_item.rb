@@ -4,24 +4,6 @@ module TurboAlmaApi
   module Bib
     # sprinkle additional and Penn-specific behavior on top of Alma::BibItem
     class PennItem < Alma::BibItem
-      PICKUP_LOCATIONS = [
-        ['Van Pelt Library', 'VanPeltLib'],
-        ['Lockers at Van Pelt Library', 'VPLOCKER'],
-        ['Annenberg Library', 'AnnenLib'],
-        ['Athenaeum Library', 'AthLib'],
-        ['Biotech Commons', 'BiomLib'],
-        ['Chemistry Library', 'ChemLib'],
-        ['Dental Medicine Library', 'DentalLib'],
-        ['Lockers at Dental Medicine Library', 'DENTLOCKER'],
-        ['Fisher Fine Arts Library', 'FisherFAL'],
-        ['Library at the Katz Center', 'KatzLib'],
-        ['Math/Physics/Astronomy Library', 'MPALib'],
-        ['Museum Library', 'MuseumLib'],
-        ['Ormandy Music and Media Center', 'MusicLib'],
-        ['Pennsylvania Hospital Library', 'PAHospLib'],
-        ['Veterinary Library - New Bolton Center', 'VetNBLib'],
-        ['Veterinary Library - Penn Campus', 'VetPennLib'],
-      ]
       IN_HOUSE_POLICY_CODE = 'InHouseView'
       # Rudimentary list of material types unsuitable for Scan & Deliver
       UNSCANNABLE_MATERIAL_TYPES = %w[
@@ -188,7 +170,7 @@ module TurboAlmaApi
       end
 
       # @return [TrueClass, FalseClass]
-      def aeon_requestable?
+     def aeon_requestable?
         aeon_site_codes = PennLib::BlacklightAlma::CodeMappingsSingleton.instance.code_mappings.aeon_site_codes
         location = if item_data.dig('location', 'value')
                      item_data['location']['value']

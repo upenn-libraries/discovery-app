@@ -8,7 +8,7 @@ class AbstractRequest
     Illiad::Request::ELECTRONIC_DELIVERY,
     Illiad::Request::OFFICE_DELIVERY
   ]
-  ALMA_DELIVERY_OPTIONS = %w[pickup].freeze
+  ALMA_FULFILLMENT_OPTIONS = %w[pickup college_house].freeze
 
   class RequestFailed < StandardError; end
 
@@ -71,7 +71,7 @@ class AbstractRequest
 
   # @return [TrueClass, FalseClass]
   def alma_fulfillment?
-    @params[:delivery].in? ALMA_DELIVERY_OPTIONS
+    @params[:delivery].in? ALMA_FULFILLMENT_OPTIONS
   end
 
   # @return [TrueClass, FalseClass]

@@ -103,7 +103,7 @@ module TurboAlmaApi
       def offset_for(request_number)
         return 0 if request_number == 1
 
-        (ITEMS_PER_REQUEST * (request_number - 1)) + 1
+        (ITEMS_PER_REQUEST * (request_number - 1))
       end
 
       # @param [Hash] options

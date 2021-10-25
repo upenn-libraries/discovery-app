@@ -23,6 +23,7 @@ en:
       request_to_view: "Request to View"
     delivery_messages:
       bbm_html: "Users must <a href='https://upenn.libwizard.com/f/books-by-mail' target='_blank'>register for Books by Mail</a> before submitting requests."
+      chd_html: "Users must <a href='https://docs.google.com/forms/d/e/1FAIpQLSfp_5hw88ZGEeCoak-L2dwtgGKAwmn5BbBJhNDB9-5JQ-jiPQ/viewform' target='_blank'>register for College House Delivery</a> before submitting requests."
       office_no_address_html: "You do not have a preferred Faculty Express delivery address. Please set one up by contacting <a href='mailto:pld@pobox.upenn.edu'>Faculty Express</a>"
       office_html: "If this is not your preferred delivery address, please contact <a href='mailto:pld@pobox.upenn.edu'>Faculty Express</a>"
       pap_html: "<a href='https://guides.library.upenn.edu/circulation/PickUpatPenn' target='_blank'>PickUp@Penn service</a>"
@@ -72,5 +73,7 @@ en:
       add_comments: "Add Comments"
       mail_delivery: "Mail Delivery"
       office_delivery: "Office Delivery"
+      college_house_delivery: "College House Delivery"
       pickup: "Pickup at Penn"
       registered_bbm: "I am a registered Books by Mail user"
+      registered_chd: "I am a registered College House Delivery user"
