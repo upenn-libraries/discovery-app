@@ -71,7 +71,8 @@ module TurboAlmaApi
 
       # @return [TrueClass, FalseClass]
       def in_house_use_only?
-        item_data.dig('policy', 'value') == IN_HOUSE_POLICY_CODE
+        item_data.dig('policy', 'value') == IN_HOUSE_POLICY_CODE ||
+          holding_data.dig('temp_policy', 'value') == IN_HOUSE_POLICY_CODE
       end
 
       # This is tailored to the user_id, if provided
@@ -183,13 +184,15 @@ module TurboAlmaApi
       # @return [TrueClass, FalseClass]
       # TODO: also check item policy?
       def on_reserve?
+        item_data.dig('policy', 'value') == 'reserve' ||
         holding_data.dig('temp_policy', 'value') == 'reserve'
       end
 
       # @return [TrueClass, FalseClass]
       # TODO: also consider temp_policy?
       def at_reference?
-        item_data.dig('policy', 'value') == 'reference'
+        item_data.dig('policy', 'value') == 'reference' ||
+          holding_data.dig('temp_policy', 'value') == 'reference'
       end
 
       # @return [TrueClass, FalseClass]
