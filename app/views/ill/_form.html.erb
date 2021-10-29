@@ -1,0 +1,21 @@
+<%= bootstrap_form_tag url: '/ill' do |f| %>
+  <% f.static_control label: 'Name' do %>
+    Name
+  <% end %>
+  <%= f.email_field :email %>
+  <%= f.phone_field :phone %>
+  <% f.static_control label: 'Affiliation' do %>
+    Affiliation
+  <% end %>
+  <%= f.text_field :title, value: @request.title %>
+  <%= f.text_field :author, value: @request.author %>
+  <%= f.text_field :edition, value: @request.edition %>
+  <%= f.text_field :publisher, value: @request.publisher %>
+  <%= f.text_field :pub_place, value: @request.pub_place %>
+  <%= f.text_field :pub_date, value: @request.pub_date %>
+  <%= f.text_field :isxn, value: @request.isxn %>
+  <%= f.text_field :citation_source, value: @request.citation_source %>
+  <%= f.text_area :comments %>
+
+  <%= f.submit %>
+<% end %>

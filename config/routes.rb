@@ -55,6 +55,8 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :ill, except: %w[edit update]
+
   # Items API
   get 'alma/items/:mms_id/all', to: 'items#all'
   get 'alma/bib/:mms_id/holding/:holding_id/item/:item_pid', to: 'items#one'

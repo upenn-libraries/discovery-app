@@ -96,6 +96,14 @@ module MockAlmaApi
     )
   end
 
+  def stub_bib_get
+    stub(
+      :get,
+      'https://api-na.hosted.exlibrisgroup.com/almaws/v1/bibs?mms_id=12345',
+      'alma/bib_get_success.json'
+    )
+  end
+
   def stub_bib_request_options
     stub(
       :get,

@@ -1,0 +1,50 @@
+{
+  "holding": [
+    {
+      "holding_id": "22332044960003681",
+      "library": {
+        "value": "Libra",
+        "desc": "LIBRA"
+      },
+      "location": {
+        "value": "stor",
+        "desc": "LIBRA"
+      },
+      "call_number": "330.202 H18",
+      "suppress_from_publishing": "false",
+      "link": "https://api-na.hosted.exlibrisgroup.com/almaws/v1/bibs/997735763503681/holdings/22332044960003681"
+    },
+    {
+      "holding_id": "22332044940003681",
+      "library": {
+        "value": "VanPeltLib",
+        "desc": "Van Pelt Library"
+      },
+      "location": {
+        "value": "vanp",
+        "desc": "Van Pelt Library"
+      },
+      "call_number": "HB235.S75 H3",
+      "suppress_from_publishing": "false",
+      "link": "https://api-na.hosted.exlibrisgroup.com/almaws/v1/bibs/997735763503681/holdings/22332044940003681"
+    }
+  ],
+  "bib_data": {
+    "title": "American treasure and the price revolution in Spain, 1501-1650 /",
+    "author": "Hamilton, Earl J.",
+    "publisher": "Harvard university press,",
+    "mms_id": "997735763503681",
+    "issn": null,
+    "network_number": [
+      "(PU)773576-penndb-Voyager",
+      "773576",
+      "(CaOTULAS)147063618",
+      "(OCoLC)3123964",
+      "(OCoLC)ocm03123964"
+    ],
+    "place_of_publication": "Cambridge, Mass.,",
+    "date_of_publication": "1934.",
+    "link": "https://api-na.hosted.exlibrisgroup.com/almaws/v1/bibs/997735763503681"
+  },
+  "total_record_count": 2
+}
