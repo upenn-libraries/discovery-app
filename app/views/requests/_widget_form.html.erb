@@ -10,6 +10,7 @@
       <div class="tooltip-wrapper disabled" data-toggle="tooltip" data-placement="bottom" title="<%= t('requests.tooltips.request_in_print') %>">
         <button type="submit" class="print-request-button btn btn-default request-button" value="print" style="display: none;" disabled><%= t('requests.buttons.print_request') %></button>
       </div>
+      <% unless user_is_courtesy_borrower? %>
       <button type="submit" class="aeon-request-button btn btn-default request-button" value="aeon" style="display: none;" disabled><%= t('requests.buttons.request_to_view') %></button>
       <div class="tooltip-wrapper disabled" data-toggle="tooltip" data-placement="bottom" title="<%= t('requests.tooltips.request_electronic') %>">
         <button type="submit" class="electronic-request-button btn btn-default request-button" style="display: none;"
@@ -17,6 +18,7 @@
           <%= t('requests.buttons.electronic_request') %>
         </button>
       </div>
+      <% end %>
       <% unless current_user %>
         <div class="btn-group">
           <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
