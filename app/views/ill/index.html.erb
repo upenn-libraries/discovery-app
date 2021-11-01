@@ -1,0 +1,25 @@
+<h2>Your ILL Requests</h2>
+
+<p>
+  You have <%= @requests.length %> Illiad requests of any status.
+</p>
+
+<div class="table-responsive">
+  <table class="table table-hover">
+    <thead>
+    <tr>
+      <th>Title</th>
+      <th>Author</th>
+      <th>Type</th>
+      <th>Status</th>
+      <th>Date Submitted</th>
+      <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% @requests.each do |req| %>
+      <%= render 'request', request: req %>
+    <% end %>
+    </tbody>
+  </table>
+</div>

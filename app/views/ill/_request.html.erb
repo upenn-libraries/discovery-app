@@ -1,0 +1,20 @@
+<tr>
+  <td>
+    <%= request['LoanTitle'] || request['PhotoJournalTitle'] %>
+  </td>
+  <td>
+    <%= request['LoanAuthor'] %>
+  </td>
+  <td>
+    <%= request['RequestType'] %>
+  </td>
+  <td>
+    <%= request['TransactionStatus'] %>
+  </td>
+  <td>
+    <%= request['CreationDate'] %>
+  </td>
+  <td>
+    <%= link_to 'View', ill_path(request['TransactionNumber']) %>
+  </td>
+</tr>

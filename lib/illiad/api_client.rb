@@ -47,6 +47,16 @@ module Illiad
           parsed_response['TransactionNumber'].to_s.prepend('ILLIAD') }
     end
 
+    def transactions(user_id)
+      response = self.class.get "/transaction/userrequests/#{user_id}?$orderby=CreationDate desc", @default_options
+      Oj.load response.body # TODO: handle errors
+    end
+
+    def get_transaction(transaction_id)
+      response = self.class.get "/transaction/#{transaction_id}", @default_options
+      Oj.load response.body
+    end
+
     # Get user info from Illiad
     # @param [String] user_id
     # @return [Hash, nil] parsed response

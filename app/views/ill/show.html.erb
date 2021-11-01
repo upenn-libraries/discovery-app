@@ -1,0 +1,21 @@
+<h2>ILL Request</h2>
+
+
+<dl>
+  <dt>
+    Transaction Number
+  </dt>
+  <dd>
+    <%= @request['TransactionNumber'] %>
+  </dd>
+  <dt>
+    Title
+  </dt>
+  <dd>
+    <%= @request['LoanTitle'] || @request['PhotoJournalTitle'] %>
+  </dd>
+</dl>
+
+<div class="well">
+  <%= @request %>
+</div>

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class IllController < ApplicationController
+  before_action :user_check
+
   # show form to create a new request
   def new
     @request = RequestItem.new
@@ -19,16 +21,26 @@ class IllController < ApplicationController
 
   # show request info, confirmation?
   def show
-    render text: 'Show ILL request info'
+    @request = Illiad::ApiClient.new.get_transaction params[:id]
   end
 
   # list requests, etc.
   def index
-    render text: 'Open ILL requests'
+    @requests = Illiad::ApiClient.new.transactions session['id']
   end
 
   # cancel/remove request
   def destroy
 
+  end
+
+  private
+
+  def user_check
+    if session['id'].present? && session['user_group'] != 'Courtesy Borrower'
+      return true
+    end
+
+    redirect_to root_url, alert: 'Sorry, you must be logged in as an approved Penn Libraries patron to use ILL services.'
   end
 end
