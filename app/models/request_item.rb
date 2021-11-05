@@ -5,6 +5,9 @@ class RequestItem
 
   MAPPED_ILL_FORM_ELEMENTS = %w[title edition author publisher pub_place pub_date isxn citation_source]
 
+  BOOK_TYPE = :book
+  ARTICLE_TYPE = :article
+
   delegate *MAPPED_ILL_FORM_ELEMENTS, to: :@source_object
 
   def populate_from(params)
@@ -24,9 +27,21 @@ class RequestItem
     BibRequest.new mmsid_from_params
   end
 
+  def type
+    if book_request?
+      return BOOK_TYPE
+    end
+
+    ARTICLE_TYPE
+  end
+
   private
 
+  def book_request?
+    @params[:requesttype] == 'book'
+  end
+
   def mmsid_from_params
-    @params['bibid'].presence || @params['mmsid'].presence
+    @params[:bibid].presence || @params[:mmsid].presence
   end
 end
