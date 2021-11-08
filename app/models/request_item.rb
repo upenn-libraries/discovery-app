@@ -3,10 +3,13 @@
 # a representation of an item suitable for creating a Request (AbstractRequest? IlliadRequest?)
 class RequestItem
 
-  MAPPED_ILL_FORM_ELEMENTS = %w[title edition author publisher pub_place pub_date isxn citation_source]
+  MAPPED_ILL_FORM_ELEMENTS = %w[
+    title edition author publisher pub_place pub_date isxn citation_source
+    journal_title article_title date volume issue pages
+  ]
 
-  BOOK_TYPE = :book
-  ARTICLE_TYPE = :article
+  BOOK_TYPE = 'book'
+  ARTICLE_TYPE = 'article'
 
   delegate *MAPPED_ILL_FORM_ELEMENTS, to: :@source_object
 

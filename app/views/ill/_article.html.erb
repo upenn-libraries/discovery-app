@@ -1,21 +1,7 @@
-<%= bootstrap_form_tag url: '/ill' do |f| %>
-  <% f.static_control label: 'Name' do %>
-    Name
-  <% end %>
-  <%= f.email_field :email %>
-  <%= f.phone_field :phone %>
-  <% f.static_control label: 'Affiliation' do %>
-    Affiliation
-  <% end %>
-  <%= f.text_field :journal_title, value: @request.journal_title %>
-  <%= f.text_field :article_title, value: @request.article_title %>
-  <%= f.text_field :author, value: @request.author %>
-  <%= f.text_field :date, value: @request.data %>
-  <%= f.text_field :volume, value: @request.volume %>
-  <%= f.text_field :issue, value: @request.issue %>
-  <%= f.text_field :pages, value: @request.pages %>
-  <%= f.text_field :citation_source, value: @request.citation_source %>
-  <%= f.text_area :comments %>
-
-  <%= f.submit %>
-<% end %>
+<%= form.text_field :journal_title, value: request.journal_title %>
+<%= form.text_field :article_title, value: request.article_title %>
+<%= form.text_field :author, value: request.author %>
+<%= form.text_field :date, value: request.date %>
+<%= form.text_field :volume, value: request.volume %>
+<%= form.text_field :issue, value: request.issue %>
+<%= form.text_field :pages, value: request.pages %>

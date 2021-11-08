@@ -1,17 +1,9 @@
-<%= bootstrap_form_tag url: '/ill' do |f| %>
-  <% f.static_control label: 'Name' do %>
-    Name
-  <% end %>
-  <%= f.email_field :email %>
-  <%= f.phone_field :phone %>
-  <% f.static_control label: 'Affiliation' do %>
-    Affiliation
-  <% end %>
-
-  <%= render partial: @request.type %> <%# :book or :article  %>
-
-  <%= f.text_field :citation_source, value: @request.citation_source %>
-  <%= f.text_area :comments %>
-
-  <%= f.submit %>
-<% end %>
+<%= form.text_field :title, value: request.title %>
+<%= form.text_field :author, value: request.author %>
+<%= form.text_field :edition, value: request.edition %>
+<%= form.text_field :publisher, value: request.publisher %>
+<%= form.text_field :pub_place, value: request.pub_place %>
+<%= form.text_field :pub_date, value: request.pub_date %>
+<%= form.text_field :isxn, value: request.isxn %>
+<%= form.text_field :citation_source, value: request.citation_source %>
+<%= form.text_area :comments %>

@@ -15,6 +15,6 @@
     <%= request['CreationDate'] %>
   </td>
   <td>
-    <%= link_to 'View', ill_path(request['TransactionNumber']) %>
+    <%= link_to 'View', ill_path(request['TransactionNumber']), class: 'btn btn-sm btn-primary' %>
   </td>
 </tr>

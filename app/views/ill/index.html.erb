@@ -1,7 +1,11 @@
 <h2>Your ILL Requests</h2>
 
 <p>
-  You have <%= @requests.length %> Illiad requests of any status.
+  <%= link_to 'Submit a new Request', new_ill_path, class: 'btn btn-sm btn-primary' %>
+</p>
+
+<p>
+  You have <span class="badge badge-primary"><%= @requests.length %></span> Illiad requests of any status.
 </p>
 
 <div class="table-responsive">

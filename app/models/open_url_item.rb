@@ -11,7 +11,12 @@ class OpenURLItem
     isxn: %w[ISSN issn rft.issn ISBN isbn rft.isbn],
     citation_source: %w[sid rfr_id],
     # article
-    # TODO:
+    journal_title: %w[Journal journal rft.btitle rft.jtitle rft.title title],
+    article_title: %w[Article article atitle rft.atitle],
+    date: %w[], # TODO: complicated
+    volume: %w[Volume volume rft.volume],
+    issue: %w[Issue issue rft.issue],
+    pages: %w[Pages pages]  # TODO: could have (rft.)spage and (rft.)epage
   }
 
   attr_reader :params

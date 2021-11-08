@@ -1,0 +1,17 @@
+<%= bootstrap_form_tag url: '/ill' do |f| %>
+  <%= f.static_control label: 'Name' do %>
+    <%= session['first_name'] %>
+  <% end %>
+  <%= f.static_control label: 'Affiliation' do %>
+    <%= session['user_group'] %>
+  <% end %>
+  <%= f.email_field :email, value: session['email'] %>
+  <%= f.phone_field :phone %>
+
+  <%= render partial: @request.type, locals: { form: f, request: @request } %>
+
+  <%= f.text_field :citation_source, value: @request.citation_source %>
+  <%= f.text_area :comments %>
+
+  <%= f.submit class: 'btn btn-primary' %>
+<% end %>
