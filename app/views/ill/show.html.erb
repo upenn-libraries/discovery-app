@@ -1,5 +1,8 @@
 <h2>ILL Request</h2>
 
+<% if @request['TransactionStatus'] == 'Delivered to Web' %>
+  <%= link_to 'Download PDF', pdf_download_url(@request['TransactionNumber']), class: 'btn btn-primary' %>
+<% end %>
 
 <dl>
   <dt>
