@@ -4,7 +4,8 @@ module TurboAlmaApi
   module Bib
     # sprinkle additional and Penn-specific behavior on top of Alma::BibItem
     class PennItem < Alma::BibItem
-      # List of material types unsuitable for Scan & Deliver
+      IN_HOUSE_POLICY_CODE = 'InHouseView'
+      # Rudimentary list of material types unsuitable for Scan & Deliver
       UNSCANNABLE_MATERIAL_TYPES = %w[
         RECORD DVD CDROM BLURAY BLURAYDVD LP FLOPPY_DISK DAT GLOBE
         AUDIOCASSETTE VIDEOCASSETTE HEAD LRDSC CALC KEYS RECORD
@@ -38,12 +39,15 @@ module TurboAlmaApi
       # @return [TrueClass, FalseClass]
       def checkoutable?
         in_place? &&
-          # !non_circulating? &&
           !not_loanable? &&
-          !aeon_requestable?
+          !aeon_requestable? &&
+          !on_reserve? &&
+          !at_reference? &&
+          !in_house_use_only?
       end
 
       # Penn uses "Non-circ" in Alma
+      # @return [TrueClass, FalseClass]
       def non_circulating?
         circulation_policy.include?('Non-circ')
       end
@@ -66,7 +70,13 @@ module TurboAlmaApi
       end
 
       # @return [TrueClass, FalseClass]
+      def in_house_use_only?
+        item_data.dig('policy', 'value') == IN_HOUSE_POLICY_CODE ||
+          holding_data.dig('temp_policy', 'value') == IN_HOUSE_POLICY_CODE
+      end
+
       # This is tailored to the user_id, if provided
+      # @return [TrueClass, FalseClass]
       def not_loanable?
         user_due_date_policy&.include? 'Not loanable'
       end
@@ -100,7 +110,7 @@ module TurboAlmaApi
                          physical_material_type['desc'],
                          public_note,
                          user_policy_display(user_due_date_policy),
-                         location_name
+                         library_name
                        ]
                      else # no item data case - holding as item...
                        [
@@ -138,8 +148,14 @@ module TurboAlmaApi
 
       # @param [String] raw_policy
       def user_policy_display(raw_policy)
-        if raw_policy == 'Not loanable'
+        if (raw_policy == 'Not loanable') && !restricted_circ?
           'Restricted Access'
+        elsif on_reserve?
+          'On Reserve'
+        elsif at_reference?
+          'At Reference Desk'
+        elsif in_house_use_only?
+          'On Site Use Only'
         elsif !checkoutable?
           'Currently Unavailable'
         else
@@ -154,8 +170,8 @@ module TurboAlmaApi
         end
       end
 
-      # TODO: is this right? AlmaAvailability parses availability XML and gets a location_code
-      def aeon_requestable?
+      # @return [TrueClass, FalseClass]
+     def aeon_requestable?
         aeon_site_codes = PennLib::BlacklightAlma::CodeMappingsSingleton.instance.code_mappings.aeon_site_codes
         location = if item_data.dig('location', 'value')
                      item_data['location']['value']
@@ -163,6 +179,25 @@ module TurboAlmaApi
                      holding_data['location']['value']
                    end
         location.in? aeon_site_codes
+      end
+
+      # @return [TrueClass, FalseClass]
+      # TODO: also check item policy?
+      def on_reserve?
+        item_data.dig('policy', 'value') == 'reserve' ||
+        holding_data.dig('temp_policy', 'value') == 'reserve'
+      end
+
+      # @return [TrueClass, FalseClass]
+      # TODO: also consider temp_policy?
+      def at_reference?
+        item_data.dig('policy', 'value') == 'reference' ||
+          holding_data.dig('temp_policy', 'value') == 'reference'
+      end
+
+      # @return [TrueClass, FalseClass]
+      def restricted_circ?
+        on_reserve? || at_reference? || in_house_use_only?
       end
 
       def isxn
@@ -180,9 +215,14 @@ module TurboAlmaApi
           'holding_id' => holding_data['holding_id'],
           'circulate' => checkoutable?,
           'call_number' => call_number,
-          'library' => location_name,
+          'location' => location_name,
+          'library' => library_name,
           'due_date' => user_due_date_policy,
           'aeon_requestable' => aeon_requestable?,
+          'on_reserve' => on_reserve?,
+          'at_reference' => at_reference?,
+          'in_house_only' => in_house_use_only?,
+          'restricted_circ' => restricted_circ?,
           'volume' => volume,
           'issue' => issue,
           'isxn' => isxn,

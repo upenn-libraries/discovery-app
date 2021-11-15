@@ -6,7 +6,7 @@ class RequestsController < ApplicationController
 
   def confirm
     partial = partial_for_request_type params
-    set_ill_url if partial == 'ill'
+    set_ill_url if partial.in? %w[ill reserves]
     set_address_info if user_alma_group == 'Faculty Express'
     render "requests/confirm/#{partial}", layout: false
   end
@@ -52,6 +52,7 @@ class RequestsController < ApplicationController
     case params[:type].to_sym
     when :circulate
       params[:available] ? 'circulate' : 'ill'
+    when :noncirc then 'noncirc'
     when :ill then 'ill'
     when :electronic then 'electronic'
     when :aeon then 'aeon'
