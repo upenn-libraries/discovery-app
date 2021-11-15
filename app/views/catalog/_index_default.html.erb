@@ -39,11 +39,6 @@
   </div>
   <div class="col-xs-2 col-sm-3 col-md-2">
     <%= render_index_doc_actions document %>
-    <% cover_id_attrs = document.cover_id_attrs %>
-    <div class="cover-image <%= format_icon(document.fetch_format, size: 'large') %>" <%= cover_id_attrs[:markup] %>>
-      <%= image_tag("https://covers.openlibrary.org/b/id/#{cover_id_attrs[:ol_cover_id]}-M.jpg",
-                    :alt => "", :class => "") unless cover_id_attrs[:ol_cover_id].nil? %>
-    </div>
   </div>
 </div>
 <% if document.alma_mms_id.present? && !atom_request? %>

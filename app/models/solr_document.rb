@@ -94,17 +94,6 @@ class SolrDocument
     fetch('format_a', []).first
   end
 
-  def cover_id_attrs
-    markup = ''
-    isbns = fetch('isbn_a', [])
-    oclc = fetch('oclc_id', '')
-    ol_cover_id = fetch('ol_cover_id', nil)
-    markup += "data-isbns=#{isbns.join(',')} " unless isbns.blank?
-    markup += "data-oclc=#{oclc}" unless oclc.blank?
-    { oclc_id: oclc, isbns: isbns, markup: markup, ol_cover_id: ol_cover_id }
-  end
-
-
   def format_display
     @format_display ||= [ fetch('format_a') ] + pennlibmarc.get_format_display(to_marc)
   end

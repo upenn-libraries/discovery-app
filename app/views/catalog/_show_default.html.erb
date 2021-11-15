@@ -41,13 +41,6 @@
     </div>
       <% doc_presenter = show_presenter(document) %>
       <%= detect_nocirc(document) %>
-    <div class="book-cover-col">
-      <% cover_id_attrs = document.cover_id_attrs %>
-      <div class="cover-image" <%= cover_id_attrs[:markup] %>>
-        <%= image_tag("https://covers.openlibrary.org/b/id/#{cover_id_attrs[:ol_cover_id]}-M.jpg",
-                      :alt => "", :class => "") unless cover_id_attrs[:ol_cover_id].nil? %>
-      </div>
-    </div>
     <%# default partial to display solr document fields in catalog show view -%>
     <div class="record-main-details">
       <dl class="dl-horizontal dl-invert">
