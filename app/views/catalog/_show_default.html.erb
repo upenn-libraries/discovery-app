@@ -91,10 +91,15 @@
     <dd class="blacklight-other-views">
       <ul class="other-view-links">
         <li>
-        <%= render_filtered_partials blacklight_config.show.staff_view, {document: @document} do |config, inner| %>
+        <%= render_filtered_partials blacklight_config.show.staff_view, { document: @document } do |_config, inner| %>
           <%= inner %>
         <% end %>
         </li>
+        <% if show_cataloging_error_link?(@document) %>
+        | <li>
+          <%= cataloging_error_path(@document.alma_mms_id) %>
+        </li>
+        <% end %>
       </ul>
     </dd>
   </dl>

@@ -17,13 +17,6 @@ class RequestsController < ApplicationController
     render 'requests/done', layout: false
   end
 
-  def options
-    options = TurboAlmaApi::Client.request_options(
-      params[:mms_id].to_s, user_id
-    )
-    render json: options
-  end
-
   private
 
   def set_item

@@ -18,6 +18,7 @@ en:
       refworks: "To RefWorks"
       endnote: "To EndNote"
       ris: "In RIS format"
+      cataloging_error: "Report cataloging error"
   franklin:
     landing_page_title: "Franklin - University of Pennsylvania"
     pap_info_link: "https://guides.library.upenn.edu/circulation/PickUpatPenn"

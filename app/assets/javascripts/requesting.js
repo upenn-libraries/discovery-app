@@ -91,20 +91,6 @@ function initializeRequestingWidget($widgetArea, context) {
             // srt focus to first button - triggers tooltip :/
             // $widgetArea.find('button:first').focus();
         });
-
-        if(context === 'show') {
-            $.getJSON('/request/options?mms_id=' + mmsId, function(data) {
-                var $showTools = $('ul.other-view-links');
-                var ares_url = data['ARES'];
-                var enhance_url = data['ENHANCED'];
-                if(ares_url) {
-                    $showTools.append($('<li> | <a target="_blank" href="'+ ares_url +'">Place on Course Reserve</a></li>'));
-                }
-                if(enhance_url) {
-                    $showTools.append($('<li> | <a target="_blank" href="'+ enhance_url +'">Report Cataloging Error</a></li>'));
-                }
-            });
-        }
     }
 }
 

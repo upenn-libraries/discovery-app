@@ -61,4 +61,20 @@ module BlacklightHelper
     other_links.html_safe
   end
 
+  # @param [SolrDocument] doc
+  # @return [TrueClass, FalseClass]
+  def show_cataloging_error_link?(doc)
+    return false unless current_user
+
+    return false unless doc.alma_mms_id.present?
+
+    true
+  end
+
+  # @param [String] mms_id
+  # @return [String]
+  def cataloging_error_path(mms_id)
+    link_to t('blacklight.tools.cataloging_error'), "/redir/enhanced?bibid=#{mms_id}"
+  end
+
 end
