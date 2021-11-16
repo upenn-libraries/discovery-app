@@ -83,16 +83,16 @@
           fieldstruct.value.each do |val|
       %>
               <div class="form-group advanced-search-field">
-                <div class="col-sm-7">
-                  <input class="form-control" name="" type="text" value="<%= val %>"/>
+                <div class="col-sm-7"><label><span class="visually-hidden">Search text</span>
+                  <input class="form-control" name="" type="text" value="<%= val %>"/></label>
                 </div>
                 <div class="col-sm-1 label-alignment">in</div>
-                <div class="col-sm-4">
+                <div class="col-sm-4"><label><span class="visually-hidden">Field to search</span>
                   <select class="form-control col-sm-3" id="text_field_<%= limit %>">
                     <%- fieldstruct.fields.each do |key, field_def| -%>
                         <option value="<%= key %>" <% if fieldstruct.selected_field == key %>selected="selected"<% end %>><%= field_def.label %></option>
                     <%- end -%>
-                  </select>
+                  </select></label>
                 </div>
               </div>
           <%
@@ -102,16 +102,16 @@
             else
           %>
           <div class="form-group advanced-search-field">
-            <div class="col-sm-7">
-              <input class="form-control" name="" type="text" value="<%= fieldstruct.value %>"/>
+            <div class="col-sm-7"><label><span class="visually-hidden">Search text</span>
+              <input class="form-control" name="" type="text" value="<%= fieldstruct.value %>"/></label>
             </div>
             <div class="col-sm-1 label-alignment">in</div>
-            <div class="col-sm-4">
+            <div class="col-sm-4"><label><span class="visually-hidden">Field to search</span>
               <select class="form-control col-sm-3" id="text_field_<%= limit %>">
                 <%- fieldstruct.fields.each do |key, field_def| -%>
                     <option value="<%= key %>" <% if fieldstruct.selected_field == key %>selected="selected"<% end %>><%= field_def.label %></option>
                 <%- end -%>
-              </select>
+              </select></label>
             </div>
           </div>
       <%
@@ -126,20 +126,20 @@
   <% prepopulated_search_fields_for_advanced_search(5, is_numeric: true, min: 1).each do |fieldstruct| %>
       <div class="form-group advanced-search-field">
         <input type="hidden" name="" value=""/>
-        <div class="col-sm-3">
-          <input class="form-control start" id="numeric_start_<%= fieldstruct.index %>" type="text" value="<%= fieldstruct.value %>"/>
+        <div class="col-sm-3"><label><span class="visually-hidden">start date</span>
+          <input class="form-control start" id="numeric_start_<%= fieldstruct.index %>" type="text" value="<%= fieldstruct.value %>"/></label>
         </div>
         <div class="col-sm-1 label-alignment">to</div>
-        <div class="col-sm-3">
-          <input class="form-control end" id="numeric_end_<%= fieldstruct.index %>" type="text" value="<%= fieldstruct.value2 %>"/>
+        <div class="col-sm-3"><label><span class="visually-hidden">end date</span>
+          <input class="form-control end" id="numeric_end_<%= fieldstruct.index %>" type="text" value="<%= fieldstruct.value2 %>"/></label>
         </div>
         <div class="col-sm-1 label-alignment">in</div>
-        <div class="col-sm-4">
+        <div class="col-sm-4"><label><span class="visually-hidden">date field to search</span>
           <select class="form-control col-sm-3" id="numeric_field_<%= fieldstruct.index %>">
             <%- fieldstruct.fields.each do |key, field_def| -%>
                 <option value="<%= key %>" <% if fieldstruct.selected_field == key %>selected="selected"<% end %>><%= field_def.label %></option>
             <%- end -%>
-          </select>
+          </select></label>
         </div>
       </div>
 

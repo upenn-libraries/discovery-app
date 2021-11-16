@@ -4,22 +4,33 @@
   -moz-border-radius: 3px;
 }
 
+
 @mixin accessible-hide {
-  position:absolute;
-  left:-10000px;
-  top:auto;
-  width:1px;
-  height:1px;
-  overflow:hidden;
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  height: 0;
+  width: 0;
+  padding: 0;
+  border: 0;
+  margin: 0;
+  overflow: hidden;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+  &:focus {
+    @include accessible-unhide;
+  }
 }
+
+// Turns off the element-invisible effect.
 @mixin accessible-unhide {
-  position:static;
-  left:0;
-  top:auto;
-  width:auto;
-  height:auto;
-  overflow:visible;
+  position: static !important;
+  clip: auto;
+  height: auto;
+  width: auto;
+  overflow: auto;
 }
+
 @mixin inline-block {
   display: inline-block;
   *vertical-align: top;
