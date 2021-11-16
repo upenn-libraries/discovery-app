@@ -12,7 +12,7 @@
       <h3 class="index_title document-title-heading">
         <% if counter = document_counter_with_offset(document_counter) %>
           <span class="document-counter">
-            <%= counter %>
+            <%= counter %>.
           </span>
         <% end %>
         <%= link_to_document document, document_show_link_field(document), counter: counter %>
