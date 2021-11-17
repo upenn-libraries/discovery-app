@@ -43,7 +43,7 @@
     </div>
   </div>
 </div>
-<% if document.alma_mms_id.present? && !atom_request? %>
+<% if (document.alma_mms_id.present? || document.is_pod?) && !atom_request? %>
   <% if document.show_requesting_widget? %>
     <%= render 'requests/index_request_widget', document: document, hide: true %>
   <% else %>

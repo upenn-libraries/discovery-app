@@ -1,8 +1,8 @@
 <section class="item-request-section-index">
-  <button class="btn btn-primary btn-get-it" data-mms-id="<%= document.alma_mms_id %>" aria-expanded="false" aria-controls="item-request-widget-for-<%= document.alma_mms_id %>">
+  <button class="btn btn-primary btn-get-it" data-mms-id="<%= document.default_id %>" aria-expanded="false" aria-controls="item-request-widget-for-<%= document.default_id %>">
     <span class="glyphicon glyphicon-book"></span> <%= t('requests.widget.title') %> <span class="getit-caret glyphicon glyphicon-chevron-down"></span>
   </button>
-  <div id="item-request-widget-for-<%= document.alma_mms_id %>" class="item-request-widget panel panel-default spinner" style='display:none;'>
+  <div id="item-request-widget-for-<%= document.default_id %>" class="item-request-widget panel panel-default spinner" style='display:none;'>
     <div class="panel-body">
       <%= render 'requests/widget_form', document: document %>
       <%#= render 'requests/help_icon' %>

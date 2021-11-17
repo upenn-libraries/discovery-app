@@ -172,6 +172,10 @@ class SolrDocument
     structs.sort { |x,y| x[:id] <=> y[:id] }.map { |item| item[:value] }.flatten
   end
 
+  def default_id
+    alma_mms_id || id
+  end
+
   # used by blacklight_alma
   def alma_mms_id
     fetch('alma_mms_id', nil)
@@ -193,6 +197,13 @@ class SolrDocument
     fetch('id', '').start_with?('HATHI')
   end
 
+  # is this a record from a POD institution?
+  # see BaseIndexer::RecordSource to make sense of this
+  # @return [TrueClass, FalseClass]
+  def is_pod?
+    fetch('record_source_id', 0) > 3
+  end
+
   # @return [TrueClass, FalseClass]
   def print_holdings?
     self['hld_count_isort']&.positive?
@@ -210,6 +221,6 @@ class SolrDocument
 
   # @return [TrueClass, FalseClass]
   def show_requesting_widget?
-    print_holdings? || self[:physical_holdings_json].present?
+    is_pod? || print_holdings? || self[:physical_holdings_json].present?
   end
 end
