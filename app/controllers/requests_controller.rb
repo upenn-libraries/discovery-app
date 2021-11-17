@@ -6,7 +6,7 @@ class RequestsController < ApplicationController
 
   def confirm
     partial = partial_for_request_type params
-    set_ill_url if partial.in? %w[ill reserves]
+    set_ill_url if partial.in? %w[ill noncirc]
     set_address_info if user_alma_group == 'Faculty Express'
     render "requests/confirm/#{partial}", layout: false
   end
@@ -71,9 +71,8 @@ class RequestsController < ApplicationController
 
   # A backup in case we can't get the nice link from Alma
   # @param [String] mms_id
-  # TODO: this will be confusing in non-production environments
   def ill_request_form_url_for(mms_id)
-    "https://franklin.library.upenn.edu/redir/ill?bibid=#{mms_id}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com"
+    "redir/ill?bibid=#{mms_id}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com"
   end
 
   # because current_user is useless
