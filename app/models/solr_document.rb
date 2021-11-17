@@ -172,10 +172,6 @@ class SolrDocument
     structs.sort { |x,y| x[:id] <=> y[:id] }.map { |item| item[:value] }.flatten
   end
 
-  def default_id
-    alma_mms_id || id
-  end
-
   # used by blacklight_alma
   def alma_mms_id
     fetch('alma_mms_id', nil)
