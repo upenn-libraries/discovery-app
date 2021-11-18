@@ -66,13 +66,13 @@
 <a name="franklin-availability"></a>
 
 <% if document.alma_mms_id.present? %>
-  <hr>
+  
   <% if document.show_requesting_widget? %>
     <%= render 'requests/show_request_widget', document: document %>
   <% else %>
     <%= render 'alma_availability', document: document, collapsed: false %>
   <% end %>
-  <hr>
+
 <% end %>
 
 <div class="bottom-fields">

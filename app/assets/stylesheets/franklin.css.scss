@@ -94,7 +94,7 @@ a:hover, a:focus {
 
 .label-availability {
   padding:  0;
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   letter-spacing: 0.04rem;
   margin-right: 3px;
   width: 12.3rem;
@@ -109,10 +109,11 @@ a:hover, a:focus {
   text-align: left;
   &:before {
     content:"\A";
-    
-    height:1.13rem;
+    width:1.08rem;
+    height:1.08rem;
     border-radius:50%;
-    background: #b83b3b;
+    
+    display:inline-block;
     margin-right: 1.2rem;
   }
 }
@@ -142,10 +143,21 @@ a:hover, a:focus {
 .blacklight-availability {
   line-height: 175%;
 }
+.blacklight-availability,
+.blacklight-status-location,
+.blacklight-full_text_links_for_cluster_display,
+ {
+  br {
+    display:block;
+    margin-bottom:.7rem;
+  }
+
+}
 
 dd.blacklight-status-location, dt.blacklight-status-location {
   margin-top: 10px;
 }
+html.js body.blacklight-catalog.blacklight-catalog-index div#main-container.container-fluid div.row.no-gutters div#content.col-md-9.col-sm-8 ul.facet-values.list-unstyled li div.availability-document-container dl.dl-horizontal.dl-invert dt 
 
 .search_q {
   height: 38px;
@@ -397,9 +409,21 @@ table[id^="holdingItems"] td {
 .item-request-section-show {
   padding: 0 0;
   display: inline-block;
-  width: 100%;
+  width: auto;
+  @media (min-width: 1200px) {
+    margin-left: 20rem;
+  }
 }
-
+@media (min-width: 1200px) {
+    .item-request-section-show,
+    hr {
+      margin-left: 20rem;
+    }
+}
+.bottom-fields h2 {
+  width: 18rem;
+  text-align: right;
+}
 .cover-image.cover-show {
   font-size: 80px;
   padding-top: 20px;
@@ -892,7 +916,7 @@ div.pagination {
   font-weight: normal;
 }
 
-ul.footerlinks, ul.other-view-links {
+ul.footerlinks {
   list-style-image: none;
   list-style-type: none;
   margin-bottom: 0;
@@ -900,10 +924,6 @@ ul.footerlinks, ul.other-view-links {
   margin-right: 0;
   margin-top: 0;
   padding-left: 0;
-}
-
-ul.other-view-links li {
-  display: inline;
 }
 
 .footerlinks li {
@@ -1349,6 +1369,9 @@ h1.franklin-title {
     > .form-control {
       /*width: 27rem;*/
     }
+  }
+  .input-group input.form-control {
+    height: 3.8rem;
   }
   .navbar-form {
     margin-top: .5rem;
@@ -2185,6 +2208,11 @@ samples:
   vertical-align: top;
   padding-top: 1px;
 }
+.format-facet.facet-values .facet-label {
+    text-indent: 0;
+}
+
+
 
 /*from pul*/
 .facet-values .icon {

@@ -1,16 +1,2 @@
-<div class="availability-document-container">
 
-  <dl class="dl-horizontal dl-invert">
-    <%= render_rbrowse_display_fields(facet, doc_presenter) %>
-
-    <% if doc_presenter.document.alma_mms_id.present? %>
-      <% if doc_presenter.document.alma_mms_id.present? && !atom_request? %>
-        <% if doc_presenter.document.show_requesting_widget? %>
-          <%= render 'requests/index_request_widget', document: doc_presenter.document, hide: true %>
-        <% else %>
-          <%= render 'alma_availability', document: doc_presenter.document, collapsed: true %>
-        <% end %>
-      <% end %>
-    <% end %>
-  </dl>
-</div>
+<%= render 'catalog/index_default', document: doc_presenter.document, document_counter: nil %>

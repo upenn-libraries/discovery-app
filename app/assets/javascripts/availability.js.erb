@@ -59,7 +59,7 @@ $(document).ready(function() {
             if (holding['holding_info'] && should_show_holding_info()) {
                 holding_info = " - " + holding['holding_info'];
             }
-            return [availability, holding['location'], holding['call_number'], holding_info , $.shelfLocatorLink(mms_id, holding, "TODO")]
+            return availability + [holding['location'], holding['call_number'], holding_info , $.shelfLocatorLink(mms_id, holding, "TODO")]
                 .filter(function (item) {
                     return item != null && item.length > 0;
                 }).join(' ');

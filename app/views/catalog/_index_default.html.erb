@@ -10,7 +10,7 @@
       -%>
 
       <h3 class="index_title document-title-heading">
-        <% if counter = document_counter_with_offset(document_counter) %>
+        <% if document_counter && counter = document_counter_with_offset(document_counter) %>
           <span class="document-counter">
             <%= counter %>.
           </span>
@@ -39,6 +39,8 @@
   </div>
   <div class="col-xs-2 col-sm-3 col-md-2">
     <%= render_index_doc_actions document %>
+     <div class="cover-image <%= format_icon(document.fetch_format, size: 'large') %>"> </div>
+   
   </div>
 </div>
 <% if document.alma_mms_id.present? && !atom_request? %>

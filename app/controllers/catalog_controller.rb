@@ -528,7 +528,7 @@ class CatalogController < ApplicationController
         { dynamic_name: 'author_display', label: 'Author/Creator',
           helper_method: 'render_linked_values', top_field: true },
         { dynamic_name: 'publication_display', label: 'Publication', top_field: true },
-        { dynamic_name: 'format_display', label: 'Format/Description', top_field: true },
+        
         { dynamic_name: 'edition_display', label: 'Edition', top_field: true },
         { dynamic_name: 'conference_display', label: 'Conference Name',
           helper_method: 'render_linked_values', top_field: true },

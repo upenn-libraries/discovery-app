@@ -25,8 +25,9 @@
 <% else %>
   <div class="navbar-form tools-basic-bookmarks">
     <%= link_to 'Advanced', blacklight_advanced_search_engine.advanced_search_path(search_state.to_h), class: 'advanced_search btn btn-default'%>
+    <%= render_nav_actions do |config, action|%>
+      <div id="li-bookmarks"><%= action %></div>
+    <% end %>
   </div>
 <% end %>
-<%= render_nav_actions do |config, action|%>
-  <div id="li-bookmarks"><%= action %></div>
-<% end %>
+
