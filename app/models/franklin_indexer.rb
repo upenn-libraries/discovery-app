@@ -220,10 +220,6 @@ class FranklinIndexer < BaseIndexer
       acc.concat(pennlibmarc.get_title_2_search_values(rec))
     end
 
-    to_field 'journal_format_f' do |rec, acc|
-      acc << 'true' if pennlibmarc.journal_format_filter?(rec)
-    end
-
     to_field 'journal_title_1_search' do |rec, acc|
       acc.concat(pennlibmarc.get_journal_title_1_search_values(rec))
     end

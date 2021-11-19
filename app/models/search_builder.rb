@@ -116,7 +116,11 @@ class SearchBuilder < Blacklight::SearchBuilder
       when 'journal_title_search'
         # we can use the regular title prefix search fields,
         # but append implicit filter
-        (solr_parameters[:fq] ||= []) << '{!term f=journal_format_f v=true}'
+        # NOTE: here we use !terms qparser instead of two separate !term filters
+        #  The latter would make more sense for caching in Solr, but we prefer the former
+        #  here because of the way Blacklight reconstructs filters from the response,
+        #  and to avoid double-filters (displayed in duplicate in the UI)
+        (solr_parameters[:fq] ||= []) << '{!terms f=format_f v=Newspaper,Journal/Periodical}'
       else
         # search_field should not include title; leave unmodified
         return

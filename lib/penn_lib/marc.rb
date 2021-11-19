@@ -831,11 +831,6 @@ module PennLib
       doc[:local_subject_stored_a]
     end
 
-    def journal_format_filter?(rec)
-      # corresponds to the format filter designation used for `journal_title_*`
-      get_format_from_leader(rec).end_with?('s')
-    end
-
     def get_format(rec)
       acc = []
 
