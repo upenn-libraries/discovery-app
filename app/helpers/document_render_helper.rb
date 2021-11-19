@@ -86,9 +86,9 @@ module DocumentRenderHelper
           url = @@HATHI_LOGIN_PREFIX + URI.encode_www_form_component(url)
           append = @@HATHI_INFO
         end
-        %Q{<a href="#{url}"> <span class="label label-availability label-primary">Online access</span>#{text}</a>#{postfix}#{append}}
-      end.compact.join('<br/>')
-    end.join('<br/>')
+        %Q{<li><a href="#{url}"> <span class="label label-availability label-primary">Online access</span>#{text}</a>#{postfix}#{append}</li>}
+      end.compact.join('')
+    end.join('')
     unless alma_mms_id.nil?
       if hathi_pd
         ret = ret.concat(hathi_tag_id('pd', alma_mms_id))

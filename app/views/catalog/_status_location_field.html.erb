@@ -1,3 +1,3 @@
 <% if document.alma_availability_mms_ids.any? %>
-  <div class="availability-ajax-load" data-availability-ids="<%= document.alma_availability_mms_ids.join(',') %>">Loading...</div>
+  <ul class="availability-ajax-load" data-availability-ids="<%= document.alma_availability_mms_ids.join(',') %>">Loading...</ul>
 <% end %>

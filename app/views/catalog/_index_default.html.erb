@@ -25,22 +25,21 @@
           <% end -%>
       <% end %>
     </ul>
-    <ul class="document-metadata dl-horizontal dl-invert results-availability">
+    <% if document.alma_mms_id.present? && !atom_request? && document.has_any_holdings? && document.alma_availability_mms_ids.any? %>
+      <ul class="availability-ajax-load document-metadata dl-horizontal dl-invert results-availability" data-availability-ids="<%= document.alma_availability_mms_ids.join(',') %>">
+    <% else %>
+      <ul class="document-metadata dl-horizontal dl-invert results-availability">
+    <% end %>
       <% online_field_name = 'full_text_links_for_cluster_display' %>
       <% if doc_presenter.field_value online_field_name %>
-          <li class="blacklight-<%= online_field_name.parameterize %>"><%= doc_presenter.field_value online_field_name %></li>
+          <%= doc_presenter.field_value online_field_name %>
       <% end -%>
-      <% if document.alma_mms_id.present? && !atom_request? && document.has_any_holdings? %>
-        <li class="blacklight-availability">
-          <%= render 'status_location_field', document: document %>
-        </li>
-      <% end %>
     </ul>
   </div>
   <div class="col-xs-2 col-sm-3 col-md-2">
     <%= render_index_doc_actions document %>
      <div class="cover-image <%= format_icon(document.fetch_format, size: 'large') %>"> </div>
-   
+
   </div>
 </div>
 <% if document.alma_mms_id.present? && !atom_request? %>

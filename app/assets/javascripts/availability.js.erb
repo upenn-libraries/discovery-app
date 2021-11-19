@@ -39,6 +39,10 @@ $(document).ready(function() {
 
     Franklin.prototype = Object.create(BlacklightAlma.prototype);
 
+    Franklin.prototype.formatHoldings = function (holdings) {
+        return holdings.join('');
+    };
+
     Franklin.prototype.formatHolding = function (mms_id, holding) {
         if (holding['inventory_type'] === 'physical') {
             var availability = "Unknown";
@@ -59,10 +63,10 @@ $(document).ready(function() {
             if (holding['holding_info'] && should_show_holding_info()) {
                 holding_info = " - " + holding['holding_info'];
             }
-            return availability + [holding['location'], holding['call_number'], holding_info , $.shelfLocatorLink(mms_id, holding, "TODO")]
+            return "<li>" + availability + [holding['location'], holding['call_number'], holding_info , $.shelfLocatorLink(mms_id, holding, "TODO")]
                 .filter(function (item) {
                     return item != null && item.length > 0;
-                }).join(' ');
+                }).join(' ') + "</li>";
         }
         else if(holding['inventory_type'] === 'electronic') {
             if (holding['activation_status'] === 'Available') {
@@ -79,10 +83,10 @@ $(document).ready(function() {
                     url = "<span class='label label-availability label-default'>No URL available</span> Electronic Resource";
                 }
 
-                return [url, holding['coverage_statement'], holding['public_note']]
+                return "<li>" + [url, holding['coverage_statement'], holding['public_note']]
                     .filter(function (item) {
                         return item != null && item.length > 0;
-                    }).join(" - ");
+                    }).join(" - ") + "</li>";
             }
 
         } else {
@@ -93,7 +97,13 @@ $(document).ready(function() {
     Franklin.prototype.renderAvailability = function (element, html) {
       // if there's no availability text at all, then hide the field label altogether
       if(html && html.length > 0) {
-          BlacklightAlma.prototype.renderAvailability.call(this, element, html);
+        $(element).addClass("availability-ajax-loaded");
+        if($(element).html() == 'Loading...') {
+          $(element).html(html);
+        }
+        else {
+        $(element).append(html);
+        }
       } else {
           $(element).closest(".document").find(".blacklight-availability").hide();
       }
