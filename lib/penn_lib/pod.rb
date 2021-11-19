@@ -120,11 +120,7 @@ module PennLib
       private
 
       def indexer_class
-        if @name == 'penn'
-          FranklinIndexer
-        else
-          "#{@name.titleize}Indexer".constantize
-        end
+        "#{@name.titleize}Indexer".constantize
       end
 
       # @return [String, nil]
