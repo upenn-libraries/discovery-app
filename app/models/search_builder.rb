@@ -180,14 +180,14 @@ class SearchBuilder < Blacklight::SearchBuilder
       end
       sort = 'elvl_rank_isort asc,last_update_isort desc'
       if access_f.nil? || access_f.empty?
-	# nothing
+        # nothing
       elsif access_f.include? 'At the library'
         if access_f.size == 1
           # privilege physical holdings
           sort = "min(def(hld_count_isort,0),1) desc,#{sort}"
         end
       else
-	# privilege online holdings
+        # privilege online holdings
         sort = "min(def(prt_count_isort,0),1) desc,#{sort}"
       end
     else
