@@ -1,0 +1,110 @@
+<records>
+  <record>
+    <leader>03676cam a22004093i 4500</leader>
+    <controlfield tag='001'>9977917576603681</controlfield>
+    <controlfield tag='005'>20211111090934.0</controlfield>
+    <controlfield tag='006'>m     o  d |      </controlfield>
+    <controlfield tag='007'>cr cnu||||||||</controlfield>
+    <controlfield tag='008'>211111s2002    xx      o     ||||0 eng d</controlfield>
+    <datafield ind1=' ' ind2=' ' tag='020'>
+      <subfield code='a'>9789812776495</subfield>
+      <subfield code='q'>(electronic bk.)</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='020'>
+      <subfield code='z'>9789812381767</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='035'>
+      <subfield code='a'>(MiAaPQ)EBC1681497</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='035'>
+      <subfield code='a'>(Au-PeEL)EBL1681497</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='035'>
+      <subfield code='a'>(CaPaEBR)ebr10201178</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='035'>
+      <subfield code='a'>(CaONFJC)MIL505380</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='035'>
+      <subfield code='a'>(OCoLC)879025430</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='035'>
+      <subfield code='a'>(EXLCZ)9917671012000041</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='040'>
+      <subfield code='a'>MiAaPQ</subfield>
+      <subfield code='b'>eng</subfield>
+      <subfield code='e'>rda</subfield>
+      <subfield code='e'>pn</subfield>
+      <subfield code='c'>MiAaPQ</subfield>
+      <subfield code='d'>MiAaPQ</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2='4' tag='050'>
+      <subfield code='a'>QC174.12.P74 2002</subfield>
+    </datafield>
+    <datafield ind1='0' ind2=' ' tag='082'>
+      <subfield code='a'>530.12</subfield>
+    </datafield>
+    <datafield ind1='1' ind2=' ' tag='100'>
+      <subfield code='a'>Preparata, Giuliano.</subfield>
+    </datafield>
+    <datafield ind1='1' ind2='0' tag='245'>
+      <subfield code='a'>Introduction To A Realistic Quantum Physics, An.</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2='1' tag='264'>
+      <subfield code='a'>Singapore :</subfield>
+      <subfield code='b'>World Scientific Publishing Company,</subfield>
+      <subfield code='c'>2002.</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2='4' tag='264'>
+      <subfield code='c'>©2002.</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='300'>
+      <subfield code='a'>1 online resource (85 pages)</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='336'>
+      <subfield code='a'>text</subfield>
+      <subfield code='b'>txt</subfield>
+      <subfield code='2'>rdacontent</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='337'>
+      <subfield code='a'>computer</subfield>
+      <subfield code='b'>c</subfield>
+      <subfield code='2'>rdamedia</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='338'>
+      <subfield code='a'>online resource</subfield>
+      <subfield code='b'>cr</subfield>
+      <subfield code='2'>rdacarrier</subfield>
+    </datafield>
+    <datafield ind1='0' ind2=' ' tag='505'>
+      <subfield code='a'>Intro -- Contents -- Preface -- 1. The Fads and Fallacies of Quantum Mechanics -- 2. Kinematics: The Descriptive Framework of Physical Reality -- 2.1 States and observables in Classical Physics (CP) -- 2.2 States and observables in Quantum Physics (QP) -- 2.3 The impossibility of a trajectory is the impossibility of a realistic QM -- 2.4 Quantum fields are the only realistic physical objects -- 3. Dynamics: The Laws of Evolution of Physical Reality -- 3.1 The Hamilton-Lagrange theory of classical dynamics -- 3.2 The Hamiltonian operator: the generator of quantum dynamics -- 3.3 The Path Integral (PI): classical trajectories and Quantum Physics -- 4. Quantum Field Theory: The Only Realistic Theory of the Quantum World -- 4.1 A preliminary discussion of coherent states -- 4.2 The Vacuum the template of physical reality -- 4.3 The &quot;classical&quot; limit of QFT: the emergence of coherence -- 4.4 The &quot;quantum-mechanical&quot; limit of QFT: the Schrodinger wave-function -- 5. Final Considerations -- Appendix -- Bibliography.</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='520'>
+      <subfield code='a'>This book is a remarkable synthesis, a clear and simple introduction to Quantum Physics with a sort of Galilean dialogue on the supreme systems of contemporary Physics. The author, whose research interests and work extended from quarks to liquid systems and from crystals to stars, introduces the common conceptual and mathematical framework of all quantum theories, realistic enough to successfully confront Nature: Quantum Field Theory applied to the study of both dilute and condensed matter. In the dilute limit, quantum mechanics is shown to be a good approximation to Quantum Field Theory. However, in condensed matter physics the problem of the ground state, which acts as a kind of template for physical reality, is studied under the hypothesis that the standard perturbative vacuum is unstable with respect to a new coherent vacuum, whose spectrum emerges quite naturally through a simple variational procedure. Contents: The Fads and Fallacies of Quantum Mechanics; Kinematics: The Descriptive Framework of Physical Reality; Dynamics: The Laws of Evolution of Physical Reality; Quantum Field Theory: The Only Realistic Theory of the Quantum World; Final Considerations. Readership: Upper level undergraduates, graduates, scientists and researchers in physics.</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='588'>
+      <subfield code='a'>Description based on publisher supplied metadata and other sources.</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2='0' tag='650'>
+      <subfield code='a'>Quantum theory.</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2='4' tag='655'>
+      <subfield code='a'>Electronic books.</subfield>
+    </datafield>
+    <datafield ind1='1' ind2=' ' tag='700'>
+      <subfield code='a'>Campochiara, Emilia.</subfield>
+    </datafield>
+    <datafield ind1='0' ind2='8' tag='776'>
+      <subfield code='i'>Print version:</subfield>
+      <subfield code='a'>Preparata, Giuliano</subfield>
+      <subfield code='t'>Introduction To A Realistic Quantum Physics, An</subfield>
+      <subfield code='d'>Singapore : World Scientific Publishing Company,c2002</subfield>
+      <subfield code='z'>9789812381767</subfield>
+    </datafield>
+    <datafield ind1=' ' ind2=' ' tag='900'>
+      <subfield code='5'>POD</subfield>
+      <subfield code='b'>PU</subfield>
+    </datafield>
+  </record>
+</records>

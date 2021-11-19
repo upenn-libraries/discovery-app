@@ -1,0 +1,170 @@
+<record>
+  <leader>02414nam a2200481 a 4500</leader>
+  <controlfield tag='001'>1135210</controlfield>
+  <controlfield tag='003'>ICU</controlfield>
+  <controlfield tag='005'>19930204000000.0</controlfield>
+  <controlfield tag='008'>910225s1991    enka     bl   00110 eng u</controlfield>
+  <datafield ind1=' ' ind2=' ' tag='010'>
+    <subfield code='a'>   91107000</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='020'>
+    <subfield code='a'>1854311050 :</subfield>
+    <subfield code='c'>£14.95</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='035'>
+    <subfield code='a'>(ICU)BID13742631</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='035'>
+    <subfield code='a'>(OCoLC)23347968</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='040'>
+    <subfield code='a'>DLC</subfield>
+    <subfield code='c'>DLC</subfield>
+  </datafield>
+  <datafield ind1='0' ind2=' ' tag='041'>
+    <subfield code='a'>eng</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='043'>
+    <subfield code='a'>e-uk---</subfield>
+  </datafield>
+  <datafield ind1='0' ind2='0' tag='050'>
+    <subfield code='a'>KD3415</subfield>
+    <subfield code='b'>.M67 1991</subfield>
+  </datafield>
+  <datafield ind1='0' ind2='0' tag='082'>
+    <subfield code='a'>344.41/0419</subfield>
+    <subfield code='a'>344.104419</subfield>
+    <subfield code='2'>20</subfield>
+  </datafield>
+  <datafield ind1='1' ind2=' ' tag='100'>
+    <subfield code='a'>Morgan, Derek,</subfield>
+    <subfield code='d'>1954-</subfield>
+    <subfield code='0'>http://id.loc.gov/authorities/names/n88010551</subfield>
+    <subfield code='1'>http://viaf.org/viaf/64046416</subfield>
+  </datafield>
+  <datafield ind1='1' ind2='0' tag='245'>
+    <subfield code='a'>Blackstone&apos;s guide to the Human Fertilisation and Embryology Act, 1990 :</subfield>
+    <subfield code='b'>abortion and embryo research, the new law /</subfield>
+    <subfield code='c'>Derek Morgan and Robert G. Lee.</subfield>
+  </datafield>
+  <datafield ind1='0' ind2=' ' tag='260'>
+    <subfield code='a'>London :</subfield>
+    <subfield code='b'>Blackstone Press,</subfield>
+    <subfield code='c'>1991.</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='300'>
+    <subfield code='a'>xiv, 261 p. :</subfield>
+    <subfield code='b'>ill. ;</subfield>
+    <subfield code='c'>22 cm.</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='336'>
+    <subfield code='a'>text</subfield>
+    <subfield code='b'>txt</subfield>
+    <subfield code='2'>rdacontent</subfield>
+    <subfield code='0'>http://id.loc.gov/vocabulary/contentTypes/txt</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='337'>
+    <subfield code='a'>unmediated</subfield>
+    <subfield code='b'>n</subfield>
+    <subfield code='2'>rdamedia</subfield>
+    <subfield code='0'>http://id.loc.gov/vocabulary/mediaTypes/n</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='338'>
+    <subfield code='a'>volume</subfield>
+    <subfield code='b'>nc</subfield>
+    <subfield code='2'>rdacarrier</subfield>
+    <subfield code='0'>http://id.loc.gov/vocabulary/carriers/nc</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='504'>
+    <subfield code='a'>Includes bibliographical references and index.</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2='0' tag='650'>
+    <subfield code='a'>Artificial insemination, Human</subfield>
+    <subfield code='x'>Law and legislation</subfield>
+    <subfield code='z'>Great Britain.</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2='0' tag='650'>
+    <subfield code='a'>Fertilization in vitro, Human</subfield>
+    <subfield code='x'>Law and legislation</subfield>
+    <subfield code='z'>Great Britain.</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2='0' tag='650'>
+    <subfield code='a'>Human reproduction</subfield>
+    <subfield code='x'>Law and legislation</subfield>
+    <subfield code='z'>Great Britain.</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2='0' tag='650'>
+    <subfield code='a'>Abortion</subfield>
+    <subfield code='x'>Law and legislation</subfield>
+    <subfield code='z'>Great Britain.</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2='0' tag='650'>
+    <subfield code='a'>Fetus</subfield>
+    <subfield code='x'>Research</subfield>
+    <subfield code='x'>Law and legislation</subfield>
+    <subfield code='z'>Great Britain.</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2='7' tag='650'>
+    <subfield code='a'>Abortion</subfield>
+    <subfield code='x'>Law and legislation.</subfield>
+    <subfield code='2'>fast</subfield>
+    <subfield code='0'>http://id.worldcat.org/fast/fst00794598</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2='7' tag='650'>
+    <subfield code='a'>Artificial insemination, Human</subfield>
+    <subfield code='x'>Law and legislation.</subfield>
+    <subfield code='2'>fast</subfield>
+    <subfield code='0'>http://id.worldcat.org/fast/fst00817237</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2='7' tag='650'>
+    <subfield code='a'>Fertilization in vitro, Human</subfield>
+    <subfield code='x'>Law and legislation.</subfield>
+    <subfield code='2'>fast</subfield>
+    <subfield code='0'>http://id.worldcat.org/fast/fst00923201</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2='7' tag='650'>
+    <subfield code='a'>Fetus</subfield>
+    <subfield code='x'>Research</subfield>
+    <subfield code='x'>Law and legislation.</subfield>
+    <subfield code='2'>fast</subfield>
+    <subfield code='0'>http://id.worldcat.org/fast/fst00923472</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2='7' tag='650'>
+    <subfield code='a'>Human reproduction</subfield>
+    <subfield code='x'>Law and legislation.</subfield>
+    <subfield code='2'>fast</subfield>
+    <subfield code='0'>http://id.worldcat.org/fast/fst00963231</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2='7' tag='651'>
+    <subfield code='a'>Great Britain.</subfield>
+    <subfield code='2'>fast</subfield>
+    <subfield code='0'>http://id.worldcat.org/fast/fst01204623</subfield>
+  </datafield>
+  <datafield ind1='1' ind2='0' tag='700'>
+    <subfield code='a'>Lee, R. G.</subfield>
+    <subfield code='q'>(Robert Gregory),</subfield>
+    <subfield code='d'>1952-</subfield>
+    <subfield code='0'>http://id.loc.gov/authorities/names/n80030417</subfield>
+    <subfield code='1'>http://viaf.org/viaf/85402592</subfield>
+  </datafield>
+  <datafield ind1='0' ind2='1' tag='740'>
+    <subfield code='a'>Human Fertilisation &amp; Embryology Act, 1990.</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='903'>
+    <subfield code='a'>HeVa</subfield>
+    <subfield code='b'>20210214</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='099'>
+    <subfield code='t'>LCC</subfield>
+    <subfield code='l'>DLL</subfield>
+    <subfield code='a'>XXKD3415.M670 1991</subfield>
+    <subfield code='c'>Law</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='097'>
+    <subfield code='b'>38312944</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='900'>
+    <subfield code='5'>POD</subfield>
+    <subfield code='b'>ICU</subfield>
+  </datafield>
+</record>
