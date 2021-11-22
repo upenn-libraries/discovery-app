@@ -83,7 +83,7 @@ a:hover, a:focus {
 
 }
 
-/*ABAILABILITY*/
+/*AVAILABILITY*/
 .holding-availability-area {
   .holding-availability-col{
     padding-left: 0;
@@ -170,11 +170,7 @@ a:hover, a:focus {
 .blacklight-availability {
   line-height: 175%;
 }
-.btn.btn-primary.btn-get-it  {
-  padding: 5px 30px;
-  margin-top: .8rem;
-  width: 15rem;
-}
+
 .record-main-details dd.blacklight-status-location ul {
   @include no-list-style;
   li {
@@ -184,11 +180,12 @@ a:hover, a:focus {
   }
 }
 
-dd.blacklight-status-location, dt.blacklight-status-location {
+dd.blacklight-status-location, 
+dt.blacklight-status-location {
   margin-top: 10px;
 }
  
-
+/*end availability*/
 .search_q {
   height: 38px;
 }
@@ -277,14 +274,7 @@ table[id^="holdingItems"] td {
 *
 **************/
 
-/*#header-navbar {
-  background: $upenn-blue asset-url('orrerybg.jpg') top left repeat-x;
-  .navbar-brand {
-    background-image: asset-url('logo.png');
-    margin-top: 20px;
-    margin-left: 10px;
-  }
-}*/
+
 
 .navbar-header {
   /* match height of bg image */
@@ -385,7 +375,7 @@ table[id^="holdingItems"] td {
 .btn {
   padding: 8px 18px;
 }
-
+/*REQUEST*/
 .btn-primary, .btn-primary:focus {
   background-color: $geit-blue;
   border-color: $geit-blue;
@@ -394,11 +384,13 @@ table[id^="holdingItems"] td {
 .btn-primary:hover {
   background-color: $upenn-blue;
 }
-
-.btn-get-it {
+.btn-get-it  {
+  padding: .5rem;
+  margin-top: .8rem;
+  width: 12.3rem;
   font-size: 14px;
   font-weight: bold;
-  margin-bottom: 5px;
+  margin-bottom: .5rem;
 }
 
 .btn-default.dropdown-toggle {
@@ -456,6 +448,7 @@ table[id^="holdingItems"] td {
       margin-left: 20rem;
     }
 }
+/*RECORD*/
 .bottom-fields h2 {
   @media (min-width: 768px) {
     width: 18rem;
@@ -1133,9 +1126,7 @@ h3.ongray {
   font-size: 0.92em;
 }
 
-.availability-details-iframe {
-  height: 17em;
-}
+
 
 .availability-loading-error {
   color: #9c0a00;
