@@ -172,7 +172,7 @@ module TurboAlmaApi
 
       # @return [TrueClass, FalseClass]
      def aeon_requestable?
-        aeon_site_codes = PennLib::BlacklightAlma::CodeMappingsSingleton.instance.code_mappings.aeon_site_codes
+        aeon_site_codes = PennLib::BlacklightAlma::AvailabilityApi.new.code_mappings.aeon_site_codes
         location = if item_data.dig('location', 'value')
                      item_data['location']['value']
                    else
