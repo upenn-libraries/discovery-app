@@ -83,6 +83,7 @@ a:hover, a:focus {
 
 }
 
+/*ABAILABILITY*/
 .holding-availability-area {
   .holding-availability-col{
     padding-left: 0;
@@ -91,6 +92,25 @@ a:hover, a:focus {
     font-size: 12px;
   }
 }
+.document-metadata  {
+  @include no-list-style;
+  li {
+    text-indent: -14rem;
+    margin-left: 14rem;
+    clear:left;
+    margin-bottom: .7rem;
+  }
+  li.blacklight-author_creator_a,
+  li.blacklight-publication_a,
+  li.blacklight-edition,
+  li.blacklight-series,
+  li.blacklight-format_a {
+    text-indent: 0;
+    margin-left: 0;
+    margin-bottom: 0;
+  }
+
+}
 
 .label-availability {
   padding:  0;
@@ -98,66 +118,76 @@ a:hover, a:focus {
   letter-spacing: 0.04rem;
   margin-right: 3px;
   width: 12.3rem;
-  display: inline-block;
+  display: inline;
   margin-right: 1.7rem;
-}
-.label-availability.label-success,
-.label-availability.label-warning,
-.label-availability.label-danger {
-  background-color: transparent;
-  
-  text-align: left;
-  &:before {
-    content:"\A";
-    width:1.08rem;
-    height:1.08rem;
-    border-radius:50%;
-    
-    display:inline-block;
-    margin-right: 1.2rem;
-  }
-}
 
-.label-availability.label-warning {
-  color: $label-warning-text;
-  &:before {
-    background: $label-warning-bg;
+  &.label-success,
+  &.label-availability.label-warning,
+  &.label-availability.label-danger {
+    position: relative;
+    top: -.2rem;
+    background-color: transparent;
+    
+    text-align: left;
+    float: left;
+    display:block;
+    position: relative;
+    &:before {
+      content: "\00B7";
+      
+      margin: 0 .9rem 0 0;
+      font-size: 65px;
+      line-height: .01;
+      position: relative;
+      top: 18px;
+      background: transparent !important;
+    }
   }
-}
-.label-availability.label-success {
-  color: $label-success-bg;
-  &:before {
-    background: $label-success-bg;
+
+  &.label-warning {
+    color: $label-warning-text;
+    &:before {
+      color: $label-warning-bg;
+    }
   }
-}
-.label-availability.label-danger {
-  color: $label-danger-bg;
-  &:before {
-    background: $label-danger-bg;
+  &.label-success {
+    color: $label-success-bg;
+    &:before {
+      color: $label-success-bg;
+    }
   }
-}
-.label-availability.label-primary {
-  padding: .4em .8em;
-  font-size: 14px;
+  &.label-danger {
+    color: $label-danger-bg;
+    &:before {
+      color: $label-danger-bg;
+    }
+  }
+  &.label-primary {
+    padding: .4em .8em;
+    font-size: 14px;
+  }
 }
 .blacklight-availability {
   line-height: 175%;
 }
-.blacklight-availability,
-.blacklight-status-location,
-.blacklight-full_text_links_for_cluster_display,
- {
-  br {
-    display:block;
-    margin-bottom:.7rem;
+.btn.btn-primary.btn-get-it  {
+  padding: 5px 30px;
+  margin-top: .8rem;
+  width: 15rem;
+}
+.record-main-details dd.blacklight-status-location ul {
+  @include no-list-style;
+  li {
+    margin-left: 14rem;
+    text-indent: -14rem;
+    margin-bottom: .7rem;
   }
-
 }
 
 dd.blacklight-status-location, dt.blacklight-status-location {
   margin-top: 10px;
 }
-html.js body.blacklight-catalog.blacklight-catalog-index div#main-container.container-fluid div.row.no-gutters div#content.col-md-9.col-sm-8 ul.facet-values.list-unstyled li div.availability-document-container dl.dl-horizontal.dl-invert dt 
+ 
 
 .search_q {
   height: 38px;
@@ -406,13 +436,19 @@ table[id^="holdingItems"] td {
   }
 }
 
+
 .item-request-section-show {
   padding: 0 0;
   display: inline-block;
-  width: auto;
-  @media (min-width: 1200px) {
+  width: 100%;
+  @media (min-width: 960px) {
     margin-left: 20rem;
+    width: 77%;
   }
+  @media (min-width: 1060px) {
+    width: 80%;
+  }
+    
 }
 @media (min-width: 1200px) {
     .item-request-section-show,
@@ -421,8 +457,29 @@ table[id^="holdingItems"] td {
     }
 }
 .bottom-fields h2 {
-  width: 18rem;
-  text-align: right;
+  @media (min-width: 768px) {
+    width: 18rem;
+    text-align: right;
+  }
+  
+}
+.record-main-details .dl-horizontal.dl-invert,
+.bottom-fields dl.dl-horizontal.dl-invert {
+  dt {
+    font-weight: bold;
+    color: #000;
+    font-size: 1.5rem;
+    margin: 1rem 0 .5rem;
+  }
+  @media (min-width: 768px) {
+    dt {
+      font-weight: normal;
+      color: $grey-text;
+      font-size: 1.7rem;
+      margin: 0;
+    }
+  }
+
 }
 .cover-image.cover-show {
   font-size: 80px;
@@ -1053,6 +1110,9 @@ h3.ongray {
   }
   .morenews {
     margin-bottom: 2rem;
+  }
+  .feed-item span {
+    color: $grey-text;
   }
 }
 
