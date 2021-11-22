@@ -389,13 +389,14 @@ class CatalogController < ApplicationController
             'Z' => { :label => 'Z', :fq => "{!prefix tag=azlist ex=azlist f=title_xfacet v='z'}"},
             'Other' => { :label => 'Other', :fq => "{!tag=azlist ex=azlist}title_xfacet:/[ -`{-~].*/"}
         }
-    config.add_facet_field 'access_f', label: 'Access', collapse: false, solr_params: MINCOUNT, query: {
-        # NOTE: we want joins here in order to "cross-pollinate" access types among same-source clusters; e.g., if there's
-        # a cluster with multiple "Penn source" records, they should all be close enough to be considered to share each
-        # others' access modes
-        'Online' => { :label => 'Online', :fq => "{!join ex=orig_q from=cluster_id to=cluster_id v='{!term f=access_f v=Online}'}"},
-        'At the library' => { :label => 'At the library', :fq => "{!join ex=orig_q from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"},
-    }
+    config.add_facet_field 'access_f', label: 'Access', limit: true
+    # config.add_facet_field 'access_f', label: 'Access', collapse: false, solr_params: MINCOUNT, query: {
+    #     # NOTE: we want joins here in order to "cross-pollinate" access types among same-source clusters; e.g., if there's
+    #     # a cluster with multiple "Penn source" records, they should all be close enough to be considered to share each
+    #     # others' access modes
+    #     'Online' => { :label => 'Online', :fq => "{!join ex=orig_q from=cluster_id to=cluster_id v='{!term f=access_f v=Online}'}"},
+    #     'At the library' => { :label => 'At the library', :fq => "{!join ex=orig_q from=cluster_id to=cluster_id v='{!term f=access_f v=\\'At the library\\'}'}"},
+    # }
 
     config.add_facet_field 'record_source_f', label: 'Record Source', collapse: false
     # config.add_facet_field 'record_source_f', label: 'Record Source', collapse: false, solr_params: MINCOUNT, query: {

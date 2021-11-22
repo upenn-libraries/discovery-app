@@ -46,6 +46,8 @@
 <% if (document.alma_mms_id.present? || document.is_pod?) && !atom_request? %>
   <% if document.show_requesting_widget? %>
     <%= render 'requests/index_request_widget', document: document, hide: true %>
+  <% elsif document.is_pod? %>
+    <%= render 'requests/pod_widget', document: document %>
   <% else %>
     <%= render 'alma_availability', document: document, collapsed: true %>
   <% end %>

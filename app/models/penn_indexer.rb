@@ -1,6 +1,14 @@
 class PennIndexer < FranklinIndexer
 
+  # TODO: ugh, why isn't there a copyfield?
   def define_access_facet
+    to_field "access_f" do |rec, acc|
+      acc << if is_online_resource?(rec)
+               'Online'
+             else
+               'At the library'
+             end
+    end
     to_field "access_f_stored" do |rec, acc|
       acc << if is_online_resource?(rec)
                'Online'
@@ -11,13 +19,30 @@ class PennIndexer < FranklinIndexer
   end
 
   def is_online_resource?(rec)
-    threehun = rec['300']
-    return false unless threehun
+    data_elements = rec['008'].value
+    return false unless data_elements
 
-    threehun_a = threehun['a']
-    return false unless threehun_a
+    form_field = if map_or_audiorec?(rec)
+                   data_elements[29]
+                 else
+                   data_elements[23]
+                 end
 
-    rec['300']['a'].downcase.include?('online')
+    form_field&.in? %w[o q s]
+  end
+
+  # consider elements 6 and 7? to determine whether something is a "Map" or an "Audio Recording" - for the purpose of
+  # then checking the appropriate 008 field for the format
+  # @param [MARC::Record] rec
+  # @return [TrueClass, FalseClass]
+  def map_or_audiorec?(rec)
+    format_code = @pennlibmarc.get_format_from_leader(rec)
+
+    # first element only?
+    format_code[0].in? %w[e i j]
+
+    # consider both?
+    # format_code.in? %w[]
   end
 
   def define_record_source_id
@@ -34,16 +59,7 @@ class PennIndexer < FranklinIndexer
 
   def get_namespaced_id(rec)
     id = get_001_id(rec)
-    id.blank? ? nil : "Penn_#{id}"
-  end
-
-  def link_to_source_context(rec)
-    system_id = get_001_id(rec)
-    "https://franklin.library.upenn.edu/catalog/FRANKLIN_#{system_id}"
-  end
-
-  def define_mms_id
-    # no-op
+    id.blank? ? nil : "PENN_#{id}"
   end
 
   def define_id
@@ -72,21 +88,6 @@ class PennIndexer < FranklinIndexer
 
       prefix = oclc_id.present? ? "#{oclc_id}!" : ''
       acc << "#{prefix}#{id}"
-    end
-  end
-
-  def define_full_text_link_a
-    to_field 'full_text_link_a' do |rec, acc|
-
-      links = []
-
-      links << {
-        linktext: 'View record in MIT\'s catalog',
-        linkurl: link_to_source_context(rec)
-      }
-
-      acc << links.to_json
-
     end
   end
 

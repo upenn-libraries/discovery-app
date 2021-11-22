@@ -217,6 +217,6 @@ class SolrDocument
 
   # @return [TrueClass, FalseClass]
   def show_requesting_widget?
-    is_pod? || print_holdings? || self[:physical_holdings_json].present?
+    print_holdings? || self[:physical_holdings_json].present? || self[:access_f_stored] == 'At the library'
   end
 end
