@@ -107,7 +107,25 @@ class SearchBuilder < Blacklight::SearchBuilder
     bq = blacklight_params[:q]
     return unless bq.present?
     search_field = blacklight_params[:search_field]
-    return if search_field.present? && search_field != 'keyword'
+    if search_field.present?
+      case search_field
+      when 'keyword'
+        # the usual case; proceed to add title prefix search fields
+      when 'title_search'
+        # unrestricted title; proceed to add title prefix search fields
+      when 'journal_title_search'
+        # we can use the regular title prefix search fields,
+        # but append implicit filter
+        # NOTE: here we use !terms qparser instead of two separate !term filters
+        #  The latter would make more sense for caching in Solr, but we prefer the former
+        #  here because of the way Blacklight reconstructs filters from the response,
+        #  and to avoid double-filters (displayed in duplicate in the UI)
+        (solr_parameters[:fq] ||= []) << '{!terms f=format_f v=Newspaper,Journal/Periodical}'
+      else
+        # search_field should not include title; leave unmodified
+        return
+      end
+    end
     weight = '26'
     augmented_solr_q = '{!maxscore}'\
         "_query_:\"{!field f='title_1_tl' v=$qq}\"^#{weight} OR "\
