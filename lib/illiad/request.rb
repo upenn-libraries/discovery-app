@@ -21,6 +21,10 @@ module Illiad
       @note = params[:comments]
     end
 
+    def type
+      :illiad
+    end
+
     # for POSTing to API
     # @return [Hash]
     def to_h
@@ -70,8 +74,8 @@ module Illiad
         PhotoJournalTitle: item&.bib('title'),
         PhotoJournalVolume: data[:section_volume],
         PhotoJournalIssue: data[:section_issue],
-        PhotoJournalMonth: item&.bib('date_of_publication'),
-        PhotoJournalYear: item&.bib('date_of_publication'),
+        PhotoJournalMonth: item.pub_month,
+        PhotoJournalYear: item.pub_year,
         PhotoJournalInclusivePages: data['pages'],
         ISSN: item&.bib('issn') || item&.bib('isbn') || data[:isxn],
         PhotoArticleAuthor: data[:section_author],
@@ -92,7 +96,9 @@ module Illiad
         body[:LoanTitle] = body[:LoanTitle].prepend('BBM ')
         body[:ItemInfo1] = 'Books by Mail'
       elsif @data[:delivery] == OFFICE_DELIVERY
-        # TODO: for now, don't do anything for Office Delivery
+        # Also set ItemInfo1 to BBM for Office delivery
+        # It doesn't make sense, but this is what Lapis desires
+        body[:ItemInfo1] = 'Books by Mail'
       end
       body
     end

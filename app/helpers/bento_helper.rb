@@ -24,12 +24,12 @@ module BentoHelper
     holding = JSON.parse(document['physical_holdings_json']).first
     library_location = print_holding_location holding
     if library_location
-      t('franklin.catalog_search.available_with_location',
+      t('franklin.catalog_search.held_with_location',
         location: library_location,
         classification: holding['classification_part'],
         item: holding['item_part'])
     else
-      t('franklin.catalog_search.available',
+      t('franklin.catalog_search.held',
         classification: holding['classification_part'],
         item: holding['item_part'])
     end

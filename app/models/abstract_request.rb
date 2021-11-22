@@ -8,7 +8,7 @@ class AbstractRequest
     Illiad::Request::ELECTRONIC_DELIVERY,
     Illiad::Request::OFFICE_DELIVERY
   ]
-  ALMA_DELIVERY_OPTIONS = %w[pickup].freeze
+  ALMA_FULFILLMENT_OPTIONS = %w[pickup college_house].freeze
 
   class RequestFailed < StandardError; end
 
@@ -49,8 +49,18 @@ class AbstractRequest
       @request = Illiad::Request.new @user, @item, @params
       illiad_api.get_or_create_illiad_user @request.user_id
       transaction_response = illiad_api.transaction @request.to_h
-      if @request.note.present? && transaction_response[:confirmation_number].present?
-        illiad_api.add_note transaction_response[:confirmation_number], @request.note, @request.user_id
+      confirmation_number = transaction_response[:confirmation_number]
+      # add notes
+      if confirmation_number
+        if @request.note.present?
+          illiad_api.add_note confirmation_number, @request.note, @request.user_id
+        end
+        if @request.delivery == Illiad::Request::MAIL_DELIVERY && @user[:group] == 'Faculty Express'
+          illiad_api.add_note(
+            confirmation_number,
+            'Delivery Choice: Faculty Express patron requests BBM/UPS delivery for this loan'
+          )
+        end
       end
       transaction_response
     else
@@ -71,7 +81,7 @@ class AbstractRequest
 
   # @return [TrueClass, FalseClass]
   def alma_fulfillment?
-    @params[:delivery].in? ALMA_DELIVERY_OPTIONS
+    @params[:delivery].in? ALMA_FULFILLMENT_OPTIONS
   end
 
   # @return [TrueClass, FalseClass]

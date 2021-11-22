@@ -22,8 +22,8 @@ en:
     catalog_search:
       no_results: "No results"
       holdings: "%{count} print %{option}"
-      available_with_location: "Available - %{location} - %{classification} %{item}"
-      available: "Available - %{classification} %{item}"
+      held_with_location: "%{location} - %{classification} %{item}"
+      held: "%{classification} %{item}"
     bento_search:
       placeholder: "Find articles, books, journals & more"
     articles_search:

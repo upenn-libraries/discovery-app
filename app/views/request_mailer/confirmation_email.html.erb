@@ -10,15 +10,19 @@
     You have successfully submitted a request for: <%= @info[:title] %>
   </p>
   <p>
-    <% if @request.respond_to? :pickup_location_human %>
-      You have chosen to pickup this item at <%= @request.pickup_location_human %>
-    <% elsif @request.respond_to? :delivery %>
+    <% if @request.type == :alma %>
+      <% if @request.delivery? %>
+        Your item will be delivered using College House delivery.
+      <% else %>
+        You have chosen to pickup this item at <%= @request.pickup_location_human %>.
+      <% end %>
+    <% elsif @request.type == :illiad %>
       <% if @request.delivery == Illiad::Request::OFFICE_DELIVERY %>
-      You have chosen office delivery.
+        You have chosen office delivery.
       <% elsif @request.delivery == Illiad::Request::MAIL_DELIVERY %>
-      You have chosen Books by Mail delivery.
+        You have chosen Books by Mail delivery.
       <% elsif @request.delivery == Illiad::Request::ELECTRONIC_DELIVERY %>
-      You will receive another email when your request is available online.
+        You will receive another email when your request is available online.
       <% end %>
     <% end %>
   </p>

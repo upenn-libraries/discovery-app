@@ -152,13 +152,23 @@ $(document).ready(function() {
     $body
         .on('click', '.delivery-option-radio', function(e) {
             var $radio = $(this);
-            var $checkbox = $('#bbm_validation_checkbox');
+            var $bbm_checkbox = $('#bbm_validation_checkbox');
+            var $chd_checkbox = $('#chd_validation_checkbox');
             if ($radio.val() === 'mail') {
-                $checkbox.prop('disabled', false).focus();
-                $checkbox.closest('div.checkbox').removeClass('disabled');
+                $bbm_checkbox.prop('disabled', false).focus();
+                $bbm_checkbox.closest('div.checkbox').removeClass('disabled');
+                $chd_checkbox.prop('disabled', true);
+                $chd_checkbox.closest('div.checkbox').addClass('disabled');
+            } else if ($radio.val() === 'college_house') {
+                $chd_checkbox.prop('disabled', false).focus();
+                $chd_checkbox.closest('div.checkbox').removeClass('disabled');
+                $bbm_checkbox.prop('disabled', true);
+                $bbm_checkbox.closest('div.checkbox').addClass('disabled');
             } else {
-                $checkbox.prop('disabled', true);
-                $checkbox.closest('div.checkbox').addClass('disabled');
+                $chd_checkbox.prop('disabled', true);
+                $chd_checkbox.closest('div.checkbox').addClass('disabled');
+                $bbm_checkbox.prop('disabled', true);
+                $bbm_checkbox.closest('div.checkbox').addClass('disabled');
             }
         })
         .on('ajax:beforeSend', '#confirm-modal form', function() {
@@ -203,6 +213,13 @@ $(document).ready(function() {
             } else {
                 if(selectedItem.aeon_requestable) {
                     urlPart = 'aeon';
+                } else if (selectedItem.restricted_circ) {
+                    params.location = selectedItem.location;
+                    params.library = selectedItem.library;
+                    params.reserves = (selectedItem.on_reserves ? '1' : '0');
+                    params.reference = (selectedItem.at_refrence ? '1' : '0');
+                    params.in_house = (selectedItem.in_house ? '1' : '0');
+                    urlPart = 'noncirc';
                 } else {
                     urlPart = 'ill';
                 }

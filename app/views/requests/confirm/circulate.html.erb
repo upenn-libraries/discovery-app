@@ -18,10 +18,15 @@
 
       <ul class="list-group">
         <% if user_is_facex? %>
-          <%= render('requests/confirm/delivery_options/office', f: f) if user_is_facex?  %>
+          <%= render('requests/confirm/delivery_options/office', f: f) %>
         <% end %>
         <%= render 'requests/confirm/delivery_options/pickup', f: f %>
-        <%= render 'requests/confirm/delivery_options/mail', f: f %>
+        <% if user_is_college_house_eligible? %>
+          <%= render 'requests/confirm/delivery_options/college_house', f: f %>
+        <% end %>
+        <% unless user_is_courtesy_borrower? %>
+          <%= render 'requests/confirm/delivery_options/mail', f: f %>
+        <% end %>
       </ul>
       <div id="comments-area">
         <a class="input-toggleable" href="#"><%= t('requests.labels.add_comments') %></a>

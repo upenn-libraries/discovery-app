@@ -231,6 +231,16 @@ module ApplicationHelper
     session[:user_group] == 'Faculty Express'
   end
 
+  # @return [TrueClass, FalseClass]
+  def user_is_courtesy_borrower?
+    session[:user_group] == 'Courtesy Borrower'
+  end
+
+  # @return [TrueClass, FalseClass]
+  def user_is_college_house_eligible?
+    session[:user_group].in? ['Undergraduate Student', 'GIC textbook users']
+  end
+
   def format_icon(format, size: 'small')
     icon_class = if !format.empty?
       case format
