@@ -199,6 +199,10 @@ class SolrDocument
     self['hld_count_isort']&.positive?
   end
 
+  def title
+    fetch('title', '')
+  end
+
   # @return [String, nil]
   def item_count
     fetch('itm_count_isort', nil)
