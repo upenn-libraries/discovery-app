@@ -18,7 +18,18 @@ function showDisabledRequestButtons($widgetArea) {
     $widgetArea.find('.aeon-request-button').prop('disabled', false).hide();
 }
 
-function displayButtons($widgetArea, selectedItem, logged_in, context) {
+function populateWidgetArea($widgetArea, selectedItem, logged_in) {
+    if(selectedItem.at_archives) {
+        $widgetArea.append(
+            "<div class='alert alert-warning archives-holding-alert'>Accessing this item requires <a href='https://archives.upenn.edu/research/visit'>visiting</a> the <a href=\"https://archives.upenn.edu/archives-info/contact\">Penn University Archives & Records Center</a>.</div>"
+        )
+    } else {
+        $widgetArea.find('.archives-holding-alert').remove();
+        displayButtons($widgetArea, selectedItem, logged_in);
+    }
+}
+
+function displayButtons($widgetArea, selectedItem, logged_in) {
     if(!selectedItem.aeon_requestable) {
         if(logged_in) {
             showAndEnableRequestButtons($widgetArea, selectedItem);
@@ -72,7 +83,8 @@ function initializeRequestingWidget($widgetArea, context) {
                     $widget.closest('.form-group').hide();
                     selectedItem = responseData[0];
                     $widget.data(selectedItem);
-                    displayButtons($widgetArea, selectedItem, logged_in, context);
+                    populateWidgetArea($widgetArea, selectedItem, logged_in, context);
+                    displayButtons();
                 } else {
                     $widget.select2({
                         theme: 'bootstrap',
