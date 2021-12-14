@@ -103,10 +103,14 @@ class SearchBuilder < Blacklight::SearchBuilder
 
   def add_left_anchored_title(solr_parameters)
     qq = solr_parameters[:qq]
-    if qq && qq.length > 200
-      raise StandardError, "query length temporarily capped at 200; found: \"#{qq}\"" # TEMPORARY MITIGATION
-    end
     return unless qq.present?
+
+    character_limit = (ENV['QUERY_LENGTH_CAP'] || 200).to_i
+    if qq.length > character_limit
+      Honeybadger.notify("long query: \"#{qq}\"")
+      qq.slice!(character_limit..-1)
+    end
+
     bq = blacklight_params[:q]
     return unless bq.present?
     search_field = blacklight_params[:search_field]
