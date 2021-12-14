@@ -105,7 +105,7 @@ class SearchBuilder < Blacklight::SearchBuilder
     qq = solr_parameters[:qq]
     return unless qq.present?
 
-    character_limit = (ENV['QUERY_LENGTH_CAP'] || 200).to_i
+    character_limit = ENV.fetch('QUERY_LENGTH_CAP', 200).to_i
     if qq.length > character_limit
       Honeybadger.notify("long query: \"#{qq}\"")
       qq.slice!(character_limit..-1)
