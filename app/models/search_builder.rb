@@ -101,14 +101,15 @@ class SearchBuilder < Blacklight::SearchBuilder
     super(params_copy)
   end
 
+  QUERY_LENGTH_CAP = ENV.fetch('QUERY_LENGTH_CAP', 200).to_i
+
   def add_left_anchored_title(solr_parameters)
     qq = solr_parameters[:qq]
     return unless qq.present?
 
-    character_limit = ENV.fetch('QUERY_LENGTH_CAP', 200).to_i
-    if qq.length > character_limit
+    if qq.length > QUERY_LENGTH_CAP
       Honeybadger.notify("long query: \"#{qq}\"")
-      qq.slice!(character_limit..-1)
+      qq.slice!(QUERY_LENGTH_CAP..-1)
     end
 
     bq = blacklight_params[:q]
