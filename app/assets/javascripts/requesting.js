@@ -54,9 +54,8 @@ function calculateItemRequestUrl(mmsId, itemCount, emptyHoldingCount) {
 
 // are all the elements unavailable? some new school JS here...
 function allUnavailable(data) {
-    // var availabilities = data.map(function(e) { return e.circulate })
-    // return [...new Set(availabilities)] === [false]
-    return true;
+    var availabilities = data.map(function(e) { return e.circulate })
+    return [...new Set(availabilities)] === [false]
 }
 
 function initializeRequestingWidget($widgetArea, context) {
@@ -91,7 +90,7 @@ function initializeRequestingWidget($widgetArea, context) {
                 } else {
                     // show a Request Scan button if all items in the select are unavailable
                     if(allUnavailable(responseData)) {
-                        showPrintRequestButton($widgetArea, true);
+                        showPrintRequestButton($widgetArea, false);
                         showScanButton($widgetArea);
                     }
                     $widget.select2({
