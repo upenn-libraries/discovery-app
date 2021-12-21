@@ -1,8 +1,17 @@
+function showScanButton($widgetArea, disabled = false) {
+    $widgetArea.find('.electronic-request-button').prop('disabled', disabled).show();
+}
+
+function showPrintRequestButton($widgetArea, disabled = false) {
+    $widgetArea.find('.print-request-button').prop('disabled', disabled).show();
+}
+
 function showAndEnableRequestButtons($widgetArea, selectedItem) {
-    $widgetArea.find('.print-request-button').prop('disabled', false).show();
+    showPrintRequestButton($widgetArea);
     if(selectedItem.scannable) {
-        $widgetArea.find('.electronic-request-button').prop('disabled', false).show();
+        showScanButton($widgetArea);
     }
+    handleAeonRequestButton($widgetArea, true, false);
 }
 
 function handleAeonRequestButton($widgetArea, show, disable) {
@@ -67,6 +76,12 @@ function calculateItemRequestUrl(mmsId, itemCount, emptyHoldingCount) {
     }
 }
 
+// are all the elements unavailable? some new school JS here...
+function allUnavailable(data) {
+    var availabilities = data.map(function(e) { return e.circulate })
+    return [...new Set(availabilities)] === [false]
+}
+
 function initializeRequestingWidget($widgetArea, context) {
     $('.selected-item-debug').hide();
     var $requestForm = $widgetArea.find('.request-form')
@@ -98,6 +113,11 @@ function initializeRequestingWidget($widgetArea, context) {
                     populateWidgetArea($widgetArea, selectedItem, logged_in, context);
                     displayButtons();
                 } else {
+                    // show a Request Scan button if all items in the select are unavailable
+                    if(allUnavailable(responseData)) {
+                        showPrintRequestButton($widgetArea, false);
+                        showScanButton($widgetArea);
+                    }
                     $widget.select2({
                         theme: 'bootstrap',
                         placeholder: "Click here to see all Items",
@@ -215,7 +235,7 @@ $(document).ready(function() {
         $('[data-toggle="tooltip"]').tooltip('hide'); // hide tooltips
         $modal.empty();
         var triggeringButton = e.relatedTarget;
-        var $widget = triggeringButton.closest('form').find('.request-item-select')
+        var $widget = triggeringButton.closest('form').find('.request-item-select');
         // get selected item from 'widget'
         if($widget.hasClass('select2-hidden-accessible')) {
             selectedItem = $widget.select2('data')[0];
@@ -259,8 +279,13 @@ $(document).ready(function() {
             $modal.find('#requestIsxn').val(selectedItem.isxn);
             $modal.find('#requestBibTitle').val(selectedItem.title);
 
-            // set Item details
-            $modal.find('#title').val(selectedItem.title);
+            //set Item details
+            if(selectedItem.id) {
+                $modal.find('#title').val(selectedItem.title);
+            } else {
+                // if a selection hasn't been made, pull title from data attributes
+                $modal.find('#title').val($widget.data('bib-title'));
+            }
             if(selectedItem.description) {
                 $modal.find('#selection').val(selectedItem.description);
             } else {
