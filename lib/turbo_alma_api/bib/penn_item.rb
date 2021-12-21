@@ -12,6 +12,24 @@ module TurboAlmaApi
         LPTOP EQUIP OTHER AUDIOVM
       ].freeze
 
+      # overrides to also check holding data since we have so many "no item" cases....
+      def holding_library
+        item_data.dig("library", "value") || holding_data.dig("library", "value")
+      end
+
+      def holding_library_name
+        item_data.dig("library", "desc") || holding_data.dig("library", "desc")
+      end
+
+      def holding_location
+        item_data.dig("location", "value") || holding_data.dig("location", "value")
+      end
+
+      def holding_location_name
+        item_data.dig("location", "desc") || holding_data.dig("location", "desc")
+      end
+      # end overrides
+
       def identifiers
         { item_pid: pid,
           holding_id: holding_data['holding_id'],
@@ -182,19 +200,22 @@ module TurboAlmaApi
       end
 
       # @return [TrueClass, FalseClass]
-      # TODO: also check item policy?
       def on_reserve?
         item_data.dig('policy', 'value') == 'reserve' ||
         holding_data.dig('temp_policy', 'value') == 'reserve'
       end
 
       # @return [TrueClass, FalseClass]
-      # TODO: also consider temp_policy?
       def at_reference?
         item_data.dig('policy', 'value') == 'reference' ||
           holding_data.dig('temp_policy', 'value') == 'reference'
       end
 
+      # @return [TrueClass, FalseClass]
+      def at_archives?
+        library_name == 'University Archives'
+      end
+      
       # @return [TrueClass, FalseClass]
       def restricted_circ?
         on_reserve? || at_reference? || in_house_use_only?
@@ -221,6 +242,7 @@ module TurboAlmaApi
           'aeon_requestable' => aeon_requestable?,
           'on_reserve' => on_reserve?,
           'at_reference' => at_reference?,
+          'at_archives' => at_archives?,
           'in_house_only' => in_house_use_only?,
           'restricted_circ' => restricted_circ?,
           'volume' => volume,
