@@ -92,13 +92,16 @@ a:hover, a:focus {
     font-size: 12px;
   }
 }
+.facet-values .document-metadata li {
+  display: block;
+}
 .document-metadata  {
   @include no-list-style;
   li {
     text-indent: -14rem;
-    margin-left: 14rem;
+    margin: 1.8rem 0 1.8rem 14rem;
     clear:left;
-    margin-bottom: .7rem;
+    line-height: 1;
   }
   li.blacklight-author_creator_a,
   li.blacklight-publication_a,
@@ -125,7 +128,7 @@ a:hover, a:focus {
   &.label-availability.label-warning,
   &.label-availability.label-danger {
     position: relative;
-    top: -.2rem;
+    top: -.8rem;
     background-color: transparent;
     
     text-align: left;
