@@ -4,8 +4,10 @@
       <span class="glyphicon glyphicon-book"></span> <%= t('requests.widget.title') %>
       <%#= render 'requests/help_icon' %>
     </div>
-    <div class="item-request-widget panel-body spinner" id="item-request-widget-for-<%= document.alma_mms_id %>">
-      <%= render 'requests/widget_form', document: document %>
+    <div class="item-request-widget spinner" id="item-request-widget-for-<%= document.alma_mms_id %>">
+      <div class="panel-body">
+        <%= render 'requests/widget_form', document: document %>
+      </div>
     </div>
   </div>
 </section>
