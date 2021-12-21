@@ -99,9 +99,8 @@ a:hover, a:focus {
   @include no-list-style;
   li {
     text-indent: -14rem;
-    margin: 1.8rem 0 1.8rem 14rem;
+    margin: .2rem 0 1rem 14rem;
     clear:left;
-    line-height: 1;
   }
   li.blacklight-author_creator_a,
   li.blacklight-publication_a,
@@ -128,7 +127,7 @@ a:hover, a:focus {
   &.label-availability.label-warning,
   &.label-availability.label-danger {
     position: relative;
-    top: -.8rem;
+    top: -.4rem;
     background-color: transparent;
     
     text-align: left;
