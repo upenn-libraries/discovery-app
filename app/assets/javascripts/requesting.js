@@ -11,31 +11,55 @@ function showAndEnableRequestButtons($widgetArea, selectedItem) {
     if(selectedItem.scannable) {
         showScanButton($widgetArea);
     }
-    $widgetArea.find('.aeon-request-button').prop('disabled', true).hide();
+    handleAeonRequestButton($widgetArea, true, false);
+}
+
+function handleAeonRequestButton($widgetArea, show, disable) {
+    $widgetArea.find('.aeon-request-button').prop('disabled', disable).toggle(show);
 }
 
 function showAndEnablePublicAeonButton($widgetArea) {
     $widgetArea.find('.print-request-button').prop('disabled', true).hide();
     $widgetArea.find('.electronic-request-button').prop('disabled', true).hide();
-    $widgetArea.find('.aeon-request-button').prop('disabled', false).show();
+    handleAeonRequestButton($widgetArea, true, false)
 }
 
 function showDisabledRequestButtons($widgetArea) {
     $widgetArea.find('.print-request-button').prop('disabled', true).show();
     $widgetArea.find('.electronic-request-button').prop('disabled', true).show();
-    $widgetArea.find('.aeon-request-button').prop('disabled', false).hide();
+    handleAeonRequestButton($widgetArea, false, false)
+}
+
+function populateWidgetArea($widgetArea, selectedItem, logged_in) {
+    if(selectedItem.at_archives) {
+        showArchivesAlert($widgetArea);
+    } else {
+        $widgetArea.find('.archives-holding-alert').remove();
+        displayButtons($widgetArea, selectedItem, logged_in);
+    }
 }
 
 function displayButtons($widgetArea, selectedItem, logged_in) {
-    if(!selectedItem.aeon_requestable) {
+    $widgetArea.find('.archives-holding-alert').remove();
+    handleAeonRequestButton($widgetArea, false, false)
+    if(selectedItem.aeon_requestable) {
+        showAndEnablePublicAeonButton($widgetArea);
+    } else if(selectedItem.at_archives) {
+        showArchivesAlert($widgetArea);
+        showDisabledRequestButtons($widgetArea);
+    } else {
         if(logged_in) {
             showAndEnableRequestButtons($widgetArea, selectedItem);
         } else {
             showDisabledRequestButtons($widgetArea);
         }
-    } else {
-        showAndEnablePublicAeonButton($widgetArea);
     }
+}
+
+function showArchivesAlert($widgetArea) {
+    $widgetArea.find('.panel-body').append(
+        "<div class='alert alert-warning archives-holding-alert'>Accessing this item requires <a href='https://archives.upenn.edu/research/visit'>visiting</a> the <a href=\"https://archives.upenn.edu/archives-info/contact\">Penn University Archives & Records Center</a>.</div>"
+    )
 }
 
 function calculateItemRequestUrl(mmsId, itemCount, emptyHoldingCount) {
@@ -86,7 +110,8 @@ function initializeRequestingWidget($widgetArea, context) {
                     $widget.closest('.form-group').hide();
                     selectedItem = responseData[0];
                     $widget.data(selectedItem);
-                    displayButtons($widgetArea, selectedItem, logged_in, context);
+                    populateWidgetArea($widgetArea, selectedItem, logged_in, context);
+                    displayButtons();
                 } else {
                     // show a Request Scan button if all items in the select are unavailable
                     if(allUnavailable(responseData)) {
