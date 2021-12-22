@@ -11,7 +11,7 @@ function showAndEnableRequestButtons($widgetArea, selectedItem) {
     if(selectedItem.scannable) {
         showScanButton($widgetArea);
     }
-    handleAeonRequestButton($widgetArea, true, false);
+    handleAeonRequestButton($widgetArea, false, true);
 }
 
 function handleAeonRequestButton($widgetArea, show, disable) {
@@ -30,18 +30,9 @@ function showDisabledRequestButtons($widgetArea) {
     handleAeonRequestButton($widgetArea, false, false)
 }
 
-function populateWidgetArea($widgetArea, selectedItem, logged_in) {
-    if(selectedItem.at_archives) {
-        showArchivesAlert($widgetArea);
-    } else {
-        $widgetArea.find('.archives-holding-alert').remove();
-        displayButtons($widgetArea, selectedItem, logged_in);
-    }
-}
-
 function displayButtons($widgetArea, selectedItem, logged_in) {
     $widgetArea.find('.archives-holding-alert').remove();
-    handleAeonRequestButton($widgetArea, false, false)
+    handleAeonRequestButton($widgetArea, false, true)
     if(selectedItem.aeon_requestable) {
         showAndEnablePublicAeonButton($widgetArea);
     } else if(selectedItem.at_archives) {
@@ -76,10 +67,11 @@ function calculateItemRequestUrl(mmsId, itemCount, emptyHoldingCount) {
     }
 }
 
-// are all the elements unavailable? some new school JS here...
+// are all the elements unavailable?
 function allUnavailable(data) {
-    var availabilities = data.map(function(e) { return e.circulate })
-    return [...new Set(availabilities)] === [false]
+    return data.every(function(elem) {
+        return elem.circulate === false;
+    })
 }
 
 function initializeRequestingWidget($widgetArea, context) {
@@ -110,8 +102,7 @@ function initializeRequestingWidget($widgetArea, context) {
                     $widget.closest('.form-group').hide();
                     selectedItem = responseData[0];
                     $widget.data(selectedItem);
-                    populateWidgetArea($widgetArea, selectedItem, logged_in, context);
-                    displayButtons();
+                    displayButtons($widgetArea, selectedItem, logged_in);
                 } else {
                     // show a Request Scan button if all items in the select are unavailable
                     if(allUnavailable(responseData)) {
