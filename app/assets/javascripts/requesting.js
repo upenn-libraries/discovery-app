@@ -1,15 +1,15 @@
-function showScanButton($widgetArea, disabled = false) {
-    $widgetArea.find('.electronic-request-button').prop('disabled', disabled).show();
+function showScanButton($widgetArea, disable) {
+    $widgetArea.find('.electronic-request-button').prop('disabled', disable).show();
 }
 
-function showPrintRequestButton($widgetArea, disabled = false) {
-    $widgetArea.find('.print-request-button').prop('disabled', disabled).show();
+function showPrintRequestButton($widgetArea, disable) {
+    $widgetArea.find('.print-request-button').prop('disabled', disable).show();
 }
 
 function showAndEnableRequestButtons($widgetArea, selectedItem) {
-    showPrintRequestButton($widgetArea);
+    showPrintRequestButton($widgetArea, false);
     if(selectedItem.scannable) {
-        showScanButton($widgetArea);
+        showScanButton($widgetArea, false);
     }
     handleAeonRequestButton($widgetArea, false, true);
 }
@@ -25,8 +25,8 @@ function showAndEnablePublicAeonButton($widgetArea) {
 }
 
 function showDisabledRequestButtons($widgetArea) {
-    $widgetArea.find('.print-request-button').prop('disabled', true).show();
-    $widgetArea.find('.electronic-request-button').prop('disabled', true).show();
+    showPrintRequestButton($widgetArea, true);
+    showScanButton($widgetArea, true);
     handleAeonRequestButton($widgetArea, false, false)
 }
 
@@ -107,7 +107,7 @@ function initializeRequestingWidget($widgetArea, context) {
                     // show a Request Scan button if all items in the select are unavailable
                     if(allUnavailable(responseData)) {
                         showPrintRequestButton($widgetArea, false);
-                        showScanButton($widgetArea);
+                        showScanButton($widgetArea, false);
                     }
                     $widget.select2({
                         theme: 'bootstrap',
