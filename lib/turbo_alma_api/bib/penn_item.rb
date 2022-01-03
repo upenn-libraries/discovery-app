@@ -4,6 +4,7 @@ module TurboAlmaApi
   module Bib
     # sprinkle additional and Penn-specific behavior on top of Alma::BibItem
     class PennItem < Alma::BibItem
+      ETAS_TEMPORARY_LOCATION = 'Van Pelt - Non Circulating'
       IN_HOUSE_POLICY_CODE = 'InHouseView'
       # Rudimentary list of material types unsuitable for Scan & Deliver
       UNSCANNABLE_MATERIAL_TYPES = %w[
@@ -11,6 +12,13 @@ module TurboAlmaApi
         AUDIOCASSETTE VIDEOCASSETTE HEAD LRDSC CALC KEYS RECORD
         LPTOP EQUIP OTHER AUDIOVM
       ].freeze
+
+      # Is this Item restricted from circulation due to ETAS?
+      # @return [TrueClass, FalseClass]
+      def etas_restricted?
+        # is in ETAS temporary location?
+        temp_location_name == ETAS_TEMPORARY_LOCATION
+      end
 
       # overrides to also check holding data since we have so many "no item" cases....
       def holding_library
@@ -61,7 +69,8 @@ module TurboAlmaApi
           !aeon_requestable? &&
           !on_reserve? &&
           !at_reference? &&
-          !in_house_use_only?
+          !in_house_use_only? &&
+          !etas_restricted?
       end
 
       # Penn uses "Non-circ" in Alma
