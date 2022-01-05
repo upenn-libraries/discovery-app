@@ -4,7 +4,7 @@ module TurboAlmaApi
   module Bib
     # sprinkle additional and Penn-specific behavior on top of Alma::BibItem
     class PennItem < Alma::BibItem
-      ETAS_TEMPORARY_LOCATION = 'Van Pelt - Non Circulating'
+      ETAS_TEMPORARY_LOCATION_CODE = 'vanpNocirc'
       IN_HOUSE_POLICY_CODE = 'InHouseView'
       # Rudimentary list of material types unsuitable for Scan & Deliver
       UNSCANNABLE_MATERIAL_TYPES = %w[
@@ -16,25 +16,24 @@ module TurboAlmaApi
       # Is this Item restricted from circulation due to ETAS?
       # @return [TrueClass, FalseClass]
       def etas_restricted?
-        # is in ETAS temporary location?
-        temp_location_name == ETAS_TEMPORARY_LOCATION
+        temp_location == ETAS_TEMPORARY_LOCATION_CODE
       end
 
       # overrides to also check holding data since we have so many "no item" cases....
       def holding_library
-        item_data.dig("library", "value") || holding_data.dig("library", "value")
+        item_data.dig('library', 'value') || holding_data.dig('library', 'value')
       end
 
       def holding_library_name
-        item_data.dig("library", "desc") || holding_data.dig("library", "desc")
+        item_data.dig('library', 'desc') || holding_data.dig('library', 'desc')
       end
 
       def holding_location
-        item_data.dig("location", "value") || holding_data.dig("location", "value")
+        item_data.dig('location', 'value') || holding_data.dig('location', 'value')
       end
 
       def holding_location_name
-        item_data.dig("location", "desc") || holding_data.dig("location", "desc")
+        item_data.dig('location', 'desc') || holding_data.dig('location', 'desc')
       end
       # end overrides
 
