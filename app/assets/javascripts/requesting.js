@@ -269,6 +269,7 @@ $(document).ready(function() {
             $modal.find('#requestMmsId').val(mmsId);
             $modal.find('#requestIsxn').val(selectedItem.isxn);
             $modal.find('#requestBibTitle').val(selectedItem.title);
+            $modal.find('#requestPubYear').val($widget.data('pub-year'));
 
             //set Item details
             if(selectedItem.id) {

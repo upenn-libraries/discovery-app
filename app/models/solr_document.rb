@@ -217,4 +217,21 @@ class SolrDocument
   def show_requesting_widget?
     print_holdings? || self[:physical_holdings_json].present?
   end
+
+  # @return [NilClass, String]
+  def publication_year
+    f260 = to_marc.fields('260')
+    return nil unless f260.any?
+
+    pubdate_subfields = f260.first.select do |sf|
+      sf.code == 'c'
+    end
+    
+    return nil unless pubdate_subfields.any?
+    
+    raw_pubdate = pubdate_subfields.first.value
+
+    # string non-numeric
+    raw_pubdate.gsub(/\D/, '')
+  end
 end
