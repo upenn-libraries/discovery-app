@@ -155,8 +155,10 @@ module TurboAlmaApi
         item_data['enumeration_b']
       end
 
+      # get raw year of publication, preferring value from Item over Bib
       def pub_year
-        item_data['chronology_i']
+        pub_year = item_data['chronology_i'].presence || bib('date_of_publication').presence
+        pub_year&.gsub(/\D/, '')
       end
 
       def pub_month
