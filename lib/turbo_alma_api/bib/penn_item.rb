@@ -257,7 +257,6 @@ module TurboAlmaApi
           'restricted_circ' => restricted_circ?,
           'volume' => volume,
           'issue' => issue,
-          'pub_year' => pub_year,
           'isxn' => isxn,
           'in_place' => in_place?,
           'scannable' => scannable?
