@@ -70,12 +70,16 @@ module DocumentRenderHelper
     hathi_etas = nil
     ret = values.map do |value|
       JSON.parse(value).map do |link_struct|
+        label = 'Online access'
         url = link_struct['linkurl']
         text = link_struct['linktext']
         postfix = link_struct['postfix']
         if text == @@HATHI_PD_TEXT
           hathi_pd = true
         elsif postfix == @@HATHI_ETAS_POSTFIX
+          etas_class = 'etas-temporary'
+          label = 'Temporary'
+          postfix += ' restrctions'
           if hathi_etas.nil?
             hathi_etas = [url]
           elsif hathi_etas.include? url
@@ -86,7 +90,7 @@ module DocumentRenderHelper
           url = @@HATHI_LOGIN_PREFIX + URI.encode_www_form_component(url)
           append = @@HATHI_INFO
         end
-        %Q{<a href="#{url}"> <span class="label label-availability label-primary">Online access</span>#{text}</a>#{postfix}#{append}}
+        %Q{<a href="#{url}"> <span class="label label-availability label-primary #{etas_class}">#{label}</span>#{text}</a>#{postfix}#{append}}
       end.compact.join('<br/>')
     end.join('<br/>')
     unless alma_mms_id.nil?
@@ -114,6 +118,8 @@ module DocumentRenderHelper
         if text == @@HATHI_PD_TEXT
           hathi_pd = true
         elsif postfix == @@HATHI_ETAS_POSTFIX
+          text = '<span class="label label-availability label-primary etas-temporary">Temporary</span>' + text
+          postfix += ' restrictions'
           if hathi_etas.nil?
             hathi_etas = [url]
           elsif hathi_etas.include? url

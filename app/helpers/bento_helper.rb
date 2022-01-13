@@ -79,6 +79,8 @@ module BentoHelper
       if e['linktext'] == HATHI_PD_TEXT
         acc[:pd] = e
       elsif e['postfix'] == HATHI_ETAS_POSTFIX
+        e['linktext'] = 'Temporary online access'
+        e['postfix'] += ' restrictions'
         e['linkurl'] = HATHI_LOGIN_PREFIX + URI.encode_www_form_component(e['linkurl'])
         acc[:etas] = e
       else
