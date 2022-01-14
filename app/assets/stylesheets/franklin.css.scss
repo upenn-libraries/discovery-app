@@ -59,6 +59,15 @@
   margin-right: 3px;
 }
 
+.etas-temporary {
+  background-color: $label-temporary-bg;
+}
+
+.etas-temporary:hover {
+  text-decoration: underline;
+  text-decoration-color: white;
+}
+
 .blacklight-availability {
   line-height: 175%;
 }
