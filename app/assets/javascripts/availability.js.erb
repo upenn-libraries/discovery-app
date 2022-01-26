@@ -127,7 +127,7 @@ $(document).ready(function() {
             "processing": true,
             "columnDefs": [
                 { "visible": false, "targets": [0,6,7] },
-                { "orderable": false, "targets": 5 }
+                { "orderable": false, targets: 0  }
             ],
             "autoWidth": false,
             "order": [],
@@ -176,21 +176,6 @@ $(document).ready(function() {
             },
             "initComplete": function(settings, json) {
                 var table = $('#requestOptions-' + mmsid).DataTable();
-
-                if(globaldata[mmsid]['inventory_type'] === 'electronic') {
-                    table.column(4).visible(false);
-                    $(table.column(2).header()).text("");
-                }
-
-                // Reference: https://stackoverflow.com/a/15458987
-                // Check if the location of the first holding is an HTML element,
-                // indicating this is for a serial
-                else if(/<[a-z][\s\S]*>/i.test(json.data[0][2])) {
-                    $('#requestOptionsAvailability-' + mmsid).text('Holdings');
-                }
-                else {
-                    $('#requestOptionsAvailability-' + mmsid).text('Availability');
-                }
 
                 $('.load-holding-details').each(function(idx, element) {
                     var mmsid = $(element).data("mmsid");
@@ -343,7 +328,7 @@ $(document).ready(function() {
             "processing": true,
             "columnDefs": [
                 { "visible": false, "targets": [0,6,7] },
-                { "orderable": false, "targets": 5 }
+                { "orderable": false, targets: 0  }
             ],
             "order": [],
             "language": {

@@ -16,10 +16,6 @@ module BlacklightSolrpluginsHelper
     end
   end
 
-  def render_rbrowse_result(facet_field, facet_item, doc_presenter)
-    link_to(facet_item.value, solr_document_path(doc_presenter.field_value('id')))
-  end
-
   def render_rbrowse_display_field(fieldname, doc_presenter)
     # handle special case of availability, which gets loaded via ajax
     if fieldname == 'availability'
