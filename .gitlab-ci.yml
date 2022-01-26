@@ -24,8 +24,6 @@ build_image:
   stage: .pre
   extends:
     - .build_docker_image
-  variables:
-    USE_CACHE: "false"
   tags:
     - build
 
