@@ -113,7 +113,8 @@ module PennLib
       'local/osu' => Prefixes::OTHER,
       'mesh' => Prefixes::MESH,
       'ndlsh' => Prefixes::OTHER,
-      'nlksh' => Prefixes::OTHER
+      'nlksh' => Prefixes::OTHER,
+      'penn_dissertations' => Prefixes::OTHER
     }
 
     # default field mapping is based only on ind2, and topic headings (as
@@ -206,7 +207,7 @@ module PennLib
         # normalized away), then any `.` present is integral (i.e., not ISBD punctuation), and thus
         # should be left intact as part of the heading.
         Marc.trim_trailing_comma!(last) || Marc.trim_trailing_period!(last)
-        if struct[:local] && struct[:prefix] == Prefixes::OTHER
+        if struct[:local] && struct[:prefix] == Prefixes::OTHER && struct[:source_specified].nil?
           # local subjects without source specified are really too messy, so they should bypass
           # xfacet processing and be placed directly in stored field for display only
           struct[:val] = struct.delete(:parts).join('--')
@@ -252,7 +253,16 @@ module PennLib
     end
 
     def self.build_subject_struct(field, tag)
-      local = field.indicator2 == '4' || tag.starts_with?('69')
+      local = tag.starts_with?('69')
+      if field.indicator2 == '4'
+        local = true
+        if field.any? { |sf| sf.value.include?('Penn dissertations') }
+          # for Penn dissertations, set an implicit default `:source_specified`, in order to
+          # include these (still as "local" headings) in subject browse. These headings can be
+          # uniquely and consistently identified by ind2==4, 'Penn disserations'.
+          ret[:source_specified] = 'penn_dissertations'
+        end
+      end
       ret = {
         count: 0,
         parts: [],
