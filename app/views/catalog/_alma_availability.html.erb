@@ -13,12 +13,11 @@
 <% end %>
   <div class="panel-body">
     <div id="table-wrapper-<%= document.alma_mms_id %>">
-      <table id="requestOptions-<%= document.alma_mms_id %>" class="request-options-load" data-mmsid="<%= document.alma_mms_id %>" style="width:100%">
+      <table id="requestOptions-<%= document.alma_mms_id %>" class="request-options-load" data-mmsid="<%= document.alma_mms_id %>" style="width:100%" data-ordering="false">
         <thead>
         <tr>
-          <th></th>
           <th id="requestOptionsAvailability-<%= document.alma_mms_id %>">Source</th>
-          <th>Holdings</th>
+          <th aria-label="Holdings" id="holdingsAvailability-<%= document.alma_mms_id %>">Holdings</th>
           <th>Notes</th>
         </tr>
         </thead>

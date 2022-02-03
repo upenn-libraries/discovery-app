@@ -125,10 +125,6 @@ $(document).ready(function() {
                 });
             },
             "processing": true,
-            "columnDefs": [
-                { "visible": false, "targets": [0,6,7] },
-                { "orderable": false, targets: 0  }
-            ],
             "autoWidth": false,
             "order": [],
             "language": {
@@ -144,17 +140,6 @@ $(document).ready(function() {
 
                 if(tableLen > 0 && globaldata != null) {
                     data = table.data();
-                    for(var i = 0; i < tableLen; i++) {
-                        if(data[i][7] in globaldata && renderdata[mmsid].indexOf(data[i][7]) === -1) {
-                            var requests = globaldata[data[i][7]];
-                            if(validRequestTypes.indexOf(requests[0]) !== -1) {
-                                renderdata[mmsid].push(data[i][7]);
-                                // TODO: when libraries reopen: remove conditional, Pickup@Penn=>Request
-                                data[i][5][0] = "<a target='_blank' href='/alma/request?mms_id=" + mmsid + "&holding_id=" + data[i][6] + "&item_pid=" + data[i][7] + "'>PickUp@Penn</a>";
-                                table.row(i).invalidate().draw();
-                            }
-                        }
-                    }
                 }
 
                 if(tableLen <= 10) {
@@ -194,13 +179,16 @@ $(document).ready(function() {
                         }
                     });
                 });
-
+                var holdingsColumn = 0;
                 $('.load-portfolio-details').each(function(idx, element) {
                     var mmsid = $(element).data("mmsid");
                     var portfoliopid = $(element).data("portfoliopid");
                     var collectionid = $(element).data("collectionid");
                     var coverage = $(element).data("coverage");
                     var publicnote = $(element).data("publicnote");
+                    if(coverage.length != 0) {
+                        holdingsColumn++;
+                    };
 
                     // "standalone" portfolios have no collection_id, and so we should skip this lookup
                     if(!collectionid) {
@@ -221,6 +209,9 @@ $(document).ready(function() {
                             $('#notes-' + portfoliopid).append(notes)
                         }
                     });
+                    if(holdingsColumn == 0) {
+                        $('#holdingsAvailability-' + mmsid).html('');
+                    };
                 });
             }
         });
@@ -326,10 +317,6 @@ $(document).ready(function() {
         .DataTable({
             "dom": '<"backbutton-top-'+ mmsid +'">lftipr<"backbutton-' + mmsid + '">',
             "processing": true,
-            "columnDefs": [
-                { "visible": false, "targets": [0,6,7] },
-                { "orderable": false, targets: 0  }
-            ],
             "order": [],
             "language": {
                 "search": "Filter records:",
