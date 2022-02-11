@@ -236,6 +236,10 @@ module ApplicationHelper
     session[:user_group] == 'Courtesy Borrower'
   end
 
+  def user_is_undergraduate?
+    session[:user_group] == 'Undergraduate Student'
+  end
+
   # @return [TrueClass, FalseClass]
   def user_is_college_house_eligible?
     session[:user_group].in? ['Undergraduate Student', 'GIC textbook users']
