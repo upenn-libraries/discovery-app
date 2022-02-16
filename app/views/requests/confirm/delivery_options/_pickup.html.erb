@@ -4,5 +4,5 @@
       <input type="radio" name="delivery" value="pickup" id="pickup-radio" class="delivery-option-radio" <%= user_is_facex? ? '' : 'checked' %>  /> <%= t('requests.labels.pickup') %></label>
   </h3>
   <p class="list-group-item-text"></p>
-  <%= f.select :pickup_location, options_for_select(circulate_pickup_locations), { label: t('requests.fields.pickup_location') }, { disabled: false } %>
+  <%= f.select :pickup_location, circulate_pickup_locations, { label: t('requests.fields.pickup_location') }, { disabled: false } %>
 </li>
