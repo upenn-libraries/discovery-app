@@ -55,7 +55,7 @@ module TurboAlmaApi
 
       # @return [String]
       def bib(field)
-        self['bib_data'].dig field
+        self['bib_data']&.dig field
       end
 
       # Determine, based on various response attributes, if this Item is

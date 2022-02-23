@@ -1,7 +1,7 @@
 <form class="request-form">
   <div class="form-group">
     <label for="request-item"><%= t('requests.fields.selection') %></label>
-    <select name="request-item" class="form-control request-item-select" data-mmsid="<%= document.alma_mms_id %>" data-item-count="<%= document.item_count %>" data-empty-holding-count="<%= document.empty_holding_count %>" data-bib-title="<%= document.title %>">
+    <select name="request-item" class="form-control request-item-select" data-mmsid="<%= document.alma_mms_id %>" data-item-count="<%= document.item_count %>" data-empty-holding-count="<%= document.empty_holding_count %>" data-bib-title="<%= document.title %>" data-isxn="<%= document.isxn %>">
       <option value=""></option>
     </select>
   </div>
