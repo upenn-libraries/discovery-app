@@ -236,13 +236,14 @@ module ApplicationHelper
     session[:user_group] == 'Courtesy Borrower'
   end
 
+  # @return [TrueClass, FalseClass]
   def user_is_undergraduate?
-    session[:user_group] == 'Undergraduate Student'
+    session[:user_group].in? ['Undergraduate Student', 'GIC textbook users']
   end
 
   # @return [TrueClass, FalseClass]
   def user_is_college_house_eligible?
-    session[:user_group].in? ['Undergraduate Student', 'GIC textbook users']
+    user_is_undergraduate?
   end
 
   def format_icon(format, size: 'small')
