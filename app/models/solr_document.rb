@@ -203,6 +203,11 @@ class SolrDocument
     fetch('title', '')
   end
 
+  # Attempt to get an ISXN for use by Get It form when no specific Item is selected
+  def isxn
+    (pennlibmarc.get_isbn_display(to_marc) || pennlibmarc.get_issn_display(to_marc))&.first
+  end
+
   # @return [String, nil]
   def item_count
     fetch('itm_count_isort', nil)

@@ -36,7 +36,7 @@ class AbstractRequest
       title: response[:title] }
   rescue RequestFailed => e
     Honeybadger.notify e
-    { status: :failed, message: "Submission failed, please try again: #{e.message}" }
+    { status: :failed, message: I18n.t('requests.messages.request_failed') }
   end
 
   # Do the request using the proper API client

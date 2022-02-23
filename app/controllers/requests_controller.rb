@@ -27,7 +27,7 @@ class RequestsController < ApplicationController
   private
 
   def set_item
-    @item = if params[:item_pid] == 'no-item'
+    @item = if (params[:item_pid] == 'no-item') || params[:item_pid].blank?
               nil
             else
               TurboAlmaApi::Client.item_for mms_id: params[:mms_id].to_s,

@@ -105,7 +105,7 @@ function initializeRequestingWidget($widgetArea, context) {
                     displayButtons($widgetArea, selectedItem, logged_in);
                 } else {
                     // show a Request Scan button if all items in the select are unavailable
-                    if(allUnavailable(responseData)) {
+                    if(allUnavailable(responseData) && logged_in) {
                         showPrintRequestButton($widgetArea, false);
                         showScanButton($widgetArea, false);
                     }
@@ -274,8 +274,10 @@ $(document).ready(function() {
             if(selectedItem.id) {
                 $modal.find('#title').val(selectedItem.title);
             } else {
-                // if a selection hasn't been made, pull title from data attributes
+                // if a selection hasn't been made, pull title and isxn from data attributes
                 $modal.find('#title').val($widget.data('bib-title'));
+                $modal.find('#requestIsxn').val($widget.data('isxn'));
+                $modal.find('#requestBibTitle').val($widget.data('bib-title'));
             }
             if(selectedItem.description) {
                 $modal.find('#selection').val(selectedItem.description);
