@@ -5,6 +5,7 @@ class FranklinAlmaController < ApplicationController
   include AlmaOptionOrdering
 
   PERMITTED_REQUEST_OPTION_CODES = %w[ILLIAD ARES ENHANCED].freeze
+  FORCE_UNAVAILABLE_LOCATION_CODES = %w[athNoCirc vpunavail storNoCirc]
 
   def holding_details
     api_instance = BlacklightAlma::BibsApi.instance
@@ -194,6 +195,8 @@ class FranklinAlmaController < ApplicationController
                                     end
         elsif holding['availability'] == 'Available' && holding['location_code'] == 'vanpNocirc'
           holding['availability'] = 'Use online access — print restricted'
+        elsif holding['availability'] == 'Available' && holding['location_code'].in?(FORCE_UNAVAILABLE_LOCATION_CODES)
+          holding['availability'] = 'Unavailable'
         end
       end
 
