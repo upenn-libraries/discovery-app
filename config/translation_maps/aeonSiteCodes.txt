@@ -1,3 +1,8 @@
+finecage
+finelock
+finemaps
+fineraremp
+finerarept
 cjsraram
 cjsambx
 cjsmar

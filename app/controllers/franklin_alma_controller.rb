@@ -5,7 +5,7 @@ class FranklinAlmaController < ApplicationController
   include AlmaOptionOrdering
 
   PERMITTED_REQUEST_OPTION_CODES = %w[ILLIAD ARES ENHANCED].freeze
-  FORCE_UNAVAILABLE_LOCATION_CODES = %w[athNoCirc vpunavail storNoCirc]
+  FORCE_UNAVAILABLE_LOCATION_CODES = %w[athNoCirc vpunavail storNoCirc finerare]
 
   def holding_details
     api_instance = BlacklightAlma::BibsApi.instance
