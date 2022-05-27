@@ -1910,4 +1910,19 @@
   <library>Yarnall Collection</library>
   <display>Van Pelt - Yarnall Collection</display>
 </location>
+<location location_code="athNoCirc">
+  <specific_location>Athenaeum of Philadelphia - Non Circulating</specific_location>
+  <library>Athenaeum of Philadelphia</library>
+  <display>Athenaeum of Philadelphia - Non Circulating</display>
+</location>
+<location location_code="storNoCirc">
+  <specific_location>LIBRA - Temporarily Unavailable</specific_location>
+  <library>LIBRA</library>
+  <display>LIBRA - Temporarily Unavailable</display>
+</location>
+<location location_code="vanpNocirc">
+  <specific_location>Van Pelt - Temporarily Unavailable</specific_location>
+  <library>Van Pelt-Dietrich Library Center</library>
+  <display>Van Pelt - Temporarily Unavailable</display>
+</location>
 </locations>
