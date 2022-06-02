@@ -2734,7 +2734,15 @@ module PennLib
       most_recent_add = rec.fields(EnrichedMarc::TAG_ITEM).flat_map do |item|
         item.find_all(&subfield_in([EnrichedMarc::SUB_ITEM_DATE_CREATED])).map do |sf|
           begin
-            DateTime.strptime(sf.value, '%Y-%m-%d %H:%M:%S').to_time.to_i
+            if sf.value.size == 10
+	      # On 2022-05-02, this field value (as exported in enriched publishing
+	      # job from Alma) began truncating time to day-level granularity. We have
+	      # no guarantee that this won't switch back in the future, so for the
+	      # foreseeable future we should support both representations.
+              DateTime.strptime(sf.value, '%Y-%m-%d').to_time.to_i
+            else
+              DateTime.strptime(sf.value, '%Y-%m-%d %H:%M:%S').to_time.to_i
+            end
           rescue Exception => e
             puts "Error parsing date string for recently added field: #{sf.value} - #{e}"
             nil
