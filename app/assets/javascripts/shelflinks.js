@@ -5,7 +5,7 @@
  *
  * This can probably be simplified; it was brought over from DLA Franklin with mostly minor clean-up.
  **/
- jQuery.shelfLocatorLink = new function() {
+jQuery.shelfLocatorLink = new function() {
 
     var intRegex = /[0-9 -()+]+$/;
 
