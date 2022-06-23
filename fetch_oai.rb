@@ -38,11 +38,21 @@ http.use_ssl = is_https
 
 http.start do |http_obj|
   http_obj.use_ssl = is_https
-  http_obj.read_timeout = 300 # Default is 60 seconds
+  http_obj.read_timeout = 500 # Default is 60 seconds
   while keep_going
     puts "Fetching #{uri}"
     request = Net::HTTP::Get.new(uri)
-    response = http_obj.request(request)
+    begin
+      retries ||= 0
+      response = http_obj.request(request)
+    rescue Net::ReadTimeout => e
+      puts "OAI request failed: #{e.message}"
+      if (retries += 1) > 3
+        puts 'Failed after 4 attempts'
+      else
+        retry
+      end
+    end
     if response.code == '200'
       output = response.body
 
@@ -71,6 +81,7 @@ http.start do |http_obj|
       uri = URI("https://upenn.alma.exlibrisgroup.com/view/oai/01UPENN_INST/request?verb=ListRecords&resumptionToken=#{resumption_token}")
       keep_going = !resumption_token.nil?
     else
+      puts 'Failed to get a successful response. Stopping.'
       keep_going = false
     end
   end
