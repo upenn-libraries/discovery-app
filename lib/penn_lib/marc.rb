@@ -261,7 +261,7 @@ module PennLib
       ret[:vernacular] = true if field.tag == '880'
       field.each do |sf|
         case sf.code
-          when '0', '6', '8', '5'
+          when '0', '6', '8', '5', '1'
             # ignore these subfields
             next
           when 'a'
@@ -665,6 +665,10 @@ module PennLib
       end.compact
     end
 
+    # TODO: MG removed the join_subject_parts method when adding in the SubjectConfig module here. This method still
+    # appears to be in use in the FranklinIndexer even though many subject fields are now processed differently
+    # Work should be done to remove all usages of join_subject_parts. Perhaps functionality from SubjectConfig could
+    # be used instead
     def get_subject_facet_values(rec, toplevel_only = false)
       rec.fields.find_all { |f| is_subject_field(f) }.map do |field|
         just_a = nil
@@ -738,7 +742,7 @@ module PennLib
       acc = []
       if %w{0 1 2}.member?(indicator2)
         #Subjects, Childrens subjects, and Medical Subjects all share this code
-        # also 650 _7, subjs w/ source specified in $2. These dispaly as Subjects along w/ the ind2==0 650s
+        # also 650 _7, subjs w/ source specified in $2. These display as Subjects along w/ the ind2==0 650s
         acc += rec.fields
              .select { |f| subject_600s.member?(f.tag) ||
                       (f.tag == '880' && has_subfield6_value(f, /^(#{subject_600s.join('|')})/)) }
