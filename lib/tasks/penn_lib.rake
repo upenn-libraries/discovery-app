@@ -111,13 +111,16 @@ namespace :pennlib do
 
     desc "Merge boundwiths into records"
     task :merge_boundwiths => :environment do |t, args|
-      input_filename = ENV['BOUND_WITHS_INPUT_FILE']
-      output_filename = ENV['BOUND_WITHS_OUTPUT_FILE']
-      input = (input_filename && File.exist?(input_filename)) ? PennLib::Util.openfile(input_filename) : STDIN
-      output = (output_filename && File.exist?(output_filename)) ? PennLib::Util.openfile(output_filename) : STDOUT
-      PennLib::BoundWithIndex.merge(ENV['BOUND_WITHS_DB_FILENAME'], input, output)
+      begin
+        input_filename = ENV['BOUND_WITHS_INPUT_FILE']
+        output_filename = ENV['BOUND_WITHS_OUTPUT_FILE']
+        input = (input_filename && File.exist?(input_filename)) ? PennLib::Util.openfile(input_filename) : STDIN
+        output = (output_filename && File.exist?(output_filename)) ? PennLib::Util.openfile(output_filename) : STDOUT
+        PennLib::BoundWithIndex.merge(ENV['BOUND_WITHS_DB_FILENAME'], input, output)
+      rescue StandardError => e
+        raise "Error adding boundwiths on file: #{input_filename}. Error message: #{e.message}. Backtrace: #{e.backtrace&.join("\n")}"
+      end
     end
-
   end
 
   namespace :oai do
