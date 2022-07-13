@@ -261,7 +261,7 @@ module PennLib
       ret[:vernacular] = true if field.tag == '880'
       field.each do |sf|
         case sf.code
-          when '0', '6', '8', '5'
+          when '0', '6', '8', '5', '1'
             # ignore these subfields
             next
           when 'a'
@@ -738,7 +738,7 @@ module PennLib
       acc = []
       if %w{0 1 2}.member?(indicator2)
         #Subjects, Childrens subjects, and Medical Subjects all share this code
-        # also 650 _7, subjs w/ source specified in $2. These dispaly as Subjects along w/ the ind2==0 650s
+        # also 650 _7, subjs w/ source specified in $2. These display as Subjects along w/ the ind2==0 650s
         acc += rec.fields
              .select { |f| subject_600s.member?(f.tag) ||
                       (f.tag == '880' && has_subfield6_value(f, /^(#{subject_600s.join('|')})/)) }
