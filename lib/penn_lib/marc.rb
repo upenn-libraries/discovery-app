@@ -665,6 +665,10 @@ module PennLib
       end.compact
     end
 
+    # TODO: MG removed the join_subject_parts method when adding in the SubjectConfig module here. This method still
+    # appears to be in use in the FranklinIndexer even though many subject fields are now processed differently
+    # Work should be done to remove all usages of join_subject_parts. Perhaps functionality from SubjectConfig could
+    # be used instead
     def get_subject_facet_values(rec, toplevel_only = false)
       rec.fields.find_all { |f| is_subject_field(f) }.map do |field|
         just_a = nil
