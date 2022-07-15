@@ -11,7 +11,9 @@ Disallow: /*?*
 
 Disallow: /advanced
 Disallow: /catalog/facet/
+Disallow: /catalog
 Disallow: /catalog.atom
 Disallow: /catalog.rss
 Disallow: /catalog/*/email
 Disallow: /catalog/*/marc_view
+Disallow: /catalog/*.*
