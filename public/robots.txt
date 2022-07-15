@@ -10,10 +10,19 @@ Sitemap: https://franklin.library.upenn.edu/sitemap.xml
 Disallow: /*?*
 
 Disallow: /advanced
+Disallow: /alma/*
 Disallow: /catalog/facet/
 Disallow: /catalog
 Disallow: /catalog.atom
 Disallow: /catalog.rss
 Disallow: /catalog/*/email
 Disallow: /catalog/*/marc_view
-Disallow: /catalog/*.*
+Disallow: /catalog/*/librarian_view
+Disallow: /catalog/*/citation
+Disallow: /catalog/*.xml
+Disallow: /catalog/*.dc_xml
+Disallow: /catalog/*.json
+Disallow: /catalog/*.ris
+Disallow: /catalog/*.marc
+Disallow: /catalog/*.marcxml
+Disallow: /catalog/*.endnote
