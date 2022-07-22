@@ -2,7 +2,7 @@
   <div class="modal-content">
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-      <div class="modal-title" id="submittedModalLabel"><%= t('requests.modal_titles.submitted') %></div>
+      <div class="modal-title" id="submittedModalLabel"><% if @response.dig(:status) == :success %><%= t('requests.modal_titles.submitted') %><% else %><%= t('requests.modal_titles.error') %><% end %></div>
     </div>
     <div class="modal-body">
       <% if @response.dig(:status) == :success %>
@@ -19,7 +19,7 @@
       </dl>
       <% else %>
         <div class="alert alert-danger" role="alert">
-          <%= @response.dig(:message) %>
+          <%= @response.dig(:message).html_safe %>
         </div>
       <% end %>
     </div>

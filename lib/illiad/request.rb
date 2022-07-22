@@ -59,12 +59,15 @@ module Illiad
         LoanPublisher: item&.bib('publisher_const'),
         LoanPlace: item&.bib('place_of_publication'),
         LoanDate: item&.bib('date_of_publication'),
-        LoanEdition: item&.bib('complete_edition'),
+        Location: item.temp_aware_location_display,
+        CallNumber: item.temp_aware_call_number,
         ISSN: item&.bib('issn') || item&.bib('isbn') || data[:isxn],
-        CitedIn: cited_in_value
+        CitedIn: cited_in_value,
+        ItemInfo3: item.barcode,
       }
       append_routing_info body
     end
+
 
     def scandelivery_request_body(user_id, item, data)
       {
