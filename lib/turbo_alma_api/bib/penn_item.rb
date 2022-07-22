@@ -58,6 +58,10 @@ module TurboAlmaApi
         self['bib_data']&.dig field
       end
 
+      def barcode
+        item_data.dig 'barcode'
+      end
+
       # Determine, based on various response attributes, if this Item is
       # able to be circulated.
       # If a user cannot check out an item, the #not_loanable? call will be false and prevent requesting
@@ -83,6 +87,21 @@ module TurboAlmaApi
       def scannable?
         aeon_requestable? || !item_data.dig('physical_material_type', 'value')
                                        .in?(UNSCANNABLE_MATERIAL_TYPES)
+      end
+
+      def temp_aware_location_display
+        if in_temp_location?
+          return "(temp) #{holding_data.dig('temp_library', 'value')} - #{holding_data.dig('temp_location', 'value')}"
+        end
+
+        "#{holding_library_name} - #{holding_location_name}"
+      end
+
+      def temp_aware_call_number
+        temp_call_num = holding_data.dig('temp_call_number')
+        return temp_call_num if temp_call_num.present?
+
+        holding_data.dig('permanent_call_number')
       end
 
       # @return [String]
@@ -117,6 +136,11 @@ module TurboAlmaApi
       # @return [TrueClass, FalseClass]
       def in_unavailable_library?
         library_name == 'ZUnavailable'
+      end
+
+      # Does the holding have temporary location or library information?
+      def in_temp_location?
+        holding_data.dig 'in_temp_location' == 'true'
       end
 
       # Whether or not this Item should hidden from display in a Patron context

@@ -4,6 +4,7 @@ en:
       title: "Get It"
     modal_titles:
       submitted: "Request Submitted"
+      error: "Request Submission Failed"
       confirm:
         ill: "Request from Another Library"
         electronic: "Scanning Request"
