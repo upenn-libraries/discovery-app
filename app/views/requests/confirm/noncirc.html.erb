@@ -6,7 +6,7 @@
     </div>
     <div class="modal-body">
       <div class="alert alert-danger">
-        <%= t noncirc_type, scope: 'requests.messages.noncirc', library: params[:library] %>
+        <%= t(noncirc_type, scope: 'requests.messages.noncirc', library: sanitize(params[:library])).html_safe %>
       </div>
       <p>
         If you would like to receive a physical copy, you may try submitting an Interlibrary Loan (ILL) request using

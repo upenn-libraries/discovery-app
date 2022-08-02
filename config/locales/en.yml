@@ -43,6 +43,7 @@ en:
         reference: "This item can be retrieved for a limited time by visiting the reference desk at %{library}"
         reserves: "This item cannot be requested because it is being held in reserves at %{library}."
         inhouse: "This item can be consulted only for a limited time and by visiting %{library}."
+        hsp: "This item can be consulted only at the Historical Society of Pennsylvania.<br><address>1300 Locust Street<br>Philadelphia, PA 19107<br></address>For questions, contact <a href='mailto:readingroom@hsp.org'>readingroom@hsp.org</a>."
       alma_response:
         no_item_for_request: "Sorry, no item can fulfill this request for pickup. You may need to visit the reserves or reference desk at the holding library in order to check out this book on-site and for a limited time."
         request_already_exists: "You already have a request for this item. You can see your pending requests by visiting the \"My Library Account\" link at the top of the page."

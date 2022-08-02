@@ -249,10 +249,16 @@ module TurboAlmaApi
       def at_archives?
         library_name == 'University Archives'
       end
+
+      # Is the item a Historical Society of Pennsylvania record? If so, it cannot be requested.
+      # @return [TrueClass, FalseClass]
+      def at_hsp?
+        library == 'HSPLib'
+      end
       
       # @return [TrueClass, FalseClass]
       def restricted_circ?
-        on_reserve? || at_reference? || in_house_use_only?
+        on_reserve? || at_reference? || in_house_use_only? || at_hsp?
       end
 
       def isxn
@@ -276,6 +282,7 @@ module TurboAlmaApi
           'aeon_requestable' => aeon_requestable?,
           'on_reserve' => on_reserve?,
           'at_reference' => at_reference?,
+          'at_hsp' => at_hsp?,
           'at_archives' => at_archives?,
           'in_house_only' => in_house_use_only?,
           'restricted_circ' => restricted_circ?,

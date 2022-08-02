@@ -16,11 +16,15 @@ module RequestsHelper
 
   # @return [Symbol]
   def noncirc_type
-    if params[:on_reserves]
+    if params[:reserves] == '1'
       :reserves
-    elsif params[:at_reference]
+    elsif params[:reference] == '1'
       :reference
-    elsif params[:in_house]
+    elsif params[:hsp] == '1'
+      :hsp
+    elsif params[:in_house] == '1'
+      :inhouse
+    else
       :inhouse
     end
   end
