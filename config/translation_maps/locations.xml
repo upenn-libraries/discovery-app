@@ -1925,4 +1925,54 @@
   <library>Van Pelt-Dietrich Library Center</library>
   <display>Van Pelt - Temporarily Unavailable</display>
 </location>
+<location location_code="hspclosed">
+  <specific_location>Historical Society of Pennsylvania - Closed Stacks</specific_location>
+  <library>Historical Society of Pennsylvania</library>
+  <display>Historical Society of Pennsylvania - Closed Stacks</display>
+</location>
+<location location_code="hspclosed2">
+  <specific_location>Historical Society of Pennsylvania - Closed Stacks 2</specific_location>
+  <library>Historical Society of Pennsylvania</library>
+  <display>Historical Society of Pennsylvania - Closed Stacks 2</display>
+</location>
+<location location_code="hspfam">
+  <specific_location>Historical Society of Pennsylvania - Family History Room</specific_location>
+  <library>Historical Society of Pennsylvania</library>
+  <display>Historical Society of Pennsylvania - Family History Room</display>
+</location>
+<location location_code="hsplcp">
+  <specific_location>Historical Society of Pennsylvania - Library Company</specific_location>
+  <library>Historical Society of Pennsylvania</library>
+  <display>Historical Society of Pennsylvania - Library Company</display>
+</location>
+<location location_code="hspmicro">
+  <specific_location>Historical Society of Pennsylvania - Microfilm Room</specific_location>
+  <library>Historical Society of Pennsylvania</library>
+  <display>Historical Society of Pennsylvania - Microfilm Room</display>
+</location>
+<location location_code="hsponline">
+  <specific_location>Historical Society of Pennsylvania - Online</specific_location>
+  <library>Historical Society of Pennsylvania</library>
+  <display>Historical Society of Pennsylvania - Online</display>
+</location>
+<location location_code="hsppenn">
+  <specific_location>Historical Society of Pennsylvania - Pennsylvania Room</specific_location>
+  <library>Historical Society of Pennsylvania</library>
+  <display>Historical Society of Pennsylvania - Pennsylvania Room</display>
+</location>
+<location location_code="hspreading">
+  <specific_location>Historical Society of Pennsylvania - Reading Room</specific_location>
+  <library>Historical Society of Pennsylvania</library>
+  <display>Historical Society of Pennsylvania - Reading Room</display>
+</location>
+<location location_code="hspref">
+  <specific_location>Historical Society of Pennsylvania - Reference Desk</specific_location>
+  <library>Historical Society of Pennsylvania</library>
+  <display>Historical Society of Pennsylvania - Reference Desk</display>
+</location>
+<location location_code="hspstafref">
+  <specific_location>Historical Society of Pennsylvania - Staff Reference</specific_location>
+  <library>Historical Society of Pennsylvania</library>
+  <display>Historical Society of Pennsylvania - Staff Reference</display>
+</location>
 </locations>

@@ -74,6 +74,23 @@ function allUnavailable(data) {
     })
 }
 
+// determine the noncirc type for passing as a param
+function noncircType(selectedItem) {
+    var type;
+    if(selectedItem.on_reserve) {
+        type = 'reserves';
+    } else if(selectedItem.at_reference) {
+        type = 'reference';
+    } else if(selectedItem.in_house_only) {
+        type = 'in_house';
+    } else if(selectedItem.at_hsp) {
+        type = 'hsp';
+    } else {
+        type = 'in_house';
+    }
+    return type;
+}
+
 function initializeRequestingWidget($widgetArea, context) {
     $('.selected-item-debug').hide();
     var $requestForm = $widgetArea.find('.request-form')
@@ -251,9 +268,7 @@ $(document).ready(function() {
                 } else if (selectedItem.restricted_circ) {
                     params.location = selectedItem.location;
                     params.library = selectedItem.library;
-                    params.reserves = (selectedItem.on_reserves ? '1' : '0');
-                    params.reference = (selectedItem.at_refrence ? '1' : '0');
-                    params.in_house = (selectedItem.in_house ? '1' : '0');
+                    params.noncirc = noncircType(selectedItem);
                     urlPart = 'noncirc';
                 } else {
                     urlPart = 'ill';
