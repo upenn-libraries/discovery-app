@@ -1027,7 +1027,8 @@ module PennLib
     def get_name_1xx_field(field)
       s = field.map do |sf|
         # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
-        if(! %W{0 4 6 8}.member?(sf.code))
+        # added 2022/08/04: filter our 1 (URIs) added my MARCive project
+        if !%W{0 1 4 6 8}.member?(sf.code)
           " #{sf.value}"
         elsif sf.code == '4'
           ", #{relator_codes[sf.value]}"
@@ -1794,7 +1795,8 @@ module PennLib
         author_parts = []
         field.each do |sf|
           # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
-          if !%W{0 4 6 8 e w}.member?(sf.code)
+          # added 2022/08/04: filter out 1 (URIs) added by MARCive project
+          if !%W{0 1 4 6 8 e w}.member?(sf.code)
             author_parts << sf.value
           end
         end
@@ -1809,7 +1811,7 @@ module PennLib
           author_parts = []
           field.each do |sf|
             # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
-            if !%W{0 4 6 8 e w}.member?(sf.code)
+            unless %W{0 4 6 8 e w}.member?(sf.code)
               author_parts << sf.value.gsub(/\?$/, '')
             end
           end
