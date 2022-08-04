@@ -19,7 +19,12 @@ class SessionsController < Devise::SessionsController
     session['email'] = alma_user.email
 
   rescue TurboAlmaApi::User::UserNotFound
-    flash[:alert] = "The credentials you have entered to authenticate are not registered in our library system. Please contact the circulation desk at vpcircdk@pobox.upenn.edu for assistance." # temporarily removed "or 215-898-7566"
+    flash[:alert] = <<-MSG
+The credentials you have entered to authenticate are not registered in our library system. 
+If you are a CHOP affiliate, contact libbiomcircprint@pobox.upenn.edu. 
+If you are a Penn alumnus, visit https://guides.library.upenn.edu/alumniservices/eres. 
+Otherwise, Please contact the circulation desk at vpcircdk@pobox.upenn.edu for assistance
+MSG
     Rails.logger.error("ERROR: Got non-200 response from Alma User API, user account may not exist for id=#{id}. response=#{response}")
   end
 
