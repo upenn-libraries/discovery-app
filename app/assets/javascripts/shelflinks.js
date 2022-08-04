@@ -33,7 +33,6 @@ jQuery.shelfLocatorLink = new function() {
         {"v": "Video Collection", "tg": "VC"},
         {"v": "Weigle Information Commons Reference", "tg": "WICR"},
         {"v": "Yarnall Collection", "tg": "YC"},
-        {"v": "Van Pelt Reference", "tg": "RF"},
         {"v": "Lippincott Library", "tg": "LL"},
         {"v": "Judaica/Ancient", "tg": "JANERR"},
         {"v": "East Asia", "tg": "EAC"},
@@ -200,9 +199,6 @@ jQuery.shelfLocatorLink = new function() {
 
     function getMapTargetByCallNumForVP(call_number) {
         var target;
-        if (call_number[0] === "9") {
-            target = "900";
-        }
         else if (call_number.indexOf("Folio") >= 0) {
             target = "FOLIO";
         }
