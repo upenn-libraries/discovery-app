@@ -3,7 +3,7 @@ module PennLib
   # Drupal site
   module SubjectSpecialists
     DRUPAL_SPECIALISTS_URL =
-      'https://www.library.upenn.edu/rest/views/subject-specialists?_format=json'.freeze
+      'https://old.library.upenn.edu/rest/views/subject-specialists?_format=json'.freeze
     CACHE_KEY = :subject_specialist_data
 
     class << self
@@ -74,7 +74,7 @@ module PennLib
             specialty[:subjects] = [specialty['subject_specialty']]
             specialty[:display_name] = specialty['full_name']
             specialty[:portrait] =
-              "https://www.library.upenn.edu#{specialty['thumbnail']}"
+              "https://old.library.upenn.edu#{specialty['thumbnail']}"
             specialists[name] = specialty
           end
         end
@@ -86,7 +86,7 @@ module PennLib
       # Pull and parse data from Drupal endpoint
       # Will retry up to 2 times and return nil if there are issues parsing JSON
       def retrieve_specialist_json
-        response = Typhoeus.get DRUPAL_SPECIALISTS_URL
+        response = Typhoeus.get DRUPAL_SPECIALISTS_URL, followlocation: true
         return Oj.load response.body if response.success?
 
         false
