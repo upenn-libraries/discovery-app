@@ -28,7 +28,7 @@ module ApplicationHelper
   end
 
   def google_site_search_results_url(query)
-    return "https://www.library.upenn.edu/search/web-pages?q=#{query}"
+    return "https://old.library.upenn.edu/search/web-pages?q=#{query}"
   end
 
   def colenda_search_results_url(query)
@@ -63,7 +63,6 @@ module ApplicationHelper
   # returns a link element to be used for the tab; this could be either an anchor
   # or a link to another page, depending on the needs of the view
   def render_tab_link(tab_id, tab_label, anchor, url, data_target)
-
     if params[:q] && controller_name == 'catalog' && action_name == 'bento'
       attrs = {
           'href': url,
@@ -75,7 +74,7 @@ module ApplicationHelper
       }
     elsif tab_id == 'website' && action_name == 'landing'
       attrs = {
-          'href': "http://www.library.upenn.edu/search/web-pages"
+          'href': "https://old.library.upenn.edu/search/web-pages"
       }
     elsif tab_id == 'colenda' && action_name == 'landing'
       attrs = {
