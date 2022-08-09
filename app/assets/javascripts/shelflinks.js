@@ -199,10 +199,9 @@ jQuery.shelfLocatorLink = new function() {
 
     function getMapTargetByCallNumForVP(call_number) {
         var target;
-        else if (call_number.indexOf("Folio") >= 0) {
+        if (call_number.indexOf("Folio") >= 0) {
             target = "FOLIO";
-        }
-        else {
+        } else {
             var numIndex;
             var firstPart = '';
             for (var i = 0; i < call_number.length; i++) {
