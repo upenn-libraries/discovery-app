@@ -85,8 +85,10 @@ module TurboAlmaApi
       # Is the item able to be Scan&Deliver'd?
       # @return [TrueClass, FalseClass]
       def scannable?
-        aeon_requestable? || !item_data.dig('physical_material_type', 'value')
-                                       .in?(UNSCANNABLE_MATERIAL_TYPES)
+        return false if at_hsp?
+
+        aeon_requestable? ||
+          !item_data.dig('physical_material_type', 'value').in?(UNSCANNABLE_MATERIAL_TYPES)
       end
 
       def temp_aware_location_display
