@@ -18,13 +18,13 @@ namespace :franklin do
       Rake::Task['franklin:solrconfig'].invoke
     end
 
-    # No Lando DB for now
-    # # Create databases, if they aren't present.
-    # system('rake db:create')
-    #
-    # # Migrate test and development databases
-    # system('RACK_ENV=development rake db:migrate')
-    # system('RACK_ENV=test rake db:migrate')
+    # Using sqlite for development and test databases.
+    # Create databases, if they aren't present.
+    system('rake db:create')
+
+    # Migrate test and development databases
+    system('RACK_ENV=development rake db:migrate')
+    system('RACK_ENV=test rake db:migrate')
   end
 
   desc 'Stop development/test environment'
@@ -47,7 +47,7 @@ namespace :franklin do
     solr_config_path = File.join Rails.root, 'tmp', 'solr_conf'
 
     # create solr_config_path if it doesnt already exist
-    FileUtils.mkdir solr_config_path unless Dir.exist? solr_config_path
+    FileUtils.mkdir_p solr_config_path unless Dir.exist? solr_config_path
 
     # clear out old config
     FileUtils.rm_rf(Dir.glob(File.join(solr_config_path, '*')))

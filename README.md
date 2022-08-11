@@ -7,6 +7,11 @@ We are using [lando](https://docs.lando.dev/basics/) to set up a local Solr imag
 ### Installing System Requirements
 #### Install Ruby 2.3.3
 Install Ruby 2.3.3 with [rbenv](https://github.com/rbenv/rbenv) or [RVM](https://rvm.io/).
+#### Install Node
+##### Mac
+```
+brew install node
+```
 #### Install Lando
 ##### Mac
 ```
@@ -19,12 +24,14 @@ See the [lando website](https://docs.lando.dev/basics/installation.html#linux) f
 ### Running Development Services
 
 #### Starting
-This starts a Solr service. If the container isn't yet present on your system, it will build one and load in the `GibneySolr` customizations and the Solr configuration from from [this Gitlab repo](https://gitlab.library.upenn.edu/franklin/franklin-solr-config/).
+This installs the necessary gems and javascript libraries. Then it starts a Solr service. If the container isn't yet present on your system, it will build one and load in the `GibneySolr` customizations and the Solr configuration from from [this Gitlab repo](https://gitlab.library.upenn.edu/franklin/franklin-solr-config/).
+
+Note: `npm install` might change the `package-lock.json` file those changes should not be committed but they are important for your local development environment.
 ```
 bundle install
+npm install
 bundle exec rake franklin:start
 ```
-
 #### Stopping
 Stops running Solr instance.
 ```
@@ -41,6 +48,12 @@ bundle exec rake franklin:clean
 Use the defaults or add some JSON to `sample_index_data.json`
 ```
 bundle exec rake franklin:load_sample_data
+```
+
+#### Starting application
+To view application in browser at `localhost:3000`, run:
+```
+rails s
 ```
 
 ## Old School Installation
