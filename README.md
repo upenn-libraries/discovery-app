@@ -7,10 +7,11 @@ We are using [lando](https://docs.lando.dev/basics/) to set up a local Solr imag
 ### Installing System Requirements
 #### Install Ruby 2.3.3
 Install Ruby 2.3.3 with [rbenv](https://github.com/rbenv/rbenv) or [RVM](https://rvm.io/).
-#### Install Node
+#### Install Node 14 (or earlier)
+This application requires an older version of Node to prevent changes from being required in the `package-lock.json`.
 ##### Mac
 ```
-brew install node
+brew install node@14
 ```
 #### Install Lando
 ##### Mac
@@ -24,9 +25,7 @@ See the [lando website](https://docs.lando.dev/basics/installation.html#linux) f
 ### Running Development Services
 
 #### Starting
-This installs the necessary gems and javascript libraries. Then it starts a Solr service. If the container isn't yet present on your system, it will build one and load in the `GibneySolr` customizations and the Solr configuration from from [this Gitlab repo](https://gitlab.library.upenn.edu/franklin/franklin-solr-config/).
-
-Note: `npm install` might change the `package-lock.json` file those changes should not be committed but they are important for your local development environment.
+This installs the necessary gems and javascript libraries, then it starts a Solr service. If the container isn't yet present on your system, it will build one and load in the `GibneySolr` customizations and the Solr configuration from from [this Gitlab repo](https://gitlab.library.upenn.edu/franklin/franklin-solr-config/).
 ```
 bundle install
 npm install
