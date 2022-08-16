@@ -74,6 +74,13 @@ function allUnavailable(data) {
     })
 }
 
+// are all the elements at HSP??
+function allHsp(data) {
+    return data.every(function(elem) {
+        return elem.at_hsp === true;
+    })
+}
+
 // determine the noncirc type for passing as a param
 function noncircType(selectedItem) {
     var type;
@@ -123,8 +130,10 @@ function initializeRequestingWidget($widgetArea, context) {
                 } else {
                     // show a Request Scan button if all items in the select are unavailable
                     if(allUnavailable(responseData) && logged_in) {
-                        showPrintRequestButton($widgetArea, false);
-                        showScanButton($widgetArea, false);
+                        if(!allHsp(responseData)) {
+                            showPrintRequestButton($widgetArea, true);
+                            showScanButton($widgetArea, false);
+                        }
                     }
                     $widget.select2({
                         theme: 'bootstrap',
