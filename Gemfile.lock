@@ -1,27 +1,4 @@
 GIT
-  remote: https://github.com/magibney/blacklight.git
-  revision: b8a2e5f823e7b8cca623e185fb53dc29c91aa825
-  branch: v6.8.0-solr7-qq-feedFormat
-  specs:
-    blacklight (6.8.0)
-      bootstrap-sass (~> 3.2)
-      deprecation
-      globalid
-      kaminari (>= 0.15)
-      nokogiri (~> 1.6)
-      rails (>= 4.2, < 6)
-      rsolr (>= 1.0.6, < 3)
-      twitter-typeahead-rails (= 0.11.1.pre.corejavascript)
-
-GIT
-  remote: https://github.com/magibney/summon.rb
-  revision: f0543e229fe41d0068e02b67f4d0af0576586c0a
-  branch: sign-empty-param-values
-  specs:
-    summon (2.0.12)
-      json (~> 1.8)
-
-GIT
   remote: https://github.com/tulibraries/alma_rb.git
   revision: 87891ba946bf748af10f1d51a71533359dfd13c9
   tag: v0.3.0
@@ -72,6 +49,29 @@ GIT
     blacklight_solrplugins (0.0.1)
       blacklight (~> 6.0)
       rails (~> 4.2)
+
+GIT
+  remote: https://gitlab.library.upenn.edu/franklin/blacklight.git
+  revision: e7a53d064eab58ac558e3d0c7d37239690a89651
+  branch: v6.8.0-solr7-qq-feedFormat
+  specs:
+    blacklight (6.8.0)
+      bootstrap-sass (~> 3.2)
+      deprecation
+      globalid
+      kaminari (>= 0.15)
+      nokogiri (~> 1.6)
+      rails (>= 4.2, < 6)
+      rsolr (>= 1.0.6, < 3)
+      twitter-typeahead-rails (= 0.11.1.pre.corejavascript)
+
+GIT
+  remote: https://gitlab.library.upenn.edu/franklin/summon.rb.git
+  revision: 4e9d73b9eb37d49b39799f645a7e4ad77725f8b2
+  branch: sign-empty-param-values
+  specs:
+    summon (2.0.12)
+      json (~> 1.8)
 
 GEM
   remote: https://rubygems.org/
@@ -154,7 +154,7 @@ GEM
     crack (0.4.4)
     crass (1.0.6)
     debug_inspector (0.0.3)
-    deprecation (1.0.0)
+    deprecation (1.1.0)
       activesupport
     devise (4.7.3)
       bcrypt (~> 3.0)
@@ -203,18 +203,18 @@ GEM
       thor (>= 0.14, < 2.0)
     json (1.8.6)
     jwt (1.5.6)
-    kaminari (1.2.1)
+    kaminari (1.2.2)
       activesupport (>= 4.1.0)
-      kaminari-actionview (= 1.2.1)
-      kaminari-activerecord (= 1.2.1)
-      kaminari-core (= 1.2.1)
-    kaminari-actionview (1.2.1)
+      kaminari-actionview (= 1.2.2)
+      kaminari-activerecord (= 1.2.2)
+      kaminari-core (= 1.2.2)
+    kaminari-actionview (1.2.2)
       actionview
-      kaminari-core (= 1.2.1)
-    kaminari-activerecord (1.2.1)
+      kaminari-core (= 1.2.2)
+    kaminari-activerecord (1.2.2)
       activerecord
-      kaminari-core (= 1.2.1)
-    kaminari-core (1.2.1)
+      kaminari-core (= 1.2.2)
+    kaminari-core (1.2.2)
     language_list (1.2.1)
     library_stdnums (1.6.0)
     libv8 (3.16.14.19)
