@@ -52,7 +52,7 @@ $(document).ready(function() {
                 } else {
                     availability = "<span class='label label-availability label-danger'>Unavailable</span>";
                 }
-            } else if (holding['availability'] === 'available' && ['athNoCirc', 'vpunavail', 'storNoCirc', 'finerare'].includes(holding['location_code'])) {
+            } else if (holding['availability'] === 'available' && ['athNoCirc', 'vpunavail', 'storNoCirc'].includes(holding['location_code'])) {
                 availability = "<span class='label label-availability label-danger'>Unavailable</span>";
             } else if (holding['availability'] === 'available') {
                 availability = holding['location_code'] === 'vanpNocirc' ? "<span class='label label-availability label-default'>Use online access — print restricted</span>" : "<span class='label label-availability label-success'>Available</span>";
