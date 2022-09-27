@@ -83,6 +83,7 @@ http.start do |http_obj|
       if (retries += 1) > 3
         puts 'Failed after 4 attempts'
       else
+        sleep(retries)
         retry
       end
     end
@@ -117,8 +118,7 @@ http.start do |http_obj|
       uri = URI("https://upenn.alma.exlibrisgroup.com/view/oai/01UPENN_INST/request?verb=ListRecords&resumptionToken=#{resumption_token}")
       keep_going = !resumption_token.nil?
     else
-      puts 'Failed to get a successful response. Stopping.'
-      notify_slack "Request failed! Bad response: #{response}"
+      alert "Request failed! Bad response #{response} from #{uri}"
       keep_going = false
     end
   end
