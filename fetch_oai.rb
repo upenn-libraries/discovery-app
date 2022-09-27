@@ -125,4 +125,4 @@ http.start do |http_obj|
 end
 
 duration = ((Time.new.to_f - start) / 60).round(1)
-notify_slack "`fetch_oai.rb` complete. `#{record_count}` records harvested (since #{from_arg}) in #{duration} minutes."
+notify_slack "`fetch_oai.rb` complete. `#{record_count}` records (since #{from_arg}) harvested in #{duration} minutes."
