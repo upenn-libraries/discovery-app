@@ -23,13 +23,22 @@ end
 # @param [String] message
 def notify_slack(message)
   slack_uri = URI(ENV['SLACK_WEBHOOK_URL'])
-  return unless slack_uri && message.present?
+  return unless slack_uri && message
 
   http = Net::HTTP.new(slack_uri.host, slack_uri.port)
   http.use_ssl = true
   request = Net::HTTP::Post.new(slack_uri, 'Content-Type' => 'application/json')
   request.body = JSON.dump({ text: "OAI harvesting: #{message}" })
-  puts http.request request
+  begin
+    http.request request
+  rescue StandardError => e
+    puts "Slack message send failed: #{e.message}"
+    if (retries += 1) > 3
+      puts 'Slack message failed after 4 attempts'
+    else
+      retry
+    end
+  end
 end
 
 set_name = ARGV[0]
@@ -116,4 +125,4 @@ http.start do |http_obj|
 end
 
 duration = ((Time.new.to_f - start) / 60).round(1)
-notify_slack "`fetch_oai.rb` complete. `#{record_count}` records harvested in #{duration} minutes."
+notify_slack "`fetch_oai.rb` complete. `#{record_count}` records harvested (since #{from_arg}) in #{duration} minutes."
