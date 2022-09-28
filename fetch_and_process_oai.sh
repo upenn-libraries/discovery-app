@@ -6,7 +6,6 @@
 # Currently the cron runs this as:
 # cd /opt/discovery && ./run_in_container.sh ./fetch_and_process_oai.sh /var/solr_input_data/alma_production/oai >> /opt/discovery/log/fetch_and_process_oai.log 2>> /opt/discovery/log/fetch_and_process_oai.log
 
-
 set_name=allTitles
 skip_indexing=false
 
@@ -47,7 +46,6 @@ echo "############################################################"
 echo "#### OAI fetch and process started at `date`"
 
 echo "Fetching from OAI"
-echo "Command: ./fetch_oai.rb $set_name "$last_run" "$now" $batch_dir"
 ./fetch_oai.rb $set_name "$last_run" "$now" $batch_dir
 
 if [ $? != 0 ]; then

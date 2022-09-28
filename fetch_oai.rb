@@ -13,7 +13,6 @@ if ARGV.size != 4
   exit
 end
 
-
 # @param [String] message
 def alert(message)
   puts message
@@ -30,6 +29,7 @@ def notify_slack(message)
   request = Net::HTTP::Post.new(slack_uri, 'Content-Type' => 'application/json')
   request.body = JSON.dump({ text: "OAI harvesting: #{message}" })
   begin
+    retries ||= 0
     http.request request
   rescue StandardError => e
     puts "Slack message send failed: #{e.message}"
@@ -101,7 +101,7 @@ http.start do |http_obj|
       resumption_token = match ? match[1] : nil
 
       response_record_count = output.scan("<record>").count
-      # autodetect batch size TODO: update this for accurate rate logging? first/last request might not have 500 (what is configured in Alma OAI integration config)
+      # autodetect batch size
       if batch_size == -1
         batch_size = response_record_count
       end
@@ -125,4 +125,4 @@ http.start do |http_obj|
 end
 
 duration = ((Time.new.to_f - start) / 60).round(1)
-notify_slack "`fetch_oai.rb` complete. `#{record_count}` records (since #{from_arg}) harvested in #{duration} minutes."
+alert "`fetch_oai.rb` complete. `#{record_count}` records (since #{from_arg}) harvested in #{duration} minutes."
