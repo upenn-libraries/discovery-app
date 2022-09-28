@@ -1,12 +1,44 @@
 #!/usr/bin/env ruby
 
+# Does OAI requests to Alma using provided parameters.
+# Ensure IP is allowlisted in Alma Integration Profile Configuration for OAI
+
 require 'net/http'
 require 'pathname'
+require 'json'
 
 if ARGV.size != 4
   puts 'Usage: fetch_oai.rb SET_NAME FROM UNTIL OUTPUT_DIRECTORY'
   puts '  set FROM and UNTIL to -1 to avoid sending those parameters'
   exit
+end
+
+# @param [String] message
+def alert(message)
+  puts message
+  notify_slack message
+end
+
+# @param [String] message
+def notify_slack(message)
+  slack_uri = URI(ENV['SLACK_WEBHOOK_URL'])
+  return unless slack_uri && message
+
+  http = Net::HTTP.new(slack_uri.host, slack_uri.port)
+  http.use_ssl = true
+  request = Net::HTTP::Post.new(slack_uri, 'Content-Type' => 'application/json')
+  request.body = JSON.dump({ text: "OAI harvesting: #{message}" })
+  begin
+    retries ||= 0
+    http.request request
+  rescue StandardError => e
+    puts "Slack message send failed: #{e.message}"
+    if (retries += 1) > 3
+      puts 'Slack message failed after 4 attempts'
+    else
+      retry
+    end
+  end
 end
 
 set_name = ARGV[0]
@@ -16,7 +48,8 @@ output_dir = ARGV[3]
 
 start = Time.new.to_f
 batch_size = -1
-count = 0
+record_count = 0
+request_count = 0
 resumption_token = nil
 keep_going = true
 
@@ -38,15 +71,26 @@ http.use_ssl = is_https
 
 http.start do |http_obj|
   http_obj.use_ssl = is_https
-  http_obj.read_timeout = 300 # Default is 60 seconds
+  http_obj.read_timeout = 500 # Default is 60 seconds
   while keep_going
     puts "Fetching #{uri}"
     request = Net::HTTP::Get.new(uri)
-    response = http_obj.request(request)
+    begin
+      retries ||= 0
+      response = http_obj.request(request)
+    rescue Net::ReadTimeout => e
+      puts "OAI request failed: #{e.message}"
+      if (retries += 1) > 3
+        puts 'Failed after 4 attempts'
+      else
+        sleep(retries)
+        retry
+      end
+    end
     if response.code == '200'
       output = response.body
 
-      basename = "#{set_name}_#{count.to_s.rjust(7, '0')}"
+      basename = "#{set_name}_#{request_count.to_s.rjust(7, '0')}"
       output_filename = Pathname.new(output_dir).join("#{basename}.xml.gz").to_s
 
       Zlib::GzipWriter.open(output_filename) do |gz|
@@ -56,22 +100,29 @@ http.start do |http_obj|
       match = output.match(%r{<resumptionToken>(.+)</resumptionToken>})
       resumption_token = match ? match[1] : nil
 
+      response_record_count = output.scan("<record>").count
       # autodetect batch size
       if batch_size == -1
-        batch_size = output.scan("<record>").size
+        batch_size = response_record_count
       end
+      record_count += response_record_count
 
       elapsed = Time.new.to_f - start
       elapsed = elapsed > 0 ? elapsed : 1
-      rate = ((count + 1) * batch_size) / elapsed
+      rate = ((request_count + 1) * batch_size) / elapsed
       puts "overall transfer rate: #{rate.to_i} records/s"
+      puts "retrieved #{record_count} records so far"
 
-      count += 1
+      request_count += 1
 
       uri = URI("https://upenn.alma.exlibrisgroup.com/view/oai/01UPENN_INST/request?verb=ListRecords&resumptionToken=#{resumption_token}")
       keep_going = !resumption_token.nil?
     else
+      alert "Request failed! Bad response #{response} from #{uri}"
       keep_going = false
     end
   end
 end
+
+duration = ((Time.new.to_f - start) / 60).round(1)
+alert "`fetch_oai.rb` complete. `#{record_count}` records (since #{from_arg}) harvested in #{duration} minutes."
