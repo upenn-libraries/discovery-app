@@ -1,5 +1,5 @@
 title = "gitleaks config"
-
+asdfasdfasdf
 [[regexes]]
 description = "Password set with string literal"
 regex = '''(?i)[\w]*password[\w]* *[:=] *['"][\S]{8,}['"]'''
