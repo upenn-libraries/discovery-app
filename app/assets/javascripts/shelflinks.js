@@ -1,4 +1,3 @@
-
 /**
  * jQuery function that works without a selector, e.g. you can call $.shelfLocationLink();
  * Packaging the code this way provides an isolated namespace for storing shelf locator code.
@@ -199,31 +198,27 @@ jQuery.shelfLocatorLink = new function() {
 
     function getMapTargetByCallNumForVP(call_number) {
         var target;
-        if (call_number.indexOf("Folio") >= 0) {
-            target = "FOLIO";
-        } else {
-            var numIndex;
-            var firstPart = '';
-            for (var i = 0; i < call_number.length; i++) {
-                var ch = call_number[i];
-                if (ch) {
-                    if (ch.match(intRegex)) {
-                        numIndex = i;
-                        break;
-                    }
+        var numIndex;
+        var firstPart = '';
+        for (var i = 0; i < call_number.length; i++) {
+            var ch = call_number[i];
+            if (ch) {
+                if (ch.match(intRegex)) {
+                    numIndex = i;
+                    break;
                 }
             }
-            for (var i = 0; i < numIndex; i++) {
-                firstPart = firstPart + call_number[i];
-            }
-            target = firstPart;
-            if (target[0] === "P") {
-                target = pMap[target];
-            } else if (target[0] === "N" && target[1] === "N") {
-                target = "NX";
-            } else if (target[0] !== "N") {
-                target = firstPart[0];
-            }
+        }
+        for (var i = 0; i < numIndex; i++) {
+            firstPart = firstPart + call_number[i];
+        }
+        target = firstPart;
+        if (target[0] === "P") {
+            target = pMap[target];
+        } else if (target[0] === "N" && target[1] === "N") {
+            target = "NX";
+        } else if (target[0] !== "N") {
+            target = firstPart[0];
         }
         return target;
     }
