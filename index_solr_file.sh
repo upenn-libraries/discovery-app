@@ -9,4 +9,4 @@ base_filename="${base_filename%%.*}"
 
 mkdir -p $dir/log
 
-zcat $filename | bundle exec rake pennlib:marc:index_from_stdin >> $dir/log/$base_filename.log 2>&1
+zcat $filename | bundle exec rake pennlib:marc:index_from_stdin[$filename] >> $dir/log/$base_filename.log 2>&1
