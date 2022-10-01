@@ -37,7 +37,8 @@ namespace :pennlib do
     end
 
     desc 'Index MARC data from stdin using Traject'
-    task :index_from_stdin  => :environment do |t, args|
+    task :index_from_stdin, [:filename] => :environment do |t, args|
+      filename = args[:filename]
       SolrMarc.indexer =
         case ENV['MARC_SOURCE']
           when 'CRL'
@@ -47,8 +48,17 @@ namespace :pennlib do
           else
             FranklinIndexer.new
         end
-
-      SolrMarc.indexer.process(STDIN)
+      begin
+        SolrMarc.indexer.process(STDIN)
+      rescue StandardError => e
+        # Output error message with filename and exception details. This gets output to the OAI indexing logs
+        # and will help in tracing errors in indexing processes. Otherwise, if this job raises an exception, only the
+        # exception message is printed and it is impossible to determine the file that is the source of the error.
+        # It is thought that errors occur due to limitations in system resources and the streaming pipelines we use for
+        # indexing causing loss of data in the STDIN pipe.
+        # See: index_solr_file.sh and index_solr.sh
+        puts "Indexing error in #{filename}: #{e.message}"
+      end
     end
 
     desc 'Index MARC records using Traject, outputting Solr query to file (for debugging)'
