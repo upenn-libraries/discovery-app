@@ -9,17 +9,14 @@ module Franklin
       # @return [nil] if no pub field was found
       # @return [Marc::DataField] if pub field was found
       def pub_field(record)
-        if (field = record.find { |f| f.tag == '264' && f.indicator2 == '1' })
-          field
-        elsif (field = record.find { |f| f.tag == '264' && f.indicator2 == '3' })
-          field
-        elsif (field = record.find { |f| f.tag == '264' && f.indicator2 == '2' })
-          field
-        elsif (field = record.find { |f| f.tag == '264' && f.indicator2 == '0' })
-          field
-        else
-          record.find { |f| f.tag == '260' }
+        # Check for 264 field first. If multiple fields, prioritizing based on indicator2 field.
+        ['1', '3', '2', '0'].each do |indicator2|
+          field = record.find { |f| f.tag == '264' && f.indicator2 == indicator2 }
+          return field unless field.nil?
         end
+
+        # If no valid 264 fields present, return 260 field.
+        record.find { |f| f.tag == '260' }
       end
 
       # Overriding Blacklight::Solr::Document::MarcExport.setup_pub_data to use custom logic for pub field.
