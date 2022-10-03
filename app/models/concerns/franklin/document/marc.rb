@@ -25,8 +25,7 @@ module Franklin
       # Overriding Blacklight::Solr::Document::MarcExport.setup_pub_data to use custom logic for pub field.
       def setup_pub_date(record)
         if (pub_field = pub_field(record))
-          # pub_date = record.find{|f| f.tag == '260'}
-          if (pub_date = pub_field.find{ |s| s.code == 'c' })
+          if (pub_date = pub_field.find { |s| s.code == 'c' })
             date_value = pub_date.value.gsub(/[^0-9|n\.d\.]/, "")[0,4] unless pub_date.value.gsub(/[^0-9|n\.d\.]/, "")[0,4].blank?
           end
           return nil if date_value.nil?
