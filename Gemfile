@@ -41,6 +41,7 @@ gem 'uglifier', '3.0.2'
 
 group :development do
   gem 'dotenv-rails'
+  gem 'ruby-debug-ide'
   gem 'web-console', '~> 2.0', platforms: :ruby
 end
 
