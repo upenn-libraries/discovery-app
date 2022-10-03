@@ -6,39 +6,17 @@ var validRequestTypes = ["CentralCAT","MAINT-EC","CHI CAT","CatMet","HEB CAT",
                          "MAINT-otf","MAINT-tr"];
 $.fn.dataTable.ext.errMode = 'none';
 
-function page_context() {
-    if(document.body.classList.contains("blacklight-catalog-show")) {
-        return 'show';
-    } else if(document.body.classList.contains("blacklight-catalog-index")) {
-        return 'index';
-    } else {
-        return null;
-    }
-}
-
-// Hackily parses relevant context out of the DOM for the specified mmsid
-function get_request_context(mmsid) {
-  var d = document.getElementById('items_nocirc-'+mmsid);
-  var items_nocirc = (d === null) ? '' : d.getAttribute('val');
-  return {
-    pickupable: null,
-    items_nocirc: items_nocirc
-  };
-}
-
-function should_show_holding_info() {
-    return document.body.classList.contains("blacklight-catalog-show");
-}
-
 $(document).ready(function() {
 
     // subclass BlacklightAlma
     function Franklin() {
         BlacklightAlma.call(this);
     }
-
     Franklin.prototype = Object.create(BlacklightAlma.prototype);
 
+    /*
+     * format a holding row for display - returns HTML for rendering
+     */
     Franklin.prototype.formatHolding = function (mms_id, holding) {
         if (holding['inventory_type'] === 'physical') {
             var availability = "Unknown";
@@ -57,14 +35,27 @@ $(document).ready(function() {
             } else if (holding['availability'] === 'available') {
                 availability = holding['location_code'] === 'vanpNocirc' ? "<span class='label label-availability label-default'>Use online access — print restricted</span>" : "<span class='label label-availability label-success'>Available</span>";
             }
+
             var holding_info = '';
             if (holding['holding_info'] && should_show_holding_info()) {
                 holding_info = " - " + holding['holding_info'];
             }
-            return [availability, holding['location'], holding['call_number'], holding_info , $.shelfLocatorLink(mms_id, holding, "TODO")]
-                .filter(function (item) {
-                    return item != null && item.length > 0;
-                }).join(' ');
+
+            var holding_details = ''
+            if(should_show_holding_info()) {
+                holding_details = "<span class='holding-public-note load-holding-details' data-mmsid='" + mms_id + "' data-holdingid='" + holding['holding_id'] + "'></span>"
+            }
+
+            var location = holding['location'] + ' ' + holding['call_number'];
+            var shelfLocationLink = $.shelfLocatorLink(mms_id, holding, "TODO", location);
+            if(!shelfLocationLink || shelfLocationLink.length === 0) {
+                shelfLocationLink = location;
+            }
+
+            return [availability, shelfLocationLink, holding_info, holding_details]
+              .filter(function (item) {
+                  return item != null && item.length > 0;
+              }).join(' ');
         }
         else if(holding['inventory_type'] === 'electronic') {
             if (holding['activation_status'] === 'Available') {
@@ -93,12 +84,29 @@ $(document).ready(function() {
     };
 
     Franklin.prototype.renderAvailability = function (element, html) {
-      // if there's no availability text at all, then hide the field label altogether
-      if(html && html.length > 0) {
-          BlacklightAlma.prototype.renderAvailability.call(this, element, html);
-      } else {
-          $(element).closest(".document").find(".blacklight-availability").hide();
-      }
+        // if there's no availability text at all, then hide the field label altogether
+        if(html && html.length > 0) {
+            BlacklightAlma.prototype.renderAvailability.call(this, element, html);
+        } else {
+            $(element).closest(".document").find(".blacklight-availability").hide();
+        }
+
+        $('.load-holding-details').each(function(idx, element) {
+            var mmsid = $(element).data("mmsid");
+            var holdingid = $(element).data("holdingid");
+            var url = "/alma/holding_details?mms_id="+mmsid+"&holding_id="+holdingid
+            $.ajax({
+                url: url,
+                success: function(data, textStatus, jqXHR) {
+                    $(element).removeClass('load-holding-details');
+                    $(element).html('');
+                    if(data['notes']) {
+                        var notes = ' - ' + data['notes'].join(' ');
+                    }
+                    $(element).append(notes);
+                }
+            });
+        });
     };
 
     Franklin.prototype.loadRequestOptionsAjax = function(mmsid) {
@@ -402,8 +410,13 @@ $(document).ready(function() {
         });
     }
 
+
     var ba = new Franklin();
+
+    // loads holding "availability" info into
     ba.loadAvailability();
+
+    // loads "request" options ("report error", "place on course reserves") in tools panel
     ba.loadRequestOptions();
 });
 
@@ -420,4 +433,28 @@ function loadItems(mms_id, holding_id, location_code, pickupable) {
 function swapDataTables(mmsid) {
     $('#requestOptions-' + mmsid + '_wrapper').toggle();
     $('#holdingItems-' + mmsid + '_wrapper').toggle();
+}
+
+function page_context() {
+    if(document.body.classList.contains("blacklight-catalog-show")) {
+        return 'show';
+    } else if(document.body.classList.contains("blacklight-catalog-index")) {
+        return 'index';
+    } else {
+        return null;
+    }
+}
+
+// Hackily parses relevant context out of the DOM for the specified mmsid
+function get_request_context(mmsid) {
+    var d = document.getElementById('items_nocirc-'+mmsid);
+    var items_nocirc = (d === null) ? '' : d.getAttribute('val');
+    return {
+        pickupable: null,
+        items_nocirc: items_nocirc
+    };
+}
+
+function should_show_holding_info() {
+    return page_context() === 'show';
 }

@@ -1,7 +1,7 @@
-
 @import 'base/globals.css.scss';
 @import 'base/colors.css.scss';
 @import 'base/mixins.css.scss';
+
 #skip-link {
   margin: 0;
   padding: 0;
@@ -27,7 +27,6 @@
   }
 }
 
-
 @media (min-width: 992px) and (max-width: 1199px) {
   .bento-box.databases-results,
   .bento-box.colenda-results,
@@ -39,7 +38,10 @@
   .libraries-results {
     width: 32.5%;
   }
+}
 
+.holding-public-note {
+  font-weight: bold;
 }
 
 .holding-availability-area {

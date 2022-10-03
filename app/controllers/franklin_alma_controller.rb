@@ -15,19 +15,12 @@ class FranklinAlmaController < ApplicationController
 
     xml = Nokogiri(response_data.body)
     holding_details = xml.xpath('//datafield[@tag="866"]/subfield[@code="a"]').map(&:text)
-
     note_details = xml.xpath('//datafield[@tag="852"]/subfield[@code="z"]').map(&:text)
-    note_details.unshift('Public Notes:') unless note_details.empty?
-
     supplemental_details = xml.xpath('//datafield[@tag="867"]/subfield[@code="a"]').map(&:text)
-    supplemental_details.unshift('Supplemental:') unless supplemental_details.empty?
-
     index_details = xml.xpath('//datafield[@tag="868"]/subfield[@code="a"]').map(&:text)
-    index_details.unshift('Indexes:') unless index_details.empty?
 
-    render json: { "holding_details": holding_details.join('<br/>').html_safe,
-                   "notes": (note_details + supplemental_details + index_details).join('<br/>').html_safe }
-
+    render json: { "holding_details": holding_details, "notes": note_details, "supplement": supplemental_details,
+                   "index": index_details }
   end
 
   # Return JSON of portfolio details (public & authentication notes only)
