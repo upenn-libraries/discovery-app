@@ -42,4 +42,22 @@ RSpec.describe PennLib::Marc, type: :model do
       expect(names.first).not_to include '123456789'
     end
   end
+  describe '.get_author_creator_sort_values' do
+    it 'does not include URIs from $1' do
+      names = marc.get_author_creator_sort_values(rec)
+      expect(names.first).not_to include '123456789'
+    end
+  end
+  describe '.get_author_creator_1_search_values' do
+    it 'does not include URIs from $1' do
+      names = marc.get_author_creator_1_search_values(rec)
+      expect(names.first).not_to include '123456789'
+    end
+  end
+  describe '.get_author_creator_2_search_values' do
+    it 'does not include URIs from $1' do
+      names = marc.get_author_creator_2_search_values(rec)
+      expect(names.first).not_to include '123456789'
+    end
+  end
 end

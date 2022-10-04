@@ -1681,7 +1681,7 @@ module PennLib
             after_comma = join_and_trim_whitespace([ trim_trailing_comma(substring_after(sf.value, ', ')) ])
             before_comma = substring_before(sf.value, ', ')
             " #{after_comma} #{before_comma}"
-          elsif(! %W{a 4 6 8}.member?(sf.code))
+          elsif !%W{a 1 4 6 8}.member?(sf.code)
             " #{sf.value}"
           elsif sf.code == '4'
             ", #{relator_codes[sf.value]}"
@@ -1731,7 +1731,7 @@ module PennLib
       acc = []
       acc += rec.fields(author_creator_2_tags).map do |field|
         pieces1 = field.map do |sf|
-          if(! %W{4 5 6 8 t}.member?(sf.code))
+          if !%W{1 4 5 6 8 t}.member?(sf.code)
             " #{sf.value}"
           elsif sf.code == '4'
             ", #{relator_codes[sf.value]}"
@@ -1784,7 +1784,7 @@ module PennLib
 
     def get_author_creator_sort_values(rec)
       rec.fields(author_creator_tags).take(1).map do |field|
-        join_subfields(field, &subfield_not_in(%w{468e}))
+        join_subfields(field, &subfield_not_in(%w[1 4 6 8 e]))
       end
     end
 
