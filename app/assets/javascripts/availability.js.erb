@@ -46,10 +46,14 @@ $(document).ready(function() {
                 holding_details = "<span class='holding-public-note load-holding-details' data-mmsid='" + mms_id + "' data-holdingid='" + holding['holding_id'] + "'></span>"
             }
 
-            var location = holding['location'] + ' ' + holding['call_number'];
-            var shelfLocationLink = $.shelfLocatorLink(mms_id, holding, "TODO", location);
-            if(!shelfLocationLink || shelfLocationLink.length === 0) {
-                shelfLocationLink = location;
+            var shelfLocationLink = '';
+            var location = holding['location'];
+            if(holding['call_number'] && holding['call_number'].length > 0) {
+                location = location + ' ' + holding['call_number'];
+                shelfLocationLink =  $.shelfLocatorLink(mms_id, holding, "TODO", location);
+                if(!shelfLocationLink || shelfLocationLink.length === 0) {
+                    shelfLocationLink = location;
+                }
             }
 
             return [availability, shelfLocationLink, holding_info, holding_details]
