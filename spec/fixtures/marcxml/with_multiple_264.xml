@@ -1,0 +1,138 @@
+<record>
+  <leader>01749nam a2200433 i 4500</leader>
+  <controlfield tag="001">9978913622203681</controlfield>
+  <controlfield tag="005">20220926120014.0</controlfield>
+  <controlfield tag="008">220926t19121912gw 000 d ger d</controlfield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(OCoLC)1345678156</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(OCoLC)on1345678156</subfield>
+  </datafield>
+  <datafield tag="040" ind1=" " ind2=" ">
+    <subfield code="a">PAU</subfield>
+    <subfield code="b">eng</subfield>
+    <subfield code="e">rda</subfield>
+    <subfield code="e">dcrmb</subfield>
+    <subfield code="c">PAU</subfield>
+  </datafield>
+  <datafield tag="050" ind1=" " ind2="4">
+    <subfield code="a">PT2616</subfield>
+    <subfield code="b">.G3 1912</subfield>
+  </datafield>
+  <datafield tag="100" ind1="1" ind2=" ">
+    <subfield code="a">Hauptmann, Gerhart,</subfield>
+    <subfield code="d">1862-1946,</subfield>
+    <subfield code="e">author.</subfield>
+  </datafield>
+  <datafield tag="245" ind1="1" ind2="0">
+    <subfield code="a">Gabriel Schillings Flucht :</subfield>
+    <subfield code="b">Drama /</subfield>
+    <subfield code="c">von Gerhart Hauptmann.</subfield>
+  </datafield>
+  <datafield tag="264" ind1=" " ind2="1">
+    <subfield code="a">Berlin :</subfield>
+    <subfield code="b">S. Fischer Verlag,</subfield>
+    <subfield code="c">[1912]</subfield>
+  </datafield>
+  <datafield tag="264" ind1=" " ind2="3">
+    <subfield code="a">[Leipzig] :</subfield>
+    <subfield code="b">Druck der Spamerschen Buchdruckerei in Leipzig.</subfield>
+  </datafield>
+  <datafield tag="264" ind1=" " ind2="4">
+    <subfield code="c">©1912</subfield>
+  </datafield>
+  <datafield tag="300" ind1=" " ind2=" ">
+    <subfield code="a">181, [3] pages</subfield>
+    <subfield code="c">20 cm</subfield>
+  </datafield>
+  <datafield tag="336" ind1=" " ind2=" ">
+    <subfield code="a">text</subfield>
+    <subfield code="b">txt</subfield>
+    <subfield code="2">rdacontent</subfield>
+  </datafield>
+  <datafield tag="337" ind1=" " ind2=" ">
+    <subfield code="a">unmediated</subfield>
+    <subfield code="b">n</subfield>
+    <subfield code="2">rdamedia</subfield>
+  </datafield>
+  <datafield tag="338" ind1=" " ind2=" ">
+    <subfield code="a">volume</subfield>
+    <subfield code="b">nc</subfield>
+    <subfield code="2">rdacarrier</subfield>
+  </datafield>
+  <datafield tag="500" ind1=" " ind2=" ">
+    <subfield code="a">"60 Exemplare sind auf handgeschöpfte Büttenpapier abgezogen und
+      numeriert, davon 50 zum Verkauf."--Verso of title leaf.</subfield>
+  </datafield>
+  <datafield tag="500" ind1=" " ind2=" ">
+    <subfield code="a">Publisher's advertisement: Pages [183]-[184].</subfield>
+  </datafield>
+  <datafield tag="590" ind1=" " ind2=" ">
+    <subfield code="a">Kislak Center LIBRA Rare copy presented to the Penn Libraries by
+      Stephen R. Lehmann and Carol M. Sabersky in 2013.</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">Art</subfield>
+    <subfield code="v">Fiction.</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">German drama</subfield>
+    <subfield code="y">20th century.</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="4">
+    <subfield code="a">CHR 1912</subfield>
+    <subfield code="5">PU</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="4">
+    <subfield code="a">PRO Lehmann, Stephen R. (donor) (LIBRA Rare copy)</subfield>
+    <subfield code="5">PU</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="4">
+    <subfield code="a">PRO Sabersky, Carol M. (donor) (LIBRA Rare copy)</subfield>
+    <subfield code="5">PU</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="7">
+    <subfield code="a">Art.</subfield>
+    <subfield code="2">fast</subfield>
+    <subfield code="0">(OCoLC)fst00815177</subfield>
+  </datafield>
+  <datafield tag="655" ind1=" " ind2="7">
+    <subfield code="a">Fiction.</subfield>
+    <subfield code="2">fast</subfield>
+    <subfield code="0">(OCoLC)fst01423787</subfield>
+  </datafield>
+  <datafield tag="655" ind1=" " ind2="7">
+    <subfield code="a">Publishers' advertisements.</subfield>
+    <subfield code="2">rbgenr</subfield>
+  </datafield>
+  <datafield tag="710" ind1="2" ind2=" ">
+    <subfield code="a">S. Fischer Verlag,</subfield>
+    <subfield code="e">publisher.</subfield>
+  </datafield>
+  <datafield tag="710" ind1="2" ind2=" ">
+    <subfield code="a">Otto Spamer (Firm),</subfield>
+    <subfield code="e">printer.</subfield>
+  </datafield>
+  <datafield tag="710" ind1="2" ind2=" ">
+    <subfield code="a">Lehmann, Stephen R.,</subfield>
+    <subfield code="e">donor.</subfield>
+    <subfield code="5">PU</subfield>
+  </datafield>
+  <datafield tag="710" ind1="2" ind2=" ">
+    <subfield code="a">Sabersky, Carol M.,</subfield>
+    <subfield code="e">donor.</subfield>
+    <subfield code="5">PU</subfield>
+  </datafield>
+  <datafield tag="752" ind1=" " ind2=" ">
+    <subfield code="a">Germany</subfield>
+    <subfield code="d">Berlin.</subfield>
+  </datafield>
+  <datafield tag="948" ind1=" " ind2=" ">
+    <subfield code="h">HELD BY PAU - 0 OTHER HOLDINGS</subfield>
+  </datafield>
+  <datafield tag="994" ind1=" " ind2=" ">
+    <subfield code="a">Z0</subfield>
+    <subfield code="b">PAU</subfield>
+  </datafield>
+</record>
