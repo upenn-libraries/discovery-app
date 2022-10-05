@@ -21,3 +21,43 @@ RSpec.describe PennLib::SubjectConfig, type: :model do
     end
   end
 end
+
+RSpec.describe PennLib::Marc, type: :model do
+  let(:marc) { PennLib::Marc.new(PennLib::CodeMappings.new(Rails.root.join('config/translation_maps')) }
+  let(:rec) do
+    MARC::XMLReader.new(
+      Rails.root.join('spec/fixtures/marcxml/9978004977403681.xml'),
+      parser: :nokogiri
+    ).first
+  end
+  describe '.get_author_display' do
+    it 'does not include URI values from $1' do
+      data = marc.get_author_display(rec)
+      expect(data.first[:value]).not_to include '123456789'
+    end
+  end
+  describe '.get_author_creator_values' do
+    it 'does not include URIs from $1' do
+      names = marc.get_author_creator_values(rec)
+      expect(names.first).not_to include '123456789'
+    end
+  end
+  describe '.get_author_creator_sort_values' do
+    it 'does not include URIs from $1' do
+      names = marc.get_author_creator_sort_values(rec)
+      expect(names.first).not_to include '123456789'
+    end
+  end
+  describe '.get_author_creator_1_search_values' do
+    it 'does not include URIs from $1' do
+      names = marc.get_author_creator_1_search_values(rec)
+      expect(names.first).not_to include '123456789'
+    end
+  end
+  describe '.get_author_creator_2_search_values' do
+    it 'does not include URIs from $1' do
+      names = marc.get_author_creator_2_search_values(rec)
+      expect(names.first).not_to include '123456789'
+    end
+  end
+end

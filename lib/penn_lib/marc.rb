@@ -1027,7 +1027,8 @@ module PennLib
     def get_name_1xx_field(field)
       s = field.map do |sf|
         # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
-        if(! %W{0 4 6 8}.member?(sf.code))
+        # added 2022/08/04: filter our 1 (URIs) added my MARCive project
+        if !%W{0 1 4 6 8}.member?(sf.code)
           " #{sf.value}"
         elsif sf.code == '4'
           ", #{relator_codes[sf.value]}"
@@ -1680,7 +1681,7 @@ module PennLib
             after_comma = join_and_trim_whitespace([ trim_trailing_comma(substring_after(sf.value, ', ')) ])
             before_comma = substring_before(sf.value, ', ')
             " #{after_comma} #{before_comma}"
-          elsif(! %W{a 4 6 8}.member?(sf.code))
+          elsif !%W{a 1 4 6 8}.member?(sf.code)
             " #{sf.value}"
           elsif sf.code == '4'
             ", #{relator_codes[sf.value]}"
@@ -1730,7 +1731,7 @@ module PennLib
       acc = []
       acc += rec.fields(author_creator_2_tags).map do |field|
         pieces1 = field.map do |sf|
-          if(! %W{4 5 6 8 t}.member?(sf.code))
+          if !%W{1 4 5 6 8 t}.member?(sf.code)
             " #{sf.value}"
           elsif sf.code == '4'
             ", #{relator_codes[sf.value]}"
@@ -1783,7 +1784,7 @@ module PennLib
 
     def get_author_creator_sort_values(rec)
       rec.fields(author_creator_tags).take(1).map do |field|
-        join_subfields(field, &subfield_not_in(%w{468e}))
+        join_subfields(field, &subfield_not_in(%w[1 4 6 8 e]))
       end
     end
 
@@ -1794,7 +1795,8 @@ module PennLib
         author_parts = []
         field.each do |sf|
           # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
-          if !%W{0 4 6 8 e w}.member?(sf.code)
+          # added 2022/08/04: filter out 1 (URIs) added by MARCive project
+          if !%W{0 1 4 6 8 e w}.member?(sf.code)
             author_parts << sf.value
           end
         end
@@ -1809,7 +1811,7 @@ module PennLib
           author_parts = []
           field.each do |sf|
             # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
-            if !%W{0 4 6 8 e w}.member?(sf.code)
+            unless %W{0 4 6 8 e w}.member?(sf.code)
               author_parts << sf.value.gsub(/\?$/, '')
             end
           end
