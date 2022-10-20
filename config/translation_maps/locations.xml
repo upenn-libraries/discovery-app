@@ -1329,13 +1329,13 @@
   <library>Van Pelt-Dietrich Library Center</library>
   <display>Kislak Center for Special Collections - Artists' Books</display>
 </location>
-    <location location_code="scbanks">
-        <specific_location>Kislak Center for Special Collections - Joanna Banks Collection</specific_location>
-        <library>Special Collections</library>
-        <library>Kislak Center for Special Collections</library>
-        <library>Van Pelt-Dietrich Library Center</library>
-        <display>Kislak Center for Special Collections - Joanna Banks Collection</display>
-    </location>
+<location location_code="scbanks">
+    <specific_location>Kislak Center for Special Collections - Joanna Banks Collection</specific_location>
+    <library>Special Collections</library>
+    <library>Kislak Center for Special Collections</library>
+    <library>Van Pelt-Dietrich Library Center</library>
+    <display>Kislak Center for Special Collections - Joanna Banks Collection</display>
+</location>
 <location location_code="scblank">
   <specific_location>Kislak Center for Special Collections - Blank Collection</specific_location>
   <library>Special Collections</library>
@@ -1609,12 +1609,12 @@
   <display>Kislak Center for Special Collections - Tehon Collection</display>
 </location>
 <location location_code="sctress">
-    <specific_location>Kislak Center for Special Collections - Arthur Tress Collection</specific_location>
-    <library>Special Collections</library>
-    <library>Kislak Center for Special Collections</library>
-    <library>Van Pelt-Dietrich Library Center</library>
-    <display>Kislak Center for Special Collections - Arthur Tress Collection</display>
-    </location>
+  <specific_location>Kislak Center for Special Collections - Arthur Tress Collection</specific_location>
+  <library>Special Collections</library>
+  <library>Kislak Center for Special Collections</library>
+  <library>Van Pelt-Dietrich Library Center</library>
+  <display>Kislak Center for Special Collections - Arthur Tress Collection</display>
+</location>
 <location location_code="scvilain">
   <specific_location>Kislak Center for Special Collections - Vilain-Wieck Collection</specific_location>
   <library>Special Collections</library>
@@ -1680,6 +1680,12 @@
   <library>Special Collections</library>
   <library>LIBRA</library>
   <display>LIBRA Special</display>
+</location>
+<location location_code="scrunning">
+  <specific_location>LIBRA Running Press Collection</specific_location>
+  <library>Special Collections</library>
+  <library>LIBRA</library>
+  <display>LIBRA Running Press Collection</display>
 </location>
 <location location_code="sw3rdfl">
   <specific_location>Van Pelt - Temporarily shelved on third floor southwest corner</specific_location>
