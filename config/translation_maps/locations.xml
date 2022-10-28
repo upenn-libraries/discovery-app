@@ -1167,102 +1167,66 @@
   <display>Ordered for Yarnall collection</display>
 </location>
 <location location_code="pah">
-  <specific_location>Pennsylvania Hospital Medical Library</specific_location>
+  <specific_location>Pennsylvania Hospital Library</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Pennsylvania Hospital Medical Library</library>
-  <display>Pennsylvania Hospital Medical Library</display>
+  <library>Pennsylvania Hospital Library</library>
+  <display>Pennsylvania Hospital Library</display>
 </location>
 <location location_code="paharch">
-  <specific_location>Pennsylvania Hospital Medical Library - Archivist's Office</specific_location>
+  <specific_location>Pennsylvania Hospital Library - Archivist's Office</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Pennsylvania Hospital Medical Library</library>
-  <display>Pennsylvania Hospital Medical Library - Archivist's Office</display>
+  <library>Pennsylvania Hospital Library</library>
+  <display>Pennsylvania Hospital Library - Archivist's Office</display>
 </location>
 <location location_code="pahcirc">
-  <specific_location>Pennsylvania Hospital Medical Library - Circulation</specific_location>
+  <specific_location>Pennsylvania Hospital Library - Circulation</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Pennsylvania Hospital Medical Library</library>
-  <display>Pennsylvania Hospital Medical Library - Circulation</display>
-</location>
-<location location_code="pahhall">
-  <specific_location>Pennsylvania Hospital Medical Library - Hall Closet</specific_location>
-  <library>Health Sciences Libraries</library>
-  <library>Pennsylvania Hospital Medical Library</library>
-  <display>Pennsylvania Hospital Medical Library - Hall Closet</display>
+  <library>Pennsylvania Hospital Library</library>
+  <display>Pennsylvania Hospital Library - Circulation</display>
 </location>
 <location location_code="pahhc">
-  <specific_location>Pennsylvania Hospital Medical Library - Historic Collection</specific_location>
+  <specific_location>Pennsylvania Hospital Library - Historic Collection</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Pennsylvania Hospital Medical Library</library>
-  <display>Pennsylvania Hospital Medical Library - Historic Collection</display>
+  <library>Pennsylvania Hospital Library</library>
+  <display>Pennsylvania Hospital Library - Historic Collection</display>
 </location>
 <location location_code="pahhist">
-  <specific_location>Pennsylvania Hospital Medical Library - History</specific_location>
+  <specific_location>Pennsylvania Hospital Library - History</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Pennsylvania Hospital Medical Library</library>
-  <display>Pennsylvania Hospital Medical Library - History</display>
+  <library>Pennsylvania Hospital Library</library>
+  <display>Pennsylvania Hospital Library - History</display>
 </location>
 <location location_code="pahiph">
-  <specific_location>Pennsylvania Hospital Medical Library - IPH Collection</specific_location>
+  <specific_location>Pennsylvania Hospital Library - IPH Collection</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Pennsylvania Hospital Medical Library</library>
-  <display>Pennsylvania Hospital Medical Library - IPH Collection</display>
-</location>
-<location location_code="pahiphf">
-  <specific_location>Pennsylvania Hospital Medical Library - IPH Collection</specific_location>
-  <library>Health Sciences Libraries</library>
-  <library>Pennsylvania Hospital Medical Library</library>
-  <display>Pennsylvania Hospital Medical Library - IPH Collection Freud</display>
-</location>
-<location location_code="pahiphhist">
-  <specific_location>Pennsylvania Hospital Medical Library - IPH Collection</specific_location>
-  <library>Health Sciences Libraries</library>
-  <library>Pennsylvania Hospital Medical Library</library>
-  <display>Pennsylvania Hospital Medical Library - IPH Collection History</display>
-</location>
-<location location_code="pahiphref">
-  <specific_location>Pennsylvania Hospital Medical Library - IPH Collection</specific_location>
-  <library>Health Sciences Libraries</library>
-  <library>Pennsylvania Hospital Medical Library</library>
-  <display>Pennsylvania Hospital Medical Library - IPH Collection Reference</display>
-</location>
-<location location_code="pahiphrr">
-  <specific_location>Pennsylvania Hospital Medical Library - IPH Collection</specific_location>
-  <library>Health Sciences Libraries</library>
-  <library>Pennsylvania Hospital Medical Library</library>
-  <display>Pennsylvania Hospital Medical Library - IPH Collection Reading Room</display>
-</location>
-<location location_code="pahiphstk">
-  <specific_location>Pennsylvania Hospital Medical Library - IPH Collection</specific_location>
-  <library>Health Sciences Libraries</library>
-  <library>Pennsylvania Hospital Medical Library</library>
-  <display>Pennsylvania Hospital Medical Library - IPH Collection Psych Stacks</display>
+  <library>Pennsylvania Hospital Library</library>
+  <display>Pennsylvania Hospital Library - IPH Collection</display>
 </location>
 <location location_code="pahref">
-  <specific_location>Pennsylvania Hospital Medical Library - Reference</specific_location>
+  <specific_location>Pennsylvania Hospital Library - Reference</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Pennsylvania Hospital Medical Library</library>
-  <display>Pennsylvania Hospital Medical Library - Reference</display>
+  <library>Pennsylvania Hospital Library</library>
+  <display>Pennsylvania Hospital Library - Reference</display>
 </location>
 <location location_code="pahres">
-  <specific_location>Pennsylvania Hospital Medical Library - Reserve</specific_location>
+  <specific_location>Pennsylvania Hospital Library - Reserve</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Pennsylvania Hospital Medical Library</library>
+  <library>Pennsylvania Hospital Library</library>
   <library>Reserve</library>
-  <display>Pennsylvania Hospital Medical Library - Reserve</display>
+  <display>Pennsylvania Hospital Library - Reserve</display>
 </location>
 <location location_code="pahresrm">
-  <specific_location>Pennsylvania Hospital Medical Library - Reserve Room</specific_location>
+  <specific_location>Pennsylvania Hospital Library - Reserve Room</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Pennsylvania Hospital Medical Library</library>
+  <library>Pennsylvania Hospital Library</library>
   <library>Reserve</library>
-  <display>Pennsylvania Hospital Medical Library - Reserve Room</display>
+  <display>Pennsylvania Hospital Library - Reserve Room</display>
 </location>
 <location location_code="pahstk">
-  <specific_location>Pennsylvania Hospital Medical Library - Stacks</specific_location>
+  <specific_location>Pennsylvania Hospital Library - Stacks</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Pennsylvania Hospital Medical Library</library>
-  <display>Pennsylvania Hospital Medical Library - Stacks</display>
+  <library>Pennsylvania Hospital Library</library>
+  <display>Pennsylvania Hospital Library - Stacks</display>
 </location>
 <location location_code="religious">
   <specific_location>Van Pelt - Medieval Studies Resource Room</specific_location>
