@@ -72,7 +72,8 @@ class RequestsController < ApplicationController
   # A backup in case we can't get the nice link from Alma
   # @param [String] mms_id
   def ill_request_form_url_for(mms_id)
-    "redir/ill?bibid=#{mms_id}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com"
+    URI::HTTPS.build(host: request.host, path: '/forms/redir/ill',
+                     query: "bibid=#{mms_id}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com").to_s
   end
 
   # because current_user is useless
