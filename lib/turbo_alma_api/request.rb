@@ -12,7 +12,7 @@ module TurboAlmaApi
       ['Lockers at Van Pelt Library', 'VPLOCKER'],
       ['Annenberg Library', 'AnnenLib'],
       # ['Athenaeum Library', 'AthLib'],
-      ['Biotech Commons', 'BiomLib'],
+      ['Holman Biotech Commons', 'BiomLib'],
       ['Chemistry Library', 'ChemLib'],
       ['Dental Medicine Library', 'DentalLib'],
       ['Lockers at Dental Medicine Library', 'DENTLOCKER'],
