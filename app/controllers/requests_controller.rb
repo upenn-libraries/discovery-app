@@ -73,7 +73,7 @@ class RequestsController < ApplicationController
   # @param [String] mms_id
   def ill_request_form_url_for(mms_id)
     URI::HTTPS.build(host: request.host, path: '/redir/ill',
-                     query: "bibid=#{mms_id}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com").to_s
+                     query: "requesttype=book&bibid=#{mms_id}&rfr_id=info%3Asid%2Fprimo.exlibrisgroup.com").to_s
   end
 
   # because current_user is useless
