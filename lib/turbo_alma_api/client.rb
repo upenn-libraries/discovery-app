@@ -112,9 +112,9 @@ module TurboAlmaApi
       raise RequestFailed, "Problem getting request options for MMS ID: #{mms_id}" if parsed_response.dig 'web_service_result', 'errorsExist'
 
       parsed_response['request_option']&.each do |option|
-        option_name = if option.key? 'general_electronic_service_details'
+        option_name = if option.dig('general_electronic_service_details', 'code').present?
                         option.dig 'general_electronic_service_details', 'code'
-                      elsif option.key? 'rs_broker_details'
+                      elsif option.dig('rs_broker_details', 'code').present?
                         option.dig 'rs_broker_details', 'code'
                       else
                         option.dig 'type', 'value'

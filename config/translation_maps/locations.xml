@@ -191,59 +191,59 @@
   <display>LIBRA - Athenaeum of Philadelphia Circulating</display>
 </location>
 <location location_code="biom">
-  <specific_location>Biotech Commons</specific_location>
+  <specific_location>Holman Biotech Commons</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Biotech Commons</library>
-  <display>Biotech Commons</display>
+  <library>Holman Biotech Commons</library>
+  <display>Holman Biotech Commons</display>
 </location>
 <location location_code="biomclin">
-  <specific_location>Biotech Commons - Clinical Reading Room</specific_location>
+  <specific_location>Holman Biotech Commons - Clinical Reading Room</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Biotech Commons</library>
-  <display>Biotech Commons - Clinical Reading Room</display>
+  <library>Holman Biotech Commons</library>
+  <display>Holman Biotech Commons - Clinical Reading Room</display>
 </location>
 <location location_code="biomhist">
-  <specific_location>Biotech Commons - Historical Collection</specific_location>
+  <specific_location>Holman Biotech Commons - Historical Collection</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Biotech Commons</library>
-  <display>Biotech Commons - Historical Collection</display>
+  <library>Holman Biotech Commons</library>
+  <display>Holman Biotech Commons - Historical Collection</display>
 </location>
 <location location_code="biomlibr">
-  <specific_location>Biotech Commons - Librarian's Office</specific_location>
+  <specific_location>Holman Biotech Commons - Librarian's Office</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Biotech Commons</library>
-  <display>Biotech Commons - Librarian's Office</display>
+  <library>Holman Biotech Commons</library>
+  <display>Holman Biotech Commons - Librarian's Office</display>
 </location>
 <location location_code="biomonli">
-  <specific_location>Biotech Commons - Online Office</specific_location>
+  <specific_location>Holman Biotech Commons - Online Office</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Biotech Commons</library>
-  <display>Biotech Commons - Online Office</display>
+  <library>Holman Biotech Commons</library>
+  <display>Holman Biotech Commons - Online Office</display>
 </location>
 <location location_code="biomperi">
-  <specific_location>Biotech Commons - Periodicals</specific_location>
+  <specific_location>Holman Biotech Commons - Periodicals</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Biotech Commons</library>
-  <display>Biotech Commons - Periodicals</display>
+  <library>Holman Biotech Commons</library>
+  <display>Holman Biotech Commons - Periodicals</display>
 </location>
 <location location_code="biomrede">
-  <specific_location>Biotech Commons - Reference Desk</specific_location>
+  <specific_location>Holman Biotech Commons - Reference Desk</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Biotech Commons</library>
-  <display>Biotech Commons - Reference Desk</display>
+  <library>Holman Biotech Commons</library>
+  <display>Holman Biotech Commons - Reference Desk</display>
 </location>
 <location location_code="biomrefe">
-  <specific_location>Biotech Commons - Reference</specific_location>
+  <specific_location>Holman Biotech Commons - Reference</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Biotech Commons</library>
-  <display>Biotech Commons - Reference</display>
+  <library>Holman Biotech Commons</library>
+  <display>Holman Biotech Commons - Reference</display>
 </location>
 <location location_code="biomrese">
-  <specific_location>Biotech Commons - Reserve</specific_location>
+  <specific_location>Holman Biotech Commons - Reserve</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Biotech Commons</library>
+  <library>Holman Biotech Commons</library>
   <library>Reserve</library>
-  <display>Biotech Commons - Reserve</display>
+  <display>Holman Biotech Commons - Reserve</display>
 </location>
 <location location_code="chem">
   <specific_location>Chemistry Library - Books</specific_location>
@@ -1079,8 +1079,8 @@
 <location location_code="oobiom">
   <specific_location>On Order</specific_location>
   <library>Health Sciences Libraries</library>
-  <library>Biotech Commons</library>
-  <display>Ordered for Biotech Commons</display>
+  <library>Holman Biotech Commons</library>
+  <display>Ordered for Holman Biotech Commons</display>
 </location>
 <location location_code="oochem">
   <specific_location>On Order</specific_location>
