@@ -1,6 +1,6 @@
 include:
   - project: "devops/gitlab/ci-templates/docker"
-    ref: "speed-up-builds"
+    ref: "multistage"
     file: ".build_docker_image.yml"
   - project: "devops/gitlab/ci-templates/docker"
     ref: "master"
@@ -24,6 +24,8 @@ build_image:
   stage: .pre
   extends:
     - .build_docker_image
+  variables:
+    USE_CACHE: "false"
   tags:
     - build
 
