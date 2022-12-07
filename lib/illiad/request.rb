@@ -79,7 +79,7 @@ module Illiad
         PhotoJournalIssue: data[:section_issue],
         PhotoJournalMonth: item&.pub_month,
         PhotoJournalYear: item.try(:pub_year),
-        PhotoJournalInclusivePages: data['pages'],
+        PhotoJournalInclusivePages: data['section_pages'],
         ISSN: item&.bib('issn') || item&.bib('isbn') || data[:isxn],
         PhotoArticleAuthor: data[:section_author],
         PhotoArticleTitle: data[:section_title],
