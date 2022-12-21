@@ -4,6 +4,7 @@ finemaps
 finerare
 fineraremp
 finerarept
+storfine
 cjsraram
 cjsambx
 cjsmar
