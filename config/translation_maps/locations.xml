@@ -1793,6 +1793,11 @@
   <library>Van Pelt-Dietrich Library Center</library>
   <display>Van Pelt - Featured DVD Display - First Floor</display>
 </location>
+<location location_code="vpjuv">
+  <specific_location>Van Pelt - Notable Juvenile Books</specific_location>
+  <library>Van Pelt-Dietrich Library Center</library>
+  <display>Van Pelt - Notable Juvenile Books</display>
+</location>
 <location location_code="vpnewbook">
   <specific_location>Van Pelt - New Book Display</specific_location>
   <library>Van Pelt-Dietrich Library Center</library>
