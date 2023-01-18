@@ -23,10 +23,10 @@ RSpec.describe PennLib::SubjectConfig, type: :model do
 end
 
 RSpec.describe PennLib::Marc, type: :model do
-  let(:marc) { PennLib::Marc.new(PennLib::CodeMappings.new(Rails.root.join('config/translation_maps')) }
+  let(:marc) { PennLib::Marc.new(PennLib::CodeMappings.new(Rails.root.join('config/translation_maps'))) }
   let(:rec) do
     MARC::XMLReader.new(
-      Rails.root.join('spec/fixtures/marcxml/9978004977403681.xml'),
+      Rails.root.join('spec/fixtures/marcxml/9978004977403681.xml').to_s,
       parser: :nokogiri
     ).first
   end
@@ -58,6 +58,12 @@ RSpec.describe PennLib::Marc, type: :model do
     it 'does not include URIs from $1' do
       names = marc.get_author_creator_2_search_values(rec)
       expect(names.first).not_to include '123456789'
+    end
+  end
+  describe '.get_contained_within_values' do
+    it 'does not include information from 773 subfields $7 or $w' do
+      values = marc.get_contained_within_values(rec)
+      expect(values).to eq ['University of Pennsylvania. School of Arts and Sciences. Computing Facilities and Services. Multimedia Educational Technology Services. Records, 1969-1991']
     end
   end
 end

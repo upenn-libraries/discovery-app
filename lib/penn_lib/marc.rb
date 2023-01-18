@@ -2031,7 +2031,7 @@ module PennLib
 
     def get_contained_within_values(rec)
       rec.fields('773').map do |field|
-        results = field.find_all(&subfield_not_in(%w{6 8})).map(&:value)
+        results = field.find_all(&subfield_not_in(%w{6 7 8 w})).map(&:value)
         join_and_trim_whitespace(results)
       end
     end
