@@ -23,10 +23,10 @@ RSpec.describe PennLib::SubjectConfig, type: :model do
 end
 
 RSpec.describe PennLib::Marc, type: :model do
-  let(:marc) { PennLib::Marc.new(PennLib::CodeMappings.new(Rails.root.join('config/translation_maps')) }
+  let(:marc) { PennLib::Marc.new(PennLib::CodeMappings.new(Rails.root.join('config/translation_maps'))) }
   let(:rec) do
     MARC::XMLReader.new(
-      Rails.root.join('spec/fixtures/marcxml/9978004977403681.xml'),
+      Rails.root.join('spec/fixtures/marcxml/9978004977403681.xml').to_s,
       parser: :nokogiri
     ).first
   end

@@ -26,9 +26,6 @@ module TurboAlmaApi
       ['Veterinary Library - Penn Campus', 'VetPennLib'],
     ]
 
-    # College House is the only viable delivery location, for now
-    CHD_DELIVERY_LOCATION_CODE = 'CHD'
-
     # @param [Hash] user
     # @param [TurboAlmaApi::Bib::PennItem] item
     # @param [Hash] params
@@ -57,17 +54,9 @@ module TurboAlmaApi
       @user[:email]
     end
 
-    # Is this request using a pickup location that is actually for a delivery service?
-    # @return [TrueClass, FalseClass]
-    def delivery?
-      @pickup_location == CHD_DELIVERY_LOCATION_CODE
-    end
-
     # @return [String (frozen)]
     # @param [ActionController::Parameters] params
     def determine_pickup_location(params)
-      return CHD_DELIVERY_LOCATION_CODE if params[:delivery] == 'college_house'
-
       params[:pickup_location]&.to_s || 'VanPeltLib'
     end
 
