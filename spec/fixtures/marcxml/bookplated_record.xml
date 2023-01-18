@@ -1,0 +1,45 @@
+<record xmlns="http://www.loc.gov/MARC21/slim">
+  <leader>00809nam a2200169 u 4500</leader>
+  <controlfield tag="005">20220623215234.0</controlfield>
+  <controlfield tag="008">191030s2013    xx      r     000 0 eng d</controlfield>
+  <controlfield tag="001">9977589176403681</controlfield>
+  <datafield tag="245" ind1="0" ind2="0">
+    <subfield code="a">Only on Saturday :</subfield>
+    <subfield code="b">the wood type prints of Jack Stauffacher /</subfield>
+    <subfield code="c">Chuck Byrne.</subfield>
+  </datafield>
+  <datafield tag="264" ind1=" " ind2="1">
+    <subfield code="a">[Place of publication not identified] :</subfield>
+    <subfield code="b">Letterform Archive,</subfield>
+    <subfield code="c">[2020]</subfield>
+  </datafield>
+  <datafield tag="336" ind1=" " ind2=" ">
+    <subfield code="a">text</subfield>
+    <subfield code="b">txt</subfield>
+    <subfield code="2">rdacontent</subfield>
+  </datafield>
+  <datafield tag="337" ind1=" " ind2=" ">
+    <subfield code="a">unspecified</subfield>
+    <subfield code="b">z</subfield>
+    <subfield code="2">rdamedia</subfield>
+  </datafield>
+  <datafield tag="338" ind1=" " ind2=" ">
+    <subfield code="a">unspecified</subfield>
+    <subfield code="b">zu</subfield>
+    <subfield code="2">rdacarrier</subfield>
+  </datafield>
+  <datafield tag="590" ind1=" " ind2=" ">
+    <subfield code="a">Acquired for the Penn Libraries with assistance from the Smidt Family Modern and Contemporary Art Collection Fund.</subfield>
+  </datafield>
+  <datafield tag="710" ind1="2" ind2=" ">
+    <subfield code="a">Smidt Family Modern and Contemporary Art Collection Fund.</subfield>
+    <subfield code="5">PU</subfield>
+  </datafield>
+  <datafield tag="856" ind1="4" ind2="2">
+    <subfield code="3">The Smidt Family Modern and Contemporary Art Collection Fund Home Page</subfield>
+    <subfield code="u">http://hdl.library.upenn.edu/1017.12/2554579</subfield>
+  </datafield>
+  <datafield tag="902" ind1=" " ind2=" ">
+    <subfield code="a">MARCIVE 2022</subfield>
+  </datafield>
+</record>
