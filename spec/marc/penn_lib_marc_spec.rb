@@ -66,4 +66,25 @@ RSpec.describe PennLib::Marc, type: :model do
       expect(values).to eq ['University of Pennsylvania. School of Arts and Sciences. Computing Facilities and Services. Multimedia Educational Technology Services. Records, 1969-1991']
     end
   end
+  context 'web link parsing for display' do
+    context 'for a fund-based bookplate' do
+      let(:weblink_rec) do
+        MARC::XMLReader.new(
+          Rails.root.join('spec/fixtures/marcxml/bookplated_record.xml').to_s,
+          parser: :nokogiri
+        ).first
+      end
+      let(:web_links) { marc.get_web_link_display(weblink_rec) }
+      it 'has two web link entries' do
+        expect(web_links.length).to eq 2
+      end
+      it 'has a bookplate img link entry with expected structure' do
+        expect(web_links[1]).to eq({
+          img_src: 'https://old.library.upenn.edu/sites/default/files/images/bookplates/SmidtFamilyModernContemporaryArt.gif',
+          img_alt: 'The Smidt Family Modern and Contemporary Art Collection Fund Home Page  Bookplate',
+          linkurl: 'http://hdl.library.upenn.edu/1017.12/2554579'
+        })
+      end
+    end
+  end
 end
