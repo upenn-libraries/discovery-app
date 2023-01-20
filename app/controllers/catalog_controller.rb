@@ -53,6 +53,9 @@ class CatalogController < ApplicationController
   # expire session if needed
   before_action :expire_session
 
+  # handle drupalization of facet params
+  before_action :dedrupalize_facet_params
+
   # screen for illegit sort params
   before_action :block_invalid_sort_params, only: :index
 
@@ -1026,4 +1029,14 @@ class CatalogController < ApplicationController
     options[:document].show_requesting_widget?
   end
 
+  # transform Rails params in place to address Drupal's mangling of Blacklight facet params
+  def dedrupalize_facet_params
+    return unless params[:f].present?
+
+    params[:f].transform_values! do |value|
+      next unless value.is_a? Hash
+
+      value.values
+    end
+  end
 end
