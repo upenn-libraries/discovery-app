@@ -25,6 +25,7 @@ jQuery.shelfLocatorLink = new function() {
         {"v": "Middle East Seminar Room", "tg": "MESR"},
         {"v": "Music Library New Book Shelf", "tg": "MLNBS"},
         {"v": "New Book Display", "tg": "NBD"},
+        {"v": "Notable Juvenile Books", "tg": "JUV"},
         {"v": "Ormandy", "tg": "OC"},
         {"v": "Rosengarten Reserve", "tg": "RR"},
         {"v": "South Asia Studies Reading Room", "tg": "SAS"},
