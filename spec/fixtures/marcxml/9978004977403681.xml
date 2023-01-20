@@ -1,1 +1,229 @@
-<record xmlns='http://www.loc.gov/MARC21/slim'><leader>04872nam a22007095i 4500</leader><controlfield tag='001'>9978004977403681</controlfield><controlfield tag='005'>20211116182153.0</controlfield><controlfield tag='006'>m|||||o||d||||||||</controlfield><controlfield tag='007'>cr#nn#---|un|u</controlfield><controlfield tag='008'>200723t20152015nyu    fo  d z001 0 eng d</controlfield><datafield ind1=' ' ind2=' ' tag='020'><subfield code='a'>1-4798-7965-7</subfield></datafield><datafield ind1='7' ind2=' ' tag='024'><subfield code='a'>10.18574/9781479879656</subfield><subfield code='2'>doi</subfield></datafield><datafield ind1=' ' ind2=' ' tag='035'><subfield code='a'>(CKB)3710000000493436</subfield></datafield><datafield ind1=' ' ind2=' ' tag='035'><subfield code='a'>(EBL)4044665</subfield></datafield><datafield ind1=' ' ind2=' ' tag='035'><subfield code='a'>(SSID)ssj0001569235</subfield></datafield><datafield ind1=' ' ind2=' ' tag='035'><subfield code='a'>(PQKBManifestationID)16221295</subfield></datafield><datafield ind1=' ' ind2=' ' tag='035'><subfield code='a'>(PQKBTitleCode)TC0001569235</subfield></datafield><datafield ind1=' ' ind2=' ' tag='035'><subfield code='a'>(PQKBWorkID)13136789</subfield></datafield><datafield ind1=' ' ind2=' ' tag='035'><subfield code='a'>(PQKB)11130112</subfield></datafield><datafield ind1=' ' ind2=' ' tag='035'><subfield code='a'>(MiAaPQ)EBC4044665</subfield></datafield><datafield ind1=' ' ind2=' ' tag='035'><subfield code='a'>(StDuBDS)EDZ0001533270</subfield></datafield><datafield ind1=' ' ind2=' ' tag='035'><subfield code='a'>(OCoLC)926101611</subfield></datafield><datafield ind1=' ' ind2=' ' tag='035'><subfield code='a'>(MdBmJHUP)muse47607</subfield></datafield><datafield ind1=' ' ind2=' ' tag='035'><subfield code='a'>(DE-B1597)548268</subfield></datafield><datafield ind1=' ' ind2=' ' tag='035'><subfield code='a'>(DE-B1597)9781479879656</subfield></datafield><datafield ind1=' ' ind2=' ' tag='035'><subfield code='a'>(EXLCZ)993710000000493436</subfield></datafield><datafield ind1=' ' ind2=' ' tag='040'><subfield code='a'>DE-B1597</subfield><subfield code='b'>eng</subfield><subfield code='c'>DE-B1597</subfield><subfield code='e'>rda</subfield></datafield><datafield ind1=' ' ind2=' ' tag='041'><subfield code='a'>eng</subfield></datafield><datafield ind1=' ' ind2=' ' tag='043'><subfield code='a'>n-us---</subfield></datafield><datafield ind1=' ' ind2=' ' tag='044'><subfield code='a'>nyu</subfield><subfield code='c'>US-NY</subfield></datafield><datafield ind1=' ' ind2='4' tag='050'><subfield code='a'>HQ1034.U5</subfield><subfield code='b'>B38 2016</subfield></datafield><datafield ind1=' ' ind2='7' tag='072'><subfield code='a'>SOC012000</subfield><subfield code='2'>bisacsh</subfield></datafield><datafield ind1='0' ind2='4' tag='082'><subfield code='a'>306.8480973</subfield><subfield code='2'>23</subfield></datafield><datafield ind1='1' ind2=' ' tag='100'><subfield code='a'>Baumle, Amanda K.,</subfield><subfield code='e'>author.</subfield><subfield code="1">http://viaf.org/viaf/123456789</subfield><subfield code='4'>aut</subfield><subfield code='4'>http://id.loc.gov/vocabulary/relators/aut</subfield></datafield><datafield ind1='1' ind2='0' tag='245'><subfield code='a'>Legalizing LGBT Families :</subfield><subfield code='b'>How the Law Shapes Parenthood /</subfield><subfield code='c'>Amanda K. Baumle, D&apos;Lane R. Compton.</subfield></datafield><datafield ind1=' ' ind2='1' tag='264'><subfield code='a'>New York, NY :</subfield><subfield code='b'>New York University Press,</subfield><subfield code='c'>[2015]</subfield></datafield><datafield ind1=' ' ind2='4' tag='264'><subfield code='c'>©2015</subfield></datafield><datafield ind1=' ' ind2=' ' tag='300'><subfield code='a'>1 online resource (310 p.)</subfield></datafield><datafield ind1=' ' ind2=' ' tag='336'><subfield code='a'>text</subfield><subfield code='b'>txt</subfield></datafield><datafield ind1=' ' ind2=' ' tag='337'><subfield code='a'>computer</subfield><subfield code='b'>c</subfield></datafield><datafield ind1=' ' ind2=' ' tag='338'><subfield code='a'>online resource</subfield><subfield code='b'>cr</subfield></datafield><datafield ind1=' ' ind2=' ' tag='500'><subfield code='a'>Description based upon print version of record.</subfield></datafield><datafield ind1=' ' ind2=' ' tag='546'><subfield code='a'>English</subfield></datafield><datafield ind1=' ' ind2=' ' tag='521'><subfield code='a'>Specialized.</subfield></datafield><datafield ind1=' ' ind2=' ' tag='504'><subfield code='a'>Includes bibliographical references and index.</subfield></datafield><datafield ind1='0' ind2='0' tag='505'><subfield code='t'>Front matter --</subfield><subfield code='t'>CONTENTS --</subfield><subfield code='t'>PREFACE --</subfield><subfield code='t'>ACKNOWLEDGMENTS --</subfield><subfield code='t'>Introduction --</subfield><subfield code='t'>1. The State of the Law for LGBT Parents --</subfield><subfield code='t'>2. Routes to Parenthood --</subfield><subfield code='t'>3. Locating Legality --</subfield><subfield code='t'>4. Parenting before the Law --</subfield><subfield code='t'>5. Parenting with the Law --</subfield><subfield code='t'>6. Parenting against the Law --</subfield><subfield code='t'>Conclusion: LGBT Parents Constructing Legality --</subfield><subfield code='t'>APPENDIX: METHODOLOGY --</subfield><subfield code='t'>NOTES --</subfield><subfield code='t'>REFERENCES --</subfield><subfield code='t'>INDEX --</subfield><subfield code='t'>ABOUT THE AUTHORS</subfield></datafield><datafield ind1=' ' ind2=' ' tag='520'><subfield code='a'>The decision to have a child is seldom a simple one, often fraught with complexities regarding emotional readiness, finances, marital status, and compatibility with life and career goals. Rarely, though, do individuals consider the role of the law in facilitating or inhibiting their ability to have a child or to parent. For LGBT individuals, however, parenting is saturated with legality – including the initial decision of whether to have a child, how to have a child, whether one’s relationship with their child will be recognized, and everyday acts of parenting like completing forms or picking up children from school. Through in-depth interviews with 137 LGBT parents, Amanda K. Baumle and D’Lane R. Compton examine the role of the law in the lives of LGBT parents and how individuals use the law when making decisions about family formation or parenting. Baumle and Compton explore the ways in which LGBT parents participate in the process of constructing legality through accepting, modifying, or rejecting legal meanings about their families. Few groups encounter as much variation in access to everyday legal rights pertaining to the family as do LGBT parents. This complexity and variation in legal environments provides a rather unique opportunity to examine the manner in which legal context affects the ways in which individuals come to understand the meaning and utility of the law for their lives. The authors conclude that legality is constructed through a complex interplay of legal context, social networks, individual characteristics, and familial desires. Ultimately, the stories of LGBT parents in this book reflect a rich and varied relationship between the law, the state, and the private family goals of individuals.</subfield></datafield><datafield ind1='0' ind2=' ' tag='588'><subfield code='a'>Description based on online resource; title from PDF title page (publisher&apos;s Web site, viewed 23. Jul 2020)</subfield></datafield><datafield ind1=' ' ind2='0' tag='650'><subfield code='a'>Sexual minorities&apos; families</subfield><subfield code='z'>United States.</subfield></datafield><datafield ind1=' ' ind2='0' tag='650'><subfield code='a'>Gay parents</subfield><subfield code='z'>United States.</subfield></datafield><datafield ind1=' ' ind2='0' tag='650'><subfield code='a'>Children of gay parents</subfield><subfield code='z'>United States.</subfield></datafield><datafield ind1=' ' ind2='0' tag='650'><subfield code='a'>Same-sex marriage</subfield><subfield code='x'>Law and legislation</subfield><subfield code='z'>United States.</subfield></datafield><datafield ind1=' ' ind2='0' tag='650'><subfield code='a'>Same-sex marriage</subfield><subfield code='z'>United States.</subfield></datafield><datafield ind1=' ' ind2='7' tag='650'><subfield code='a'>LGBTQ+ families.</subfield><subfield code='2'>homoit</subfield><subfield code='1'>https://homosaurus.org/v3/homoit0000420</subfield></datafield><datafield ind1=' ' ind2='7' tag='650'><subfield code='a'>Children of LGBTQ+ people.</subfield><subfield code='2'>homoit</subfield><subfield code='1'>https://homosaurus.org/v3/homoit0000260</subfield></datafield><datafield ind1=' ' ind2='7' tag='650'><subfield code='a'>LGBTQ+ adoptive parenthood.</subfield><subfield code='2'>homoit</subfield><subfield code='1'>https://homosaurus.org/v3/homoit0000811</subfield></datafield><datafield ind1=' ' ind2='7' tag='650'><subfield code='a'>LGBTQ+ parenthood.</subfield><subfield code='2'>homoit</subfield><subfield code='1'>https://homosaurus.org/v3/homoit0000914</subfield></datafield><datafield ind1=' ' ind2='7' tag='650'><subfield code='a'>Parental rights.</subfield><subfield code='2'>homoit</subfield><subfield code='1'>https://homosaurus.org/v3/homoit0001074</subfield></datafield><datafield ind1=' ' ind2='7' tag='650'><subfield code='a'>LGBTQ+ parents.</subfield><subfield code='2'>homoit</subfield><subfield code='1'>https://homosaurus.org/v3/homoit0001075</subfield></datafield><datafield ind1=' ' ind2='4' tag='655'><subfield code='a'>Electronic books.</subfield></datafield><datafield ind1='1' ind2=' ' tag='700'><subfield code='a'>Compton, D&apos;Lane R.,</subfield><subfield code='e'>author.</subfield><subfield code='4'>aut</subfield><subfield code='4'>http://id.loc.gov/vocabulary/relators/aut</subfield></datafield><datafield ind1='0' ind2=' ' tag='776'><subfield code='z'>1-4798-5764-5</subfield></datafield><datafield ind1=' ' ind2=' ' tag='906'><subfield code='a'>BOOK</subfield></datafield></record>
+<record xmlns='http://www.loc.gov/MARC21/slim'>
+  <leader>04872nam a22007095i 4500</leader>
+  <controlfield tag='001'>9978004977403681</controlfield>
+  <controlfield tag='005'>20211116182153.0</controlfield>
+  <controlfield tag='006'>m|||||o||d||||||||</controlfield>
+  <controlfield tag='007'>cr#nn#---|un|u</controlfield>
+  <controlfield tag='008'>200723t20152015nyu    fo  d z001 0 eng d</controlfield>
+  <datafield ind1=' ' ind2=' ' tag='020'>
+    <subfield code='a'>1-4798-7965-7</subfield>
+  </datafield>
+  <datafield ind1='7' ind2=' ' tag='024'>
+    <subfield code='a'>10.18574/9781479879656</subfield>
+    <subfield code='2'>doi</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='035'>
+    <subfield code='a'>(CKB)3710000000493436</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='035'>
+    <subfield code='a'>(EBL)4044665</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='035'>
+    <subfield code='a'>(SSID)ssj0001569235</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='035'>
+    <subfield code='a'>(PQKBManifestationID)16221295</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='035'>
+    <subfield code='a'>(PQKBTitleCode)TC0001569235</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='035'>
+    <subfield code='a'>(PQKBWorkID)13136789</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='035'>
+    <subfield code='a'>(PQKB)11130112</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='035'>
+    <subfield code='a'>(MiAaPQ)EBC4044665</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='035'>
+    <subfield code='a'>(StDuBDS)EDZ0001533270</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='035'>
+    <subfield code='a'>(OCoLC)926101611</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='035'>
+    <subfield code='a'>(MdBmJHUP)muse47607</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='035'>
+    <subfield code='a'>(DE-B1597)548268</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='035'>
+    <subfield code='a'>(DE-B1597)9781479879656</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='035'>
+    <subfield code='a'>(EXLCZ)993710000000493436</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='040'>
+    <subfield code='a'>DE-B1597</subfield>
+    <subfield code='b'>eng</subfield>
+    <subfield code='c'>DE-B1597</subfield>
+    <subfield code='e'>rda</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='041'>
+    <subfield code='a'>eng</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='043'>
+    <subfield code='a'>n-us---</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='044'>
+    <subfield code='a'>nyu</subfield>
+    <subfield code='c'>US-NY</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2='4' tag='050'>
+    <subfield code='a'>HQ1034.U5</subfield>
+    <subfield code='b'>B38 2016</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2='7' tag='072'>
+    <subfield code='a'>SOC012000</subfield>
+    <subfield code='2'>bisacsh</subfield>
+  </datafield>
+  <datafield ind1='0' ind2='4' tag='082'>
+    <subfield code='a'>306.8480973</subfield>
+    <subfield code='2'>23</subfield>
+  </datafield>
+  <datafield ind1='1' ind2=' ' tag='100'>
+    <subfield code='a'>Baumle, Amanda K.,</subfield>
+    <subfield code='e'>author.</subfield>
+    <subfield code="1">http://viaf.org/viaf/123456789</subfield>
+    <subfield code='4'>aut</subfield>
+    <subfield code='4'>http://id.loc.gov/vocabulary/relators/aut</subfield>
+  </datafield>
+  <datafield ind1='1' ind2='0' tag='245'>
+    <subfield code='a'>Legalizing LGBT Families :</subfield>
+    <subfield code='b'>How the Law Shapes Parenthood /</subfield>
+    <subfield code='c'>Amanda K. Baumle, D&apos;Lane R. Compton.</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2='1' tag='264'>
+    <subfield code='a'>New York, NY :</subfield>
+    <subfield code='b'>New York University Press,</subfield>
+    <subfield code='c'>[2015]</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2='4' tag='264'>
+    <subfield code='c'>©2015</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='300'>
+    <subfield code='a'>1 online resource (310 p.)</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='336'>
+    <subfield code='a'>text</subfield>
+    <subfield code='b'>txt</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='337'>
+    <subfield code='a'>computer</subfield>
+    <subfield code='b'>c</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='338'>
+    <subfield code='a'>online resource</subfield>
+    <subfield code='b'>cr</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='500'>
+    <subfield code='a'>Description based upon print version of record.</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='546'>
+    <subfield code='a'>English</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='521'>
+    <subfield code='a'>Specialized.</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='504'>
+    <subfield code='a'>Includes bibliographical references and index.</subfield>
+  </datafield>
+  <datafield ind1='0' ind2='0' tag='505'>
+    <subfield code='t'>Front matter --</subfield>
+    <subfield code='t'>CONTENTS --</subfield>
+    <subfield code='t'>PREFACE --</subfield>
+    <subfield code='t'>ACKNOWLEDGMENTS --</subfield>
+    <subfield code='t'>Introduction --</subfield>
+    <subfield code='t'>1. The State of the Law for LGBT Parents --</subfield>
+    <subfield code='t'>2. Routes to Parenthood --</subfield>
+    <subfield code='t'>3. Locating Legality --</subfield>
+    <subfield code='t'>4. Parenting before the Law --</subfield>
+    <subfield code='t'>5. Parenting with the Law --</subfield>
+    <subfield code='t'>6. Parenting against the Law --</subfield>
+    <subfield code='t'>Conclusion: LGBT Parents Constructing Legality --</subfield>
+    <subfield code='t'>APPENDIX: METHODOLOGY --</subfield>
+    <subfield code='t'>NOTES --</subfield>
+    <subfield code='t'>REFERENCES --</subfield>
+    <subfield code='t'>INDEX --</subfield>
+    <subfield code='t'>ABOUT THE AUTHORS</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='520'>
+    <subfield code='a'>The decision to have a child is seldom a simple one, often fraught with complexities regarding emotional readiness, finances, marital status, and compatibility with life and career goals. Rarely, though, do individuals consider the role of the law in facilitating or inhibiting their ability to have a child or to parent. For LGBT individuals, however, parenting is saturated with legality – including the initial decision of whether to have a child, how to have a child, whether one’s relationship with their child will be recognized, and everyday acts of parenting like completing forms or picking up children from school. Through in-depth interviews with 137 LGBT parents, Amanda K. Baumle and D’Lane R. Compton examine the role of the law in the lives of LGBT parents and how individuals use the law when making decisions about family formation or parenting. Baumle and Compton explore the ways in which LGBT parents participate in the process of constructing legality through accepting, modifying, or rejecting legal meanings about their families. Few groups encounter as much variation in access to everyday legal rights pertaining to the family as do LGBT parents. This complexity and variation in legal environments provides a rather unique opportunity to examine the manner in which legal context affects the ways in which individuals come to understand the meaning and utility of the law for their lives. The authors conclude that legality is constructed through a complex interplay of legal context, social networks, individual characteristics, and familial desires. Ultimately, the stories of LGBT parents in this book reflect a rich and varied relationship between the law, the state, and the private family goals of individuals.</subfield>
+  </datafield>
+  <datafield ind1='0' ind2=' ' tag='588'>
+    <subfield code='a'>Description based on online resource; title from PDF title page (publisher&apos;s Web site, viewed 23. Jul 2020)</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2='0' tag='650'>
+    <subfield code='a'>Sexual minorities&apos; families</subfield>
+    <subfield code='z'>United States.</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2='0' tag='650'>
+    <subfield code='a'>Gay parents</subfield>
+    <subfield code='z'>United States.</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2='0' tag='650'>
+    <subfield code='a'>Children of gay parents</subfield>
+    <subfield code='z'>United States.</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2='0' tag='650'>
+    <subfield code='a'>Same-sex marriage</subfield>
+    <subfield code='x'>Law and legislation</subfield>
+    <subfield code='z'>United States.</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2='0' tag='650'>
+    <subfield code='a'>Same-sex marriage</subfield>
+    <subfield code='z'>United States.</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2='7' tag='650'>
+    <subfield code='a'>LGBTQ+ families.</subfield>
+    <subfield code='2'>homoit</subfield>
+    <subfield code='1'>https://homosaurus.org/v3/homoit0000420</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2='7' tag='650'>
+    <subfield code='a'>Children of LGBTQ+ people.</subfield>
+    <subfield code='2'>homoit</subfield>
+    <subfield code='1'>https://homosaurus.org/v3/homoit0000260</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2='7' tag='650'>
+    <subfield code='a'>LGBTQ+ adoptive parenthood.</subfield>
+    <subfield code='2'>homoit</subfield>
+    <subfield code='1'>https://homosaurus.org/v3/homoit0000811</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2='7' tag='650'>
+    <subfield code='a'>LGBTQ+ parenthood.</subfield>
+    <subfield code='2'>homoit</subfield>
+    <subfield code='1'>https://homosaurus.org/v3/homoit0000914</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2='7' tag='650'>
+    <subfield code='a'>Parental rights.</subfield>
+    <subfield code='2'>homoit</subfield>
+    <subfield code='1'>https://homosaurus.org/v3/homoit0001074</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2='7' tag='650'>
+    <subfield code='a'>LGBTQ+ parents.</subfield>
+    <subfield code='2'>homoit</subfield>
+    <subfield code='1'>https://homosaurus.org/v3/homoit0001075</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2='4' tag='655'>
+    <subfield code='a'>Electronic books.</subfield>
+  </datafield>
+  <datafield ind1='1' ind2=' ' tag='700'>
+    <subfield code='a'>Compton, D&apos;Lane R.,</subfield>
+    <subfield code='e'>author.</subfield>
+    <subfield code='4'>aut</subfield>
+    <subfield code='4'>http://id.loc.gov/vocabulary/relators/aut</subfield>
+  </datafield>
+  <datafield ind1='0' ind2=' ' tag='773'>
+    <subfield code='7'>c2gc</subfield>
+    <subfield code='a'>University of Pennsylvania. School of Arts and Sciences. Computing Facilities and Services. Multimedia Educational Technology Services.</subfield>
+    <subfield code='t'>Records, 1969-1991</subfield>
+    <subfield code='w'>(CStRLIN)PAUV93-F1</subfield>
+  </datafield>
+  <datafield ind1='0' ind2=' ' tag='776'>
+    <subfield code='z'>1-4798-5764-5</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2=' ' tag='906'>
+    <subfield code='a'>BOOK</subfield>
+  </datafield>
+</record>
