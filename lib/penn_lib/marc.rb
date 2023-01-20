@@ -2694,7 +2694,7 @@ module PennLib
           imagesource = "https://old.library.upenn.edu/sites/default/files/images/bookplates/#{imagename}.gif"
           links << {
               img_src: imagesource,
-              img_alt: "#{linktext} Bookplate", # TODO: this can append an extra space
+              img_alt: "#{linktext.strip} Bookplate",
               linkurl: linkurl,
           }
         end
