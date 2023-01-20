@@ -39,6 +39,10 @@
     <subfield code="3">The Smidt Family Modern and Contemporary Art Collection Fund Home Page</subfield>
     <subfield code="u">http://hdl.library.upenn.edu/1017.12/2554579</subfield>
   </datafield>
+  <datafield tag="856" ind1="4" ind2="2">
+    <subfield code="3">The Appelbaum Family Endowment for the Study of City and Regional Planning Home Page</subfield>
+    <subfield code="u">http://hdl.library.upenn.edu/1017.12/2554348</subfield>
+  </datafield>
   <datafield tag="902" ind1=" " ind2=" ">
     <subfield code="a">MARCIVE 2022</subfield>
   </datafield>

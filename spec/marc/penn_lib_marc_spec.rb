@@ -75,14 +75,21 @@ RSpec.describe PennLib::Marc, type: :model do
         ).first
       end
       let(:web_links) { marc.get_web_link_display(weblink_rec) }
-      it 'has two web link entries' do
-        expect(web_links.length).to eq 2
+      it 'has four web link entries' do
+        expect(web_links.length).to eq 4
       end
       it 'has a bookplate img link entry with expected structure' do
         expect(web_links[1]).to eq({
           img_src: 'https://old.library.upenn.edu/sites/default/files/images/bookplates/SmidtFamilyModernContemporaryArt.gif',
-          img_alt: 'The Smidt Family Modern and Contemporary Art Collection Fund Home Page  Bookplate',
+          img_alt: 'The Smidt Family Modern and Contemporary Art Collection Fund Home Page Bookplate',
           linkurl: 'http://hdl.library.upenn.edu/1017.12/2554579'
+        })
+      end
+      it 'has a bookplate img link entry with expected structure matching on "Endowment for"' do
+        expect(web_links[3]).to eq({
+          img_src: 'https://old.library.upenn.edu/sites/default/files/images/bookplates/AppelbaumFamilyStudyCityRegionalPlanning.gif',
+          img_alt: 'The Appelbaum Family Endowment for the Study of City and Regional Planning Home Page Bookplate',
+          linkurl: 'http://hdl.library.upenn.edu/1017.12/2554348'
         })
       end
     end
