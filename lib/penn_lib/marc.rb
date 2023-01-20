@@ -2682,8 +2682,8 @@ module PennLib
         }
 
         # if the link text includes words/phrases commonly used in bookplate links
-        if linktext =~ /(Funds?|Collections?( +Gifts)?|Trust|Development) +Home +Page|A +Penn +Libraries +Collection +Gift/
-          # strip out some less-meningful words to create the filename that leslie will use when creating the bookplate image
+        if linktext =~ /(Funds?|Collections?( +Gifts)?|Trust|Development|Endowment for.*) +Home +Page|A +Penn +Libraries +Collection +Gift/
+          # strip out some less-meaningful words to create the filename that leslie will use when creating the bookplate image
           imagename = linktext.gsub(/- A Penn Libraries Collection Gift/i, '')
               .gsub(/ Home Page/i, '')
               .gsub(/[&.]/, '')
