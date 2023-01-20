@@ -60,4 +60,10 @@ RSpec.describe PennLib::Marc, type: :model do
       expect(names.first).not_to include '123456789'
     end
   end
+  describe '.get_contained_within_values' do
+    it 'does not include information from 773 subfields $7 or $w' do
+      values = marc.get_contained_within_values(rec)
+      expect(values).to eq ['University of Pennsylvania. School of Arts and Sciences. Computing Facilities and Services. Multimedia Educational Technology Services. Records, 1969-1991']
+    end
+  end
 end
