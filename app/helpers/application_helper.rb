@@ -236,13 +236,8 @@ module ApplicationHelper
   end
 
   # @return [TrueClass, FalseClass]
-  def user_is_undergraduate?
-    session[:user_group].in? ['Undergraduate Student', 'GIC textbook users']
-  end
-
-  # @return [TrueClass, FalseClass]
-  def user_is_college_house_eligible?
-    user_is_undergraduate?
+  def user_is_student?
+    session[:user_group].in? ['Undergraduate Student', 'Grad Student', 'GIC textbook users']
   end
 
   def format_icon(format, size: 'small')

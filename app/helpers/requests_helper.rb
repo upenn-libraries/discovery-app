@@ -27,7 +27,7 @@ module RequestsHelper
   end
 
   def circulate_pickup_locations
-    return options_for_select TurboAlmaApi::Request::PICKUP_LOCATIONS unless user_is_undergraduate?
+    return options_for_select TurboAlmaApi::Request::PICKUP_LOCATIONS unless user_is_student?
 
     options_for_select TurboAlmaApi::Request::PICKUP_LOCATIONS, selected: 'VPLOCKER'
   end

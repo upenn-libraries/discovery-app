@@ -8,7 +8,7 @@ class AbstractRequest
     Illiad::Request::ELECTRONIC_DELIVERY,
     Illiad::Request::OFFICE_DELIVERY
   ]
-  ALMA_FULFILLMENT_OPTIONS = %w[pickup college_house].freeze
+  ALMA_FULFILLMENT_OPTIONS = %w[pickup].freeze
 
   class RequestFailed < StandardError; end
 

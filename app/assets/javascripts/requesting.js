@@ -214,20 +214,10 @@ $(document).ready(function() {
         .on('click', '.delivery-option-radio', function(e) {
             var $radio = $(this);
             var $bbm_checkbox = $('#bbm_validation_checkbox');
-            var $chd_checkbox = $('#chd_validation_checkbox');
             if ($radio.val() === 'mail') {
                 $bbm_checkbox.prop('disabled', false).focus();
                 $bbm_checkbox.closest('div.checkbox').removeClass('disabled');
-                $chd_checkbox.prop('disabled', true);
-                $chd_checkbox.closest('div.checkbox').addClass('disabled');
-            } else if ($radio.val() === 'college_house') {
-                $chd_checkbox.prop('disabled', false).focus();
-                $chd_checkbox.closest('div.checkbox').removeClass('disabled');
-                $bbm_checkbox.prop('disabled', true);
-                $bbm_checkbox.closest('div.checkbox').addClass('disabled');
             } else {
-                $chd_checkbox.prop('disabled', true);
-                $chd_checkbox.closest('div.checkbox').addClass('disabled');
                 $bbm_checkbox.prop('disabled', true);
                 $bbm_checkbox.closest('div.checkbox').addClass('disabled');
             }

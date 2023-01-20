@@ -21,10 +21,6 @@
           <%= render('requests/confirm/delivery_options/office', f: f) %>
         <% end %>
         <%= render 'requests/confirm/delivery_options/pickup', f: f %>
-        <%# College House Delivery is disabled as of 06/2022 per Erin Sharwell -mk %>
-        <%# if user_is_college_house_eligible? %>
-          <%#= render 'requests/confirm/delivery_options/college_house', f: f %>
-        <%# end %>
         <% unless user_is_courtesy_borrower? %>
           <%= render 'requests/confirm/delivery_options/mail', f: f %>
         <% end %>

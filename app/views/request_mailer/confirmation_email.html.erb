@@ -11,11 +11,7 @@
   </p>
   <p>
     <% if @request.type == :alma %>
-      <% if @request.delivery? %>
-        Your item will be delivered using College House delivery.
-      <% else %>
-        You have chosen to pickup this item at <%= @request.pickup_location_human %>.
-      <% end %>
+      You have chosen to pickup this item at <%= @request.pickup_location_human %>.
     <% elsif @request.type == :illiad %>
       <% if @request.delivery == Illiad::Request::OFFICE_DELIVERY %>
         You have chosen office delivery.
