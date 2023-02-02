@@ -306,11 +306,11 @@ jQuery.shelfLocatorLink = new function() {
             if (target !== 'DENIAL' && shouldDisplayLink(location, target, availability, format)) {
                 if (location.indexOf("Fine Arts") >= 0) {
                     var url = "https://old.library.upenn.edu/about/locations/floor-plans/stacks-fisher#" + target;
-                    return "<a href=\"" + url + "\" target='_blank'>" + link_text + "</a>";
+                    return "<a class=\"shelf-location-link\" href=\"" + url + "\" target='_blank'>" + link_text + "</a>";
                 } else {
                     //console.log("showing result for " + mms_id + " " + library + " " + location + " " + target + " " + availability);
                     var url = "https://old.library.upenn.edu/about/locations/floor-plans/stacks-vp#" + target;
-                    return "<a href=\"" + url + "\" target='_blank'>" + link_text + "</a>";
+                    return "<a class=\"shelf-location-link\" href=\"" + url + "\" target='_blank'>" + link_text + "</a>";
                 }
             }
         } catch(e) {
