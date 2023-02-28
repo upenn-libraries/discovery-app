@@ -1,8 +1,38 @@
-
+require 'tempfile'
 require 'date'
 
 namespace :pennlib do
   namespace :marc do
+
+    # ONLY SUPPORT ALMA RECORD
+    # DON'T BOTHER WITH BOUNDWITHS PROCESSING
+    # PROVIDE NICE, UNAMBIGUOUS OUTPUT
+    desc 'Index a record given an MMS ID using the Alma API'
+    task :api_index, [:mms_ids] => :environment do |t, args|
+      ids = args[:mms_ids]
+      puts "Received the following MMS IDs to index: #{ids}"
+      ids = ids.split(' ').map(&:strip)
+      # call API for each (turbo alma API??)
+      bibs = TurboAlmaApi::Client.get_bibs ids
+      puts "Found #{bibs.length} bibs of #{ids.length}"
+      # TODO: if no match, find missing bib, report
+      # ensure bibs should be discoverable
+      bibs = bibs['bib'].select { |e| e['suppress_from_publishing'] == 'false' && e['suppress_from_external_search'] == 'false' }
+      indexer = FranklinIndexer.new
+      update_url = indexer.settings['solr.update_url']
+      bibs.each do |bib|
+        reader = MARC::XMLReader.new(StringIO.new(bib['anies'].first))
+        hash = indexer.map_record reader.first
+        resp = HTTPClient.post(update_url, JSON.generate([hash]), "Content-type" => "application/json")
+        resp
+      end
+      resp = HTTPClient.get(
+        [ENV['SOLR_URL'].chomp('/'), 'update', 'json'].join('/'),
+        { 'commit' => 'true' }
+      )
+      resp.status == 200
+
+    end
 
     # This is a wrapper around the "solr:marc:index" task
     # to get around the single file limitation (JRuby has a very long

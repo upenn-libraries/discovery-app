@@ -142,5 +142,15 @@ module TurboAlmaApi
         "#{BASE_URL}/v1/bibs/#{request.mms_id}/requests"
       end
     end
+
+    def self.get_bibs(mms_ids)
+      mms_ids = Array.wrap(mms_ids)
+      request_url = "#{BASE_URL}/v1/bibs?mms_id=#{mms_ids.join(',')}"
+      response = api_get_request request_url
+      parsed_response = Oj.load response.body
+      raise RequestFailed, "Problem getting bib records" if parsed_response.dig 'web_service_result', 'errorsExist'
+
+      parsed_response
+    end
   end
 end
