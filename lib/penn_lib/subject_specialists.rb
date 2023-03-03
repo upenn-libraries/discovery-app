@@ -3,7 +3,7 @@ module PennLib
   # Drupal site
   module SubjectSpecialists
     DRUPAL_SPECIALISTS_URL =
-      'https://old.library.upenn.edu/rest/views/subject-specialists?_format=json'.freeze
+      'https://www.library.upenn.edu/rest/views/subject-specialists?_format=json'.freeze
     CACHE_KEY = :subject_specialist_data
 
     class << self
@@ -73,13 +73,21 @@ module PennLib
           else
             specialty[:subjects] = [specialty['subject_specialty']]
             specialty[:display_name] = specialty['full_name']
-            specialty[:portrait] =
-              "https://old.library.upenn.edu#{specialty['thumbnail']}"
+            specialty[:portrait] = get_thumbnail_url(specialty['thumbnail'])
             specialists[name] = specialty
           end
         end
         subjects.each do |subject, staff|
           subjects[subject] = staff.map { |name| specialists[name] }
+        end
+      end
+
+      def get_thumbnail_url(src_tag)
+        if src_tag.blank?
+          "https://www.library.upenn.edu/themes/custom/penn_libraries/assets/img/avatar-square.jpg"
+        else
+          rel_url = /src=\"([^\"]*)/.match(src_tag)[1]
+          "https://www.library.upenn.edu#{rel_url}"
         end
       end
 
