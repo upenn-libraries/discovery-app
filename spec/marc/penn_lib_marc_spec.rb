@@ -30,6 +30,13 @@ RSpec.describe PennLib::Marc, type: :model do
       parser: :nokogiri
     ).first
   end
+  describe '.get_genre_display' do
+    it 'does not include un-approved ontology values' do
+      data = marc.get_genre_display(rec, false).collect { |f| f[:value] }
+      expect(data).not_to include 'FAST term'
+      expect(data).to include 'FTAMC term'
+    end
+  end
   describe '.get_author_display' do
     it 'does not include URI values from $1' do
       data = marc.get_author_display(rec)
