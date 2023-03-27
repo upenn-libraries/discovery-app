@@ -378,12 +378,12 @@ module PennLib
   # logic is, necessarily - JC)
   #
   class Marc
-
     include BlacklightSolrplugins::Indexer
 
-    DATABASES_FACET_VALUE = 'Database & Article Index'
-
     attr_accessor :code_mappings
+
+    DATABASES_FACET_VALUE = 'Database & Article Index'
+    ALLOWED_GENRE_ONTOLOGY_CODES = %w[ftamc gmgpc gsafd homoit lcgft rbbin rbgenr rbmscv rbpap rbpri rbprov rbpub rbtyp]
 
     # @param [PennLib::CodeMappings]
     def initialize(code_mappings)
@@ -508,8 +508,12 @@ module PennLib
     # 11/2018 kms: eventually should depracate has_subfield6_value and use this for all
     # returns true if field has a value that matches
     # passed-in regex and passed in subfield
-    def has_subfield_value(field,subf,regex)
+    def has_subfield_value(field, subf, regex)
        field.any? { |sf| sf.code == subf && sf.value =~ regex }
+    end
+
+    def subfield_value_in(field, subf, array)
+       field.any? { |sf| sf.code == subf && sf.value.in?(array) }
     end
 
 
@@ -1355,16 +1359,19 @@ module PennLib
     end
 
     def get_genre_display(rec, should_link)
-      rec.fields
-          .select { |f| f.tag == '655' || (f.tag == '880' && has_subfield6_value(f, /655/)) }
-          .map do |field|
-        sub_with_hyphens = field.find_all(&subfield_not_in(%w{0 2 5 6 8 c e w})).map do |sf|
-          sep = ! %w{a b }.member?(sf.code) ? ' -- ' : ' '
-          sep + sf.value
-        end.join
-        eandw_with_hyphens = field.find_all(&subfield_in(%w{e w})).join(' -- ')
-        { value: sub_with_hyphens, value_append: eandw_with_hyphens, link: should_link, link_type: 'genre_search' }
-      end
+      rec
+        .fields
+        .select { |f|
+            (f.tag == '655' || (f.tag == '880' && has_subfield6_value(f, /655/))) &&
+              subfield_value_in(f, '2', ALLOWED_GENRE_ONTOLOGY_CODES)
+        }.map do |field|
+          sub_with_hyphens = field.find_all(&subfield_not_in(%w{0 2 5 6 8 c e w})).map { |sf|
+            sep = ! %w{a b}.member?(sf.code) ? ' -- ' : ' '
+            (sep + sf.value).strip
+          }.join
+          eandw_with_hyphens = field.find_all(&subfield_in(%w{e w})).join(' -- ')
+          { value: sub_with_hyphens, value_append: eandw_with_hyphens, link: should_link, link_type: 'genre_search' }
+        end
     end
 
     def get_title_values(rec)
