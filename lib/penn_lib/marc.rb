@@ -2691,7 +2691,7 @@ module PennLib
               .select { |word| !words_to_remove_from_web_link.member?(word.downcase) }
               .join('')
           # generate image URL
-          imagesource = "https://old.library.upenn.edu/sites/default/files/images/bookplates/#{imagename}.gif"
+          imagesource = "https://www.library.upenn.edu/sites/default/files/images/bookplates/#{imagename}.gif"
           links << {
               img_src: imagesource,
               img_alt: "#{linktext.strip} Bookplate",
