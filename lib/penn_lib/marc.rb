@@ -1371,7 +1371,7 @@ module PennLib
           }.join
           eandw_with_hyphens = field.find_all(&subfield_in(%w{e w})).join(' -- ')
           { value: sub_with_hyphens, value_append: eandw_with_hyphens, link: should_link, link_type: 'genre_search' }
-        end
+        end.uniq
     end
 
     def get_title_values(rec)
