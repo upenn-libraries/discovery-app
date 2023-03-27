@@ -85,7 +85,7 @@ RSpec.describe PennLib::Marc, type: :model do
           linkurl: 'http://hdl.library.upenn.edu/1017.12/2554579'
         })
       end
-      it 'has a bookplate img link entry with expected structure matching on "Endowment for"' do
+      it 'has a bookplate img link entry with expected structure matching on "Endowment"' do
         expect(web_links[3]).to eq({
           img_src: 'https://www.library.upenn.edu/sites/default/files/images/bookplates/AppelbaumFamilyStudyCityRegionalPlanning.gif',
           img_alt: 'The Appelbaum Family Endowment for the Study of City and Regional Planning Home Page Bookplate',
