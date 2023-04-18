@@ -383,7 +383,9 @@ module PennLib
     attr_accessor :code_mappings
 
     DATABASES_FACET_VALUE = 'Database & Article Index'
-    ALLOWED_GENRE_ONTOLOGY_CODES = %w[ftamc gmgpc gsafd homoit lcgft rbbin rbgenr rbmscv rbpap rbpri rbprov rbpub rbtyp]
+    ALLOWED_SUBJECT_ONTOLOGY_CODES = %w[aat cct fast homoit jlabsh lcsh lcstt lctgm local/osu mesh ndlsh nlksh]
+    ALLOWED_GENRE_ONTOLOGY_CODES =
+      %w[ftamc gmgpc gsafd homoit lcgft rbbin rbgenr rbmscv rbpap rbpri rbprov rbpub rbtyp] + ALLOWED_SUBJECT_ONTOLOGY_CODES
 
     # @param [PennLib::CodeMappings]
     def initialize(code_mappings)
@@ -613,7 +615,7 @@ module PennLib
       # 10/2018 kms: add 2nd Ind 7
       subject_codes.member?(field.tag) && (%w(0 2 4).member?(field.indicator2) ||
             (field.indicator2 == '7' && field.any? do |sf|
-              sf.code == '2' && %w(aat cct fast homoit jlabsh lcsh lcstt lctgm local/osu mesh ndlsh nlksh).member?(sf.value)
+              sf.code == '2' && ALLOWED_SUBJECT_ONTOLOGY_CODES.member?(sf.value)
             end))
     end
 

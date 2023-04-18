@@ -34,11 +34,12 @@ RSpec.describe PennLib::Marc, type: :model do
     it 'does not include un-approved ontology values' do
       genre_values = marc.get_genre_display(rec, false).collect { |f| f[:value] }
       expect(genre_values).not_to include 'Disallowed ontology term'
-      expect(genre_values).to include 'Allowed ontology term'
+      expect(genre_values).to include 'Allowed subject ontology term'
+      expect(genre_values).to include 'Allowed genre ontology term'
     end
     it 'does not include duplicate values' do
       genre_values = marc.get_genre_display(rec, false).collect { |f| f[:value] }
-      expect(genre_values).to match_array(['Allowed ontology term'])
+      expect(genre_values).to match_array(['Allowed genre ontology term'])
     end
   end
   describe '.get_author_display' do
