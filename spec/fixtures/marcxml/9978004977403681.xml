@@ -210,16 +210,20 @@
   </datafield>
   <datafield ind1=' ' ind2='7' tag='655'>
     <subfield code='a'>Disallowed ontology term</subfield>
+    <subfield code='2'>zzzz</subfield>
+    <subfield code='0'>http://id.worldcat.org/zzzz/1411641.</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2='7' tag='655'>
+    <subfield code='a'>Allowed subject ontology term</subfield>
     <subfield code='2'>fast</subfield>
     <subfield code='0'>http://id.worldcat.org/fast/1411641.</subfield>
   </datafield>
   <datafield ind1=' ' ind2='7' tag='655'>
-    <subfield code='a'>Allowed ontology term</subfield>
-    <subfield code='2'>ftamc</subfield>
-    <subfield code='0'>http://id.worldcat.org/fast/1411641.</subfield>
+    <subfield code='a'>Allowed genre ontology term</subfield>
+    <subfield code='2'>gsafd</subfield>
   </datafield>
   <datafield ind1=' ' ind2='7' tag='655'>
-    <subfield code='a'>Allowed ontology term</subfield>
+    <subfield code='a'>Allowed genre ontology term</subfield>
     <subfield code='2'>gsafd</subfield>
   </datafield>
   <datafield ind1='1' ind2=' ' tag='700'>
