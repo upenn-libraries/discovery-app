@@ -383,9 +383,8 @@ module PennLib
     attr_accessor :code_mappings
 
     DATABASES_FACET_VALUE = 'Database & Article Index'
-    ALLOWED_SUBJECT_ONTOLOGY_CODES = %w[aat cct fast homoit jlabsh lcsh lcstt lctgm local/osu mesh ndlsh nlksh]
-    ALLOWED_GENRE_ONTOLOGY_CODES =
-      %w[ftamc gmgpc gsafd homoit lcgft rbbin rbgenr rbmscv rbpap rbpri rbprov rbpub rbtyp] + ALLOWED_SUBJECT_ONTOLOGY_CODES
+    ALLOWED_SUBJ_GENRE_ONTOLOGIES = %w[aat cct fast ftamc gmgpc gsafd homoit jlabsh lcgft lcsh lcstt lctgm
+                                       local/osu mesh ndlsh nlksh rbbin rbgenr rbmscv rbpap rbpri rbprov rbpub rbtyp]
 
     # @param [PennLib::CodeMappings]
     def initialize(code_mappings)
@@ -615,7 +614,7 @@ module PennLib
       # 10/2018 kms: add 2nd Ind 7
       subject_codes.member?(field.tag) && (%w(0 2 4).member?(field.indicator2) ||
             (field.indicator2 == '7' && field.any? do |sf|
-              sf.code == '2' && ALLOWED_SUBJECT_ONTOLOGY_CODES.member?(sf.value)
+              sf.code == '2' && ALLOWED_SUBJ_GENRE_ONTOLOGIES.member?(sf.value)
             end))
     end
 
@@ -753,7 +752,7 @@ module PennLib
              .select { |f| subject_600s.member?(f.tag) ||
                       (f.tag == '880' && has_subfield6_value(f, /^(#{subject_600s.join('|')})/)) }
              .select { |f| f.indicator2 == indicator2 || (f.indicator2 == '7' && indicator2 == '0' && f.any? do |sf|
-                sf.code == '2' && %w(aat cct fast homoit jlabsh lcsh lcstt lctgm local/osu mesh ndlsh nlksh).member?(sf.value)
+                sf.code == '2' && ALLOWED_SUBJ_GENRE_ONTOLOGIES.member?(sf.value)
               end)}
              .map do |field|
           #added 2017/04/10: filter out 0 (authority record numbers) added by Alma
@@ -1365,7 +1364,7 @@ module PennLib
         .fields
         .select { |f|
             (f.tag == '655' || (f.tag == '880' && has_subfield6_value(f, /655/))) &&
-              subfield_value_in(f, '2', ALLOWED_GENRE_ONTOLOGY_CODES)
+              subfield_value_in(f, '2', ALLOWED_SUBJ_GENRE_ONTOLOGIES)
         }.map do |field|
           sub_with_hyphens = field.find_all(&subfield_not_in(%w{0 2 5 6 8 c e w})).map { |sf|
             sep = ! %w{a b}.member?(sf.code) ? ' -- ' : ' '

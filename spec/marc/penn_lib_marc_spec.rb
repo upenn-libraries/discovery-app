@@ -39,7 +39,7 @@ RSpec.describe PennLib::Marc, type: :model do
     end
     it 'does not include duplicate values' do
       genre_values = marc.get_genre_display(rec, false).collect { |f| f[:value] }
-      expect(genre_values).to match_array(['Allowed genre ontology term'])
+      expect(genre_values).to match_array(['Allowed genre ontology term', 'Allowed subject ontology term'])
     end
   end
   describe '.get_author_display' do
