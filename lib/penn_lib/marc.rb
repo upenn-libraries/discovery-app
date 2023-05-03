@@ -361,6 +361,77 @@ module PennLib
     }
   end
 
+  # Genre/Form
+  # display field selector logic
+  # reference: https://www.loc.gov/marc/bibliographic/bd655.html
+  #
+  # We display Genre/Term values if they fulfill the following criteria
+  #  - The field is in MARC 655. Or the field is in MARC 880 with subfield 2 includes '655'.
+  #   AND
+  #    - Above fields have an indicator 2 value of: 0 (LSCH) or 4 (No source specified).
+  #     OR
+  #    - Above fields have a subfield 2 (ontology code) in the list of allowed values.
+  class GenreTools
+    GENRE_FIELD_TAG = '655'
+    ALT_GENRE_FIELD_TAG = '880'
+    ALLOWED_INDICATOR2_VALUES = %w[0 4]
+
+    class << self
+      # @param [MARC::DataField] field
+      # @return [TrueClass, FalseClass]
+      def allowed_genre_field?(field)
+        return false unless genre_field?(field)
+
+        allowed_code?(field) || allowed_ind2?(field)
+      end
+
+      # @param [MARC::DataField] field
+      # @return [TrueClass, FalseClass]
+      def genre_field?(field)
+        field.tag == GENRE_FIELD_TAG ||
+          (field.tag == ALT_GENRE_FIELD_TAG && MarcUtil.has_subfield_value?(field, '6', /#{GENRE_FIELD_TAG}/))
+      end
+
+      # @param [MARC::DataField] field
+      # @return [TrueClass, FalseClass]
+      def allowed_code?(field)
+        MarcUtil.subfield_value_in?(field, '2', PennLib::Marc::ALLOWED_SUBJ_GENRE_ONTOLOGIES)
+      end
+
+      # 0 in ind2 means LCSH
+      # 4 in ind2 means "Source not specified"
+      # @param [MARC::DataField] field
+      # @return [TrueClass, FalseClass]
+      def allowed_ind2?(field)
+        field.indicator2.in? ALLOWED_INDICATOR2_VALUES
+      end
+    end
+  end
+  
+  # class to hold "utility" methods used by others methods in main Marc class and new *Tool classes
+  # for now, leave methods as also defined in Marc class to avoid unexpected issues
+  class MarcUtil
+    class << self
+      # returns true if field has a value that matches
+      # passed-in regex and passed in subfield
+      # @param [MARC::DataField] field
+      # @param [String|Integer|Symbol] subf
+      # @param [Regexp] regex
+      # @return [TrueClass, FalseClass]
+      def has_subfield_value?(field, subf, regex)
+        field.any? { |sf| sf.code == subf.to_s && sf.value =~ regex }
+      end
+
+      # @param [MARC:DataField] field
+      # @param [String|Integer|Symbol] subf
+      # @param [Array] array
+      # @return [TrueClass, FalseClass]
+      def subfield_value_in?(field, subf, array)
+        field.any? { |sf| sf.code == subf.to_s && sf.value.in?(array) }
+      end
+    end
+  end
+
   # Class for doing extraction and processing on MARC::Record objects.
   # This is intended to be used in both indexing code and front-end templating code
   # (since MARC is stored in Solr). As such, there should NOT be any traject-specific
@@ -506,7 +577,7 @@ module PennLib
     end
 
 
-    # 11/2018 kms: eventually should depracate has_subfield6_value and use this for all
+    # 11/2018 kms: eventually should deprecate has_subfield6_value and use this for all
     # returns true if field has a value that matches
     # passed-in regex and passed in subfield
     def has_subfield_value(field, subf, regex)
@@ -516,7 +587,6 @@ module PennLib
     def subfield_value_in(field, subf, array)
        field.any? { |sf| sf.code == subf && sf.value.in?(array) }
     end
-
 
     # common case of wanting to extract subfields as selected by passed-in block,
     # from 880 datafield that has a particular subfield 6 value
@@ -1359,20 +1429,20 @@ module PennLib
       end
     end
 
+    # @param [MARC::Record] rec
+    # @param [TrueClass, FalseClass] should_link
     def get_genre_display(rec, should_link)
-      rec
-        .fields
-        .select { |f|
-            (f.tag == '655' || (f.tag == '880' && has_subfield6_value(f, /655/))) &&
-              subfield_value_in(f, '2', ALLOWED_SUBJ_GENRE_ONTOLOGIES)
-        }.map do |field|
-          sub_with_hyphens = field.find_all(&subfield_not_in(%w{0 2 5 6 8 c e w})).map { |sf|
-            sep = ! %w{a b}.member?(sf.code) ? ' -- ' : ' '
-            (sep + sf.value).strip
-          }.join
-          eandw_with_hyphens = field.find_all(&subfield_in(%w{e w})).join(' -- ')
-          { value: sub_with_hyphens, value_append: eandw_with_hyphens, link: should_link, link_type: 'genre_search' }
-        end.uniq
+      rec.fields
+         .select { |field|
+           GenreTools.allowed_genre_field? field
+         }.map do |field|
+           sub_with_hyphens = field.find_all(&subfield_not_in(%w{0 2 5 6 8 c e w})).map { |sf|
+             sep = !%w{a b}.member?(sf.code) ? ' -- ' : ' '
+             sep + sf.value
+           }.join.lstrip
+           eandw_with_hyphens = field.find_all(&subfield_in(%w{e w})).join(' -- ')
+           { value: sub_with_hyphens, value_append: eandw_with_hyphens, link: should_link, link_type: 'genre_search' }
+         end.uniq
     end
 
     def get_title_values(rec)

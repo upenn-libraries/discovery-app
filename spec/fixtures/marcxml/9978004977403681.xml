@@ -226,6 +226,15 @@
     <subfield code='a'>Allowed genre ontology term</subfield>
     <subfield code='2'>gsafd</subfield>
   </datafield>
+  <datafield ind1=' ' ind2='0' tag='655'>
+    <subfield code='a'>Displayed 655 _0</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2='4' tag='655'>
+    <subfield code='a'>Displayed 655 _4</subfield>
+  </datafield>
+  <datafield ind1=' ' ind2='5' tag='655'>
+    <subfield code='a'>Not displayed 655 _5</subfield>
+  </datafield>
   <datafield ind1='1' ind2=' ' tag='700'>
     <subfield code='a'>Compton, D&apos;Lane R.,</subfield>
     <subfield code='e'>author.</subfield>
