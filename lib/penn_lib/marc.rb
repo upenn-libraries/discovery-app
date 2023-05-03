@@ -366,11 +366,11 @@ module PennLib
   # reference: https://www.loc.gov/marc/bibliographic/bd655.html
   #
   # We display Genre/Term values if they fulfill the following criteria
-  #  - The field is in MARC 655 or MARC 880 with subfield 2 equal to 655
+  #  - The field is in MARC 655. Or the field is in MARC 880 with subfield 2 equal to 655.
   #   AND
-  #  - Above fields have an indicator 2 value of: 0 (LSCH) or 4 (No source specified)
-  #   OR
-  #  - Above fields have a subfield 2 (ontology code) in the list of allowed values
+  #    - Above fields have an indicator 2 value of: 0 (LSCH) or 4 (No source specified).
+  #     OR
+  #    - Above fields have a subfield 2 (ontology code) in the list of allowed values.
   class GenreTools
     GENRE_FIELD_TAG = '655'
     ALT_GENRE_FIELD_TAG = '880'
