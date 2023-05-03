@@ -1429,19 +1429,20 @@ module PennLib
       end
     end
 
+    # @param [MARC::Record] rec
+    # @param [TrueClass, FalseClass] should_link
     def get_genre_display(rec, should_link)
-      rec
-        .fields
-        .select { |f|
-          GenreTools.allowed_genre_field? f
-        }.map do |field|
-          sub_with_hyphens = field.find_all(&subfield_not_in(%w{0 2 5 6 8 c e w})).map { |sf|
-            sep = ! %w{a b}.member?(sf.code) ? ' -- ' : ' '
-            (sep + sf.value).strip
-          }.join
-          eandw_with_hyphens = field.find_all(&subfield_in(%w{e w})).join(' -- ')
-          { value: sub_with_hyphens, value_append: eandw_with_hyphens, link: should_link, link_type: 'genre_search' }
-        end.uniq
+      rec.fields
+         .select { |field|
+           GenreTools.allowed_genre_field? field
+         }.map do |field|
+           sub_with_hyphens = field.find_all(&subfield_not_in(%w{0 2 5 6 8 c e w})).map { |sf|
+             sep = !%w{a b}.member?(sf.code) ? ' -- ' : ' '
+             sep + sf.value
+           }.join.lstrip
+           eandw_with_hyphens = field.find_all(&subfield_in(%w{e w})).join(' -- ')
+           { value: sub_with_hyphens, value_append: eandw_with_hyphens, link: should_link, link_type: 'genre_search' }
+         end.uniq
     end
 
     def get_title_values(rec)
