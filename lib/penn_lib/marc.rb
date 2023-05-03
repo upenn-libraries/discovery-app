@@ -366,7 +366,7 @@ module PennLib
   # reference: https://www.loc.gov/marc/bibliographic/bd655.html
   #
   # We display Genre/Term values if they fulfill the following criteria
-  #  - The field is in MARC 655. Or the field is in MARC 880 with subfield 2 equal to 655.
+  #  - The field is in MARC 655. Or the field is in MARC 880 with subfield 2 includes '655'.
   #   AND
   #    - Above fields have an indicator 2 value of: 0 (LSCH) or 4 (No source specified).
   #     OR
@@ -377,17 +377,23 @@ module PennLib
     ALLOWED_INDICATOR2_VALUES = %w[0 4]
 
     class << self
+      # @param [MARC::DataField] field
+      # @return [TrueClass, FalseClass]
       def allowed_genre_field?(field)
         return false unless genre_field?(field)
 
         allowed_code?(field) || allowed_ind2?(field)
       end
 
+      # @param [MARC::DataField] field
+      # @return [TrueClass, FalseClass]
       def genre_field?(field)
         field.tag == GENRE_FIELD_TAG ||
           (field.tag == ALT_GENRE_FIELD_TAG && MarcUtil.has_subfield_value?(field, '6', /#{GENRE_FIELD_TAG}/))
       end
 
+      # @param [MARC::DataField] field
+      # @return [TrueClass, FalseClass]
       def allowed_code?(field)
         MarcUtil.subfield_value_in?(field, '2', PennLib::Marc::ALLOWED_SUBJ_GENRE_ONTOLOGIES)
       end
@@ -408,12 +414,12 @@ module PennLib
     class << self
       # returns true if field has a value that matches
       # passed-in regex and passed in subfield
-      # @param [Object] field
-      # @param [Object] subf
-      # @param [Object] regex
+      # @param [MARC::DataField] field
+      # @param [String|Integer|Symbol] subf
+      # @param [Regexp] regex
       # @return [TrueClass, FalseClass]
       def has_subfield_value?(field, subf, regex)
-        field.any? { |sf| sf.code == subf && sf.value =~ regex }
+        field.any? { |sf| sf.code == subf.to_s && sf.value =~ regex }
       end
 
       # @param [MARC:DataField] field
