@@ -31,15 +31,23 @@ RSpec.describe PennLib::Marc, type: :model do
     ).first
   end
   describe '.get_genre_display' do
+    let(:genre_values) { marc.get_genre_display(rec, false).collect { |f| f[:value] } }
     it 'does not include un-approved ontology values' do
-      genre_values = marc.get_genre_display(rec, false).collect { |f| f[:value] }
       expect(genre_values).not_to include 'Disallowed ontology term'
       expect(genre_values).to include 'Allowed subject ontology term'
       expect(genre_values).to include 'Allowed genre ontology term'
     end
     it 'does not include duplicate values' do
-      genre_values = marc.get_genre_display(rec, false).collect { |f| f[:value] }
-      expect(genre_values).to match_array(['Allowed genre ontology term', 'Allowed subject ontology term'])
+      expect(genre_values).to match_array genre_values.uniq
+    end
+    it 'does include values where subfield 2 is 0' do
+      expect(genre_values).to include 'Displayed 655 _0'
+    end
+    it 'does include values where subfield 2 is 4' do
+      expect(genre_values).to include 'Displayed 655 _4'
+    end
+    it 'does not include values where subfield 2 is 5' do
+      expect(genre_values).not_to include 'Displayed 655 _5'
     end
   end
   describe '.get_author_display' do
