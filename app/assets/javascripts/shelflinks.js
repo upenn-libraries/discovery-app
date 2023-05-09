@@ -89,7 +89,11 @@ jQuery.shelfLocatorLink = new function() {
         var inLL = location.indexOf("Lippincott") >= 0;
         var inFA = (location.indexOf("Fine Arts") >= 0) && (location.indexOf("LIBRA") < 0);
 
-        if (!inVP && !inLL && !inFA) {
+        // TODO: 5/2023 - don't show shelflinks while things are being moved around
+        // if (!inVP && !inLL && !inFA) {
+        //     return false;
+        // }
+        if (!inVP && !inLL) {
             return false;
         }
         else if (location.indexOf("in process") >= 0) {
@@ -297,6 +301,15 @@ jQuery.shelfLocatorLink = new function() {
         return target;
     }
 
+    function shouldShowTemporaryLink(location, target) {
+        if (target !== 'DENIAL') { return false; }
+
+        var inVP = location.indexOf("Van Pelt") >= 0;
+        var inLL = location.indexOf("Lippincott") >= 0;
+
+        return (inVP || inLL);
+    }
+
     return function(mms_id, holding, format, text) {
         try {
             var link_text = text || 'See shelf location'
@@ -312,6 +325,9 @@ jQuery.shelfLocatorLink = new function() {
                     var url = "https://old.library.upenn.edu/about/locations/floor-plans/stacks-vp#" + target;
                     return "<a class=\"shelf-location-link\" href=\"" + url + "\" target='_blank'>" + link_text + "</a>";
                 }
+            } else if (target !== 'DENIAL' && shouldShowTemporaryLink(location, target)) {
+                // TODO: If impacted by the temporary move...
+                return "https://www.library.upenn.edu/floor-plans/vanpelt/stacks";
             }
         } catch(e) {
             console.log("error in shelfLocatorLink for " + mms_id + ": " + e.message);
