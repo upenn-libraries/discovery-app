@@ -454,8 +454,10 @@ module PennLib
     attr_accessor :code_mappings
 
     DATABASES_FACET_VALUE = 'Database & Article Index'
-    ALLOWED_SUBJ_GENRE_ONTOLOGIES = %w[aat cct fast ftamc gmgpc gsafd homoit jlabsh lcgft lcsh lcstt lctgm
-                                       local/osu mesh ndlsh nlksh rbbin rbgenr rbmscv rbpap rbpri rbprov rbpub rbtyp]
+    ALLOWED_SUBJ_GENRE_ONTOLOGIES = %w[
+      aat cct fast ftamc gmgpc gsafd homoit jlabsh lcgft lcsh lcstt lctgm local/osu local/upenn mesh ndlsh nli nlksh
+      rbbin rbgenr rbmscv rbpap rbpri rbprov rbpub rbtyp
+    ]
 
     # @param [PennLib::CodeMappings]
     def initialize(code_mappings)
