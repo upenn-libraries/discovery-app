@@ -92,7 +92,7 @@ jQuery.shelfLocatorLink = new function() {
         if (!inVP && !inLL && !inFA) {
             return false;
         }
-        if (location.indexOf("in process") >= 0) {
+        else if (location.indexOf("in process") >= 0) {
             return false;
         }
         else if (location.indexOf("on order") >= 0) {
@@ -321,6 +321,8 @@ jQuery.shelfLocatorLink = new function() {
                 } else {
                     url = "https://old.library.upenn.edu/about/locations/floor-plans/stacks-vp#" + target;
                 }
+            } else {
+                return; // don't show a link
             }
             return "<a class=\"shelf-location-link\" href=\"" + url + "\" target='_blank'>" + link_text + "</a>";
         } catch(e) {
