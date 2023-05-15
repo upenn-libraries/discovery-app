@@ -1,6 +1,7 @@
 # See http://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
 #
 User-agent: *
+Crawl-delay: 5
 Sitemap: https://franklin.library.upenn.edu/sitemap.xml
 
 # it's possible that some relevant pages with query params could be derived, e.g. from curated
