@@ -500,6 +500,7 @@ class CatalogController < ApplicationController
         { dynamic_name: 'manufacture_display', label: 'Manufacture' },
         { name: 'contained_within_a', label: 'Contained in' },
         { name: 'format_a', label: 'Format/Description', separator: ', '},
+        { name: 'score', label: 'Relevance Score', unless: Rails.env.production?, helper_method: :relevance_score },
         # in this view, 'Online resource' is full_text_link; note that
         # 'Online resource' is deliberately different here from what's on show view
         { dynamic_name: 'full_text_links_for_cluster_display', label: 'Online resource', helper_method: 'render_online_resource_display_for_index_view' },
