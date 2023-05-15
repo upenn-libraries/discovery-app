@@ -92,7 +92,7 @@ jQuery.shelfLocatorLink = new function() {
         if (!inVP && !inLL && !inFA) {
             return false;
         }
-        else if (location.indexOf("in process") >= 0) {
+        if (location.indexOf("in process") >= 0) {
             return false;
         }
         else if (location.indexOf("on order") >= 0) {
@@ -297,22 +297,32 @@ jQuery.shelfLocatorLink = new function() {
         return target;
     }
 
+    function shouldShowTemporaryLink(location, target) {
+        if (target === 'DENIAL') { return false; }
+
+        var inVP = location.indexOf("Van Pelt") >= 0;
+        var inLL = location.indexOf("Lippincott") >= 0;
+
+        return (inVP || inLL);
+    }
+
     return function(mms_id, holding, format, text) {
         try {
             var link_text = text || 'See shelf location'
             var location = holding['location'];
             var target = getMapTarget(location, holding['call_number'], format);
             var availability = holding['availability'];
-            if (target !== 'DENIAL' && shouldDisplayLink(location, target, availability, format)) {
+            var url;
+            if (shouldShowTemporaryLink(location, target)) {
+                url = "https://www.library.upenn.edu/floor-plans/vanpelt/stacks";
+            } else if (target !== 'DENIAL' && shouldDisplayLink(location, target, availability, format)) {
                 if (location.indexOf("Fine Arts") >= 0) {
-                    var url = "https://old.library.upenn.edu/about/locations/floor-plans/stacks-fisher#" + target;
-                    return "<a class=\"shelf-location-link\" href=\"" + url + "\" target='_blank'>" + link_text + "</a>";
+                    url = "https://old.library.upenn.edu/about/locations/floor-plans/stacks-fisher#" + target;
                 } else {
-                    //console.log("showing result for " + mms_id + " " + library + " " + location + " " + target + " " + availability);
-                    var url = "https://old.library.upenn.edu/about/locations/floor-plans/stacks-vp#" + target;
-                    return "<a class=\"shelf-location-link\" href=\"" + url + "\" target='_blank'>" + link_text + "</a>";
+                    url = "https://old.library.upenn.edu/about/locations/floor-plans/stacks-vp#" + target;
                 }
             }
+            return "<a class=\"shelf-location-link\" href=\"" + url + "\" target='_blank'>" + link_text + "</a>";
         } catch(e) {
             console.log("error in shelfLocatorLink for " + mms_id + ": " + e.message);
         }
