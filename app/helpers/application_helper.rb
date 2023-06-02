@@ -28,7 +28,7 @@ module ApplicationHelper
   end
 
   def google_site_search_results_url(query)
-    return "https://old.library.upenn.edu/search/web-pages?q=#{query}"
+    return "https://www.library.upenn.edu/page/search-results?q=#{query}"
   end
 
   def colenda_search_results_url(query)
@@ -74,7 +74,7 @@ module ApplicationHelper
       }
     elsif tab_id == 'website' && action_name == 'landing'
       attrs = {
-          'href': "https://old.library.upenn.edu/search/web-pages"
+          'href': "https://www.library.upenn.edu/page/search-results"
       }
     elsif tab_id == 'colenda' && action_name == 'landing'
       attrs = {
