@@ -11,9 +11,9 @@ module ApplicationHelper
   def summon_url(query, proxy = false)
     url = "http://upenn.summon.serialssolutions.com/#!/search?q=#{url_encode(query)}"
     if proxy
-      return "https://proxy.library.upenn.edu/login?url=#{url}"
+      "https://proxy.library.upenn.edu/login?url=#{url}"
     else
-      return url
+      url
     end
   end
 
@@ -28,15 +28,15 @@ module ApplicationHelper
   end
 
   def google_site_search_results_url(query)
-    return "https://www.library.upenn.edu/page/search-results?q=#{query}"
+    "https://www.library.upenn.edu/page/search-results?q=#{query}"
   end
 
   def colenda_search_results_url(query)
-    return "https://colenda.library.upenn.edu/catalog?q=#{query}"
+    "https://colenda.library.upenn.edu/catalog?q=#{query}"
   end
 
   def catalog_results_url(query)
-    return search_catalog_path(q: query, search_field: 'keyword')
+    search_catalog_path(q: query, search_field: 'keyword')
   end
   # returns the css classes needed for elements that should be considered 'active'
   # with respect to tabs functionality
@@ -218,7 +218,7 @@ module ApplicationHelper
         )]
       end
     end
-    return result
+    result
   end
 
   def resourcesharing_path
