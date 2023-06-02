@@ -317,9 +317,12 @@ jQuery.shelfLocatorLink = new function() {
                 url = "https://www.library.upenn.edu/floor-plans/vanpelt/stacks";
             } else if (target !== 'DENIAL' && shouldDisplayLink(location, target, availability, format)) {
                 if (location.indexOf("Fine Arts") >= 0) {
-                    url = "https://old.library.upenn.edu/about/locations/floor-plans/stacks-fisher#" + target;
+                    var url = "/stackmap/fisher#" + target;
+                    return "<a class=\"shelf-location-link\" href=\"" + url + "\" target='_blank'>" + link_text + "</a>";
                 } else {
-                    url = "https://old.library.upenn.edu/about/locations/floor-plans/stacks-vp#" + target;
+                    //console.log("showing result for " + mms_id + " " + library + " " + location + " " + target + " " + availability);
+                    var url = "/stackmap/van-pelt#" + target;
+                    return "<a class=\"shelf-location-link\" href=\"" + url + "\" target='_blank'>" + link_text + "</a>";
                 }
             } else {
                 return; // don't show a link

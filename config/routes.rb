@@ -15,6 +15,8 @@ Rails.application.routes.draw do
   root to: "catalog#landing"
   get 'bento/' => 'catalog#bento'
   get 'databases', to: 'catalog#databases'
+  get 'stackmap/fisher', to: 'stackmap#fisher'
+  get 'stackmap/van-pelt', to: 'stackmap#vanpelt'
 
   mount Blacklight::Engine => '/'
   mount BlacklightDynamicSitemap::Engine => '/'

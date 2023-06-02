@@ -334,6 +334,20 @@ header {
     border-color: #ccc;
 }
 
+.floor-section {
+  background-color: rgba(133,74,207,.3);
+}
+
+#vpfloorplan, #fisherfloorplan {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-size: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 10%;
+}
+
 /*xxxxxxxxxxxxxxxxxxxx*/
 
 #navandidbar  {
