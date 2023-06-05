@@ -64,7 +64,7 @@ namespace :pennlib do
     desc 'Index MARC records using Traject, outputting Solr query to file (for debugging)'
     task :index_to_file => :environment do |t, args|
 
-      class MyMarcIndexer < HathiIndexer
+      class MyMarcIndexer < FranklinIndexer
         def initialize
           super
           settings do
@@ -74,7 +74,12 @@ namespace :pennlib do
         end
       end
 
-      io = Zlib::GzipReader.new(File.open(ENV['MARC_FILE']), :external_encoding => 'UTF-8')
+      file = ENV['MARC_FILE']
+      io = if file.ends_with? '.gz'
+             Zlib::GzipReader.new(File.open(file), :external_encoding => 'UTF-8')
+           else
+             File.open file
+           end
       MyMarcIndexer.new.process(io)
     end
 
