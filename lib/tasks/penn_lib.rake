@@ -61,6 +61,9 @@ namespace :pennlib do
       end
     end
 
+    # Index any given record and get a traject_ouput.json file containing the JSON to be sent to solr
+    # Usage: SOLR_URL=/ MARC_FILE=full-path-to-a-marcxml-file bundle exec rake pennlib:marc:index_to_file
+    # Note: MARCXML must include a top level <collection /> node with MARCXML namespace
     desc 'Index MARC records using Traject, outputting Solr query to file (for debugging)'
     task :index_to_file => :environment do |t, args|
 
