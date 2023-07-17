@@ -993,6 +993,11 @@
   <library>Reserve</library>
   <display>Penn Museum Library - Reserve</display>
 </location>
+<location location_code="musenewbks">
+  <specific_location>Penn Museum Library - New Books Display</specific_location>
+  <library>Penn Museum Library</library>
+  <display>Penn Museum Library - New Books Display</display>
+</location>
 <location location_code="musiclist">
   <specific_location>Van Pelt - Ormandy Center</specific_location>
   <library>Van Pelt-Dietrich Library Center</library>
