@@ -2533,7 +2533,7 @@ module PennLib
                  .map do |field|
         subi = remove_paren_value_from_subfield_i(field) || ''
         related = field.map do |sf|
-          if ! %w{0 4 i}.member?(sf.code)
+          if ! %w{0 4 6 i}.member?(sf.code)
             " #{sf.value}"
           elsif sf.code == '4'
             ", #{relator_codes[sf.value]}"
@@ -2548,7 +2548,7 @@ module PennLib
                  .map do |field|
         subi = remove_paren_value_from_subfield_i(field) || ''
         related = field.map do |sf|
-          if ! %w{0 4 i}.member?(sf.code)
+          if ! %w{0 4 6 i}.member?(sf.code)
             " #{sf.value}"
           elsif sf.code == '4'
             ", #{relator_codes[sf.value]}"
