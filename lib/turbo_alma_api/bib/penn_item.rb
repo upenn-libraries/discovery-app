@@ -12,6 +12,7 @@ module TurboAlmaApi
         AUDIOCASSETTE VIDEOCASSETTE HEAD LRDSC CALC KEYS RECORD
         LPTOP EQUIP OTHER AUDIOVM
       ].freeze
+      UNAVAILABLE_LOCATIONS = ['ZUnavailable', 'ZUnavailable Library']
 
       # Is this Item restricted from circulation due to ETAS?
       # @return [TrueClass, FalseClass]
@@ -137,7 +138,7 @@ module TurboAlmaApi
       # Is this Item in the mythical "Unavailable" Library? Apparently, a graveyard for withdrawn Items
       # @return [TrueClass, FalseClass]
       def in_unavailable_library?
-        library_name == 'ZUnavailable'
+        library_name.in? UNAVAILABLE_LOCATIONS
       end
 
       # Does the holding have temporary location or library information?
