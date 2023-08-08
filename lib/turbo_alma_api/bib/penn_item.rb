@@ -138,7 +138,7 @@ module TurboAlmaApi
       # Is this Item in the mythical "Unavailable" Library? Apparently, a graveyard for withdrawn Items
       # @return [TrueClass, FalseClass]
       def in_unavailable_library?
-        library == UNAVAILABLE_LIBRARY
+        library == UNAVAILABLE_LIBRARY_CODE
       end
 
       # Does the holding have temporary location or library information?
