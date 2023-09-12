@@ -11,14 +11,18 @@ jQuery.shelfLocatorLink = new function() {
     // note that location names here must be kept in sync with Alma, otherwise it won't work
     var locationsToTargetsVP = [
         {"v": "Africana Studies Resource Room", "tg": "ASRR"},
+        {"v": "Albrecht Music Library", "tg": "ALB"},
         {"v": "Bestsellers Collection", "tg": "BC"},
         {"v": "Classics Resource Room", "tg": "CRR"},
         {"v": "East Asia Collection", "tg": "EAC"},
-        {"v": "East Asia Compact Shelving", "tg": "EACS"},
+        {"v": "East Asia Compact Shelving", "tg": "EAC"},
         {"v": "East Asia Seminar Room", "tg": "EASR"},
         {"v": "Judaica and Ancient Near East Resource Room", "tg": "JANERR"},
+        {"v": "Judaica/Ancient", "tg": "JANERR"},
+        {"v": "Lippincott Library", "tg": "LL"},
         {"v": "Marian Anderson Music Study Center", "tg": "MAMSC"},
         {"v": "Marian Anderson Study Center Reserve", "tg": "MAMSC"},
+        {"v": "Albrecht Music Library", "tg": "ALB"},
         {"v": "Medieval Studies Resource Room", "tg": "MSRR"},
         {"v": "Microtext", "tg": "MICRO"},
         {"v": "Middle East Seminar Reserve", "tg": "MESR"},
@@ -29,14 +33,12 @@ jQuery.shelfLocatorLink = new function() {
         {"v": "Ormandy", "tg": "OC"},
         {"v": "Rosengarten Reserve", "tg": "RR"},
         {"v": "South Asia Studies Reading Room", "tg": "SAS"},
+        {"v": "South Asia Reserve", "tg": "SAS"},
         {"v": "South Asian Reserve", "tg": "SAS"},
+        {"v": "Van Pelt Global Studies Collection", "tg": "GLO"},
         {"v": "Video Collection", "tg": "VC"},
         {"v": "Weigle Information Commons Reference", "tg": "WICR"},
-        {"v": "Yarnall Collection", "tg": "YC"},
-        {"v": "Lippincott Library", "tg": "LL"},
-        {"v": "Judaica/Ancient", "tg": "JANERR"},
-        {"v": "East Asia", "tg": "EAC"},
-        {"v": "South Asia Reserve", "tg": "SAS"}
+        {"v": "Yarnall Collection", "tg": "YC"}
     ];
 
     var locationsToTargetsFisher = [
@@ -218,7 +220,7 @@ jQuery.shelfLocatorLink = new function() {
             target = pMap[target];
         } else if (target[0] === "N" && target[1] === "N") {
             target = "NX";
-        } else if (target[0] !== "N") {
+        } else if (target[0] !== "N" && target[0] !== "H") {
             target = firstPart[0];
         }
         return target;
@@ -297,15 +299,6 @@ jQuery.shelfLocatorLink = new function() {
         return target;
     }
 
-    function shouldShowTemporaryLink(location, target) {
-        if (target === 'DENIAL') { return false; }
-
-        var inVP = location.indexOf("Van Pelt") >= 0;
-        var inLL = location.indexOf("Lippincott") >= 0;
-
-        return (inVP || inLL);
-    }
-
     return function(mms_id, holding, format, text) {
         try {
             var link_text = text || 'See shelf location'
@@ -313,13 +306,11 @@ jQuery.shelfLocatorLink = new function() {
             var target = getMapTarget(location, holding['call_number'], format);
             var availability = holding['availability'];
             var url;
-            if (shouldShowTemporaryLink(location, target)) {
-                url = "https://www.library.upenn.edu/floor-plans/vanpelt/stacks";
-            } else if (target !== 'DENIAL' && shouldDisplayLink(location, target, availability, format)) {
+            if (target !== 'DENIAL' && shouldDisplayLink(location, target, availability, format)) {
                 if (location.indexOf("Fine Arts") >= 0) {
-                    url = "https://old.library.upenn.edu/about/locations/floor-plans/stacks-fisher#" + target;
+                    url = "https://www.library.upenn.edu/finearts/locator#" + target;
                 } else {
-                    url = "https://old.library.upenn.edu/about/locations/floor-plans/stacks-vp#" + target;
+                    url = "https://www.library.upenn.edu/vanpelt/locator#" + target;
                 }
             } else {
                 return; // don't show a link
