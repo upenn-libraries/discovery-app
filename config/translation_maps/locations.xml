@@ -145,6 +145,11 @@
   <library>Athenaeum of Philadelphia</library>
   <display>Athenaeum of Philadelphia - Rare Books Collection</display>
 </location>
+<location location_code="RDDSXBooks">
+  <specific_location>Van Pelt - RDDSX Books</specific_location>
+  <library>Van Pelt-Dietrich Library Center</library>
+  <display>Van Pelt - RDDSX Books</display>
+</location>
 <location location_code="reevecoll">
   <specific_location>Athenaeum of Philadelphia - Reeve Collection</specific_location>
   <library>Athenaeum of Philadelphia</library>
