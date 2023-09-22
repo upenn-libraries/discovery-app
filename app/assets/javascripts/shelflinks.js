@@ -35,7 +35,7 @@ jQuery.shelfLocatorLink = new function() {
         {"v": "South Asia Studies Reading Room", "tg": "SAS"},
         {"v": "South Asia Reserve", "tg": "SAS"},
         {"v": "South Asian Reserve", "tg": "SAS"},
-        {"v": "Van Pelt Global Studies Collection", "tg": "GLO"},
+        {"v": "Van Pelt - Center for Global Collections", "tg": "GLO"},
         {"v": "Video Collection", "tg": "VC"},
         {"v": "Weigle Information Commons Reference", "tg": "WICR"},
         {"v": "Yarnall Collection", "tg": "YC"}
