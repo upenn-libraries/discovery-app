@@ -9,7 +9,7 @@ module ApplicationHelper
   end
 
   def summon_url(query, proxy = false)
-    url = "http://upenn.summon.serialssolutions.com/#!/search?q=#{url_encode(query)}"
+    url = "https://upenn.summon.serialssolutions.com/#!/search?q=#{url_encode(query)}"
     if proxy
       "https://proxy.library.upenn.edu/login?url=#{url}"
     else
