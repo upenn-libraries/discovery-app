@@ -1,7 +1,7 @@
 
 $(document).ready(function () {
 
-    var articleFinderUrl = 'http://hdl.library.upenn.edu/1017/25333';
+    var articleFinderUrl = 'https://hdl.library.upenn.edu/1017/25333';
 
     // we set href too for cleanliness
     $('.article-finder-link')
