@@ -1,7 +1,7 @@
 $(document).ready(function() {
     $(".summon-form").submit(function(event) {
         event.preventDefault();
-        var searchURL = "http://upenn.summon.serialssolutions.com/#!/search?q=" + encodeURIComponent($(".summon-form input[name='q']").val());
+        var searchURL = "https://upenn.summon.serialssolutions.com/#!/search?q=" + encodeURIComponent($(".summon-form input[name='q']").val());
         // Must concatenate all fvf values into one parameter.
         var fvf = "";
         $(".summon-form .limit-options input:checked").each(function() {
