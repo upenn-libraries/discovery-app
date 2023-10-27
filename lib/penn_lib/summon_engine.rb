@@ -3,6 +3,15 @@ class PennLib::SummonEngine < BentoSearch::SummonEngine
 
   META_CHARS = '-|!\(\){}\[\]^~*?\\:' # '&' does not seem to be affected
 
+  # Override default base url value to use HTTPS because it is 2023
+  def self.default_configuration
+    {
+      :base_url => "https://api.summon.serialssolutions.com/2.0.0/search",
+      :highlighting => true,
+      :use_summon_openurl => false
+    }
+  end
+
   def search_implementation(args)
     mitigate(args)
     results = super(args)
