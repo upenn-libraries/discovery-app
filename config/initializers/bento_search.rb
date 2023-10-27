@@ -15,7 +15,7 @@ BentoSearch.register_engine('summon') do |conf|
     # all users are authenticated.
     #"s.role" => "authenticated"
     's.ho' => 't',
-    's.secure' => 'f',
+    's.secure' => 't',
   }
 
   # allow ajax load.
