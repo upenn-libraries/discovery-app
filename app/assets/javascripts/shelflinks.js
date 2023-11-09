@@ -19,6 +19,7 @@ jQuery.shelfLocatorLink = new function() {
         {"v": "East Asia Seminar Room", "tg": "EASR"},
         {"v": "Judaica and Ancient Near East Resource Room", "tg": "JANERR"},
         {"v": "Judaica/Ancient", "tg": "JANERR"},
+        {"v": "Kislak Center for Special Collections - Furness Shakespeare Library", "tg": "HHF"},
         {"v": "Lippincott Library", "tg": "LL"},
         {"v": "Marian Anderson Music Study Center", "tg": "MAMSC"},
         {"v": "Marian Anderson Study Center Reserve", "tg": "MAMSC"},
