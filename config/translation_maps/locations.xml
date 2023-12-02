@@ -1722,6 +1722,11 @@
   <library>Van Pelt-Dietrich Library Center</library>
   <display>Van Pelt - Center for Global Collections</display>
 </location>
+<location location_code="vanpcgccm">
+  <specific_location>Van Pelt - Global Comics Collection</specific_location>
+  <library>Van Pelt-Dietrich Library Center</library>
+  <display>Van Pelt - Global Comics Collection</display>
+</location>
 <location location_code="vanpmicro">
   <specific_location>Van Pelt - Microtext</specific_location>
   <library>Van Pelt-Dietrich Library Center</library>
