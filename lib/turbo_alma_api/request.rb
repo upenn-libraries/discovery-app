@@ -18,7 +18,7 @@ module TurboAlmaApi
       ['Lockers at Dental Medicine Library', 'DENTLOCKER'],
       ['Fisher Fine Arts Library', 'FisherFAL'],
       ['Library at the Katz Center', 'KatzLib'],
-      # ['Math/Physics/Astronomy Library', 'MPALib'],
+      ['Math/Physics/Astronomy Library', 'MPALib'],
       ['Museum Library', 'MuseumLib'],
       ['Ormandy Music and Media Center', 'MusicLib'],
       ['Pennsylvania Hospital Library - 800 Spruce St.', 'PAHospLib'],
