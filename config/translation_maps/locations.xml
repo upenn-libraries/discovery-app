@@ -727,6 +727,11 @@
   <library>Fisher Fine Arts Library</library>
   <display>Fine Arts Library - Core Reading Collection</display>
 </location>
+<location location_code="fineexhib">
+  <specific_location>Fisher Fine Arts Library - Exhibitions Corridor</specific_location>
+  <library>Fisher Fine Arts Library</library>
+  <display>Fine Arts Library - Exhibitions Corridor</display>
+</location>
 <location location_code="finelock">
   <specific_location>Fisher Fine Arts Library - Locked Case</specific_location>
   <library>Special Collections</library>
