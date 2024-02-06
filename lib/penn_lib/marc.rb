@@ -2729,7 +2729,7 @@ module PennLib
 
     def get_bound_with_display(rec)
       rec.fields('501').map do |field|
-        join_subfields(field, &subfield_not_in(%w{a}))
+        join_subfields(field, &subfield_in(%w{a}))
       end.select(&:present?)
     end
 
