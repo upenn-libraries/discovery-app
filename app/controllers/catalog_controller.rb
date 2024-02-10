@@ -435,9 +435,9 @@ class CatalogController < ApplicationController
     # config.add_facet_field 'pub_date_isort', label: 'Publication Year', range: true, collapse: false,
     #                        include_in_advanced_search: false
 
-    # config.add_facet_field 'subject_xfacet2', label: 'Subject', limit: 20, show: false, solr_params: MINCOUNT,
-    #                        xfacet: true, xfacet_view_type: 'xbrowse', facet_for_filtering: 'subject_f',
-    #                        :if => search_field_accept::(['subject_xfacet2'])
+    config.add_facet_field 'subject_xfacet2', label: 'Subject', limit: 20, show: false, solr_params: MINCOUNT,
+                           xfacet: true, xfacet_view_type: 'xbrowse', facet_for_filtering: 'subject_f',
+                           :if => search_field_accept::(['subject_xfacet2'])
     config.add_facet_field 'title_xfacet', label: 'Title', limit: 20, show: false, solr_params: MINCOUNT,
                            xfacet: true, xfacet_view_type: 'rbrowse', :if => search_field_accept::(['title_xfacet']),
                            xfacet_rbrowse_fields: %w[title author_creator_a standardized_title_a edition conference_a series contained_within_a publication_a format_a full_text_links_for_cluster_display availability]
@@ -690,11 +690,11 @@ class CatalogController < ApplicationController
       }
     end
 
-    # config.add_search_field('subject_xfacet2') do |field|
-    #   field.label = 'Subject Heading Browse'
-    #   field.action = '/catalog/xbrowse/subject_xfacet2'
-    #   field.include_in_advanced_search = false
-    # end
+    config.add_search_field('subject_xfacet2') do |field|
+      field.label = 'Subject Heading Browse'
+      field.action = '/catalog/xbrowse/subject_xfacet2'
+      field.include_in_advanced_search = false
+    end
 
     config.add_search_field('subject_correlation') do |field|
       field.label = 'Subject Heading Correlation'
