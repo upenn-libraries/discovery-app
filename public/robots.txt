@@ -12,7 +12,9 @@ Disallow: /*?*
 
 Disallow: /advanced
 Disallow: /alma/*
-Disallow: /catalog/facet/
+Disallow: /bento
+Disallow: /bookmarks
+Disallow: /catalog/facet
 Disallow: /catalog
 Disallow: /catalog.atom
 Disallow: /catalog.rss
