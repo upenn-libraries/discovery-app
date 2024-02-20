@@ -14,6 +14,7 @@ jQuery.shelfLocatorLink = new function() {
         {"v": "Albrecht Music Library", "tg": "ALB"},
         {"v": "Bestsellers Collection", "tg": "BC"},
         {"v": "Classics Resource Room", "tg": "CRR"},
+        {"v": "Van Pelt - East Asia", "tg": "EAC"},
         {"v": "East Asia Collection", "tg": "EAC"},
         {"v": "East Asia Compact Shelving", "tg": "EAC"},
         {"v": "East Asia Seminar Room", "tg": "EASR"},
