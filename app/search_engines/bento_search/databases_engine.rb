@@ -16,9 +16,10 @@ class BentoSearch::DatabasesEngine
   def search_implementation(args)
     return if args[:query].nil?
 
-    docs = blacklight_result_docs args
+    response = blacklight_results args
     bs_results = BentoSearch::Results.new
-    bs_results.total_items = docs.length
+    bs_results.total_items = response.first.dig('response', 'numFound')
+    docs = response.first.docs
     return bs_results if docs.empty?
 
     docs.each do |doc|
@@ -29,16 +30,15 @@ class BentoSearch::DatabasesEngine
 
   # Do BL search and get SolrDocuments
   # @param [Hash] args
-  # @return [Array<SolrDocument>]
-  def blacklight_result_docs(args)
-    bl_results = search_results(
+  # @return [Blacklight::Solr::Response]
+  def blacklight_results(args)
+    search_results(
       q: args[:query],
       per_page: 5,
       facet: false,
       search_field: 'keyword',
       f: { 'format_f': [PennLib::Marc::DATABASES_FACET_VALUE] }
     )
-    bl_results.first.docs
   end
 
   # Build a BentoSearch::Item from a SolrDocument
