@@ -41,9 +41,9 @@ $(document).ready(function() {
             }
             BentoSearch.ajax_load(loginStatusDiv.children(".bento_search_ajax_wait"), function (div) {
                 // set the login link with proper redirect
-                var currentUrl = window.location.href;
-                var proxyUrl = PROXY_PREPEND + 'http://127.0.0.1:8082/?redirect=' + encodeURIComponent(currentUrl);
-                $(div).find(".ezproxy-login-link").attr("href", proxyUrl);
+                // var currentUrl = window.location.href;
+                // var proxyUrl = PROXY_PREPEND + 'http://127.0.0.1:8082/?redirect=' + encodeURIComponent(currentUrl);
+                // $(div).find(".ezproxy-login-link").attr("href", proxyUrl);
 
                 if (auth !== null && auth !== undefined && auth.loggedIn) {
                     $(div).find(".view-and-filter").find("a").each(function (idx, element) {
