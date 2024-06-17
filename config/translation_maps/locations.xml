@@ -594,6 +594,12 @@
   <library>Levy Dental Medicine Library</library>
   <display>Levy Dental Medicine Library - Stacks</display>
 </location>
+<location location_code="dentpcare">
+  <specific_location>Levy Dental Medicine Library - PCare</specific_location>
+  <library>Health Sciences Libraries</library>
+  <library>Levy Dental Medicine Library</library>
+  <display>Levy Dental Medicine Library - PCare</display>
+</location>
 <location location_code="dentrare">
   <specific_location>Levy Dental Medicine Library - Rare Books</specific_location>
   <library>Special Collections</library>
@@ -1817,6 +1823,11 @@
   <specific_location>Van Pelt - Featured DVD Display - First Floor</specific_location>
   <library>Van Pelt-Dietrich Library Center</library>
   <display>Van Pelt - Featured DVD Display - First Floor</display>
+</location>
+<location location_code="vpfolio">
+  <specific_location>Van Pelt - Folios</specific_location>
+  <library>Van Pelt-Dietrich Library Center</library>
+  <display>Van Pelt Library</display>
 </location>
 <location location_code="vpjuv">
   <specific_location>Van Pelt - Notable Juvenile Books</specific_location>
