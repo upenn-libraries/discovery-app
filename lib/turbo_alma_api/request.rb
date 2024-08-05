@@ -21,7 +21,7 @@ module TurboAlmaApi
       ['Math/Physics/Astronomy Library', 'MPALib'],
       ['Museum Library', 'MuseumLib'],
       ['Ormandy Music and Media Center', 'MusicLib'],
-      ['Pennsylvania Hospital Library - 800 Spruce St.', 'PAHospLib'],
+      ['Pennsylvania Hospital Library - PAH Staff Only', 'PAHospLib'],
       ['Veterinary Library - New Bolton Center', 'VetNBLib'],
       ['Veterinary Library - Penn Campus', 'VetPennLib'],
     ]
