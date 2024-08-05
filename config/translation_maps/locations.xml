@@ -594,7 +594,13 @@
   <library>Levy Dental Medicine Library</library>
   <display>Levy Dental Medicine Library - Stacks</display>
 </location>
-<location location_code="dentpcare">
+<location location_code="dent390">
+  <specific_location>Levy Dental Medicine Library - Lounge</specific_location>
+  <library>Health Sciences Libraries</library>
+  <library>Levy Dental Medicine Library</library>
+  <display>Levy Dental Medicine Library - Lounge</display>
+</location>
+  <location location_code="dentpcare">
   <specific_location>Levy Dental Medicine Library - PCare</specific_location>
   <library>Health Sciences Libraries</library>
   <library>Levy Dental Medicine Library</library>
